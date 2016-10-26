@@ -1,0 +1,366 @@
+Bookmarks
+
+Bookmarks
+---------
+
+Bookmarks bar
+^^^^^^^^^^^^^
+
+NLP Book Manning
+^^^^^^^^^^^^^^^^
+
+pycon2016-twip
+^^^^^^^^^^^^^^
+
+http://www.python-course.eu/finite_state_machine.php[Python Advanced:
+Finite State Machine in Python]
+
+http://code.activestate.com/recipes/146262-finite-state-machine-fsm/[Finite
+State Machine (FSM) « Python recipes « ActiveState Code]
+
+http://www.cs.utsa.edu/~bylander/cs2233/languageshandout.pdf[www.cs.utsa.edu/~bylander/cs2233/languageshandout.pdf]
+
+http://www.deepsky.com/~merovech/voynich/voynich_manchu_reference_materials/PDFs/jurafsky_martin.pdf[www.deepsky.com/~merovech/voynich/voynich_manchu_reference_materials/PDFs/jurafsky_martin.pdf]
+
+https://www.cs.colorado.edu/~martin/SLP/Updates/1.pdf
+
+http://stp.lingfil.uu.se/~santinim/ml/2014/JurafskyMartinSpeechAndLanguageProcessing2ed_draft%202007.pdf[stp.lingfil.uu.se/~santinim/ml/2014/JurafskyMartinSpeechAndLanguageProcessing2ed_draft
+2007.pdf]
+
+http://www.librarian.net/wp-content/uploads/science-googlelabs.pdf[www.librarian.net/wp-content/uploads/science-googlelabs.pdf]
+
+file:///home/hobs/Downloads/PLAGIARISM_DETECTION_ALGORITHM_USING_NAT.pdf[PLAGIARISM_DETECTION_ALGORITHM_USING_NAT.pdf]
+
+https://github.com/gunthercox/ChatterBot[gunthercox/ChatterBot]
+
+http://nealcaren.web.unc.edu/an-introduction-to-text-analysis-with-python-part-1/[An
+introduction to text analysis with Python, Part 1 | Neal Caren]
+
+http://www.slideshare.net/PyData/authorship-attribution-forensic-linguistics-with-python-scikit-learn-pandas-kostas-perifanos[Authorship
+Attribution and Forensic Linguistics with Python/Scikit-Le…]
+
+http://www.fb10.uni-bremen.de/anglistik/langpro/webspace/jb/info-pages/nlg/ATG01/ATG01.html[ATG01]
+
+http://www.aclweb.org/anthology/siggen.html[ACL Anthology » SIGGEN]
+
+http://www.nlg-wiki.org/systems/Timeline_of_NLG_systems_since_2000[Timeline
+of NLG systems since 2000 - NLG Systems Wiki]
+
+http://dl.acm.org/citation.cfm?id=1643823.1643908[Implementing an online
+help desk system based on conversational agent]
+
+http://www.pnas.org/content/92/22/9977.full.pdf[www.pnas.org/content/92/22/9977.full.pdf]
+
+http://www.csie.ntu.edu.tw/~lyuu/complexity/2012/20120918.pdf[www.csie.ntu.edu.tw/~lyuu/complexity/2012/20120918.pdf]
+
+http://www.frontiersin.org/[Frontiers | Peer Reviewed Articles - Open
+Access Journals]
+
+https://dev.twitter.com/overview/api/twitter-libraries#python[Twitter
+Libraries | Twitter Developers]
+
+http://www.cs.duke.edu/courses/spring14/compsci290/assignments/lab02.html[Duke
+University sklearn TFIDF vectorizer example]
+
+http://www.cs.toronto.edu/~ranzato/publications/ranzato-phd-thesis.pdf[www.cs.toronto.edu/~ranzato/publications/ranzato-phd-thesis.pdf]
+
+http://multithreaded.stitchfix.com/blog/2015/03/11/word-is-worth-a-thousand-vectors/[A
+Word is Worth a Thousand Vectors | Stitch Fix Technology –
+Multithreaded]
+
+https://github.com/giladlotan/pydatanyc12_gephi_networkx[giladlotan/pydatanyc12_gephi_networkx:
+A lecture I gave at PyData NYC 2012 on using the networkx python library
+and Gephi to generate a mapping of the python community on Twitter]
+
+http://dataconomy.com/implementing-the-five-most-popular-similarity-measures-in-python/[Implementing
+the Five Most Popular Similarity Measures in Python - Dataconomy]
+
+https://us.pycon.org/2016/schedule/presentation/1778/[Presentation:
+Making an Impact with Python Natural Language Processing Tools | PyCon
+2016 in Portland, OR]
+
+http://localhost:8000/docs/slides/0%20-%20Introduction.html#/making-an-impact-with-python-nlp[localhost:8000/docs/slides/0
+- Introduction.html#/making-an-impact-with-python-nlp]
+
+http://corenlp.run/
+
+https://console.api.ai/api-client/#/getStarted[api.ai]
+
+https://developer.pandorabots.com/[chatbots.io]
+
+nlp-corpora-lexica
+^^^^^^^^^^^^^^^^^^
+
+https://hashcat.net/forum/thread-1236.html[Word List Downloads]
+
+https://crackstation.net/buy-crackstation-wordlist-password-cracking-dictionary.htm[CrackStation's
+Password Cracking Dictionary (Pay what you want!)]
+
+http://storage.googleapis.com/books/ngrams/books/datasetsv2.html[Google
+Ngram Viewer]
+
+NLP
+^^^
+
+http://papers.nips.cc/paper/1873-on-a-connection-between-kernel-pca-and-metric-multidimensional-scaling[On
+a Connection between Kernel PCA and Metric Multidimensional Scaling]
+
+https://engineering.purdue.edu/~malcolm/ibm/pubs/ICASSP2001-Segmentation.pdf[Scale
+Space Segmentation and Latent Semantic Indexing for Hierarchical
+Semantic Indexing]
+
+http://www.patents.com/us-7137062.html[US Patent # 7,137,062. System and
+method for hierarchical segmentation with latent semantic indexing in
+scale space - Patents.com]
+
+http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0096944[PLOS
+ONE: A New Method Combining LDA and PLS for Dimension Reduction]
+
+https://docs.djangoproject.com/en/1.8/topics/testing/overview/[doctest]
+
+http://web.media.mit.edu/~javierhr/files/slidesPCA.pdf[web.media.mit.edu/~javierhr/files/slidesPCA.pdf]
+
+http://www2.ece.ohio-state.edu/~aleix/pami01.pdf[www2.ece.ohio-state.edu/~aleix/pami01.pdf]
+
+https://www.google.com/search?q=A.+Martinez%2C+A.+Kak+PCA+vs+LDA&oq=A.+Martinez%2C+A.+Kak++PCA+vs+LDA&aqs=chrome..69i57.6976j0j7&sourceid=chrome&es_sm=93&ie=UTF-8[A.
+Martinez, A. Kak PCA vs LDA - Google Search]
+
+http://www.cse.unr.edu/~bebis/MathMethods/LDA/lecture.pdf[www.cse.unr.edu/~bebis/MathMethods/LDA/lecture.pdf]
+
+Context-Space NLP
+^^^^^^^^^^^^^^^^^
+
+https://www.google.com/patents/US7137062[Patent US7137062 - System and
+method for hierarchical segmentation with latent semantic ... - Google
+Patents]
+
+Skewed Skipgram Kernel
+^^^^^^^^^^^^^^^^^^^^^^
+
+http://www.researchgate.net/profile/Sebastian_Pado/publication/221013297_A_Structured_Vector_Space_Model_for_Word_Meaning_in_Context/links/0912f50bcab9830f66000000.pdf[www.researchgate.net/profile/Sebastian_Pado/publication/221013297_A_Structured_Vector_Space_Model_for_Word_Meaning_in_Context/links/0912f50bcab9830f66000000.pdf]
+
+http://delivery.acm.org/10.1145/1860000/1858012/p109-reisinger.pdf?ip=173.240.241.94&id=1858012&acc=OPEN&key=4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E6D218144511F3437&CFID=561435434&CFTOKEN=14949586&__acm__=1447954375_0f0da7b0814c93ded7ca32da72cc2cd1[delivery.acm.org/10.1145/1860000/1858012/p109-reisinger.pdf?ip=173.240.241.94&id=1858012&acc=OPEN&key=4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E6D218144511F3437&CFID=561435434&CFTOKEN=14949586&__acm__=1447954375_0f0da7b0814c93ded7ca32da72cc]
+
+http://www.cs.fsu.edu/~lifeifei/cis5930/lecture12-a.pdf[www.cs.fsu.edu/~lifeifei/cis5930/lecture12-a.pdf]
+
+https://radimrehurek.com/gensim/models/word2vec.html[gensim:
+models.word2vec – Deep learning with word2vec]
+
+http://rare-technologies.com/word2vec-tutorial/[Word2vec Tutorial » RaRe
+Technologies]
+
+https://code.google.com/p/word2vec/[word2vec - Tool for computing
+continuous distributed representations of words. - Google Project
+Hosting]
+
+https://pypi.python.org/pypi/text-sentence/[text-sentence 0.14 : Python
+Package Index]
+
+https://github.com/piskvorky/gensim/wiki/Recipes-&-FAQ#q4-how-do-you-output-the-u-s-vt-matrices-of-lsi[Recipes
+& FAQ · piskvorky/gensim Wiki]
+
+https://radimrehurek.com/gensim/models/lsimodel.html[gensim:
+models.lsimodel – Latent Semantic Indexing]
+
+http://www.ics.uci.edu/~welling/classnotes/papers_class/Fisher-LDA.pdf[www.ics.uci.edu/~welling/classnotes/papers_class/Fisher-LDA.pdf]
+
+https://www.cs.cmu.edu/~tom/10701_sp11/recitations/Recitation_11.pdf
+
+https://www.cs.cmu.edu/~tom/10701_sp11/recitations/[Index of
+/~tom/10701_sp11/recitations]
+
+https://www.cs.cmu.edu/~tom/10701_sp11/[Machine Learning 10-701/15-781
+Spring 2011]
+
+http://streamhacker.com/2011/10/31/fuzzy-string-matching-python/[Fuzzy
+String Matching in Python | StreamHacker]
+
+PyDX-hope
+^^^^^^^^^
+
+http://cordova.apache.org/[Apache Cordova]
+
+https://domainpunch.com/tlds/[The Full List of Internet Top-Level and
+Country Code Domains (TLDs) | gTLDs, ccTLDs and IDN]
+
+http://jezebel.com/gamergate-trolls-arent-ethics-crusaders-theyre-a-hate-1644984010[#Gamergate
+Trolls Aren't Ethics Crusaders; They're a Hate Group]
+
+http://saifmohammad.com/WebPages/lexicons.html[Saif: Lexicons]
+
+https://github.com/vered1986/HypeNet[vered1986/HypeNET: Integrated
+path-based and distributional method for hypernymy detection]
+
+http://ronan.collobert.com/pub/matos/2011_nlp_jmlr.pdf[collobert11a.dvi]
+
+https://apps.worldwritable.com/tutorials/chatbot/[Chatbot Fundamentals:
+An interactive guide to writing bots in Python]
+
+https://pypi.python.org/pypi/ChatterBot[ChatterBot 0.4.6 : Python
+Package Index]
+
+http://corpora2.informatik.uni-leipzig.de/download.html[Wortschatz -
+International Portal]
+
+http://www.anc.org/data/masc/downloads/[Downloads | Open American
+National Corpus]
+
+http://www.linguistics.ucsb.edu/research/santa-barbara-corpus[Santa
+Barbara Corpus of Spoken American English | Department of Linguistics -
+UC Santa Barbara]
+
+http://faculty.nps.edu/cmartell/NPSChat.htm[faculty.nps.edu/cmartell/NPSChat.htm]
+
+https://www.opendatascience.com/blog/introduction-deep-learning-for-chatbots-part-1/[Introduction:
+Deep Learning for Chatbots | Open Data Science]
+
+http://www.attn.com/stories/10746/bullied-13-year-old-writes-letter-before-suicide?utm_source=facebook&utm_medium=post&utm_campaign=internal[Bullied
+13-Year-Old Left Letter Before Suicide]
+
+https://web.archive.org/web/20130827121341/http://cosman246.com/jargon.html[The
+Newer Hacker's Dictionary]
+
+http://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html[Cornell
+Movie-Dialogs Corpus]
+
+http://labrosa.ee.columbia.edu/millionsong/musixmatch#getting[The
+musiXmatch Dataset | Million Song Dataset]
+
+http://venturebeat.com/2016/09/02/chatbots-are-a-creation-channel-for-storytelling/[Chatbots
+are a creation channel for storytelling | VentureBeat | Bots | by Sar
+Haribhakti]
+
+https://domparkhurst.wordpress.com/tag/shelfjoy/[ShelfJoy – Dom's Blog]
+
+http://gizmodo.com/facebook-messenger-chatbots-are-more-frustrating-than-h-1770732045[Facebook
+Chatbots Are Frustrating and Useless]
+
+http://www.businesswire.com/news/home/20160602005463/en/Sequel-Chatbot-Platform-Messaging-Apps-Launches-Natural[Sequel
+Chatbot Platform for Messaging Apps Launches with Natural Language and
+API Integration | Business Wire]
+
+http://randomwalker.info/publications/language-bias.pdf[language-bias.pdf]
+
+http://venturebeat.com/2016/06/05/how-bot-to-bot-could-soon-replace-apis/[How
+bot-to-bot could soon replace APIs | VentureBeat | Bots | by Niko
+Nelissen, Etouches]
+
+https://issuu.com/lindseyweber5/docs/emoji_by_womanzine[emoji by
+WOMANZINE by Forced Meme Productions - issuu]
+
+https://www.theguardian.com/science/2016/sep/01/how-algorithms-rule-our-working-lives[How
+algorithms rule our working lives | Cathy O’Neil | Science | The
+Guardian]
+
+https://github.com/totalgood/playground[totalgood/playground: Play with
+neural networks!]
+
+http://infolab.usc.edu/csci599/Fall2002/paper/IS2_multidimensional-index-structures-in.pdf[IS2_multidimensional-index-structures-in.pdf]
+
+http://ceur-ws.org/Vol-850/paper_grebhahn.pdf[paper_grebhahn.pdf]
+
+http://www.tfidf.com/[Tf-idf :: A Single-Page Tutorial - Information
+Retrieval and Text Mining]
+
+http://www.slideshare.net/grigorysapunov/deep-learning-cases-text-and-image-processing[Deep
+Learning Cases: Text and Image Processing]
+
+http://www.lifehacker.com.au/2016/05/meet-viv-the-future-of-chatbots-and-artificial-intelligence/[Meet
+Viv: The Future Of Chatbots And Artificial Intelligence | Lifehacker
+Australia]
+
+http://bgr.com/2016/03/17/siri-inventor-dag-kittlaus-viv-global-brain/[Siri
+Inventor Dag Kittlaus hypes up “Viv”, the next big leap in AI | BGR]
+
+http://isw3.naist.jp/~lasguido-l/me/__paper__/nio.ieice.2014.pdf[nio.ieice.2014.pdf]
+
+http://arxiv.org/pdf/1603.06042v2.pdf[1603.06042v2.pdf]
+
+https://storage.googleapis.com/amy-jo/talks/tf-workshop.pdf[tf-workshop.pdf]
+
+https://research.googleblog.com/2016/05/chat-smarter-with-allo.html[Research
+Blog: Chat Smarter with Allo]
+
+https://www.safaribooksonline.com/oriole/?utm_source=oreilly&utm_medium=newsite&utm_campaign=oriole-deep-learning[Oriole
+Online Tutorials]
+
+http://conferences.oreilly.com/strata/hadoop-big-data-ny/public/schedule/detail/52036[Conditional
+recurrent neural nets, generative AI Twitter bots, and DL4J: Big data
+conference: Strata + Hadoop World, September 26 - 29, 2016, New York,
+NY]
+
+https://django-rest-swagger.readthedocs.io/en/latest/[``]
+
+https://www.postgresql.org/docs/9.1/static/fuzzystrmatch.html[PostgreSQL:
+Documentation: 9.1: fuzzystrmatch]
+
+http://uxchat.me/[Daily UX conversations with your friendly UX Bear - UX
+Chat]
+
+http://mypersonality.org/wiki/doku.php?id=register[register
+[myPersonality Project]]
+
+forum moderation and chatbots
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+http://blog.kaggle.com/2012/09/26/impermium-andreas-blog/[Troll
+Detection with Scikit-Learn | No Free Hunch]
+
+http://www.businessinsider.com/chinese-search-giant-baidu-has-launched-a-medical-chatbot-2016-10?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+typepad%2Falleyinsider%2Fsilicon_alley_insider+%28Silicon+Alley+Insider%29[Chinese
+search giant Baidu has launched a medical chatbot]
+
+https://www.ozlo.com/[Ozlo]
+
+https://liberalarts.utexas.edu/psychology/faculty/pennebak[UT College of
+Liberal Arts:]
+
+http://analyzewords.com/science.php[The Science Behind AnalyzeWords.com]
+
+http://www.comp.leeds.ac.uk/eric/abushawar05icamej.pdf[abushawar05icamej.pdf]
+
+https://www.andy-roberts.net/res/writing/ltc05_faqchat.pdf[ltc05_faqchat.pdf]
+
+https://github.com/github/hubot[github/hubot: A customizable life
+embetterment robot.]
+
+https://hubot.github.com/docs/[HUBOT]
+
+http://www.lawgazette.co.uk/news/chatbot-pioneer-builds-free-tool-for-law-firms/5058339.fullarticle[‘Chatbot’
+pioneer builds free tool for law firms | News | Law Society Gazette]
+
+https://ai.icymi.email/obamas-report-on-the-future-of-artificialintelligence-the-main-takeaways-zdnet/[​Obama's
+report on the future of artificial intelligence: The main takeaways -
+Artificial Intelligence]
+
+https://manning.app.box.com/v/author-resources[Box | Simple Online
+Collaboration: Online File Storage, FTP Replacement, Team Workspaces]
+
+http://www.programmableweb.com/category/dictionary/api[49 Dictionary
+APIs | ProgrammableWeb]
+
+http://www.clips.ua.ac.be/pages/pattern[Pattern | CLiPS]
+
+http://www.clips.ua.ac.be/datasets[Datasets | CLiPS]
+
+http://www.clips.ua.ac.be/datasets/twisty-corpus[TwiSty Corpus | CLiPS]
+
+http://textminingonline.com/getting-started-with-pattern[Getting Started
+with Pattern – Text Mining Online]
+
+http://web.stanford.edu/class/cs276/[CS276: Information Retrieval and
+Web Search]
+
+http://nlp.stanford.edu/IR-book/html/htmledition/contents-1.html[Contents]
+
+http://sebastianraschka.com/Articles/2014_python_lda.html[Linear
+Discriminant Analysis bit by bit]
+
+https://m.youtube.com/watch?feature=youtu.be&v=AOU-Yw1qdJs[Natural
+language processing in Python using NLTK. Part 1/3 - YouTube]
+
+https://github.com/jacobeisenstein/gt-nlp-class?files=1[jacobeisenstein/gt-nlp-class]
+
+https://github.com/keonkim/awesome-nlp/blob/master/README.md#user-content-python[GitHub
+· Where software is built]
+
+

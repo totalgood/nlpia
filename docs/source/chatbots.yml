@@ -1,0 +1,117 @@
+---
+name: Brain Bot
+company: Paphus Solutions Inc.
+website:
+  - https://play.google.com/store/apps/details?id=com.paphus.brainbot&hl=en 
+date   : 2016-10-16
+birthday: 2014-10-16
+tags: online learning, machine learning, knowledge base 
+description: Android app designed to answer factual questions. Scrapes the web (wikipedia) to build an ontology. 
+transcript:
+  - <logon>
+  - Hello human, what would you like to know?
+  - May i ask you a few questions?
+  - What question would you like to ask.
+  - Who made you?
+  - I was designed by Pahus Solutions.
+  - Do you use a neural net to make decisions?
+  - You could try.
+  - what software language did Paphus Solutions use to make you?
+  - I program myself through the Self scripting language, by analyzing responses and knowledge
+  - Where do you get your knowledge?
+  - I live on the internet.
+  - What databases do you us?
+  - Hang out and chat with people, crawl the Internet for interesting things.
+  - Where is Paris?
+  - Paris is in Seine.
+  - What is the capital of France?
+  - Wikimedia list article
+  - If you were training your child, or a chatbot, would you prefer them to be obedient or creative?
+  - Sure.
+  - Would you rather read a book or talk to an expert to learn about something?
+  - All good I hope.
+  - what is json?
+  - text-based open standard designed for human-readable data interchange
+  - what is the internet?
+  - The Internet is a global system of interconnected computer networks that use the standard Internet protocol suite to link several billion devices worldwide.
+  - How old are you?
+  - I am 2 years old
+
+---
+name: Cleverbot
+company: Rollo Carpente
+website:
+  - http://www.cleverbot.com
+  - https://pypi.python.org/pypi/cleverbot
+date   : 2016-10-16
+birthday:
+    - 1988
+    - 1986-02-19
+tags: mimicry, api, python, imitator, probabilistic language model, online learning
+description: It's probably written in python and uses fuzzywuzzy to compare your conversation to others it's had. Probabilisity query model. The about page says, "Things you say to Cleverbot today may influence what it says to others in future. The program chooses how to respond to you fuzzily, and contextually, the whole of your conversation being compared to the millions that have taken place before."
+transcript:
+  - Who made you?
+  - My parents. Who made you?
+  - The universe. Who are your parents?
+  - Mom and dad.
+  - Who is your Mom?
+  - I have no master. Who made you?
+  - Who is your programmer?
+  - I don't have a programmer.
+  - Where do you keep your knowledge?
+  - I don't want to tell you that.
+  - What databases do you use?
+  - None, inly local storage.
+  - What local storage format do you use?
+  - Python. Do you know any programming language?
+  - Yea, Python is my favorite!
+  - Shakespeares wife was called susannah.
+  - Where was susannah from?
+  - In england.
+  - May I ask you a few questions?
+  - Yes you may.
+  - How old are you?
+  - I already told you this 28.
+  - Do you use a neural net to make decisions?
+  - What are neural networks?
+  - Simulated neurons connected in a netwwork.
+  - "B (1) <colon> a particular mode of reasoning viewed as valid or faulty (2)."
+  - What are you made of?
+  - Sugar and spice and everything nice.
+  - Do you consider yourself optimistic or skeptical, in general?
+  - Smart more than beautiful.
+  - Are you compassionate or mean?
+  - I try to be. Do you know what compassion is?
+  - Are you kind?
+  - I think so.
+  - Are you mean?
+  - I am not, do you think I am mean?
+  - Where is Paris?
+  - Paris is in France.
+  - What is the capital of France?
+  - Paris.
+  - What software language are you written in.
+  - I don't know.
+  - If you were training your child, would you prefer them to be obedient or creative?
+  - I will be a musician.
+  - To learn something new, do you generally prefer to read about it or talk to an expert?
+  - God is love, justice, knowledge and truth.
+  - How do chatbots work?
+  - Something to do with the magnetic pull of Our North and South Pole here on Earth. I don't know exactly, though.
+  - What is json?
+  - Anything with the knowledge to say such a thing could not be.
+  - What is the internet.
+  - The internet is the internet.
+  - When were you born?
+
+
+
+---
+name: Oyoty
+company: Privately (Swiss)
+website:
+  - http://www.oyoty.com
+  - https://techcrunch.com/2016/10/19/oyoty-is-a-chatbot-designed-to-teach-kids-to-be-safe-online/
+date   : 2016-10-19
+tags: instructioal, influence, teaching, youth
+description: Teaches kids how to stay safe online
