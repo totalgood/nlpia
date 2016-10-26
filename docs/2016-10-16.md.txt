@@ -1,0 +1,22 @@
+Like authoritarian questionnaire ask various chatbots questions and categorize them by their responses, especially those with api. Build chatbot taxonomy or lexonomy or personality profile.
+
+- Rate them on Loebner scale using Cole's adversarial nn bot?
+- personality profile questions (Briggs, Jung)
+- Vandy authoritarian paper questions
+- theory of mind
+- Facebook pronoun reference questions
+- English comprehension test questions
+- factual questions that should quote wikipedia
+  - how many planets are there?
+  -  Capital of Alaska?
+  - Capital of France?
+  - where is Paris?
+- IQ analogy questions
+- common sense questions that a computer should understand,  electrical power, internet bandwidth, web page error messages
+- body questions, leg bone connected to the ? bone
+
+
+Plan
+
+- like coursera start with bit vector model
+- Pedagogy
