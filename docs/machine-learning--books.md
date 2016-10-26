@@ -1,6 +1,4 @@
-## Books
-
-This course will pull examples and ideas from multiple sources, but most closely resembles the content and structure of the second half of the 2015 Grus book _Learning Data Science from Scratch_, published and sold by [O'Reilly for $34](http://shop.oreilly.com/product/0636920033400.do). You should be able to find promo codes for 50% off.  We'll touch on some topics in Chapter 1 in the first class but skip around in chapters 10-24 for the rest of the class. We spent Day 4 building a generative model similar to what Grus did in Chapter 20.
+## Machine Learning Books
 
 ### 2015 Grus: _Learning Data Science from Scratch_ [O'Reilly $34](http://shop.oreilly.com/product/0636920033400.do)
 

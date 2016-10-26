@@ -1,8 +1,8 @@
-=============
-NLP_in_Action
-=============
+=====
+nlpia
+=====
 
-This is the documentation of **NLP_in_Action**.
+This is the documentation of **nlpia** the code for _NLP_In_Action_.
 
 .. note::
 
