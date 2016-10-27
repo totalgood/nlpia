@@ -2,7 +2,11 @@
 
 ## Text Retrieval and Search
 
-[Python RTree indexinig](http://toblerity.org/rtree/tutorial.html#creating-an-index]: Multidimensional GIS-like indexes on topic-vectors?
+[Python R-Tree Indexes](http://toblerity.org/rtree/tutorial.html#creating-an-index]: Multidimensional GIS-like indexes on topic-vectors?
+[R*-Tree Indexes](https://en.wikipedia.org/wiki/R*_tree): R*-Tree indexes are the state of the art for multi-dimensional indexing
+[Elastic Search N-Gram Definition](https://www.elastic.co/blog/significant-terms-aggregation): For Indexes "grams" are characters, not tokens or words
+[PostGRESQL GIN Index Operators](https://www.postgresql.org/docs/9.4/static/functions-geometry.html): Multidimensional numerical array search in postgres?
+
 ## Academic Papers
 
 - "A longitudinal study of cyberbullying: Examining risk and protective factors"[1]

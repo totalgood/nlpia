@@ -6,6 +6,15 @@ Lexica are collections of words like dictionaries, thesauruses, N-gram collectio
 
 ## Corpora
 
+### Labeled
 
+- [keyword extraction datasets](https://github.com/zelandiya/keyword-extraction-datasets)
+- [Cornell movie dialog corpus](https://github.com/suriyadeepan/datasets/tree/master/seq2seq/cornell_movie_corpus)
+
+### Unlabeled
 
 ## Lexica
+
+### Labeled
+
+### Unlabeled
