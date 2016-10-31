@@ -1,0 +1,10 @@
+= Getting started with Foo
+:chapter: 1
+
+// TODO add intro bullets
+
+Welcome to _Foo in Action_! Over the course of these pages, you will learn the ins and outs of using Foo (we hope).
+
+== How to Foo
+
+How to Foo is easy to do. Here's how.
