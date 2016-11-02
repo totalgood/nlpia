@@ -353,7 +353,11 @@ YouTube](https://m.youtube.com/watch?feature=youtu.be&v=AOU-Yw1qdJs)
 
 [jacobeisenstein/gt-nlp-class](https://github.com/jacobeisenstein/gt-nlp-class?files=1)
 
-[GitHub · Where software is
-built](https://github.com/keonkim/awesome-nlp/blob/master/README.md#user-content-python)
+[github.com/Awesome-NLP](https://github.com/keonkim/awesome-nlp/blob/master/README.md#user-content-python)
+
+### English Grammar
+
+[Noun Phrase](http://www.chompchomp.com/terms/nounphrase.htm)
+
 
 
