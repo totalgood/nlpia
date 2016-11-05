@@ -55,6 +55,14 @@
 + Twitter Snarfer
 	input: search query and other configuration parameters
 	output: queriable DB of Tweets
+- Sentence/phrase/quote segmenter
+  - add newlines to DetectorMorse's set of possible "sentence" terminators "!?." and retrain
+  - tagging sentences with any context information that is lost during segmentation. 
+      - is this a heading, a bullet beneath a heading, a sentence within a paragraph, a solitary sentence disconnected from the others, is it a question, is it a question or a statement about a question, (e.g. "She said 'What's up?' " etc), is it emphatic ("She said "Help!" and I slept.")
+  - tagging makes the segmenters reversible and the next stage in the pipeline has more information about context. 
+- Plug up an Grant Ingersol's RTFMBot to the Manning writing process documentation hosted on Box.com
+- Grant Ingersol's RTFMbot so that chatbot can talk on totalgood.slack.com
+
 
 Many of these could just aggregate other open-source, open-data APIs like these and add themselves to lists like this:
 
