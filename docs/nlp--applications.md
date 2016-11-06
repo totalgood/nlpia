@@ -1,2 +1,0 @@
-# NLP Application Areas
-
