@@ -1,0 +1,68 @@
+= The Language of Thought
+:chapter: 1
+
+* Inspiration
+* Your NLP Factory
+* Getting Started
+
+== Inspiration
+
+Natural Language Processing (NLP) is popping up in more and more places each year. And the pace is accelerating. NLP seems to be at the core of a lot of exciting developments in Artificial Intelligence, inspiring exciting new startups, enabling new applications, contributing to breakthroughs in Computer Science research, and spawning whole new industries. Why was 2017 the year of the chatbot?
+
+* New appreciation for the untapped trove of NLP data?
+* Processing power catching up with researchers' ideas?
+* The fun and efficiency of interracting with a machine "in our own language"?
+
+Of course it's all of the above, and we won't bore you by reiterating the reasoning behind these three "causes" for the recent resurgence of AI and NLP. You can easily enter the question "Why is natural language processing so important right now?" into https://duckduckgo.com/?q=Why+is+natural+language+processing+so+important+right+now%3F&t=h_&ia=web[any search engine that does NLP well], and you're likely to be directed to the appropriate https://en.wikipedia.org/wiki/Natural_language_processing[wikpedia article] or a popular news article explaining it with more recent data and examples than we can here in a static textbook.
+
+However, we can offer some new reasons gleaned from tangentially related research in other areas, such as the concept that our minds think more efficiently due to our ability to collect concepts, thoughts, into packets of meaning called words. This is the thesis of Steven Pinker's https://en.wikipedia.org/wiki/The_Stuff_of_Thought[_The_Stuff_of_Thought_]. So if it's good enough for human brains, and we'd like to emulate or simulate human thought in a machine, then natural language is likely going to be a critical communication protocol within and between systems that emulate intelligent computation or thinking. And there may be import clues to intelligence that we can glean from the data structures and nested networks of connections that make it possible for an inanimate system to digest, store, recall, and generate natural language.
+
+And there's another even more interesting reason why you might want to learn how to program a system that uses natural language well... you might just help save the human race. Hopefully you've been following the discussion about the https://en.wikipedia.org/wiki/AI_control_problem[AI Control Problem] and the phrase "help save the human race" didn't surprise you. As you progress through this book and we show you how to build and connect several lobes of a chatbot "brain" together, you'll notice that very small nudges to the social feedback loops between humans and machines can have profound effects. Like a butterfly flapping its wings in China, one small decimal place adjustment to your chatbot's "selfishness" gain can result in a 5h!7 storm of antagonistic behavior and conflict with humans. And you'll also notice how a few nice, altruistic systems interracting with us will quickly gather a loyal following of supporters that help quell the chaos wreaked by bots designed to pursue purely capitalistic goals. Prosocial, cooperative chatbots can have a profound impact on the world.
+
+This is how and why the authors of this book came together. A supportive community emmerged through open, honest, prosocial communication over the Internet using the language that came natural to us. And we're using our http://forum.myquant.cn/uploads/default/original/1X/2065c4d1964e26331996cfa23d12acd185e3d7b6.pdf[collective intelligence] to help build and support things with less power to think and act in this world. And we hope that our words will leave their impression in your mind and propogate like a virus through the world of chatbots, infecting others with our passion for building prosocial bots.
+
+== A Chatbot Workshop
+
+So to help us (and the human race) you'll need an environment with all the tools and data you need to assemble your natural language processing pipeline. And you'll need tools and frameworks to help you use that pipeline to pump out NLP algorithms and entire chatbot systems.
+
+The tools you'll need include
+
+* A Windows, Linux, or Mac PC with at least 4 GB of RAM and 10 GB of free storage
+* `git` and a http://www.github.com/[GitHub] account
+* `python3` and some Python packages
+  ** scikit-learn
+  ** gensim
+  ** seaborn
+  ** nltk
+  ** textblob
+  ** ChatterBot
+
+To set up our environments to code up the framework for the chatbot in this book I did
+
+[sourcecode: bash]
+mkproject nlpia
+
+Some of you may have read the "ia" at the end as "ai" because of all the "priming" in this chapter about Artificial Intelligence. But of course you now realize that it's simply an acronym for the book title. But the book is about AI too, and I'd rather type `workon nlpai` each morning than `workon nlpia`. The latter sounds a bit like some weird new fish spicies like Talapia (language of thought, remember). A good acronym should invoke what it's about. That way it can take up less memory in our brains. So I've taken the liberty of changing the acronym for my work on this book to `nlpai`, just for efficiency's sake ;).
+
+But this got us thinking about how we might convince the publisher to reorder the words so that our software project acronym captured this double meaning.
+
+* _NLP_Action_in
+* _NLP,_Action_in
+* Action_in NLP
+
+Or how about taking liberties with the whole noun phrase.
+
+* _NLP_Action_in
+* _NLP,_Action_in
+* Action_in NLP
+
+Clearly none of those orderings would fly with a reasonable publisher. So that brings us to the next topic... how word order affects the meaning of a phrase.  Words aren't completely independent packets of meaning that can be counted and tossed in a bag together (for each sentence or document) in order to save space and create a manageable "feature space" for machine learning.
+
+=== Grammar
+
+The order of words matters. That's something that bag-of-words approaches often neglect. Fortunately for most short phrases and even entire sentences this approximation works OK, if you just want to encode the general sense and sentiment of a sentence. But if you imagine trying to translate an English sentence into SQL to retrieve an accurate answer to a `query` (question), then you will realize that a bag of words would provide very little information about the query. For logical processing of natural language (inference) and question-answering systems (such as the SQL database query example) you will need to take into account the order of words. Knowing English syntax and grammar becomes critical to resolving ambiguities in a natural language question and finding the right answer to respond with.
+
+
+
+
+
