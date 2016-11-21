@@ -1,5 +1,7 @@
 # Datasets
 
+Natural language datasets become more valuable when they are `join`ed with other machine learning datasets and statistics.
+
 ## Hack Oregon
 
 - [Civic Datasets](http://www.civicapps.org/datasets)
@@ -63,3 +65,4 @@ Competitions often have labeled datasets and many competitors open source their 
 - [JSONView](https://chrome.google.com/webstore/search/JSONview?hl=en-US) plugin for Chrome
   - decompresses and lays out json in a tree to make it easier to understand
 - [Python app for downloading historical weather data](https://github.com/hobson/pug-ann/tree/master/pug/ann/data)
+

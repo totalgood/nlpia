@@ -23,8 +23,7 @@
 [Xiang]: http://www.cs.cmu.edu/~lingwang/papers/sp250-xiang.pdf "Detecting Offensive Tweets via Topical Feature Discovery"
 [Jones]: http://www.noswearing.com/about.php "No Swear List & Curse Filter"
 
-## Data
-Sc1enceClosedOpened
+## Corpora
 
 - [twitter corpora and lexica](http://saifmohammad.com/WebPages/lexicons.html)
 - [niderhoff list of NLP datasets](https://github.com/niderhoff/nlp-datasets)
