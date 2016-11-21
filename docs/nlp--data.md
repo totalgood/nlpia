@@ -18,6 +18,7 @@ Lexica are collections of words like dictionaries, thesauruses, N-gram collectio
 - Twitter [Bullying Traces Data Set](http://research.cs.wisc.edu/bullying/data.html)
 - [twitter corpora and lexica](http://saifmohammad.com/WebPages/lexicons.html)
 - [Google NGrams (up to 5-Grams) for 15% of all books up to 2012](http://storage.googleapis.com/books/ngrams/books/datasetsv2.html)
+- [Music Match Dataset](http://labrosa.ee.columbia.edu/millionsong/musixmatch#getting)
 
 ## Lexica
 
