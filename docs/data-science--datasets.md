@@ -21,7 +21,7 @@ Natural language datasets become more valuable when they are `join`ed with other
 Competitions often have labeled datasets and many competitors open source their models, so you can see how well you are doing.
 
 - Kaggle
-  - ["Evergreen" or "Timelessness" classification of 10k URLs](https://www.kaggle.com/c/stumbleupon/data
+  - ["Evergreen" or "Timelessness" classification of 10k URLs](https://www.kaggle.com/c/stumbleupon/data)
 
 ## Academic Studies
 
@@ -47,16 +47,19 @@ Competitions often have labeled datasets and many competitors open source their 
 
 ## Government
 
+- [Google Public Data Explorer](https://www.google.com/publicdata/directory)
+- [World Bank economic data](http://data.worldbank.org/)
 - [USDA Food Nutrient Database](www.ars.usda.gov)
   - [Release 28](https://www.ars.usda.gov/SP2UserFiles/Place/12354500/Data/SR/SR28/dnload/sr28asc.zip)
   - [Release 28 updates (additional entries)](https://www.ars.usda.gov/SP2UserFiles/Place/12354500/Data/SR/SR28/dnload/sr28upd.zip)
-- [DATA.GOV search for portland Data](https://catalog.data.gov/dataset?q=portland%2C+oregon&sort=none&groups=local&organization_type=State+Government&ext_location=&ext_bbox=&ext_prev_extent=-142.03125%2C8.754794702435605%2C-59.0625%2C61.77312286453148)
-  - PSU [2014 Salaries by Role](https://data.oregon.gov/api/views/9x7t-w4u8/rows.csv?accessType=DOWNLOAD), [Expenses by Category](https://data.oregon.gov/api/views/ruye-i7t4/rows.csv?accessType=DOWNLOAD)
+- [DATA.GOV search for Portland area](https://catalog.data.gov/dataset?q=portland%2C+oregon&sort=none&groups=local&organization_type=State+Government&ext_location=&ext_bbox=&ext_prev_extent=-142.03125%2C8.754794702435605%2C-59.0625%2C61.77312286453148)
+  - [2010 Salaries by Agency](https://data.oregon.gov/dataset/Salaries-Agencies-As-of-June-30-2010/ea53-t8fq)
+  - [2012 Wallowa Sallaries](https://data.oregon.gov/Education/Salary-ESD-Wallowa-Fiscal-Year-2012/9ez6-a7sk)
   - [Oregon OSHA Fatal Accidents](https://data.oregon.gov/api/views/7e2w-n5dn/rows.csv?accessType=DOWNLOAD)
 
 ## Security & Web
 
-- [Ashley Madison dump](torrent search?)
+- Do a torrent search for the Ashley Madison dump
 - [PCAP packets for 2013 Pen Test Challenge](http://pen-testing.sans.org/holiday-challenge/2013)
 
 
@@ -66,3 +69,4 @@ Competitions often have labeled datasets and many competitors open source their 
   - decompresses and lays out json in a tree to make it easier to understand
 - [Python app for downloading historical weather data](https://github.com/hobson/pug-ann/tree/master/pug/ann/data)
 
+601-954-0297

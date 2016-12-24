@@ -47,6 +47,8 @@ Competitions often have labeled datasets and many competitors open source their 
 
 ## Government
 
+- [Google Public Data Explorer](https://www.google.com/publicdata/directory)
+- [World Bank economic data](http://data.worldbank.org/)
 - [USDA Food Nutrient Database](www.ars.usda.gov)
   - [Release 28](https://www.ars.usda.gov/SP2UserFiles/Place/12354500/Data/SR/SR28/dnload/sr28asc.zip)
   - [Release 28 updates (additional entries)](https://www.ars.usda.gov/SP2UserFiles/Place/12354500/Data/SR/SR28/dnload/sr28upd.zip)

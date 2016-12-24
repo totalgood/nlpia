@@ -1,0 +1,36 @@
+,POS Tag,Description,Example
+0,CC,coordinating conjunction,and
+1,CD,cardinal number,"1, third"
+2,DT,determiner,the
+3,EX,existential there,there is
+4,FW,foreign word,d’hoevre
+5,IN,preposition/subordinating conjunction,"in, of, like"
+6,JJ,adjective,big
+7,JJR,"adjective, comparative",bigger
+8,JJS,"adjective, superlative",biggest
+9,LS,list marker,1)
+10,MD,modal,"could, will"
+11,NN,"noun, singular or mass",door
+12,NNS,noun plural,doors
+13,NNP,"proper noun, singular",John
+14,NNPS,"proper noun, plural",Vikings
+15,PDT,predeterminer,both the boys
+16,POS,possessive ending,friend‘s
+17,PRP,personal pronoun,"I, he, it"
+18,PRP$,possessive pronoun,"my, his"
+19,RB,adverb,"however, usually, naturally, here, good"
+20,RBR,"adverb, comparative",better
+21,RBS,"adverb, superlative",best
+22,RP,particle,give up
+23,TO,to,"to go, to him"
+24,UH,interjection,uhhuhhuhh
+25,VB,"verb, base form",take
+26,VBD,"verb, past tense",took
+27,VBG,"verb, gerund/present participle",taking
+28,VBN,"verb, past participle",taken
+29,VBP,"verb, sing. present, non-3d",take
+30,VBZ,"verb, 3rd person sing. present",takes
+31,WDT,wh-determiner,which
+32,WP,wh-pronoun,"who, what"
+33,WP$,possessive wh-pronoun,whose
+34,WRB,wh-abverb,"where, when"
