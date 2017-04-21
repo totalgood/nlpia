@@ -12,7 +12,6 @@
 
 
 >>> from collections import Counter
->>> bag_of_words = Counter(token_sequence)
+>>> bag_of_words = Counter(tokens)
 >>> bag_of_words
-Counter({'the': 4, ',': 3, 'faster': 3, 'harry': 2, 'to': 1, '.': 1, 'would': 1, 'home': 1, 'got': 1, 'store': 1, 'get': 1})
-
+Counter({'the': 4, ',': 3, 'faster': 3, 'harry': 2, 'store': 1, 'get': 1, 'home': 1, 'would': 1, 'to': 1, 'got': 1, '.': 1})
