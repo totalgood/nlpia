@@ -1,19 +1,13 @@
-=============
-NLP_in_Action
-=============
+=====
+NLPIA
+=====
 
 
-Add a short description here!
+The code and data for [Natural Language Processing in Action](https://www.manning.com/books/natural-language-processing-in-action)
 
 
 Description
 ===========
 
-A LONGER DESCRIPTION OF YOUR PROJECT GOES HERE...
+A community-developed book about building Natural Language Processing pipelines for prosocial chatbots that contribute to communities.
 
-
-Note
-====
-
-This project has been set up using PyScaffold 2.5.6. For details and usage
-information on PyScaffold see http://pyscaffold.readthedocs.org/.
