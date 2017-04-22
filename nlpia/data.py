@@ -1,5 +1,6 @@
 import os
 import requests
+from tqdm import tqdm
 
 # from pugnlp import mkdir_p
 
@@ -21,13 +22,13 @@ harry_docs += ["Harry is hairy and faster than Jill."]
 harry_docs += ["Jill is not as hairy as Harry."]
 
 
-def download(name=None):
+def download(name=None, verbose=True):
     name = (name or '').lower()
     file_paths = {}
     if name in ('', 'w2v', 'word2vec'):
         req = requests.get(W2V_URL)
         with open(W2V_FILE, 'wb') as f:
-            for chunk in req.iter_content(100000):
+            for chunk in tqdm(req.iter_content(100000), total=int(f.size / 100000. + 1)):
                 f.write(chunk)
             file_paths['w2v'] = f.name
     return file_paths
