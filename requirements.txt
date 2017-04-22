@@ -1,16 +1,41 @@
+coverage>=4.3.4
 django==1.10.3
+future>=0.16.0
 jupyter==1.0.0
 matplotlib==1.5.3
-nltk==3.2.1
-# numpy==1.11.2
-peewee==2.8.5
+nltk==3.2.2
+pandas>=0.19.2
 pip>=8.1.2
 pypandoc==1.2.0
 scikit-learn==0.18
-scipy==0.19.0
+scipy>=0.19.0
 seaborn==0.7.1
 tweepy==3.5.0
 wheel==0.30.0a0
-pandas>=0.19.2
 gensim==2.0.0
+pugnlp>=0.0.3
+
+# ###################################################
+# NOTES
+#
+
+# scipy requires:
+#$ sudo apt-get install gfortran libopenblas-dev liblapack-dev python-scipy python-matplotlib python-numpy
+
+# matplotlib requires:
+#$ sudo apt-get install libpng12-dev libfreetype6-dev
+
+# matplotlib requires a backend (see matplotlibrc), tkagg is one option:
+#$ sudo apt-get install tcl-dev tk-dev python-tk python3-tk
+
+# pugnlp includes:
+# coverage>=4.3.4 nltk>=3.2.2 fuzzywuzzy>=0.15.0 python-slugify>=1.2.4 nlup>=0.5
+
+# optional packages:
 # boto==2.46
+# editdistance>=0.3.1
+
+#
+# NOTES
+# ###################################################
+
