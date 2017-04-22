@@ -31,8 +31,10 @@ def no_tqdm(it, total=1):
 def download(name=None, verbose=True):
     name = (name or '').lower()
     file_paths = {}
-    if not verbose:
+    if verbose:
         tqdm_prog = tqdm
+    else:
+        tqdm_prog = no_tqdm
     if name in ('', 'w2v', 'word2vec'):
         req = requests.get(W2V_URL)
         with open(W2V_FILE, 'wb') as f:
