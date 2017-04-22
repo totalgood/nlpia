@@ -1,5 +1,7 @@
 import os
 import requests
+import time
+
 from tqdm import tqdm
 
 # from pugnlp import mkdir_p
@@ -36,5 +38,6 @@ def download(name=None, verbose=True):
         with open(W2V_FILE, 'wb') as f:
             for chunk in tqdm_prog(req.iter_content(100000), total=int(f.size / 100000. + 1)):
                 f.write(chunk)
+                time.sleep(.001)
             file_paths['w2v'] = f.name
     return file_paths
