@@ -36,7 +36,11 @@ def download(name=None, verbose=True):
     else:
         tqdm_prog = no_tqdm
     if name in ('', 'w2v', 'word2vec'):
+        if verbose:
+            print('requesting URL: {}'.format(W2V_URL))
         req = requests.get(W2V_URL)
+        if verbose:
+            print('response URL: {}'.format(req))
         with open(W2V_FILE, 'wb') as f:
             for chunk in tqdm_prog(req.iter_content(100000), total=int(f.size / 100000. + 1)):
                 f.write(chunk)
