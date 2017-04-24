@@ -15,6 +15,8 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 DATA_URL = 'http://totalgood.org/static/data'
 W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
 W2V_URL = 'https://www.dropbox.com/s/4bcegydk3pn9067/GoogleNews-vectors-negative300.bin.gz?dl=0'
+BIG_URLS = {'w2v': W2V_URL,
+            'slang': 'https://www.dropbox.com/s/51mfq87zvct1t1y/slang.csv.gz?dl=0'}
 W2V_PATH = os.path.join(DATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-greeting-training-set.csv']
@@ -27,13 +29,14 @@ for filename in TEXTS:
 def read_csv(*args, **kwargs):
     """Like pandas.read_csv, only little smarter (checks first column to see if it should be the data frame index)
 
-    >>> read_csv('mavis-greeting-training-set.csv')
+    >>> read_csv('mavis-greeting-training-set.csv').head()
     """
     index_names = ('Unnamed: 0',)
     kwargs.update({'low_memory': False})
     df = pd.read_csv(*args, **kwargs)
     if df.columns[0] in index_names or (df[df.columns[0]] == df.index).all():
         df = df.set_index(df.columns[0], drop=True)
+        df.index.name = 'index'
     elif (df[df.columns[0]] == np.arange(len(df))).all():
         df = df.set_index(df.columns[0], drop=False)
     elif (df.index == np.arange(len(df))).all() and str(df[df.columns[0]].dtype).startswith('int') and df[df.columns[0]].count() == len(df):
