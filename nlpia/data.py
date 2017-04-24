@@ -10,7 +10,7 @@ USER_HOME = os.path.expanduser("~")
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 DATA_URL = 'http://totalgood.org/static/data'
 W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
-W2V_URL = DATA_URL.rstrip('/') + '/' + W2V_FILE
+W2V_URL = 'https://www.dropbox.com/s/4bcegydk3pn9067/GoogleNews-vectors-negative300.bin.gz?dl=0'
 W2V_PATH = os.path.join(DATA_PATH, W2V_FILE)
 
 with open(os.path.join(DATA_PATH, 'kite.txt')) as f:
@@ -28,22 +28,31 @@ def no_tqdm(it, total=1):
     return it
 
 
-def download(name=None, verbose=True):
-    name = (name or '').lower()
+def download(names=None, verbose=True):
+    names = [names] if isinstance(names, (str, bytes, basestring)) else names
+    names = names or ['w2v']
     file_paths = {}
+    for name in names:
+        name = name.lower().strip()
+        if name in ('w2v', 'word2vec'):
+            download_file(W2V_URL, 'GoogleNews-vectors-negative300.bin.gz', verbose=verbose)
+    return file_paths
+
+
+def download_file(url, local_file_path=None, chunk_size=1024, verbose=True):
+    """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
+    local_file_path = os.path.join(DATA_PATH, url.split('/')[-1]) if local_file_path is None else local_file_path
+    if not (local_file_path.startswith(DATA_PATH) or local_file_path[0] in ('/', '~')):
+        local_file_path = os.path.join(DATA_PATH, local_file_path)
     if verbose:
         tqdm_prog = tqdm
+        print('requesting URL: {}'.format(W2V_URL))
     else:
         tqdm_prog = no_tqdm
-    if name in ('', 'w2v', 'word2vec'):
-        if verbose:
-            print('requesting URL: {}'.format(W2V_URL))
-        req = requests.get(W2V_URL)
-        if verbose:
-            print('response URL: {}'.format(req))
-        with open(W2V_FILE, 'wb') as f:
-            for chunk in tqdm_prog(req.iter_content(100000), total=int(f.size / 100000. + 1)):
+
+    r = requests.get(url, stream=True)
+    with open(local_file_path, 'wb') as f:
+        for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size), total=int(1 + 2. * f.size / chunk_size)):
+            if chunk:  # filter out keep-alive chunks
                 f.write(chunk)
-                time.sleep(.001)
-            file_paths['w2v'] = f.name
-    return file_paths
+    return local_file_path
