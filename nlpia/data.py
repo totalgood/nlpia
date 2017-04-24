@@ -58,8 +58,7 @@ def download_file(url, local_file_path=None, chunk_size=1024, verbose=True):
     print(r.headers.keys())
     print('size: {}'.format(size))
     with open(local_file_path, 'wb') as f:
-        for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size),
-                               total=size if size is None else int(1 + 2. * size / chunk_size)):
+        for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size)):
             if chunk:  # filter out keep-alive chunks
                 f.write(chunk)
     return local_file_path
