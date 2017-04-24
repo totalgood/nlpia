@@ -1,6 +1,6 @@
 import os
 import requests
-import logging
+from .constants import logging
 
 # import time
 
