@@ -46,3 +46,4 @@ secret*
 # big data
 nlpia/data/GoogleNews-vectors-negative300.bin.gz
 nlpia/data/GoogleNews-vectors-negative300.py3.gz
+nlpia/largefiles/*
