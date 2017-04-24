@@ -16,12 +16,34 @@ DATA_URL = 'http://totalgood.org/static/data'
 W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
 W2V_URL = 'https://www.dropbox.com/s/4bcegydk3pn9067/GoogleNews-vectors-negative300.bin.gz?dl=0'
 W2V_PATH = os.path.join(DATA_PATH, W2V_FILE)
+TEXTS = ['kite_text.txt', 'kite_history.txt']
+CSVS = ['mavis-greeting-training-set.csv']
 
-with open(os.path.join(DATA_PATH, 'kite.txt')) as f:
-    kite_text = f.read()
+for filename in TEXTS:
+    with open(os.path.join(DATA_PATH, filename)) as f:
+        locals()[filename.split('.')[0]] = f.read()
 
-with open(os.path.join(DATA_PATH, 'kite_history.txt')) as f:
-    kite_history = f.read()
+
+def read_csv(*args, **kwargs):
+    """Like pandas.read_csv, only little smarter (checks first column to see if it should be the data frame index)
+
+    >>> read_csv('mavis-greeting-training-set.csv')
+    """
+    index_names = ('Unnamed: 0',)
+    kwargs.update({'low_memory': False})
+    df = pd.read_csv(*args, **kwargs)
+    if df.columns[0] in index_names or (df[df.columns[0]] == df.index).all():
+        df = df.set_index(df.columns[0], drop=True)
+    elif (df[df.columns[0]] == np.arange(len(df))).all():
+        df = df.set_index(df.columns[0], drop=False)
+    elif (df.index == np.arange(len(df))).all() and str(df[df.columns[0]].dtype).startswith('int') and df[df.columns[0]].count() == len(df):
+        df = df.set_index(df.columns[0], drop=False)
+    return df
+
+
+for filename in CSVS:
+    locals()['df_' + filename.split('.')[0].replace('-', '_')] = read_csv(os.path.join(DATA_PATH, filename))
+
 
 harry_docs = ["The faster Harry got to the store, the faster and faster Harry would get home."]
 harry_docs += ["Harry is hairy and faster than Jill."]
@@ -69,20 +91,6 @@ def download_file(url, local_file_path=None, size=None, chunk_size=1024, verbose
         #     if chunk:  # filter out keep-alive chunks
         #         f.write(chunk)
     return local_file_path
-
-
-def read_csv(*args, **kwargs):
-    """Like pandas.read_csv, only little smarter (checks first column to see if it should be the data frame index)"""
-    index_names = ('Unnamed: 0',)
-    kwargs.update({'low_memory': False})
-    df = pd.read_csv(*args, **kwargs)
-    if df.columns[0] in index_names or (df[df.columns[0]] == df.index).all():
-        df = df.set_index(df.columns[0], drop=True)
-    elif (df[df.columns[0]] == np.arange(len(df))).all():
-        df = df.set_index(df.columns[0], drop=False)
-    elif (df.index == np.arange(len(df))).all() and str(df[df.columns[0]].dtype).startswith('int') and df[df.columns[0]].count() == len(df):
-        df = df.set_index(df.columns[0], drop=False)
-    return df
 
 
 def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1, 5)], header=0, index_col=None):
