@@ -67,7 +67,7 @@ def download_file(url, local_file_path=None, size=None, chunk_size=1024, verbose
 
     with open(local_file_path, 'wb') as f:
         shutil.copyfileobj(r.raw, f)
-        # for chunk in r.iter_content(chunk_size=chunk_size):
+        # for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size)):
         #     if chunk:  # filter out keep-alive chunks
         #         f.write(chunk)
     return local_file_path
