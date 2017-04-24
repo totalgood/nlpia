@@ -1,6 +1,9 @@
 import os
+import shutil
 import requests
 from .constants import logging
+
+from pugnlp.futil import path_status
 
 # import time
 
@@ -38,11 +41,12 @@ def download(names=None, verbose=True):
     for name in names:
         name = name.lower().strip()
         if name in ('w2v', 'word2vec'):
-            download_file(W2V_URL, 'GoogleNews-vectors-negative300.bin.gz', verbose=verbose)
+            file_paths['w2v'] = download_file(W2V_URL, 'GoogleNews-vectors-negative300.bin.gz', size=1647046227,
+                                              verbose=verbose)
     return file_paths
 
 
-def download_file(url, local_file_path=None, chunk_size=1024, verbose=True):
+def download_file(url, local_file_path=None, size=None, chunk_size=1024, verbose=True):
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     local_file_path = os.path.join(DATA_PATH, url.split('/')[-1]) if local_file_path is None else local_file_path
     if not (local_file_path.startswith(DATA_PATH) or local_file_path[0] in ('/', '~')):
@@ -52,13 +56,18 @@ def download_file(url, local_file_path=None, chunk_size=1024, verbose=True):
         print('requesting URL: {}'.format(W2V_URL))
     else:
         tqdm_prog = no_tqdm
+    stat = path_status(local_file_path)
+    if stat['type'] == 'file' and stat['size'] == size:  # TODO: check md5
+        return local_file_path
 
     r = requests.get(url, stream=True)
-    size = r.headers.get('Content-Length', None)
+    size = r.headers.get('Content-Length', None) if size is None else size
     print(r.headers.keys())
     print('size: {}'.format(size))
+
     with open(local_file_path, 'wb') as f:
-        for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size)):
-            if chunk:  # filter out keep-alive chunks
-                f.write(chunk)
+        shutil.copyfileobj(r.raw, f)
+        # for chunk in r.iter_content(chunk_size=chunk_size):
+        #     if chunk:  # filter out keep-alive chunks
+        #         f.write(chunk)
     return local_file_path
