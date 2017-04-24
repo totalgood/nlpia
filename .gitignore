@@ -44,6 +44,7 @@ MANIFEST
 secret*
 
 # big data
-nlpia/data/GoogleNews-vectors-negative300.bin.gz
-nlpia/data/GoogleNews-vectors-negative300.py3.gz
 nlpia/largefiles/*
+nlpia/data/*.gz
+nlpia/data/*.bz2
+nlpia/data/*.xz
