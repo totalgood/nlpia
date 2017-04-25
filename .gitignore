@@ -44,7 +44,7 @@ MANIFEST
 secret*
 
 # big data
-nlpia/largefiles/*
+nlpia/bigdata/*
 nlpia/data/*.gz
 nlpia/data/*.bz2
 nlpia/data/*.xz
