@@ -98,7 +98,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         tqdm_prog = no_tqdm
     r = requests.get(url, stream=True, allow_redirects=True)
     size = r.headers.get('Content-Length', None) if size is None else size
-    print('remote size: {}'.format(size))
+    print('remote size: {}'.format(size))  # FIXME: this isn't accurate
 
     stat = path_status(file_path)
     print('local size: {}'.format(stat.get('size', None)))
@@ -108,12 +108,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
 
     print('Downloading to {}'.format(file_path))
 
-    # All 3 of these python approaches fail where unix wget succeeds (if ?dl=0 instead of ?dl=1)
-
-    # wget.download(url)
     with open(file_path, 'wb') as f:
-        # shutil.copyfileobj(r.raw, f)
-
         for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size)):
             if chunk:  # filter out keep-alive chunks
                 f.write(chunk)
