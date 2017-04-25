@@ -44,14 +44,6 @@ LOGGING = {
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger(__name__)
 
-
 USER_HOME = os.path.expanduser("~")
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
-DATA_URL = 'http://totalgood.org/static/data'
-W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
-W2V_URL = 'https://www.dropbox.com/s/4bcegydk3pn9067/GoogleNews-vectors-negative300.bin.gz?dl=0'
-BIG_URLS = {'w2v': W2V_URL,
-            'slang': 'https://www.dropbox.com/s/51mfq87zvct1t1y/slang.csv.gz?dl=0'}
-W2V_PATH = os.path.join(DATA_PATH, W2V_FILE)
-TEXTS = ['kite_text.txt', 'kite_history.txt']
-CSVS = ['mavis-greeting-training-set.csv']
+BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
