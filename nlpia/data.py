@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 SMALLDATA_URL = 'http://totalgood.org/static/data'
 W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
-BIG_URLS = {'w2v': 'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=0',
-            'slang': 'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=0',
-            'tweets': 'https://www.dropbox.com/s/j90wja7j748sah7/pk_user_isbot_isstrict_text.txt.gz?dl=0'}
+BIG_URLS = {'w2v': 'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
+            'slang': 'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
+            'tweets': 'https://www.dropbox.com/s/5gpb43c494mc8p0/tweets.csv.gz?dl=1'}
 W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
@@ -53,9 +53,9 @@ for filename in CSVS:
     locals()['df_' + filename.split('.')[0].replace('-', '_')] = read_csv(os.path.join(DATA_PATH, filename))
 
 
-harry_docs = ["The faster Harry got to the store, the faster and faster Harry would get home."]
-harry_docs += ["Harry is hairy and faster than Jill."]
-harry_docs += ["Jill is not as hairy as Harry."]
+harry_docs = ["The faster Harry got to the store, the faster and faster Harry would get home.",
+              "Harry is hairy and faster than Jill.",
+              "Jill is not as hairy as Harry."]
 
 
 def no_tqdm(it, total=1):
@@ -84,7 +84,7 @@ def download(names=None, verbose=True):
     return file_paths
 
 
-def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_size=1024, verbose=True):
+def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_size=4096, verbose=True):
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     if filename is None:
         filename = dropbox_basesname(url)
