@@ -36,16 +36,16 @@ def read_csv(*args, **kwargs):
 
     >>> read_csv('mavis-batey-greetings.csv').head()
     """
-    index_names = ('Unnamed: 0')
+    index_names = ('Unnamed: 0', 'pk', 'index', '')
     kwargs.update({'low_memory': False})
     df = pd.read_csv(*args, **kwargs)
-    if df.columns[0] in index_names or (df[df.columns[0]] == df.index).all():
+    if ((df.columns[0] in index_names or (df[df.columns[0]] == df.index).all()) or
+        (df[df.columns[0]] == np.arange(len(df))).all() or
+        ((df.index == np.arange(len(df))).all() and str(df[df.columns[0]].dtype).startswith('int') and
+         df[df.columns[0]].count() == len(df))):
         df = df.set_index(df.columns[0], drop=True)
-        # df.index.name = 'index'
-    elif (df[df.columns[0]] == np.arange(len(df))).all():
-        df = df.set_index(df.columns[0], drop=False)
-    elif (df.index == np.arange(len(df))).all() and str(df[df.columns[0]].dtype).startswith('int') and df[df.columns[0]].count() == len(df):
-        df = df.set_index(df.columns[0], drop=False)
+        if df.index.name in ('Unnamed: 0', ''):
+            df.index.name = None
     return df
 
 

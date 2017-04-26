@@ -1,3 +1,0 @@
-Book project for Foo in Action
-==============================
-This repository is the holding tank of great thoughts relating to Foo in Action...
