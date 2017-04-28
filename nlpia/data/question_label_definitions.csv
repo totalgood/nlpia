@@ -1,0 +1,50 @@
+ABBREVIATION,  abb,abbreviation
+ABBREVIATION,  exp,expression abbreviated
+ENTITY,  animal,animals
+ENTITY,  body,organs of body
+ENTITY,  color,colors
+ENTITY,  creative,"inventions, books and other creative pieces"
+ENTITY,  currency,currency names
+ENTITY,  dis.med.,diseases and medicine
+ENTITY,  event,events
+ENTITY,  food,food
+ENTITY,  instrument,musical instrument
+ENTITY,  lang,languages
+ENTITY,  letter,letters like a-z
+ENTITY,  other,other entities
+ENTITY,  plant,plants
+ENTITY,  product,products
+ENTITY,  religion,religions
+ENTITY,  sport,sports
+ENTITY,  substance,elements and substances
+ENTITY,  symbol,symbols and signs
+ENTITY,  technique,techniques and methods
+ENTITY,  term,equivalent terms
+ENTITY,  vehicle,vehicles
+ENTITY,  word,words with a special property
+DESCRIPTION,  definition,definition of sth.
+DESCRIPTION,  description,description of sth.
+DESCRIPTION,  manner,manner of an action
+DESCRIPTION,  reason,reasons
+HUMAN,  group,a group or organization of persons
+HUMAN,  ind,an individual
+HUMAN,  title,title of a person
+HUMAN,  description,description of a person
+LOCATION,  city,cities
+LOCATION,  country,countries
+LOCATION,  mountain,mountains
+LOCATION,  other,other locations
+LOCATION,  state,states
+NUMERIC,  code,postcodes or other codes
+NUMERIC,  count,number of sth.
+NUMERIC,  date,dates
+NUMERIC,  distance,linear measures
+NUMERIC,  money,prices
+NUMERIC,  order,ranks
+NUMERIC,  other,other numbers
+NUMERIC,  period,the lasting time of sth.
+NUMERIC,  percent,fractions
+NUMERIC,  speed,speed
+NUMERIC,  temp,temperature
+NUMERIC,  size,"size, area and volume"
+NUMERIC,  weight,weight
