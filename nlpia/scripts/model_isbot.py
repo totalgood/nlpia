@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """model_isbot
 
-Run nlpia.data.download() to download GBs of models like W2V and the LSAmodel used here 
+Run nlpia.data.download() to download GBs of models like W2V and the LSAmodel used here
 """
 
 import os
@@ -12,7 +12,7 @@ from tqdm import tqdm
 from gensim.models import LsiModel, TfidfModel
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from sklearn.svm import SVR
+# from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
@@ -30,7 +30,7 @@ tweets = tweets[tweets.isbot >= 0]
 # labels3 = tweets.isbot.apply(lambda x: int(x * 3))
 labels2 = tweets.isbot.apply(lambda x: int(x * 2))
 
-lsa = LsiModel.load('lsa_tweets_5589798_2003588x200.pkl')
+lsa = LsiModel.load(os.path.join(BIGDATA_PATH, 'lsa_tweets_5589798_2003588x200.pkl'))
 tfidf = TfidfModel(id2word=lsa.id2word, dictionary=lsa.id2word)
 bows = np.array([lsa.id2word.doc2bow(txt.split()) for txt in tweets.text])
 tfidfs = tfidf[bows]
