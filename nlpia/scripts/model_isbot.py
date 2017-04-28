@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""model_isbot"""
+"""model_isbot
+
+Run nlpia.data.download() to download GBs of models like W2V and the LSAmodel used here 
+"""
 
 import os
 
@@ -17,6 +20,8 @@ from sklearn.model_selection import cross_val_score
 from nlpia.constants import BIGDATA_PATH
 from nlpia.data import read_csv
 
+# adjust this downward
+NUM_FOR_TRAINING = 1000
 np = pd.np
 
 tweets = read_csv(os.path.join(BIGDATA_PATH, 'tweets.csv.gz'))
@@ -49,17 +54,17 @@ y_lda = lda.predict(Xtest)
 print(mean_squared_error(y_lda, ytest))
 
 lda = LDA('lsqr', 'auto', n_components=3)
-print(cross_val_score(lda, Xtest, labels2_test, cv=7)).std()
+print(cross_val_score(lda, Xtest, labels2_test, cv=7))
 
 
 # lda.save('lda')
 
-svr_lin = SVR(kernel='linear', C=1e3)
-y_lin = svr_lin.fit(X, y).predict(Xtest)
-print(mean_squared_error(y_lin, ytest))
-svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
-y_rbf = svr_rbf.fit(X, y).predict(Xtest)
-lda.save('svr_rbf')
+# svr_lin = SVR(kernel='linear', C=1e3)
+# y_lin = svr_lin.fit(X, y).predict(Xtest)
+# print(mean_squared_error(y_lin, ytest))
+# svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
+# y_rbf = svr_rbf.fit(X, y).predict(Xtest)
+# lda.save('svr_rbf')
 
-svr_poly = SVR(kernel='poly', C=1e3, degree=2)
-y_poly = svr_poly.fit(X, y).predict(Xtest)
+# svr_poly = SVR(kernel='poly', C=1e3, degree=2)
+# y_poly = svr_poly.fit(X, y).predict(Xtest)
