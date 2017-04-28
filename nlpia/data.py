@@ -27,7 +27,7 @@ W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
 BIG_URLS = {'w2v': 'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
             'slang': 'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
             'tweets': 'https://www.dropbox.com/s/5gpb43c494mc8p0/tweets.csv.gz?dl=1',
-            'lsa_tweets': 'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets.tar.gz?dl=1'}
+            'lsa_tweets': 'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1'}
 W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
