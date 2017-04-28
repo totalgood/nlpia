@@ -57,4 +57,4 @@ def train_tsne(training_size):
 
     tsne = TSNE()
     tsne.fit(X)
-
+    return tsne, X, Xtest, y, ytest
