@@ -12,7 +12,13 @@ from .constants import logging, DATA_PATH, BIGDATA_PATH
 from tqdm import tqdm
 from pugnlp.futil import path_status
 import pandas as pd
+import tarfile
 
+"""Loaders and downloaders for data files and models required for the examples in NLP in Action
+
+>>> from nlpia.data import download
+>> download()  Will take hours and 8GB of storage
+"""
 np = pd.np
 logger = logging.getLogger(__name__)
 
@@ -20,10 +26,19 @@ SMALLDATA_URL = 'http://totalgood.org/static/data'
 W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
 BIG_URLS = {'w2v': 'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
             'slang': 'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
-            'tweets': 'https://www.dropbox.com/s/5gpb43c494mc8p0/tweets.csv.gz?dl=1'}
+            'tweets': 'https://www.dropbox.com/s/5gpb43c494mc8p0/tweets.csv.gz?dl=1',
+            'lsa_tweets': 'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets.tar.gz?dl=1'}
 W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
+
+
+def untar(fname):
+    if fname.endswith("tar.gz"):
+        with tarfile.open(fname) as tf:
+            tf.extractall()
+    else:
+        print("Not a tar.gz file: {}".format(fname))
 
 
 for filename in TEXTS:
@@ -81,6 +96,9 @@ def download(names=None, verbose=True):
                                              data_path=BIGDATA_PATH,
                                              size=1647046227,
                                              verbose=verbose)
+            if file_paths[name].endswith('.tar.gz'):
+                untar(file_paths[name])
+            file_paths[name] = file_paths[name][:-7]  # FIXME: rename tar.gz file so that it mimics contents
     return file_paths
 
 
