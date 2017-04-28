@@ -25,7 +25,7 @@ from nlpia.constants import BIGDATA_PATH
 from nlpia.data import read_csv
 
 
-def train_tsne(training_size):
+def train_tsne(training_size=2000, **tsne_kwargs):
     # adjust this downward to see it it affects accuracy
     np = pd.np
 
@@ -55,6 +55,6 @@ def train_tsne(training_size):
     labels2_test = labels2.loc[yindex_test]
     labels2 = labels2.loc[yindex]
 
-    tsne = TSNE()
+    tsne = TSNE(**tsne_kwargs)
     tsne.fit(X)
     return tsne, X, Xtest, y, ytest
