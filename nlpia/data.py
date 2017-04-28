@@ -87,7 +87,7 @@ def dropbox_basesname(url):
 
 def download(names=None, verbose=True):
     names = [names] if isinstance(names, (str, bytes)) else names
-    names = names or ['w2v', 'slang', 'tweets']
+    names = names or BIG_URLS.keys()
     file_paths = {}
     for name in names:
         name = name.lower().strip()
