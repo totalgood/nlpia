@@ -120,7 +120,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
 
     stat = path_status(file_path)
     print('local size: {}'.format(stat.get('size', None)))
-    if stat['type'] == 'file' and stat['size'] == size:  # TODO: check md5
+    if stat['type'] == 'file' and stat['size'] > 10000000:  # TODO: check md5 or get the right size of remote file
         r.close()
         return file_path
 
