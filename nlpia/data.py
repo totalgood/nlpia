@@ -24,10 +24,24 @@ logger = logging.getLogger(__name__)
 
 SMALLDATA_URL = 'http://totalgood.org/static/data'
 W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
-BIG_URLS = {'w2v': 'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
-            'slang': 'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
-            'tweets': 'https://www.dropbox.com/s/5gpb43c494mc8p0/tweets.csv.gz?dl=1',
-            'lsa_tweets': 'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1'}
+BIG_URLS = {
+    'w2v': (
+        'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
+        1647046227,
+        ),
+    'slang': (
+        'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
+        117633024,
+        ),
+    'tweets': (
+        'https://www.dropbox.com/s/5gpb43c494mc8p0/tweets.csv.gz?dl=1',
+        311725313,
+        ),
+    'lsa_tweets': (
+        'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1',
+        3112841312,
+        ),
+    }
 W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
@@ -92,9 +106,9 @@ def download(names=None, verbose=True):
     for name in names:
         name = name.lower().strip()
         if name in BIG_URLS:
-            file_paths[name] = download_file(BIG_URLS[name],
+            file_paths[name] = download_file(BIG_URLS[name][0],
                                              data_path=BIGDATA_PATH,
-                                             size=1647046227,
+                                             size=BIG_URLS[name][1],
                                              verbose=verbose)
             if file_paths[name].endswith('.tar.gz'):
                 untar(file_paths[name])
@@ -116,11 +130,11 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         tqdm_prog = no_tqdm
     r = requests.get(url, stream=True, allow_redirects=True)
     size = r.headers.get('Content-Length', None) if size is None else size
-    print('remote size: {}'.format(size))  # FIXME: this isn't accurate
+    print('remote size: {}'.format(size))
 
     stat = path_status(file_path)
     print('local size: {}'.format(stat.get('size', None)))
-    if stat['type'] == 'file' and stat['size'] > 10000000:  # TODO: check md5 or get the right size of remote file
+    if stat['type'] == 'file' and stat['size'] == size:  # TODO: check md5 or get the right size of remote file
         r.close()
         return file_path
 
