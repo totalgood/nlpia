@@ -58,3 +58,8 @@ def train_tsne(training_size=2000, **tsne_kwargs):
     tsne = TSNE(**tsne_kwargs)
     tsne.fit(X)
     return tsne, X, Xtest, y, ytest
+
+
+def embedding_correlation(Xtest, ytest):
+    pass
+    
