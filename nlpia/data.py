@@ -39,7 +39,7 @@ BIG_URLS = {
         ),
     'lsa_tweets': (
         'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1',
-        3112841312,
+        3112841563,  # 3112841312,
         ),
     }
 W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
