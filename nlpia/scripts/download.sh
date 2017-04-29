@@ -4,7 +4,7 @@
 BIGDATA_PATH=$(python -c 'from nlpia.data import BIGDATA_PATH; print(BIGDATA_PATH);')
 
 oldIFS="$IFS"
-IFS=$'\n' BIG_URLS=($(python -c 'from nlpia.data import BIG_URLS; print("\n".join(BIG_URLS.values()));'))
+IFS=$'\n' BIG_URLS=($(python -c 'from nlpia.data import BIG_URLS; print("\n".join([u[0] for u in BIG_URLS.values()]));'))
 IFS="$oldIFS"
 
 for URL in "${BIG_URLS[@]}"; do
