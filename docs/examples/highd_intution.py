@@ -1,3 +1,12 @@
+""" Explore the "topology" of High-D space and make anolgies in 2-3D
+
+>>> from nlpia.plots import *
+>>> df = pd.DataFrame(np.random.uniform(size=(1000,3)))
+>>> labels = df.ix[:,:3].dot(np.array([3,-4,0])/5.) > 0
+>>> df['c'] = labels.astype(int)
+>>> scatter_3d(df, labels='c')
+>>> plt.show()
+"""
 from seaborn import plt
 
 import pandas as pd
@@ -17,8 +26,6 @@ axes = df.plot(kind='scatter', x=0, y=1, ax=ax)
 plt.title('2D Normally Distributed')
 plt.tight_layout()
 plt.show()
-
-
 
 scatter_3d(df)
 plt.show()
