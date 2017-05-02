@@ -53,7 +53,7 @@ class TweetCorpus(corpora.TextCorpus):
                 if self.mask is not None and not self.mask[i]:
                     continue
                 ngrams = []
-                for ng in tokens2ngrams(self.tokenizer(self.case_normalizer(line))):
+                for ng in tokens2ngrams(self.tokenizer(self.case_normalizer(line)), n=self.num_grams):
                     if self.ignore_matcher(ng):
                         continue
                     ngrams += [ng]

@@ -10,15 +10,14 @@ from gensim.corpora import Dictionary
 
 from nlpia.data import BIGDATA_PATH, read_csv
 
-KEEP_N = 300000  # max vocab size
+KEEP_N = 300000   # max vocab size
 NO_BELOW = 5      # min DF (count)
-NO_ABOVE = .7     # max DF (fraction)
+NO_ABOVE = .99    # max DF (fraction)
 
 # Only 5 of these tokens are saved for a no_below=2 filter: PyCons NLPS #PyCon2016 #NaturalLanguageProcessing #naturallanguageprocessing
 cased_tokens = 'PyConOpenSpaces PyCon PyCon2017 PyCon2018 PyCon2016 PyCon2015 OpenSpace PyconTutorial'.split()
 cased_tokens += 'NLP NaturalLanguageProcessing NLPInAction NaturalLanguageProcessingInAction NLPIA Twote Twip'.split()
 cased_tokens += [s + 's' for s in cased_tokens]
-cased_tokens += 'TotalGood TotalGoods HobsonLane Hob Hobs TotalGood.com www.TotalGood.com http://www.TotalGood.com https://www.TotalGood.com'.split()
 allcase_tokens = cased_tokens + [s.lower() for s in cased_tokens]
 allcase_tokens += [s.title() for s in cased_tokens]
 allcase_tokens += [s.upper() for s in cased_tokens]
