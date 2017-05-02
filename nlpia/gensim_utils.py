@@ -39,21 +39,30 @@ def return_none(*args, **kwargs):
     pass
 
 
+def to_unicode(s_or_b):
+    if isinstance(s_or_b, bytes):
+        s_or_b = s_or_b.decode('utf-8')
+    return utils.to_unicode(s_or_b)
+
+
 class TweetCorpus(corpora.TextCorpus):
     ignore_matcher = return_none   # compiled regular expression for token matches to skip/ignore
     num_grams = 2
-    case_normalizer = utils.to_unicode
-    tokenizer = str.split
+    case_normalizer = str
+    tokenizer = None
     mask = None
 
     def get_texts(self):
         """ Parse documents from a .txt file assuming 1 document per line, yielding lists of filtered tokens """
         with self.getstream() as text_stream:
             for i, line in enumerate(text_stream):
+                line = to_unicode(line)
+                print(line)
+                # line = self.case_normalizer(line)
                 if self.mask is not None and not self.mask[i]:
                     continue
                 ngrams = []
-                for ng in tokens2ngrams(self.tokenizer(self.case_normalizer(line)), n=self.num_grams):
+                for ng in tokens2ngrams((TweetCorpus.tokenizer or str.split)(line), n=self.num_grams):
                     if self.ignore_matcher(ng):
                         continue
                     ngrams += [ng]
@@ -78,10 +87,12 @@ class SMSCorpus(corpora.TextCorpus):
         """ Parse documents from a .txt file assuming 1 document per line, yielding lists of filtered tokens """
         with self.getstream() as text_stream:
             for i, line in enumerate(text_stream):
+                line = self.case_normalizer(line)
+                print(i, line)
                 if self.mask is not None and not self.mask[i]:
                     continue
                 ngrams = []
-                for ng in tokens2ngrams(self.tokenizer(self.case_normalizer(line))):
+                for ng in tokens2ngrams(self.tokenizer(line)):
                     if self.ignore_matcher(ng):
                         continue
                     ngrams += [ng]

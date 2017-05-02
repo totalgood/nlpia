@@ -4,11 +4,13 @@ import gc
 import json
 import pandas as pd
 import gzip
+from tqdm import tqdm
 
 from gensim.models import TfidfModel, LsiModel
 from gensim.corpora import Dictionary
 
 from nlpia.data import BIGDATA_PATH, read_csv
+from nlpia.gensim_utils import TweetCorpus
 
 KEEP_N = 300000   # max vocab size
 NO_BELOW = 5      # min DF (count)
@@ -30,18 +32,21 @@ if os.path.isfile(vocab_path):
     vocab = Dictionary.load(vocab_path)
     print(' len(vocab) loaded: {}'.format(len(vocab.dfs)))
 else:
-    tweets_path = os.path.join(BIGDATA_PATH, 'tweets.csv.gz')
-    print('Loading tweets: {} ...'.format(tweets_path))
-    tweets = read_csv(tweets_path)
-    tweets = pd.np.array(tweets.text.str.split())
-    with gzip.open(os.path.join(BIGDATA_PATH, 'tweets.txt.gz'), 'w') as f:
-        for tokens in tweets:
-            f.write((' '.join(tokens) + '\n').encode('utf-8'))
+    tokens_path = os.path.join(BIGDATA_PATH, 'tweets.txt.gz')
+    if not os.path.isfile(tokens_path):
+        tweets_path = os.path.join(BIGDATA_PATH, 'tweets.csv.gz')
+        print('Loading tweets: {} ...'.format(tweets_path))
+        tweets = read_csv(tweets_path)
+        tweets = pd.np.array(tweets.text.apply(eval).str.split())
+        with gzip.open(tokens_path, 'wb') as f:
+            for tokens in tqdm(tweets):
+                f.write((b' '.join(tokens) + b'\n'))
     # tweets['text'] = tweets.text.apply(lambda s: eval(s).decode('utf-8'))
     # tweets['user'] = tweets.user.apply(lambda s: eval(s).decode('utf-8'))
     # tweets.to_csv('tweets.csv.gz', compression='gzip')
     print('Computing vocab from {} tweets...'.format(len(tweets)))
-    vocab = Dictionary(tweets, no_below=NO_BELOW, no_above=NO_ABOVE, keep_tokens=set(KEEP_TOKENS))
+    corpus = TweetCorpus(gzip.open(tokens_path, 'rb'))
+    vocab = Dictionary(corpus, no_below=NO_BELOW, no_above=NO_ABOVE, keep_tokens=set(KEEP_TOKENS))
 
 vocab.filter_extremes(no_below=NO_BELOW, no_above=NO_ABOVE, keep_n=KEEP_N, keep_tokens=set(KEEP_TOKENS))
 print(' len(vocab) after filtering: {}'.format(len(vocab.dfs)))
@@ -57,7 +62,7 @@ json.dump(tweets, gzip.open(os.path.join(BIGDATA_PATH, 'tweet_bows.json.gz'), 'w
 gc.collect()
 
 # LSA is more useful name than LSA
-lsa = LsiModel(tfidf[tweets], num_topics=200, id2word=vocab, extra_samples=100, power_iters=2)
+lsa = LsiModel(tfidf[tweets], num_topics=200, id2word=vocab, one_pass=False, extra_samples=150, power_iters=3)
 
 # these models can be big
 lsa.save(os.path.join(BIGDATA_PATH, 'lsa_tweets'))
