@@ -3,6 +3,10 @@
 
 Run nlpia.data.download() to download GBs of models like W2V and the LSAmodel used here
 """
+from __future__ import print_function, unicode_literals, division, absolute_import
+from future import standard_library
+standard_library.install_aliases() # noqa
+from builtins import *  # noqa
 
 import os
 

@@ -1,3 +1,8 @@
+from __future__ import print_function, unicode_literals, division, absolute_import
+from future import standard_library
+standard_library.install_aliases() # noqa
+from builtins import *  # noqa
+
 import os
 import gc
 
@@ -26,7 +31,7 @@ allcase_tokens += [s.upper() for s in cased_tokens]
 KEEP_TOKENS = allcase_tokens + ['#' + s for s in allcase_tokens]
 
 # takes 15 minutes and 10GB of RAM for 500k tweets if you keep all 20M unique tokens/names URLs
-vocab_path = os.path.join(BIGDATA_PATH, 'vocab939370.pkl')
+vocab_path = os.path.join(BIGDATA_PATH, 'vocab.gensim')
 if os.path.isfile(vocab_path):
     print('Loading vocab: {} ...'.format(vocab_path))
     vocab = Dictionary.load(vocab_path)
@@ -37,16 +42,18 @@ else:
         tweets_path = os.path.join(BIGDATA_PATH, 'tweets.csv.gz')
         print('Loading tweets: {} ...'.format(tweets_path))
         tweets = read_csv(tweets_path)
-        tweets = pd.np.array(tweets.text.apply(eval).str.split())
+        tweets = pd.np.array(tweets.text.apply(eval).apply(bytes.decode).str.split())
         with gzip.open(tokens_path, 'wb') as f:
             for tokens in tqdm(tweets):
                 f.write((b' '.join(tokens) + b'\n'))
     # tweets['text'] = tweets.text.apply(lambda s: eval(s).decode('utf-8'))
     # tweets['user'] = tweets.user.apply(lambda s: eval(s).decode('utf-8'))
     # tweets.to_csv('tweets.csv.gz', compression='gzip')
-    print('Computing vocab from {} tweets...'.format(len(tweets)))
-    corpus = TweetCorpus(gzip.open(tokens_path, 'rb'))
-    vocab = Dictionary(corpus, no_below=NO_BELOW, no_above=NO_ABOVE, keep_tokens=set(KEEP_TOKENS))
+    print('Computing vocab from tweets in {} ...'.format(tokens_path))
+    corpus = TweetCorpus()
+    corpus.input = gzip.open(tokens_path, 'rb')
+    vocab = Dictionary(corpus, prune_at=20000000)
+    vocab.filter_extremes(no_below=NO_BELOW, no_above=NO_ABOVE, keep_tokens=set(KEEP_TOKENS))
 
 vocab.filter_extremes(no_below=NO_BELOW, no_above=NO_ABOVE, keep_n=KEEP_N, keep_tokens=set(KEEP_TOKENS))
 print(' len(vocab) after filtering: {}'.format(len(vocab.dfs)))

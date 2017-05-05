@@ -1,7 +1,7 @@
 from __future__ import print_function, unicode_literals, division, absolute_import
-# from builtins import int, round, str,  object  # NOQA
 from future import standard_library
-standard_library.install_aliases()  # NOQA
+standard_library.install_aliases()  # noqa
+from builtins import *  # noqa
 
 import os
 import re
@@ -41,7 +41,15 @@ BIG_URLS = {
         'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1',
         3112841563,  # 3112841312,
         ),
+    'imdb': (
+        'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
+        3112841563,  # 3112841312,
+        ),
     }
+DATA_NAMES = {
+    'pointcloud': os.path.join(DATA_PATH, 'pointcloud.csv.gz')
+}
+
 W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
@@ -157,3 +165,14 @@ def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1,
     if index_col and df.index.name == index_col:
         del df[index_col]
     return df
+
+
+def get_data(name='sms-spam'):
+    try:
+        return read_csv(os.path.join(DATA_PATH, name + '.csv.gz'))
+    except IOError:
+        try:
+            return read_csv(os.path.join(DATA_PATH, name + '.csv'))
+        except IOError:
+            logger.error('Unable to find dataset named {} in DATA_PATH'.format(name))
+            raise
