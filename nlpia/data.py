@@ -7,7 +7,7 @@ import os
 import re
 # import shutil
 import requests
-from .constants import logging, DATA_PATH, BIGDATA_PATH
+from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH
 
 from tqdm import tqdm
 from pugnlp.futil import path_status
@@ -99,7 +99,7 @@ def no_tqdm(it, total=1):
     return it
 
 
-def dropbox_basesname(url):
+def dropbox_basename(url):
     filename = os.path.basename(url)
     match = re.findall(r'\?dl=[0-9]$', filename)
     if match:
@@ -127,7 +127,7 @@ def download(names=None, verbose=True):
 def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_size=4096, verbose=True):
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     if filename is None:
-        filename = dropbox_basesname(url)
+        filename = dropbox_basename(url)
     file_path = os.path.join(data_path, filename)
     if url.endswith('?dl=0'):
         url = url[:-1] + '1'  # noninteractive download

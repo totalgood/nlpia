@@ -7,7 +7,7 @@ import os
 import re
 # import shutil
 import requests
-from .constants import logging, DATA_PATH, BIGDATA_PATH
+from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH
 
 from tqdm import tqdm
 from pugnlp.futil import path_status
@@ -22,7 +22,6 @@ import tarfile
 np = pd.np
 logger = logging.getLogger(__name__)
 
-SMALLDATA_URL = 'http://totalgood.org/static/data'
 W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
 BIG_URLS = {
     'w2v': (
@@ -99,7 +98,7 @@ def no_tqdm(it, total=1):
     return it
 
 
-def dropbox_basesname(url):
+def dropbox_basename(url):
     filename = os.path.basename(url)
     match = re.findall(r'\?dl=[0-9]$', filename)
     if match:
