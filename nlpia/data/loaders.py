@@ -22,6 +22,7 @@ import tarfile
 np = pd.np
 logger = logging.getLogger(__name__)
 
+# SMALLDATA_URL = 'http://totalgood.org/static/data'
 W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
 BIG_URLS = {
     'w2v': (
@@ -48,6 +49,10 @@ BIG_URLS = {
 DATA_NAMES = {
     'pointcloud': os.path.join(DATA_PATH, 'pointcloud.csv.gz')
 }
+
+DDL_DS_QUESTIONS_URL = 'http://minimum-entropy.districtdatalabs.com/api/questions/?format=json'
+DDL_DS_ANSWERSS_URL = 'http://minimum-entropy.districtdatalabs.com/api/answers/?format=json'
+
 
 W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
@@ -126,7 +131,7 @@ def download(names=None, verbose=True):
 def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_size=4096, verbose=True):
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     if filename is None:
-        filename = dropbox_basesname(url)
+        filename = dropbox_basename(url)
     file_path = os.path.join(data_path, filename)
     if url.endswith('?dl=0'):
         url = url[:-1] + '1'  # noninteractive download
