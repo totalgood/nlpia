@@ -50,6 +50,10 @@ DATA_NAMES = {
     'pointcloud': os.path.join(DATA_PATH, 'pointcloud.csv.gz')
 }
 
+DDL_DS_QUESTIONS_URL = 'http://minimum-entropy.districtdatalabs.com/api/questions/?format=json'
+DDL_DS_ANSWERSS_URL = 'http://minimum-entropy.districtdatalabs.com/api/answers/?format=json'
+
+
 W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']

@@ -9,7 +9,7 @@ import logging
 import logging.config
 import os
 
-LOGGING = {
+LOGGING_CONFIG = {
     'version': 1,
     'disable_existing_loggers': False,
 
@@ -17,9 +17,12 @@ LOGGING = {
         'django': {
             'format': 'django: %(message)s',
         },
-        u'basic': {
-            u'format': u'%(asctime)s | %(name)15s:%(lineno)3s:%(funcName)15s | %(levelname)7s | %(message)s',
-        }
+        'basic': {
+            'format': '%(asctime)s %(levelname)7s:%(name)15s:%(lineno)3s:%(funcName)20s %(message)s',
+        },
+        'short': {
+            'format': '%(asctime)s %(levelname)s:%(name)s:%(message)s'
+        },
     },
 
     'handlers': {
@@ -30,17 +33,17 @@ LOGGING = {
             'formatter': 'django',
             'address': '/dev/log',
         },
-        u'console': {
-            u'class': u'logging.StreamHandler',
-            u'level': u'DEBUG',
-            u'formatter': u'basic',
-            u'stream': u'ext://sys.stdout',
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG',
+            'formatter': 'basic',
+            'stream': 'ext://sys.stdout',
         },
     },
 
     'loggers': {
         'loggly': {
-            'handlers': [u'console', 'logging.handlers.SysLogHandler'],
+            'handlers': ['console', 'logging.handlers.SysLogHandler'],
             'propagate': True,
             'format': 'django: %(message)s',
             'level': 'DEBUG',
@@ -48,7 +51,7 @@ LOGGING = {
     },
 }
 
-logging.config.dictConfig(LOGGING)
+logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 USER_HOME = os.path.expanduser("~")
