@@ -1,6 +1,5 @@
 # from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 # import plotly.graph_objs as go
-from past.builtins import basestring
 
 from seaborn import plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa
@@ -14,7 +13,7 @@ np = pd.np
 
 def scatter_3d(df, labels=None, depthshade=True):
     df = getattr(df, 'embedding_', df)
-    labels = df[labels] if (isinstance(labels, *(int, basestring)) and
+    labels = df[labels] if (isinstance(labels, *(int, str, bytes)) and
                             labels in getattr(df, 'columns', set())) else labels
     labels = np.array(np.zeros(shape=(len(df),)) if labels is None else labels)
     if isinstance(labels[0], float):

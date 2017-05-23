@@ -180,3 +180,7 @@ def get_data(name='sms-spam'):
         except IOError:
             logger.error('Unable to find dataset named {} in DATA_PATH'.format(name))
             raise
+
+
+def get_github_issues(project='jupyter'):
+

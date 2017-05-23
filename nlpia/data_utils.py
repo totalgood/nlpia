@@ -29,7 +29,7 @@ def representative_sample(X, num_samples, save=False):
     idx.build(int(np.log2(N)) + 1)
 
     if save:
-        if isinstance(save, basestring):
+        if isinstance(save, (bytes, str)):
             idxfilename = save
         else:
             idxfile = tempfile.NamedTemporaryFile(delete=False)

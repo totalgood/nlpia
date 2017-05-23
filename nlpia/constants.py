@@ -2,12 +2,13 @@ from __future__ import print_function, unicode_literals, division, absolute_impo
 from future import standard_library
 standard_library.install_aliases()  # noqa: Counter, OrderedDict, 
 from builtins import *  # noqa
-from past.builtins import basestring   # noqa:
-
 
 import logging
 import logging.config
 import os
+
+import configparser
+
 
 LOGGING_CONFIG = {
     'version': 1,
@@ -55,5 +56,11 @@ logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 USER_HOME = os.path.expanduser("~")
+PROJECT_PATH = os.path.dirname(os.path.dirname(__file__))
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
+
+secrets = configparser.RawConfigParser()
+secrets.read(os.path.join(PROJECT_PATH, 'secrets.cfg'))
+
+locals().update(secrets.__dict__)

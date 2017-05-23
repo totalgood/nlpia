@@ -2,8 +2,7 @@
 from __future__ import print_function, unicode_literals, division, absolute_import
 from builtins import int, round, str,  object  # noqa
 from future import standard_library
-standard_library.install_aliases()  # noqa: Counter, OrderedDict, 
-from past.builtins import basestring   # noqa:
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 
 import pandas as pd
 
