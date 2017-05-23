@@ -42,6 +42,7 @@ MANIFEST
 
 # secrets
 secret*
+!secrets.cfg.EXAMPLE_TEMPLATE
 
 # big data
 nlpia/bigdata/*

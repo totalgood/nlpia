@@ -9,6 +9,8 @@ import os
 
 import configparser
 
+from pugnlp.util import dict2obj
+
 
 LOGGING_CONFIG = {
     'version': 1,
@@ -61,6 +63,10 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
 
 secrets = configparser.RawConfigParser()
-secrets.read(os.path.join(PROJECT_PATH, 'secrets.cfg'))
+try:
+    secrets.read(os.path.join(PROJECT_PATH, 'secrets.cfg'))._sections
+except IOError:
+    logger.error('Unable to load/parse secrets.cfg file at "{}". Does it exist?'.format(os.path.join(PROJECT_PATH, 'secrets.cfg')))
+    secrets = {}
 
-locals().update(secrets.__dict__)
+secrets = dict2obj(secrets)
