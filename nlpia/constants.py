@@ -64,7 +64,8 @@ BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
 
 secrets = configparser.RawConfigParser()
 try:
-    secrets.read(os.path.join(PROJECT_PATH, 'secrets.cfg'))._sections
+    secrets.read(os.path.join(PROJECT_PATH, 'secrets.cfg'))
+    secrets = secrets._sections
 except IOError:
     logger.error('Unable to load/parse secrets.cfg file at "{}". Does it exist?'.format(os.path.join(PROJECT_PATH, 'secrets.cfg')))
     secrets = {}
