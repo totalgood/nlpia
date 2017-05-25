@@ -1,7 +1,7 @@
 import logging
 import sys
 
-import constants  # noqa  this will setup logging to go to stdout or loggly (if you ask for it)
+import nlpia.constants  # noqa  this will setup logging to go to stdout or loggly (if you ask for it)
 
 
 def stdout_logging(loglevel=logging.INFO):
