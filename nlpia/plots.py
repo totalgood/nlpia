@@ -5,12 +5,23 @@ from seaborn import plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa
 
 import plotly.plotly as plotly
+from plotly.offline.offline import _plot_html 
 import cufflinks as cf  # noqa
 
 import pandas as pd
 
 np = pd.np
 
+PLOTLY_HTML = """
+<html>
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  {}
+</body>
+</html>
+"""
 
 def plotly_timeseries(df):
     fig = df.iplot([{
@@ -100,5 +111,35 @@ def offline_plotly(df=None):
     # plotly.iplot(fig, filename='pandas-3d-iris', validate=False)
 
     url = plotly.offline.plot(fig, filename='pandas-3d-iris', validate=False)
+    return url
 
 
+def offline_plotly_data(data, filename='plotly.html', config={}, validate=False,
+                        default_width='100%', default_height=525, global_requirejs=True):
+    """WRite a plotly scatter plot to HTML file that doesn't require server
+
+    >>> from plotly.graph_objs import Scatter
+    >>> df = pd.read_csv('https://plot.ly/~etpinard/191.csv')
+    >>> df.columns = [eval(c) if c[0] in '"\'' else str(c) for c in df.columns]
+    >>> data = {'data': [
+    ...         Scatter(x=df[continent+', x'],
+    ...                 y=df[continent+', y'],
+    ...                 text=df[continent+', text'],
+    ...                 marker=Marker(size=df[continent+', size'], sizemode='area', sizeref=131868,),
+    ...                 mode='markers',
+    ...                 name=continent) for continent in ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
+    ...     ],
+    ...     'layout': Layout(xaxis=XAxis(title='Life Expectancy'), yaxis=YAxis(title='GDP per Capita', type='log'))
+    ... }
+    >>> offline_plotly_data(data)
+    """
+    html, divid, width, height = _plot_html(
+        data,
+        config=config,
+        validate=validate,
+        default_width=default_width, default_height=default_height,
+        global_requirejs=global_requirejs)
+    html = PLOTLY_HTML.format(html)
+    with open(filename, 'wt') as f:
+        f.write(html)
+    return html
