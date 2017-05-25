@@ -5,10 +5,20 @@ from seaborn import plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa
 
 import plotly.plotly as plotly
+import cufflinks as cf  # noqa
 
 import pandas as pd
 
 np = pd.np
+
+
+def plotly_timeseries(df):
+    fig = df.iplot([{
+        'x': df.index,
+        'y': df[col],
+        'name': col
+    }  for col in df.columns], filename='cufflinks/simple-line')
+    return fig
 
 
 def scatter_3d(df, labels=None, depthshade=True):
@@ -90,3 +100,5 @@ def offline_plotly(df=None):
     # plotly.iplot(fig, filename='pandas-3d-iris', validate=False)
 
     url = plotly.offline.plot(fig, filename='pandas-3d-iris', validate=False)
+
+
