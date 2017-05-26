@@ -1,0 +1,18 @@
+# Chapter 3 examples in the order they appear in the text, verbatum
+# doctest formatted
+
+
+>>> from nltk.tokenize import TreebankWordTokenizer
+>>> sentence = "The faster Harry got to the store, the faster Harry, the faster, would get home."
+>>> tokenizer = TreebankWordTokenizer()
+>>> token_sequence = tokenizer.tokenize(sentence.lower())
+>>> token_sequence
+['the', 'faster', 'harry', 'got', 'to', 'the', 'store', ',', 'the', 'faster', 'harry', ',', 'the', 'faster', ',', 'would', 'get', 'home', '.']
+
+
+
+>>> from collections import Counter
+>>> bag_of_words = Counter(token_sequence)
+>>> bag_of_words
+Counter({'the': 4, ',': 3, 'faster': 3, 'harry': 2, 'to': 1, '.': 1, 'would': 1, 'home': 1, 'got': 1, 'store': 1, 'get': 1})
+
