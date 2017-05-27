@@ -1,24 +1,29 @@
 # from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 # import plotly.graph_objs as go
 
+import os
+
 from seaborn import plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa
+import pandas as pd
 
 import plotly.plotly as plotly
 from plotly.offline.offline import _plot_html 
 import cufflinks as cf  # noqa
 
-import pandas as pd
+from nlpia.constants import DATA_PATH
 
 np = pd.np
 
 PLOTLY_HTML = """
 <html>
 <head>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script type="text/javascript">
+{plotlyjs}
+</script>
 </head>
 <body>
-  {}
+{plotlyhtml}
 </body>
 </html>
 """
@@ -37,8 +42,10 @@ def scatter_3d(df, labels=None, depthshade=True):
     labels = df[labels] if (isinstance(labels, *(int, str, bytes)) and
                             labels in getattr(df, 'columns', set())) else labels
     labels = np.array(np.zeros(shape=(len(df),)) if labels is None else labels)
-    if isinstance(labels[0], float):
-        labels = labels.astype(int)  # TODO: LabelEncoder
+    try:
+        labels = labels.astype(int)  # TODO: use LabelEncoder
+    except (TypeError, AttributeError):
+        pass
     if str(labels.dtype).startswith('int'):
         labels = np.array(list('grbkcym'))[labels % 7]
 
@@ -114,32 +121,35 @@ def offline_plotly(df=None):
     return url
 
 
-def offline_plotly_data(data, filename='plotly.html', config={}, validate=False,
-                        default_width='100%', default_height=525, global_requirejs=True):
-    """WRite a plotly scatter plot to HTML file that doesn't require server
+def offline_plotly_data(data, filename='plotly.html', config={}, validate=True,
+                        default_width='100%', default_height=525, global_requirejs=False):
+    """ Write a plotly scatter plot to HTML file that doesn't require server
 
-    >>> from plotly.graph_objs import Scatter
+    >>> import pandas as pd
+    >>> from plotly.graph_objs import Scatter, Marker, Layout, YAxis, XAxis
     >>> df = pd.read_csv('https://plot.ly/~etpinard/191.csv')
     >>> df.columns = [eval(c) if c[0] in '"\'' else str(c) for c in df.columns]
     >>> data = {'data': [
-    ...         Scatter(x=df[continent+', x'],
-    ...                 y=df[continent+', y'],
-    ...                 text=df[continent+', text'],
-    ...                 marker=Marker(size=df[continent+', size'], sizemode='area', sizeref=131868,),
-    ...                 mode='markers',
-    ...                 name=continent) for continent in ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
-    ...     ],
-    ...     'layout': Layout(xaxis=XAxis(title='Life Expectancy'), yaxis=YAxis(title='GDP per Capita', type='log'))
-    ... }
-    >>> offline_plotly_data(data)
+    >>>          Scatter(x=df[continent+', x'],
+    >>>                  y=df[continent+', y'],
+    >>>                  text=df[continent+', text'],
+    >>>                  marker=Marker(size=df[continent+', size'], sizemode='area', sizeref=131868,),
+    >>>                  mode='markers',
+    >>>                  name=continent) for continent in ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
+    >>>      ],
+    >>>      'layout': Layout(xaxis=XAxis(title='Life Expectancy'), yaxis=YAxis(title='GDP per Capita', type='log'))
+    >>> }
+    >>> html = offline_plotly_data(data)
     """
+    with open(os.path.join(DATA_PATH, 'plotly.js.min'), 'rt') as f:
+        js = f.read()
     html, divid, width, height = _plot_html(
         data,
         config=config,
         validate=validate,
         default_width=default_width, default_height=default_height,
         global_requirejs=global_requirejs)
-    html = PLOTLY_HTML.format(html)
+    html = PLOTLY_HTML.format(plotlyjs=js, plotlyhtml=html)
     with open(filename, 'wt') as f:
         f.write(html)
     return html
