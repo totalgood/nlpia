@@ -5,7 +5,7 @@ from builtins import *  # noqa
 
 import os
 import re
-# import shutil
+import json
 import requests
 from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH
 
@@ -171,12 +171,23 @@ def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1,
     return df
 
 
+def read_json(file_path):
+    return json.load(open(file_path, 'rt'))
+
+
 def get_data(name='sms-spam'):
     try:
         return read_csv(os.path.join(DATA_PATH, name + '.csv.gz'))
     except IOError:
-        try:
-            return read_csv(os.path.join(DATA_PATH, name + '.csv'))
-        except IOError:
-            logger.error('Unable to find dataset named {} in DATA_PATH'.format(name))
-            raise
+        pass
+    try:
+        return read_csv(os.path.join(DATA_PATH, name + '.csv'))
+    except IOError:
+        pass
+    try:
+        return read_json(os.path.join(DATA_PATH, name + '.json'))
+    except IOError:
+        pass
+    msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, or .json'.format(name)
+    logger.error(msg)
+    raise IOError(msg)

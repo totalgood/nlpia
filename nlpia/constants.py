@@ -62,6 +62,7 @@ PROJECT_PATH = os.path.dirname(os.path.dirname(__file__))
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
 
+# rename secrets.cfg.EXAMPLE_TEMPLATE -> secrets.cfg then edit secrets.cfg to include your actual credentials
 secrets = configparser.RawConfigParser()
 try:
     secrets.read(os.path.join(PROJECT_PATH, 'secrets.cfg'))

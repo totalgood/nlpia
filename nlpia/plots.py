@@ -8,7 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa
 import pandas as pd
 
 import plotly.plotly as plotly
-from plotly.offline.offline import _plot_html 
+from plotly.offline.offline import _plot_html
 import cufflinks as cf  # noqa
 
 from nlpia.constants import DATA_PATH
