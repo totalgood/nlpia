@@ -87,6 +87,10 @@ def read_csv(*args, **kwargs):
         df = df.set_index(df.columns[0], drop=True)
         if df.index.name in ('Unnamed: 0', ''):
             df.index.name = None
+    try:
+        df.index = pd.to_datetime(df.index)
+    except (ValueError, TypeError, pd.errors.OutOfBoundsDatetime):
+        pass
     return df
 
 
