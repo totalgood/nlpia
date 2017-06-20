@@ -10,6 +10,9 @@ import os
 import configparser
 
 from pugnlp.util import dict2obj
+from sys import platform as _platform
+
+syslog_addr = '/var/run/syslog' if _platform == "darwin" else '/dev/log'
 
 
 LOGGING_CONFIG = {
@@ -34,7 +37,7 @@ LOGGING_CONFIG = {
             'class': 'logging.handlers.SysLogHandler',
             'facility': 'local7',
             'formatter': 'django',
-            'address': '/dev/log',
+            'address': syslog_addr,
         },
         'console': {
             'class': 'logging.StreamHandler',
