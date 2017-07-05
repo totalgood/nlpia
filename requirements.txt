@@ -24,7 +24,7 @@ gensim>=2.1.0,<3.0.0
 #
 
 # On newish Ubuntu OSes all that's required is the python header files:
-#$ sudo apt-get install python-dev python3.5-dev python-virtualenv python-pip
+#$ sudo apt-get install python-dev python3.5-dev python3-virtualenv python-pip build-essential gfortran
 
 # On Macs all that's required is python3 and pip (brew installs the python-dev header files automatically?):
 #$ brew install python3

@@ -87,10 +87,13 @@ def read_csv(*args, **kwargs):
         df = df.set_index(df.columns[0], drop=True)
         if df.index.name in ('Unnamed: 0', ''):
             df.index.name = None
-    try:
-        df.index = pd.to_datetime(df.index)
-    except (ValueError, TypeError, pd.errors.OutOfBoundsDatetime):
-        pass
+    if ((str(df.index.values.dtype).startswith('int') and (df.index.values > 1e9 * 3600 * 24 * 366 * 10).any()) or
+            (str(df.index.values.dtype) == 'object')):
+        try:
+            df.index = pd.to_datetime(df.index)
+        except (ValueError, TypeError, pd.errors.OutOfBoundsDatetime):
+            logger.info('Unable to coerce DataFrame.index into a datetime using pd.to_datetime([{},...])'.format(
+                df.index.values[0]))
     return df
 
 
@@ -177,6 +180,22 @@ def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1,
 
 def read_json(file_path):
     return json.load(open(file_path, 'rt'))
+
+
+def get_wikidata_qnum(wikiarticle, wikisite):
+    """Retrieve the Query number for a wikidata database of metadata about a particular article
+
+    >>> print(get_wikidata_qnum(wikiarticle="Andromeda Galaxy", wikisite="enwiki"))
+    Q2469
+    """
+    resp = requests.get('https://www.wikidata.org/w/api.php', {
+        'action': 'wbgetentities',
+        'titles': wikiarticle,
+        'sites': wikisite,
+        'props': '',
+        'format': 'json'
+    }).json()
+    return list(resp['entities'])[0]
 
 
 def get_data(name='sms-spam'):
