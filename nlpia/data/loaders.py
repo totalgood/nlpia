@@ -199,6 +199,8 @@ def get_wikidata_qnum(wikiarticle, wikisite):
 
 
 def get_data(name='sms-spam'):
+    if name == 'cities1000':
+        return load_geonames(os.path.join(DATA_PATH, 'cities1000.txt'))
     try:
         return read_csv(os.path.join(DATA_PATH, name + '.csv.gz'))
     except IOError:
@@ -214,3 +216,65 @@ def get_data(name='sms-spam'):
     msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, or .json'.format(name)
     logger.error(msg)
     raise IOError(msg)
+
+
+def load_geonames(path='http://download.geonames.org/export/dump/cities1000.zip'):
+    """Clean the table of city metadata from download.geoname.org/export/dump/{filename}
+
+    Reference:
+      http://download.geonames.org/export/dump/readme.txt
+
+    'cities1000.txt' and 'allCountries.txt' have the following tab-separated fields:
+
+    0  geonameid         : integer id of record in geonames database
+    1  name              : name of geographical point (utf8) varchar(200)
+    2  asciiname         : name of geographical point in plain ascii characters, varchar(200)
+    3  alternatenames    : alternatenames, comma separated, ascii names automatically transliterated,
+                           convenience attribute from alternatename table, varchar(10000)
+    4  latitude          : latitude in decimal degrees (wgs84)
+    5  longitude         : longitude in decimal degrees (wgs84)
+    6  feature class     : see http://www.geonames.org/export/codes.html, char(1)
+    7  feature code      : see http://www.geonames.org/export/codes.html, varchar(10)
+    8  country code      : ISO-3166 2-letter country code, 2 characters
+    9  cc2               : alternate country codes, comma separated, ISO-3166 2-letter country code, 200 characters
+    10 admin1 code       : fipscode (subject to change to iso code), see exceptions below, see file admin1Codes.txt
+                           for display names of this code; varchar(20)
+    11 admin2 code       : code for the second administrative division, a county in the US, see file admin2Codes.txt; varchar(80)
+    12 admin3 code       : code for third level administrative division, varchar(20)
+    13 admin4 code       : code for fourth level administrative division, varchar(20)
+    14 population        : bigint (8 byte int)
+    15 elevation         : in meters, integer
+    16 dem               : digital elevation model, srtm3 or gtopo30, average elevation of 3''x3'' (ca 90mx90m) or 30''x30''
+                           (ca 900mx900m) area in meters, integer. srtm processed by cgiar/ciat.
+    17 timezone          : the iana timezone id (see file timeZone.txt) varchar(40)
+    18 modification date : date of last modification in yyyy-MM-dd format
+    """
+    columns = ['geonameid', 'name', 'asciiname', 'alternatenames', 'latitude', 'longitude', 'feature class', 'feature code', 'country code']
+    columns += ['cc2', 'admin1_code', 'admin2_code', 'admin3_code', 'admin4_code', 'population', 'elevation', 'dem', 'timezone', 'modification date']
+    columns = [c.lower().replace(' ', '_') for c in columns]
+    df = pd.read_csv(path, sep='\t', index_col=None, low_memory=False, header=None)
+    df.columns = columns
+    return df
+
+
+def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz'):
+    """There are still quite a few errors in this table, even after all this cleaning, so it's not a good source of city names"""
+    df = pd.read_csv(filename, header=0, index_col=0, low_memory=False)
+    df.columns = [c.replace(' ', '_').lower() for c in df.columns]
+    canonical = pd.DataFrame([list(row) for row in df.canonical_name.str.split(',').values])
+
+    def cleaner(row):
+        cleaned = pd.np.array([s for i, s in enumerate(row.values) if s not in ('Downtown', None) and (i > 3 or row[i + 1] != s)])
+        if len(cleaned) == 2:
+            cleaned = [cleaned[0], None, cleaned[1], None, None]
+        else:
+            cleaned = list(cleaned) + [None] * (5 - len(cleaned))
+        if not pd.np.all(pd.np.array(row.values)[:3] == pd.np.array(cleaned)[:3]):
+            logger.info('{} => {}'.format(row.values, cleaned))
+        return list(cleaned)
+
+    cleancanon = canonical.apply(cleaner, axis=1)
+    cleancanon.columns = 'city region country extra extra2'.split()
+    df['region'] = cleancanon.region
+    df['country'] = cleancanon.country
+    return df
