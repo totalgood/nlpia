@@ -233,20 +233,20 @@ def normalize_etpinard_df(df='https://plot.ly/~etpinard/191.csv', columns='x y s
 def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='text',
                                   category_col='category', possible_categories=None,
                                   config={'displaylogo': False},
-                                  layout={'type': 'log'},
-                                  marker={'sizemin': 10, 'sizemode': 'area', 'sizeref': 1000},
+                                  xscale=None, yscale='log',
+                                  layout={},
+                                  marker={'sizemode': 'area'},
                                   ):
     config_default = dict(DEFAULT_PLOTLY_CONFIG)
     marker_default = {
         'size': size_col,
         'sizemode': 'area',
-        'sizeref': int(df[size_col].min() * .1)}
+        'sizeref': int(df[size_col].min() * .8)}
     marker_default.update(marker)
     size_col = marker_default.pop('size')
     layout_default = {
-        'xaxis': graph_objs.XAxis(title=x),
-        'yaxis': graph_objs.YAxis(title=y),
-        'type': 'log',
+        'xaxis': graph_objs.XAxis(title=x, type=xscale),
+        'yaxis': graph_objs.YAxis(title=y, type=yscale),
         }
     layout_default.update(**layout)
     if config is not None:
