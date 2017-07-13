@@ -446,7 +446,6 @@ for name in uspca2.name:
         mask += [True]
     else:
         mask += [False]
-from collections import Coutner
 from collections import Counter
 count, mask = Counter(), []
 for name in uspca2.name:
