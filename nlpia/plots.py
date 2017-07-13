@@ -19,14 +19,16 @@ np = pd.np
 
 PLOTLY_HTML = """
 <html>
-<head>
-<script type="text/javascript">
-{plotlyjs}
-</script>
-</head>
-<body>
-{plotlyhtml}
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> -->
+    <script type="text/javascript">
+    {plotlyjs}
+    </script>
+  </head>
+  <body>
+    {plotlyhtml}
+  </body>
 </html>
 """
 
@@ -252,12 +254,13 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
     if config is not None:
         config_default.update(config)
     df.columns = clean_columns(df.columns)
-    if possible_categories is None:
+    if possible_categories is None and category_col is not None:
         if category_col in df.columns:
             category_labels = df[category_col]
         else:
             category_labels = np.array(category_col)
-        possible_categories = list(category_labels.unique())
+        possible_categories = list(set(category_labels))
+    possible_categories = [None] if possible_categories is None else possible_categories
     if category_col in df:
         masks = [np.array(df[category_col] == label) for label in possible_categories]
     else:
