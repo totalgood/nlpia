@@ -234,11 +234,42 @@ def normalize_etpinard_df(df='https://plot.ly/~etpinard/191.csv', columns='x y s
 
 def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='text',
                                   category_col='category', possible_categories=None,
+                                  filename='offline_plotly_scatter_bubble.html',
                                   config={'displaylogo': False},
                                   xscale=None, yscale='log',
-                                  layout={},
+                                  layout={'hovermode': 'closest', 'showlegend': False, 'autosize': True},
                                   marker={'sizemode': 'area'},
                                   ):
+    """Interactive scatterplot of a DataFrame with the size and color of circles linke to two columns
+
+    config keys:
+      fillFrame setBackground displaylogo sendData showLink linkText staticPlot scrollZoom plot3dPixelRatio displayModeBar
+      showTips workspace doubleClick autosizable editable
+
+    layout keys:
+      angularaxis annotations autosize bargap bargroupgap barmode barnorm boxgap boxgroupgap boxmode calendar
+      direction dragmode font geo height hiddenlabels hiddenlabelssrc hidesources hovermode images legend
+      mapbox margin orientation paper_bgcolor plot_bgcolor radialaxis scene separators shapes showlegend sliders smith
+      ternary title titlefont updatemenus width xaxis yaxis
+
+    marker keys:
+      autocolorscale blend border cauto cmax cmin color colorbar colors colorscale colorsrc colorssrc line maxdisplayed
+      opacity opacitysrc outliercolor reversescale showscale size sizemax sizemin sizemode sizeref sizesrc symbol symbolsrc
+
+    marker['sizeref'] gives the denominator of the circle scaling factor.
+      Typically it should be about a tenth of the minimum 'size' column value
+
+    >>> from nlpia.data import get_data
+    >>> from nlpia.plots import offline_plotly_scatter_bubble
+    >>> df = get_data('cities_us_wordvectors_pca2_meta')
+    >>> html = offline_plotly_scatter_bubble(
+    ...     df.sort_values('population', ascending=False)[:350].copy().sort_values('population'),
+    ...     filename='plotly_scatter_bubble.html',
+    ...     x='x', y='y',
+    ...     size_col='population', text_col='name', category_col='timezone',
+    ...     xscale=None, yscale=None,  # 'log' or None
+    ...     layout={}, marker={'sizeref': 3000})
+    """
     config_default = dict(DEFAULT_PLOTLY_CONFIG)
     marker_default = {
         'size': size_col,
@@ -277,4 +308,4 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
             ],
             'layout': graph_objs.Layout(**layout_default)
             }
-    return offline_plotly_data(data, config=config_default)
+    return offline_plotly_data(data, filename=filename, config=config_default)
