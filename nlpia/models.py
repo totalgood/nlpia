@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
 from future import standard_library
-standard_library.install_aliases()
+standard_library.install_aliases()  # noqa
 
-import pandas as pd
 from pandas import np
 
 
@@ -45,10 +44,18 @@ class LinearRegressor:
 
 
 class OneNeuronRegressor:
-    """ FIXME: DOES NOT CONVERGE TO THE SAME ANSWER AS SGDREGRESSOR!
+    """ Full batch learning using the Delta rule (weights += error * weights)
 
-    X = np.range(10).reshape(None, 1)
-    y = 3.14 * X + np.random.randn(X.shape)
+    >>> n_samples = 10
+    >>> X = np.arange(10).reshape((n_samples, 1))
+    >>> y = 3.14 * X + np.random.randn(*X.shape)
+    >>> nn = OneNeuronRegressor(alpha=0.01 / n_samples, n_iter=1)
+    >>> e = np.zeros(10)
+    >>> for i in range(10):
+    ...     e[i] = np.abs(nn.delta(X,y)).sum()
+    ...     nn = nn.fit(X, y)
+    >>> n_samples - (e[1:] < e[:-1]).sum()
+    1
 
     X = pca_topic_vectors[['topic4']].values[:5, :]
     y = scores['compound'].reshape(len(scores), 1).values[:5, :]
