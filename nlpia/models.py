@@ -47,6 +47,9 @@ class LinearRegressor:
 class OneNeuronRegressor:
     """ FIXME: DOES NOT CONVERGE TO THE SAME ANSWER AS SGDREGRESSOR!
 
+    X = np.range(10).reshape(None, 1)
+    y = 3.14 * X + np.random.randn(X.shape)
+
     X = pca_topic_vectors[['topic4']].values[:5, :]
     y = scores['compound'].reshape(len(scores), 1).values[:5, :]
 
@@ -65,34 +68,26 @@ class OneNeuronRegressor:
     def __init__(self, n_inputs=1, n_iter=1000, alpha=0.1):
         self.n_inputs = n_inputs
         self.n_outputs = 1
-        self.W1 = np.random.randn(self.n_outputs, self.n_inputs + 1)
+        self.W = np.random.randn(self.n_outputs, self.n_inputs + 1)
         self.n_iter = n_iter
         self.alpha = alpha
 
-    def error(self, X, y):
-        # Calculate predictions (forward propagation)
-        z1 = self.predict(y.reshape(len(X), 1))
-        return (y - z1)
-
     def delta(self, X, y):
-        e = self.error(X, y)
-        deltaW1 = X.T.dot(e)
-        # deltaW1 = np.array([np.sum(deltaW1[:, i]) for i in range(self.W1.shape[0])]).reshape(self.W1.shape) / len(X)
-        return deltaW1
+        return (y.reshape((len(X), 1)) - self.predict(X.reshape(len(X), 1))).reshape((len(X),))
+
+    def homogenize(self, X):
+        X_1 = np.ones((len(X), self.n_inputs + 1))
+        X_1[:, 1:] = X
+        return X_1
 
     def fit(self, X, y, n_iter=None):
+        """w = w + α * δ * X"""
         self.n_iter = self.n_iter if n_iter is None else n_iter
+        X_1 = self.homogenize(X)
         for i in range(self.n_iter):
-            deltaW1 = self.delta(X, y)
-            self.W1[0, 0] = self.W1[0, 0] + self.alpha * deltaW1
-            self.W1[0, 1] = self.W1[0, 1] + self.alpha * np.mean(self.error(X, y))
-
-            # self.b1 += self.alpha * deltab1
+            self.W += self.alpha * self.delta(X, y).reshape((len(X), 1)).T.dot(X_1)
         return self
 
     def predict(self, X):
-        X1 = np.ones((len(X), self.n_inputs + 1))
-        X1[:, 0] = X[:, 0]
-        return self.W1.dot(X1.T).T
-
-
+        X_1 = self.homogenize(X)
+        return self.W.dot(X_1.T).T
