@@ -7,7 +7,7 @@ standard_library.install_aliases()  # noqa
 from pandas import np
 
 
-class LinearRegressor:
+class LinearRegressor(object):
 
     def fit(self, X, y):
         """ Compute average slope and intercept for all X, y pairs
@@ -21,6 +21,17 @@ class LinearRegressor:
 
         References:
           Based on: https://github.com/justmarkham/DAT4/blob/master/notebooks/08_linear_regression.ipynb
+
+        >>> n_samples = 100
+        >>> X = np.arange(100).reshape((n_samples, 1))
+        >>> slope, intercept = 3.14159, -4.242
+        >>> y = 3.14 * X + np.random.randn(*X.shape) + intercept
+        >>> line = LinearRegressor()
+        >>> line.fit(X, y)
+        >>> abs(line.slope - slope) < abs(0.02 * (slope + 1))
+        True
+        >>> abs(line.intercept - intercept) < abs(0.02 * (intercept + 1))
+        True
         """
 
         # initial sums
@@ -43,7 +54,7 @@ class LinearRegressor:
         return self.slope * X + self.intercept
 
 
-class OneNeuronRegressor:
+class OneNeuronRegressor(object):
     """ Full batch learning using the Delta rule (weights += error * weights)
 
     >>> n_samples = 10
@@ -54,6 +65,8 @@ class OneNeuronRegressor:
     >>> for i in range(10):
     ...     e[i] = np.abs(nn.delta(X,y)).sum()
     ...     nn = nn.fit(X, y)
+    ...     print(nn.W)
+    ...     print(e[1])
     >>> n_samples - (e[1:] < e[:-1]).sum()
     1
 
@@ -72,27 +85,35 @@ class OneNeuronRegressor:
         print(pd.DataFrame(nn.error(X, y)).mean())[0]
     """
 
-    def __init__(self, n_inputs=1, n_iter=1000, alpha=0.1):
+    def __init__(self, n_inputs=1, n_iter=1000, alpha=0.01):
         self.n_inputs = n_inputs
         self.n_outputs = 1
         self.W = np.random.randn(self.n_outputs, self.n_inputs + 1)
         self.n_iter = n_iter
         self.alpha = alpha
+        return self
 
     def delta(self, X, y):
-        return (y.reshape((len(X), 1)) - self.predict(X.reshape(len(X), 1))).reshape((len(X),))
+        X = getattr(X, 'values', X).reshape(len(X), 1)
+        return (y.reshape((len(X), 1)) - self.predict(X)).reshape((len(X),))
 
     def homogenize(self, X):
+        X = getattr(X, 'values', X).reshape(len(X), 1)
         X_1 = np.ones((len(X), self.n_inputs + 1))
-        X_1[:, 1:] = X
+        X_1[:, 1:] = getattr(X, 'values', X)
         return X_1
 
     def fit(self, X, y, n_iter=None):
         """w = w + α * δ * X"""
         self.n_iter = self.n_iter if n_iter is None else n_iter
+        X = getattr(X, 'values', X).reshape(len(X), 1)
         X_1 = self.homogenize(X)
         for i in range(self.n_iter):
-            self.W += self.alpha * self.delta(X, y).reshape((len(X), 1)).T.dot(X_1)
+            for i in range(0, len(X), 10):  # minibatch learning for numerical stability
+                batch = slice(i, min(i + 10, len(X)))
+                Xbatch, ybatch = X[batch, :], y[batch]
+                X_1_batch = X_1[batch, :]
+                self.W += (self.alpha / len(X) ** 1.5) * self.delta(Xbatch, ybatch).reshape((len(Xbatch), 1)).T.dot(X_1_batch)
         return self
 
     def predict(self, X):
