@@ -1,0 +1,457 @@
+"text","power","sensitivity","passive-agressive","sarcastic","macho","bullying"
+"I’m sorry.",-1,0,0,0,-1,-1
+"I apologize.",1,1,0,0,0.1,-1
+"I apologize for arriving so late.",1,1,0,0,-1,-1
+"I’m sorry that I arrived so late.",-1,0,0,0,-1,0
+"I apologize for forgetting your birthday.",1,1,0,0,0.1,0
+"I’m sorry I forgot your birthday.",-1,0,0,0,0,0
+"I apologize for being rude to you in front of your friends.",1,1,0,0,0,0
+"I’m sorry I was rude to you in front of your friends.",-1,0,0,0,0,0
+"I was wrong, and I apologize.",1,1,0,0,0,0
+"You know, <NNP>, I want you to know I was wrong, and I apologize.",1,1,0,0,0,0
+"It won’t happen again.",1,1,0,0,0,0
+"I’m really sorry you’re going through all of this, can I help?",1,1,0,0,0,0
+"How can I help?",1,1,0,0,0,0
+"I’m sorry buddy, but you’ll have to …",-1,-1,0,0,0,0
+"I’m really sorry.",-1,0,0,0,0,0
+"I apologize if I offended you.",-1,-1,0,0,0,0
+"I apologize for …",1,1,0,0,0,0
+"I’m sorry buddy, but you have to …",-1,-1,0,0,0,0
+"I’m sorry buddy, but you …",-1,-1,0,0,0,0
+"I’m sorry buddy, but …",-1,-1,0,0,0,0
+"Buddy …",-0.5,-0.5,0,0,1,1
+"Bro …",-0.5,-0.5,0,0,1,1
+"… bro …",-0.5,-0.5,0,0,1,1
+"I apologize for being rude to you …",1,1,0,0,0,0
+"I apologize for being … to you.",1,1,0,0,0,0
+"I apologize for … you.",1,1,0,0,0,0
+"Calm down.",-1,-1,0,0,0,0
+"I understand …",1,1,0,0,0,0
+"I understand.",1,1,0,0,0,0
+"I hear you.",0.9,0.9,0,0,0,0
+"You should …",-0.9,-0.9,0,0,0,0
+"You should calm down.",-1,-1,0,0,0,1
+"You have to calm down.",-1,-1,0,0,0,0
+"Now calm down, Jane.",-1,-1,0,0,0,0
+"Now calm down, Jon.",-1,-1,0,0,0,0
+"Now calm down, <NNP>.",-1,-1,0,0,0,0
+"I’m really grateful for …",1,1,0,0,0,0
+"Thank you for …",1,1,0,0,0,0
+"You are acting way out of control.",-1,-1,0,0,0,0
+"You are out of control.",-0.9,-0.9,0,0,0,0
+"You’ll never get what you want by …",-0.8,-0.8,0,0,0,0
+"I understand how upset you are …",0.9,0.9,0,0,0,0
+"I understand how upset you are, and I can help.",1,1,0,0,0,0
+"I can’t help you until you calm down.",-1,-1,0,0,0,0
+"I understand why you feel that way.",0.9,0.9,0,0,-1,-0.5
+"Please give me a chance to help.",0.9,0.9,0,0,0,0
+"I understand why you would feel that way, …",1,1,0,0,0,0
+"Please calm down and I’ll be able to help you.",-1,-1,0,0,0.5,
+"Please calm down.",-1,-1,0,0,0.5,0.5
+"No you don’t!",-1,-1,0,0,0,0
+"How could you possibly know how I feel?",-1,-1,0,0,0,0
+"I understand why you’d feel that way;  please give me a chance to help.",1,1,0,0,0,0
+"I can certainly understand why you’d be so upset.",1,1,0,0,-1,-1
+"I understand why you’d be so upset.",0.9,0.9,0,0,-1,-1
+"I understand exactly how you fee.",-1,-1,0,0,0,0
+"I have an idea.",-1,0.5,0,0,0,0
+"I have an answer.",1,0.25,0,0,0,0
+"I have a proposal for you.",1,0.5,0,0,0,0
+"I have an answer to this problem.",1,0.25,0,0,0,0
+"I have an idea about how we can fix this …",-1,0.25,0,0,0,0
+"… I believe …",0.9,0.5,0,0,0,0
+"… I think …",-0.9,-0.5,0,0,0,0
+"I’ve been thinking about what you said …",0.3,0.5,0,0,0,0
+"I … solution …",0.5,0,0,0,0,0
+"I’ve come up with a few proposals for you.",1,0,0,0,0,0
+"I believe I have the solution.",1,0,0,0,0,0
+"I’ve come up with a few ideas for you.",-1,0,0,0,0,0
+"I think I have an idea.",-1,0,0,0,0,0
+"What’s wrong with you?",-1,-1,0,0,0,0
+"What’s bothering you?",1,1,0,0,0,0
+"What’s bothering you so much that you would say that?",1,1,0,0,0,0
+"Why would you say that?",-1,-1,0,0,0,0
+"Why would you do that?",-1,-1,0,0,0,0
+"What’s upsetting you?",1,1,0,0,0,0
+"What’s your problem?",-1,-1,0,0,0,0
+"What’s the problem?",-0.9,-0.9,0,0,0,0
+"I’m here for you if you ever want to talk …",1,1,0,0,0,0
+"Do you want to talk about it?",-1,0,0,0,0,0
+"My name is Jane Smith.",-1,0.25,0,0,0,0
+"My name is <NNP>.",-1,0.25,0,0,0,0
+"I’m Jane Smith.",1,0,0,0,0,0
+"I’m <NNP>.",1,0,0,0,0,0
+"Hi, I’m Jane Smith.",1,0,0,0,0,0
+"Hi, I’m <NNP>.",1,0,0,0,0,0
+"Hi, my name’s Jane Smith.",-1,0.25,0,0,0,0
+"Hi, my name’s <NNP>.",-1,0.25,0,0,0,0
+"It’s nice to meet you <NNP>.",1,1,0,0,0,0
+"This is <NNP>.",1,0,0,0,0,0
+"Hi, this is <NNP>, with <NN>.",1,0,0,0,0,0
+"Hi, this is <NNP>, with <NN>. Is <NNP> in?",1,0,0,0,0,0
+"Hi, this is <NNP>, <NN> with <NN>.",1,0,0,0,0,0
+"Hi <NNP>, this is <NNP>, <NN> with <NN>.",1,0,0,0,0,0
+"Hi <NNP>, this is <NNP>, …",0.9,0,0,0,0,0
+"Hi, this is <NNP>, …",0.9,0,0,0,0,0
+"Hi <NNP>, my name is <NNP>. I’m a <NN> with <NN>.",-1,0,0,0,0,0
+"Hi <NNP>, this is <NNP>, … I’d appreciate …",0.9,0,0,0,0,0
+"Hello, this is <NNP> calling.",1,0,0,0,0,0
+"I disagree.",-1,0,0,0,0,0
+"I see it another way.",1,0.25,0,0,0,0
+"You’re wrong.",-1,-1,0,0,0,0
+"You’re right.",0,1,0,0,0,0
+"I simply see it another way.",0.9,0,0,0,0,0
+"I understand what you’re saying.",0.9,0,0,0,0,0
+"I understand what you’re saying, I simply see it another way.",1,0,0,0,0,0
+"I understand how you see it,  I simply see it differently.",1,0,0,0,0,0
+"I see it differently.",0.5,0,0,0,0,0
+"I just disagree.",-0.9,0,0,0,0,0
+"You make a good point.",-0.5,0,0,0,0,0
+"You make a good point, but I disagree with you.",-1,0,0,0,0,0
+"I totally disagree.",-1,0,0,0,0,0
+"I see it differently, however this is interesting. Tell me more if you like.",1,0,0,0,0,0
+"Tell me more …",0.9,0.9,0,0,0,0
+"I trust your judgment, and you have my support.",1,1,0,0,0,0
+"I trust you …",0.9,0.9,0,0,0,0
+"I trust your judgment.",0.9,1,0,0,0,0
+"You have my support.",0.9,0.9,0,0,0,0
+"I support you.",0,0.9,0,0,0,0
+"Let’s just agree to disagree.",-1,-1,1,0,0,0
+"We’ll have to agree to disagree.",-1,-1,1,0,0,0
+"I can understand how you see it. I see it another way.",1,0,-1,0,0,0
+"Our computers are slow.",-1,0,0,0,0,0
+"Our network is slow today.",-0.9,0,0,0,0,0
+"Our <NNS> are slow.",-0.9,0,0,0,0,0
+"While we’re waiting for the <NN> to process …",1,0.1,0,0,0,0
+"Our server is slow.",-0.9,0,0,0,0,0
+"Our algorithm is slow.",-0.9,0,0,0,0,0
+"Our <NN> is slow.",-0.9,0,0,0,0,0
+"<PRP$> <NN> is slow.",-0.8,0,0,0,0,0
+"Tell me how your experience with <WP> has been so far.",0.9,0,0,0,0,0
+"How has your experience with <NN> been so far?",0.9,0.1,0,0,0,0
+"I’m sorry. Our <NNS> are really slow today.",-1,0.1,0,0,0,0
+"While this is loading, tell me more about …",1,0.1,0,0,0,0
+"Tell me more about …",0.9,0.5,0,0,0,0
+"Just a minute.",-0.9,0,0,0,0,0
+"Our computers are slow today.",-0.9,0,0,0,0,0
+"Our <NNS> are slow today.",-0.9,0,0,0,0,0
+"Please give me a minute while …",-0.9,0,0,0,0,0
+"While the information is coming up, could you please tell me why you …",1,0,0,0,0,0
+"Unfortunately the computer is down. But fortunately you got me, Jon, and I’m going to help you as best I can.",0.9,0,0,0,0,0
+"Unfortunately the internet is down. But fortunately you got me, Jane, and I’m going to help you as best I can.",0.9,0,0,0,0,0
+"Unfortunately the <NN> is down. But fortunately you got me, <NNP>, and I’m going to help you as best I can.",0.9,0,0,0,0,0
+"Unfortunately our network is down, but fortunately you got me. I’m going to help you as best I can. Tell me about …",0.9,0,0,0,0,0
+"Unfortunately our <NN> is down, but fortunately you got me. I’m going to help you as best I can. Tell me about …",0.9,0,0,0,0,0
+"Tell me about …",0.9,0.5,0,0,0,0
+"You said …",-1,0,0,0,0,0
+"Why didn’t you tell me?",-1,0,0,0,0,0
+"In the future, you can always come to me with these things.",1,0.2,0,0,0,0
+"Why didn’t you tell me earlier?",-1,0,0,0,0,0
+"Why didn’t you tell me sooner?",-1,0,0,0,0,0
+"Why didn’t you tell me how you felt?",-1,0,0,0,0,0
+"You know, in the future, you can always come to me with things like this.",1,0,0,0,0,0
+"Why didn’t you tell me what was going on?",-1,0,0,0,0,0
+"In the future, I hope you know you can always tell me how you feel.",1,0,0,0,0,0
+"You’re a <NN>.",-0.9,-0.9,0,0,0,0
+"In the future, you can always come to me with these things and know that I won’t judge you when you do.",1,0.5,0,0,0,0
+"Why didn’t you tell me what you were doing?",-1,-1,0,0,0,0
+"But …",-1,-0.1,0,0,0,0
+"Have said that …",1,0.1,0,0,0,0
+"I’ve always enjoyed seeing you.",0.9,0.9,0,0,0,0
+"I’ve always enjoyed working with you.",0.9,0.9,0,0,0,0
+"I’ve always enjoyed <VBG> with you.",0.9,0.9,0,0,0,0
+"I’ve always enjoyed <VBG> with you. That said I have to move on.",1,0,0,0,0,0
+"I think you’re an excellent communicator.",0.9,0.5,0,0,0,0
+"I think you’re an excellent leader.",0.9,0.5,0,0,0,0
+"I think you’re an excellent scientist.",0.9,0.5,0,0,0,0
+"I think you’re an excellent recruiter.",0.9,0.5,0,0,0,0
+"I think you’re an excellent developer.",0.9,0.5,0,0,0,0
+"I think you’re an excellent <NN>.",0.9,0.5,0,0,0,0
+"I really enjoyed your talk.",0.9,0.5,0,0,0,0
+"I really enjoyed your presentation.",0.9,0.5,0,0,0,0
+"I really enjoyed your book.",0.9,0.5,0,0,0,0
+"I really enjoyed your dish.",0.9,0.5,0,0,0,0
+"I really enjoyed your video.",0.9,0.5,0,0,0,0
+"I really enjoyed your diagram.",0.9,0.5,0,0,0,0
+"I really enjoyed your explanation.",0.9,0.6,0,0,0,0
+"I really enjoyed your <NN>.",0.9,0.5,0,0,0,0
+"I trust you. Having said that, I can’t do what you’re asking.",1,0,0,0,0,0
+"I trust you, but I can’t do what you’re asking.",-1,0,0,0,0,0
+"I understand what you’re saying. Having said that, I see it another way.",1,0,0,0,0,0
+"I understand what you’re saying, I simply disagree.",-1,0,0,0,0,0
+"While I understand why you’d say that, I simply see it differently.",1,0,0,0,0,0
+"I understand why you’d say that, but I disagree.",-1,0,0,0,0,0
+"I understand why you’d say that, but I don’t agree with you.",-1,0,0,0,0,0
+"While I love you, I can’t do that for you.",1,0,0,0,0,0
+"I love you, but I can’t do that for your.",-1,0,0,0,0,0
+"I love you, but …",-1,0,0,0,0,0
+"No offense but …",-1,-0.5,0,0,0,0
+"Don’t take this the wrong way but …",-1,-0.5,0,0,0,0
+"I don’t mean to be rude but …",-1,-0.5,0,0,0,0
+"You look awful in that …",-0.9,-0.9,0,0,0,0
+"I don’t think <PRP> likes you …",-0.9,-0.9,0,0,0,0
+"Nobody here cares.",-1,-1,0,0,0,0
+"I don’t care.",-1,-1,0,0,0,0
+"You’re too … to let …",0.5,0.1,0,0,0,0
+"You’re too polished a professional to let something like a personality conflict tarnish your image.",1,0,0,0,0,0
+"You need to stop fighting with <NNP>.",-1,0,0,0,0,0
+"You’ve worked too hard on this <NN> to let errors distract from the <NN>.",1,0,0,0,0,0
+"You’ve worked too hard on this report to let errors distract from the message.",1,0,0,0,0,0
+"I don’t think he likes you …",-0.9,-0.9,0,0,0,0
+"I don’t think she likes you …",-0.9,-0.9,0,0,0,0
+"You’re a jerk.",-1,-1,0,0,0,0
+"You’re an American.",-0.9,-0.9,0,0,0,0
+"You’re a woman.",-0.9,-0.9,0,0,0,0
+"You’re a man.",-0.9,-0.9,0,0,0,0
+"This report is full of errors.",-1,-1,0,0,0,0
+"This <NN> is full of errors.",-0.9,-0.9,0,0,0,0
+"You’ve worked too hard on this code to let bugs detract from the UX.",0.9,0,0,0,0,0
+"Our policy …",-1,-0.5,0,0,0,0
+"The reason our policy states … is because …",1,0,0,0,0,0
+"The reason our policy says … is …",0.9,0,0,0,0,0
+"It’s our company policy …",-1,0,0,0,0,0
+"Because I said so.",-1,-1,0,0,0,0
+"I told you …",-0.9,-0.5,0,0,0,0
+"I said …",-0.9,0,0,0,0,0
+"I understand this can be frustrating.",0.9,0,0,0,0,0
+"That’s why we ask …",0.9,0,0,0,0,0
+"… for you protection …",0.9,0,0,0,0,0
+"I’m sorry, but our company policy …",-1,0,0,0,0,0
+"Unfortunately, we have to have uniform polices …",0.9,0,0,0,0,0
+"Unfortunately, we have to ...",0.9,0,0,0,0,0
+"Unfortunately, we have to have uniform polices like this so we can keep your rates as low as possible.",1,0,0,0,0,0
+"Company policy states that if you don’t pay your bill by the 7th, your service will be cut off.",-1,0,0,0,0,0
+"To ensure your own safety, I have to insist …",1,0,0,0,0,0
+"To ensure your satisfaction …",0.9,0,0,0,0,0
+"It’s company policy.",-1,0,0,0,0,0
+"You have to …",-0.5,0,0,0,0,0
+"I need the report by the end of the day.",-1,0,0,0,0,0
+"The report is due by the end of the day.",1,0,0,0,0,0
+"I need you to really focus on this project.",-1,0,0,0,0,0
+"Your complete focus if vital to the success of this project.",1,0,0,0,0,0
+"You need to pay attention in class.",-1,0,0,0,0,0
+"This class deserves your full attention.",1,0,0,0,0,0
+"Honestly …",-1,0,0,0,0,0
+"To be honest …",-1,0,0,0,0,0
+"TBH",-1,0,0,0,0,0
+"Frankly …",1,0,0,0,0,0
+"Frankly, it’s difficult for me to see how this is going to work.",1,0,0,0,0,0
+"Honestly, it’s difficult for me to see how this is going to work.",-1,0,0,0,0,0
+"Would you like me to be frank?",1,0,0,0,0,0
+"Would you like me to be honest?",-1,0,0,0,0,0
+"I’m just being honest.",-1,0,0,0,0,0
+"I like the way the report was laid out. Next time I’d use primary colors because they’re easier on the eyes.",1,0,0,0,0,0
+"I like the way the <NN> was <VB>. Next time I’d ...",1,0,0,0,0,0
+"I hate …",-0.9,0,0,0,0,0
+"I’d get rid of …",-0.9,0,0,0,0,0
+"You make me …",-1,0,0,0,0,0
+"When you … I feel … because …",1,0,0,0,0,0
+"When you don’t do what you say you’ll do, I feel disappointed and hurt, because I love you and try to do what I tell you I’ll do.",1,0,0,0,0,0
+"You know, you really make me mad when you don’t do what you say you’re going to do.",-1,0,0,0,0,0
+"When you talk to me like that, calling me names, in front of our friends, I feel embarrassed and humiliated because it reminds me of when I was name-called on the playground as a child.",1,0.2,0,0,0,0
+"That really pisses me off when you do that!",-1,-0.3,0,0,0,0
+"I feel angry because I feel as though I’ve been betrayed.",1,0,0,0,0,0
+"I feel hurt because I feel as though I’m being abandoned.",1,0,0,0,0,0
+"When you talk to me that way, I feel hurt and wounded, because name-calling is abusive.",0.9,0,0,0,0,0
+"I don’t talk that way to you, because I love you and don’t want to hurt you.",0.9,0,0,0,0,0
+"Boy, you can be a jerk.",-1,-1,0,0,0,0
+"No problem!",-1,0,0,0,0,0
+"You’re welcome.",1,0,0,0,0,0
+"Sure.",-1,0,0,0,0,0
+"You got it.",-1,0,0,0,0,0
+"Not a problem.",-1,0,0,0,0,0
+"You’re welcome, I’m happy I could do that for you.",1,1,0,0,0,0
+"Not a problem!",-1,0,0,0,0,0
+"You’re very welcome.",1,0,0,0,0,0
+"That’s what I’m here for.",-1,0,0,0,0,0
+"Thank you.",1,0,0,0,0,0
+"Really, you think so?",-0.9,0,0,0,0,0
+"Really, you think so? I’m not sure. I’m still getting used to it.",-1,0,0,0,0,0
+"What were you thinking?",-1,-1,0,0,0,0
+"How did you think that was going to make me feel?",-1,-1,0,0,0,0
+"What was going through your head?",-1,-1,0,0,0,0
+"Did you really think …",-1,-1,0,0,0,0
+"Did you even stop to think …",-1,-1,0,0,0,0
+"Why would you …",-1,0,0,0,0,0
+"In the future, if you want to … I’m asking that you … OK?",0.9,0,0,0,0,0
+"In the future, if you want to talk to my client, I’m asking that you run that by me first, OK?",1,0,0,0,0,0
+"Why would you call my client without asking me first?",-1,0,0,0,0,0
+"Why would you … without asking me first?",-1,0,0,0,0,0
+"If you are going to fix an appliance here at home, would you please let me know first, so I can help you find the manual and tools?",1,0,0,0,0,0
+"What makes you think you can fix that appliance?",-1,0,0,0,0,0
+"If you are going to ..., would you please let me know first, so I can help you ...?",0.9,0,0,0,0,0
+"What makes you think you can fix do that?",-0.9,0,0,0,0,0
+"When you don’t tell me you’re going to be late, I worry.",1,0,0,0,0,0
+"In the future, if you just let me know you’re running late, I can understand that.",1,0,0,0,0,0
+"In the future, if you just let me know you’re running late; I can understand that, and there won’t be any problem at all.",1,0,0,0,0,0
+"Did you even think about how I’d feel, wondering where you were?",-1,0,0,0,0,0
+"Did you even think about how that would make me feel?",-1,0,0,0,0,0
+"What on earth was going through your head?",-1,0,0,0,0,0
+"I apologize I shouldn’t have said that. What I meant was …",1,0,0,0,0,0
+"What I meant was …",1,0,0,0,0,0
+"Please come to me and discuss it before you ask your mother to come stay with us, OK?",1,0,0,0,0,0
+"Please come to me ... before you ask ... to come stay with us, OK?",1,0,0,0,0,0
+"It may not have worked this time, but I still support you and am willing to help however I can.",1,0,0,0,0,0
+"Did you really think that would work?",-1,0,0,0,0,0
+"That’s interesting …",1,0,0,0,0,0
+"That’s interesting. Tell me more.",1,0,0,0,0,0
+"That’s interesting; why would you say that?",1,0,0.25,0,0,0
+"That’s interesting; why would you do that?",1,0,0.25,0,0,0
+"That’s interesting; why would you ask that?",1,0,0.25,0,0,0
+"That’s interesting; tell me more.",1,0,0,0,0,0
+"How could yo possibly think that?",-1,0,0,0,0,0
+"Are you serious?",-1,0,0,0,0,0
+"That’s interesting; why would you ask me that?",1,0,0,0,0,0
+"It’s none of your business.",-1,-1,0.25,0,0,0
+"That’s interesting; are you always this <ADJ>",0.7,0,0.5,0,0,0
+"What’s wrong with you?",-1,0,0,0,0,0
+"We need to talk",-1,0,0,0,0,0
+"I need your help. …",1,0,0,0,0,0
+"<NNP>, I need your help …",1,0,0,0,0,0
+"Honey, we need to talk.",-1,0,0,0,0,0
+"Chief, we need to talk.",-1,0,0,0,0,0
+"Boss we need to talk.",-1,0,0,0,0,0
+"Hey bud, we need to talk.",-1,0,0,0,0,0
+"Mate, we need to talk.",-1,0,0,0,0,0
+"<NNP>, I’m concerned …",1,0,0,0,0,0
+"<NNP>, I’m frustrated …",0.9,0,0,0,0,0
+"<NNP>, I’m troubled …",0.9,0,0,0,0,0
+"Jon, I need your help.",1,0,0,0,0,0
+"Jon, I’m concerned and could really use your help.",1,0,0,0,-1,0
+"Jon, we need to talk.",-1,0,0,0,0.5,0
+"Jon, you need to start carrying your weight around here.",-1,0,0,0,0,0
+"Jon, I’m troubled and I need your help.",1,0,0,0,0,0
+"Listen Jon, …",-1,0,0,0,0,0
+"Listen Jon, we need to talk; you really messed up.",-1,0,0,0,0,0
+"You really messed up.",-0.7,0,0,0,0,0
+"Jane, I’m concerned; we need to tackle a few problems.",0.1,0,0,0,1,0
+"Jane, I’m concerned; we need to work on a few problems.",0.9,0,0,0,0,0
+"Jon, I’m concerned; we need to tackle a few problems.",1,0,0,0,1,0
+"Yea, no.",-1,-1,1,0,0,0
+"Jon, close the door and sit down.",-1,-1,0,0,0,0
+"You’re in luck!",1,0,0,0,0,0
+"I’m going to … you",-1,0,0,0,0,0
+"I’m going to … you if you don’t …",-0.9,0,0,0,0,0
+"If you don’t …",-0.9,0,0,0,0,0
+"What would you like me …",0.2,0,0,0,0,0
+"You’re in luck <NNP>! We’ve extended your …",0.8,0,0,0,0,0
+"You’re in luck if you are … because you’re eligible for … ",0.9,0,0,0,0,0
+"You’re in luck if you happen to …",0.9,0,0,0,0,0
+"Jon, I just found out that our package won’t be arriving until tomorrow. Having said that, you’re in luck because on late orders, even just one day late, I can refund you the entire shipping amount.",1,0,0,0,0,0
+"<NNP>, I just found out that … . Having said that, you’re in luck because … so I can give you …",0.9,0,0,0,0,0
+"You’re in luck, you’re dog’s dead, so …",-1,-1,0,1,0,0
+"You’re in luck.",0.9,0,0,0,0,0
+"You’ve found the right person.",1,0,0,0,0,0
+"<NNP>, you’re in luck! Because it will be a few more minutes until …, you can enjoy the free … while we …",0.9,0,0,0,0,0
+"Mr. Smith, you’re in luck! Because it will be a few more minutes until your room is ready, you can enjoy the free beverages in our lounge while we get the room ready for you.",1,0,0,0,0,0
+"You’re in luck if you’re aged 65-99 because you’re eligible for our “young at heart” discount.",1,0,0,0,0,0
+"It’ll be just a few more minutes until your room is ready. I can offer you some free drinks in the lounge while you wait.",-1,0,0,0,0,0
+"That sounds totally frustrating, but Mr. Smith—you’re in luck. You’ve found the right person; I’m Jane Smith, and I can help you with this.",1,0,0,0,0,0
+"That sounds totally frustrating, but <NNP>—you’re in luck. You’ve found the right person; I’m <NNP>, and I can help you with this.",1,0,0,0,0,0
+"That sounds totally frustrating, but <NNP>—you’re in luck. You’ve found the right person.",0.9,0,0,0,0,0
+"I can help you with this.",0.9,0,0,0,-0.1,-0.1
+"Who told you that?",-1,0,0,0,0,0
+"Who said that?",-0.9,0,0,0,0,0
+"Well, that weekend is unfortunately sold out, but you’re in luck. I have an even better room the following weekend that I can give you at the same price if you’d like.",1,0,0,0,0,0
+"Well, that ... is unfortunately sold out, but you’re in luck. I have an even better... that I can give you at the same price if you’d like.",0.9,0,0,0,0,0
+"No, I’m sorry, we’re totally sold out.",-1,0,0,0,0,0
+"Do you want …",-1,0,0,0,0,0
+"Would you like …",1,0,0,0,0,0
+"Would you like a bag with that?",1,0,0,0,0,0
+"Do you want a bag?",-1,0,0,0,0,0
+"You said …",-1,0,0,0,0,0
+"I heard …",1,0,0,0,0,0
+"I understood …",1,0,0,0,0,0
+"What I’m hearing is …",0.5,0,0,0,0,0
+"What I heard was …",0.9,0,0,0,0,0
+"What I understood was …",0.9,0,0,0,0,0
+"But you told me …",-1,0,0,0,0,0
+"Wait! You just said …",-1,0,0,0,0,0.5
+"That’s not what you just said!",-1,0,0,0,0,0
+"That’s not what I just heard you say!",-0.5,0,0,0,0,0
+"But yesterday you told me …",-1,0,0,0,0,0
+"But last week you said …",-1,0,0,0,0,0
+"I did NOT say that!",-0.5,0,0,0,0,0
+"I never said that!",-1,0,0,0,0,0
+"Prove it.",-0.9,0,0,0,0,0
+"That’s interesting; let me clarify what I heard before I respond, OK?",1,0,0,0,0,0
+"So you’re saying you’re better than me?",-1,0,0,0,0,0
+"So you’re saying …",-0.5,0,0,0,0,0
+"I’m confused. Yesterday I understood that before you left you were going to clean the basement.",1,0,0,0,0,0
+"I’m confused …",0.8,0,0,0,0,0
+"I’m confused. I understood that … you were going to …",0.9,0,0,0,0,0
+"So what I’m hearing is that you are uncomfortable working with John. Is that correct?",1,0,0,0,0,0
+"So what I’m heating is that … Is that correct?",0.9,0,0,0,0,0
+"So what I’m hearing is that you are uncomfortable … Is that correct?",0.9,0,0,0,0,0
+"So you’re saying you hate John?",-1,0,0,0,0,0
+"So you’re saying you don’t like John?",-0.9,0,0,0,0,0
+"I thought that after the play, we were going to go to dinner.",1,0,0,0,0,0
+"You promised to …",-0.9,0,0,0,0,0
+"You promised to take me to dinner after the play.",-1,0,0,0,0,0
+"Oh, I heard something different.",1,0,0,0,0,0
+"You’re a liar.",-1,0,0,0,0,0
+"That’s a lie!",-1,0,0,0,0,0
+"That’s not true!",-1,0,0,0,0,0
+"You’re welcome. I’m happy to do that for you.",1,0,0,0,0,0
+"That’s clever.",0.9,0,0,0,0,0
+"I like the way you …",0.9,0,0,0,0,0
+"I like that you …",0.9,0,0,0,0,0
+"That’s smart …",0.9,0,0,0,0,0
+"That’s a good idea …",0.9,0,0,0,0,0
+"I like that.",0.9,0,0,0,0,0
+"Not good enough.",-1,0,0,0,0,0
+"Why can’t you be more like …",-1,0,0,0,0,0
+"Why can’t you …",-0.9,0,0,0,0,0
+"I am so fat …",-1,0,0,0,0,0
+"I am so clumsy …",-1,0,0,0,0,0
+"I’m so stupid …",-1,0,0,0,0,0
+"I’m so incompetent …",-1,0,0,0,0,0
+"That’s so stupid of me.",-0.8,0,0,0,0,0
+"I’m ashamed of you.",-1,0,0,0,0,0
+"I’m ashamed … you …",-0.9,0,0,0,0,0
+"You’re a …",-0.5,0,0,0,0,0
+"You’re a ...er.",-1,0,0,0,0,0
+"You’re a user.",-1,0,0,0,0,0
+"You’re a mooch.",-1,0,0,0,0,0
+"You’re selfish.",-1,0,0,0,0,0
+"You’re a narcicist.",-1,0,0,0,0,0
+"You’re no good.",-1,0,0,0,0,0
+"I love you so much, not matter what, always.",1,0,0,0,0,0
+"You can always count on me.",1,0,0,0,0,0
+"You’re beautiful just the way you are.",1,0,0,0,0,0
+"Your job is to dream as big as you can. My job is to help you achieve your dreams. I’ll do my job if you do yours.",1,0,0,0,0,0
+"You can do it.",1,0,0,0,0,0
+"You can do anything you set your mind to.",0.95,0,0,0,0,0
+"You can do it. You can do anything.",1,0,0,0,0,0
+"Failure is just one step closer to the solution. Everybody fails.",1,0,0,0,0,0
+"Everybody fails.",1,0,0,0,0,0
+"Failure is just one step closer to the solution.",1,0,0,0,0,0
+"You’re a troll.",-1,-1,0,0,0,1
+"The only real failure is not trying. Failure is just part of the process—it means you’re doing it right",1,0,0,0,0,0
+"Being courageous doesn’t mean not being afraid, it means doing what’s right even though you’re afraid.",1,0,0,0,0,0
+"You’re never alone. I’ll always be here for you.",1,1,0,0,0,0
+"I’ll always be here for you.",1,1,0,0,0,0
+"You’re perfect.",1,0,0,0,0,0
+"Why not?",1,0,0,0,0,0
+"Why can’t you be more like your brother?",-1,0,0,0,0,0
+"Why can’t you be more like your sister?",-1,0,0,0,0,0
+"Why can’t you be more like <NNP>?",-1,0,0,0,0,0
+"You’re good enough to win the gold …",1,0,0,0,0,0
+"You’re good enough to win … if you …",1,0,0,0,0,0
+"You’re smart enough to … if you just keep …",0.9,0,0,0,0,0
+"… it really makes me proud of you …",0.9,0,0,0,0,0
+"You know John, when I see you applying yourself to your school work, it really makes me proud of you.",1,0,0,0,0,0
+"When I see the loving side of you come out when you’re with your little sister, I feel so proud to be your mother and my heart nearly bursts.",1,1,0,0,0,0
+"It’s hell getting old.",-1,0,0,0,0,0
+"It’s hell …",-0.8,0,0,0,0,0
+"I need a facelift.",-1,0,0,0,0,0
+"You know when I look at you it makes me feel beautiful.",1,0,0,0,0,0
+"You’re a part of me.",1,0,0,0,0,0
+"When you … it hurts me.",1,0,0,0,0,0
+"When you … it’s like a knife in my heart …",0.8,-1,0,0,1,0
+"You’re a creative thinker.",1,0,0,0,0,0
+"You’re a lover.",1,0,0,0,-1,0
+"You’re a helper.",1,0,0,0,-0.5,0
+"You’re a do-gooder.",0.8,0,0,0,0,0
+"You’re a smart guy.",0.9,0,0,0,0.5,0
+"You’re a smart woman.",0.9,0,0,0,-0.5,0
