@@ -16,17 +16,17 @@ addons:
   apt:
     packages:
       - git
-      - python-pip
+      - python3-pip
       - gfortran
       - libopenblas-dev
       - liblapack-dev
-      - python-numpy
-      - python-scipy
-      - python-matplotlib
+      - python3-matplotlib
+      # - python-numpy
+      # - python-scipy
+      # - python-matplotlib
       # - python3-pip
       # - python3-numpy
       # - python3-scipy
-      # - python3-matplotlib
 install:
   - source tests/travis_install.sh
   - pip install --upgrade pip
