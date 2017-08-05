@@ -29,7 +29,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
     source activate testenv
 
 elif [[ "$DISTRIB" == "ubuntu" ]]; then
-    # Use standard ubuntu packages in their default version
+    sudo apt-get install -y gfortran libopenblas-dev liblapack-dev python-numpy python-scipy python-matplotlib
 fi
 
 if [[ "$COVERAGE" == "true" ]]; then
