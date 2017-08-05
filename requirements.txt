@@ -17,7 +17,7 @@ tweepy>=3.5.0
 twython>=3.5.0
 wheel>=0.30.0a0
 gensim>=2.1.0,<3.0.0
--e git+git@github.com:totalgood/pugnlp.git@master#egg=pugnlp
+git+https://github.com/totalgood/pugnlp.git@master#egg=pugnlp
 
 
 # ###################################################
