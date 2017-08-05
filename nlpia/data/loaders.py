@@ -213,6 +213,11 @@ def get_data(name='sms-spam'):
         return read_json(os.path.join(DATA_PATH, name + '.json'))
     except IOError:
         pass
+    try:
+        with open(os.path.join(DATA_PATH, name + '.txt')) as fin:
+            return fin.read().split('\n')
+    except IOError:
+        pass
     msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, or .json'.format(name)
     logger.error(msg)
     raise IOError(msg)
