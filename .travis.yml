@@ -32,8 +32,8 @@ install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
 before_script:
-  - git config --global user.email "github@totalgood.com"
-  - git config --global user.name "Hobson Lane"
+  - git config --global user.email "travis_nlpia@totalgood.com"
+  - git config --global user.name "nlpia Travis tests"
 script:
   - python setup.py test
 after_success:
