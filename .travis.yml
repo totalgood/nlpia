@@ -7,7 +7,7 @@ virtualenv:
   system_site_packages: true
 env:
   matrix:
-    - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
+    # - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"  # ipython 6.0 install fails, must install LTS release 5.0 for 2.7
     # - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     # - DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
     - DISTRIB="conda" PYTHON_VERSION="3.5" COVERAGE="false"
@@ -29,6 +29,7 @@ addons:
       # - python3-matplotlib
 install:
   - source tests/travis_install.sh
+  - pip install --upgrade pip
   - pip install -r requirements.txt
 before_script:
   - git config --global user.email "travis.nlpia@totalgood.com"
