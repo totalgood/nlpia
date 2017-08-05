@@ -1,8 +1,7 @@
 # Travis configuration file using the build matrix feature
 # Read more under http://docs.travis-ci.com/user/build-configuration/
-# THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
 
-sudo: false
+sudo: true
 language: python
 virtualenv:
   system_site_packages: true
