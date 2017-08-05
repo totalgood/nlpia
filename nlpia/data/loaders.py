@@ -10,7 +10,7 @@ import requests
 from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH
 
 from tqdm import tqdm
-from pugnlp.futil import path_status
+from pugnlp.futil import path_status, find_files
 import pandas as pd
 import tarfile
 
@@ -28,24 +28,24 @@ BIG_URLS = {
     'w2v': (
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
         1647046227,
-        ),
+    ),
     'slang': (
         'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
         117633024,
-        ),
+    ),
     'tweets': (
         'https://www.dropbox.com/s/5gpb43c494mc8p0/tweets.csv.gz?dl=1',
         311725313,
-        ),
+    ),
     'lsa_tweets': (
         'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1',
         3112841563,  # 3112841312,
-        ),
+    ),
     'imdb': (
         'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
         3112841563,  # 3112841312,
-        ),
-    }
+    ),
+}
 DATA_NAMES = {
     'pointcloud': os.path.join(DATA_PATH, 'pointcloud.csv.gz')
 }
@@ -68,8 +68,9 @@ def untar(fname):
 
 
 for filename in TEXTS:
-    with open(os.path.join(DATA_PATH, filename)) as f:
-        locals()[filename.split('.')[0]] = f.read()
+    with open(os.path.join(DATA_PATH, filename)) as fin:
+        locals()[filename.split('.')[0]] = fin.read()
+del fin
 
 
 def read_csv(*args, **kwargs):
@@ -198,27 +199,47 @@ def get_wikidata_qnum(wikiarticle, wikisite):
     return list(resp['entities'])[0]
 
 
+DATASET_FILENAMES = [f['name'] for f in find_files(DATA_PATH, '.csv.gz')]
+DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.csv')]
+DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.json')]
+DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.txt')]
+DATASET_NAMES = [f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]]
+DATASET_NAME2FILENAME = dict(zip(DATASET_NAMES, DATASET_FILENAMES))
+
+
 def get_data(name='sms-spam'):
-    if name == 'cities1000':
-        return load_geonames(os.path.join(DATA_PATH, 'cities1000.txt'))
-    try:
-        return read_csv(os.path.join(DATA_PATH, name + '.csv.gz'))
-    except IOError:
-        pass
-    try:
-        return read_csv(os.path.join(DATA_PATH, name + '.csv'))
-    except IOError:
-        pass
-    try:
-        return read_json(os.path.join(DATA_PATH, name + '.json'))
-    except IOError:
-        pass
-    try:
-        with open(os.path.join(DATA_PATH, name + '.txt')) as fin:
-            return fin.read().split('\n')
-    except IOError:
-        pass
-    msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, or .json'.format(name)
+    """ Load data from a json, csv, or txt file if it exists in the data dir.
+
+    >>> from nlpia.data.loaders import get_data
+    >>> words = get_data('words_ubuntu_us')
+    >>> len(words)
+    99171
+    >>> words[:8]
+    ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
+    """
+    if name in DATASET_NAME2FILENAME:
+        if name == 'cities1000':
+            return load_geonames(os.path.join(DATA_PATH, name + '.txt'))
+        try:
+            return read_csv(os.path.join(DATA_PATH, name + '.csv.gz'))
+        except IOError:
+            pass
+        try:
+            return read_csv(os.path.join(DATA_PATH, name + '.csv'))
+        except IOError:
+            pass
+        try:
+            return read_json(os.path.join(DATA_PATH, name + '.json'))
+        except IOError:
+            pass
+        try:
+            with open(os.path.join(DATA_PATH, name + '.txt')) as fin:
+                return fin.read().split('\n')
+        except IOError:
+            pass
+
+    msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, .json, or .txt\n'.format(name)
+    msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
     logger.error(msg)
     raise IOError(msg)
 
