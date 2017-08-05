@@ -21,7 +21,7 @@ import argparse
 import sys
 import logging
 
-from nlp_in_action import __version__
+from nlpia import __version__
 
 __author__ = "Hobson Lane"
 __copyright__ = "Hobson Lane"
