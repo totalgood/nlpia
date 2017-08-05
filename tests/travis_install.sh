@@ -29,7 +29,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
     source activate testenv
 
 elif [[ "$DISTRIB" == "ubuntu" ]]; then
-    sudo apt-get install -y gfortran libopenblas-dev liblapack-dev python-numpy python-scipy python-matplotlib
+    echo "installing packages in .travis.yml"
 fi
 
 if [[ "$COVERAGE" == "true" ]]; then

@@ -17,12 +17,22 @@ addons:
     packages:
       - git
       - python-pip
+      - gfortran
+      - libopenblas-dev
+      - liblapack-dev
+      - python-numpy
+      - python-scipy
+      - python-matplotlib
+      - python3-pip
+      - python3-numpy
+      - python3-scipy
+      - python3-matplotlib
 install:
   - source tests/travis_install.sh
   - pip install -r requirements.txt
 before_script:
-  - git config --global user.email "you@example.com"
-  - git config --global user.name "Your Name"
+  - git config --global user.email "github@totalgood.com"
+  - git config --global user.name "Hobson Lane"
 script:
   - python setup.py test
 after_success:
