@@ -1,10 +1,11 @@
 """ Translate documents in some way, like `sed`, only a bit more complex """
 import requests
 import re
+import json
 
 from pugnlp.futil import find_files
 
-from constants import secrets
+from .constants import secrets
 
 
 def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified', access_token=None):
@@ -61,3 +62,38 @@ def segment_sentences(filepath, ext='asc'):
         with open(filemeta['path'], 'rt') as fin:
             for line in fin:
                 altered_text += line
+
+
+def fix_hunspell_json(badjson_path='en_us.json', goodjson_path='en_us_fixed.json'):
+    """Fix the invalid hunspellToJSON.py json format by inserting double-quotes in list of affix strings
+
+    Args:
+      badjson_path (str): path to input json file that doesn't properly quote
+      goodjson_path (str): path to output json file with properly quoted strings in list of affixes
+
+    Returns:
+      list of all words with all possible affixes in *.txt format (simplified .dic format)
+
+    References:
+      Syed Faisal Ali 's Hunspell dic parser: https://github.com/SyedFaisalAli/HunspellToJSON
+    """
+    with open(badjson_path, 'r') as fin:
+        with open(goodjson_path, 'w') as fout:
+            for i, line in enumerate(fin):
+                line2 = re.sub(r'\[(\w)', r'["\1', line)
+                line2 = re.sub(r'(\w)\]', r'\1"]', line2)
+                line2 = re.sub(r'(\w),(\w)', r'\1","\2', line2)
+                fout.write(line2)
+
+    with open(goodjson_path, 'r') as fin:
+        words = []
+        with open(goodjson_path + '.txt', 'w') as fout:
+            hunspell = json.load(fin)
+            for word, affixes in hunspell['words'].items():
+                words += [word]
+                fout.write(word + '\n')
+                for affix in affixes:
+                    words += [affix]
+                    fout.write(affix + '\n')
+
+    return words

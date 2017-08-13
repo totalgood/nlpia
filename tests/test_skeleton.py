@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from nlp_in_action.skeleton import fib
+from nlpia.skeleton import fib
 
 __author__ = "Hobson Lane"
 __copyright__ = "Hobson Lane"
