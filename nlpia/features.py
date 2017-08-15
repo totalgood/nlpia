@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-def optimize_feature_exponents(df, output_column_name=None, exponents=[2., 1., .8, .5, .25, .1, .01]):
+def optimize_feature_power(df, output_column_name=None, exponents=[2., 1., .8, .5, .25, .1, .01]):
     """ Plot the correlation coefficient for various exponential scalings of input features
 
     >>> np.random.seed(314159)
@@ -11,7 +11,7 @@ def optimize_feature_exponents(df, output_column_name=None, exponents=[2., 1., .
     >>> df['x10'] = df.output * 10
     >>> df['sq'] = df.output ** 2
     >>> df['sqrt'] = df.output ** .5
-    >>> optimize_feature_exponents(df, output_column_name='output').round(2)
+    >>> optimize_feature_power(df, output_column_name='output').round(2)
             x10    sq  sqrt
     power
     2.00  -0.08  1.00  0.83
