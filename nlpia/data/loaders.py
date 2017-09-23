@@ -11,6 +11,7 @@ from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH
 
 from tqdm import tqdm
 from pugnlp.futil import path_status, find_files
+from pugnlp.constants import MAX_INT64 as MAX_INT
 import pandas as pd
 import tarfile
 
@@ -203,12 +204,17 @@ DATASET_FILENAMES = [f['name'] for f in find_files(DATA_PATH, '.csv.gz')]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.csv')]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.json')]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.txt')]
-DATASET_NAMES = [f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]]
+DATASET_NAMES = sorted([f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]])
 DATASET_NAME2FILENAME = dict(zip(DATASET_NAMES, DATASET_FILENAMES))
 
 
 def get_data(name='sms-spam'):
     """ Load data from a json, csv, or txt file if it exists in the data dir.
+
+    References:
+      [cities_air_pollution_index](https://www.numbeo.com/pollution/rankings.jsp)
+      [cities](http://download.geonames.org/export/dump/cities.zip)
+      [cities_us](http://download.geonames.org/export/dump/cities_us.zip)
 
     >>> from nlpia.data.loaders import get_data
     >>> words = get_data('words_ubuntu_us')
@@ -218,8 +224,8 @@ def get_data(name='sms-spam'):
     ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
     """
     if name in DATASET_NAME2FILENAME:
-        if name == 'cities1000':
-            return load_geonames(os.path.join(DATA_PATH, name + '.txt'))
+        # if name == 'cities1000':
+        #     return load_geonames(os.path.join(DATA_PATH, name + '.txt'))
         try:
             return read_csv(os.path.join(DATA_PATH, name + '.csv.gz'))
         except IOError:
@@ -242,6 +248,22 @@ def get_data(name='sms-spam'):
     msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
     logger.error(msg)
     raise IOError(msg)
+
+
+def str2int(s):
+    s = ''.join(c for c in s if c in '0123456789')
+    return int(s or - MAX_INT)
+
+
+def clean_toxoplasmosis(url='http://www.rightdiagnosis.com/t/toxoplasmosis/stats-country.htm'):
+    dfs = pd.read_html('http://www.rightdiagnosis.com/t/toxoplasmosis/stats-country.htm', header=0)
+    df = dfs[0].copy()
+    df.columns = normalize_column_names(df.columns)
+    df = df.dropna().copy()
+    df['extrapolated_prevalence'] = df['extrapolated_prevalence'].apply(str2int)
+    df['population_estimated_used'] = df['population_estimated_used'].apply(str2int)
+    df['frequency'] = df.extrapolated_prevalence.astype(float) / df.population_estimated_used
+    return df
 
 
 def load_geonames(path='http://download.geonames.org/export/dump/cities1000.zip'):
@@ -277,10 +299,16 @@ def load_geonames(path='http://download.geonames.org/export/dump/cities1000.zip'
     """
     columns = ['geonameid', 'name', 'asciiname', 'alternatenames', 'latitude', 'longitude', 'feature class', 'feature code', 'country code']
     columns += ['cc2', 'admin1_code', 'admin2_code', 'admin3_code', 'admin4_code', 'population', 'elevation', 'dem', 'timezone', 'modification date']
-    columns = [c.lower().replace(' ', '_') for c in columns]
+    columns = normalize_column_names(columns)
     df = pd.read_csv(path, sep='\t', index_col=None, low_memory=False, header=None)
     df.columns = columns
     return df
+
+
+def normalize_column_names(df):
+    columns = df.columns if hasattr(df, 'columns') else df
+    columns = [c.lower().replace(' ', '_') for c in columns]
+    return columns
 
 
 def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz'):
