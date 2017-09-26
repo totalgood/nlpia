@@ -59,6 +59,8 @@ W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
 
+DATA_INFO = pd.read_csv(os.path.join(DATA_PATH, 'data_info.csv'))
+
 
 def untar(fname):
     if fname.endswith("tar.gz"):
@@ -81,7 +83,10 @@ def read_csv(*args, **kwargs):
     """
     index_names = ('Unnamed: 0', 'pk', 'index', '')
     kwargs.update({'low_memory': False})
-    df = pd.read_csv(*args, **kwargs)
+    if isinstance(args[0], pd.DataFrame):
+        df = args[0]
+    else:
+        df = pd.read_csv(*args, **kwargs)
     if ((df.columns[0] in index_names or (df[df.columns[0]] == df.index).all()) or
         (df[df.columns[0]] == np.arange(len(df))).all() or
         ((df.index == np.arange(len(df))).all() and str(df[df.columns[0]].dtype).startswith('int') and
@@ -121,6 +126,13 @@ def dropbox_basename(url):
 
 
 def download(names=None, verbose=True):
+    """ Download files or HTML tables listed in `names` and save them to DATA_PATH/`names`.csv
+
+    Uses table in data_info.csv to determin URL or file path from name.
+
+    TODO: if name is a valid URL then download it and create a name
+          and store the name: url in data_info.csv before downloading
+    """
     names = [names] if isinstance(names, (str, bytes)) else names
     names = names or BIG_URLS.keys()
     file_paths = {}
@@ -134,6 +146,11 @@ def download(names=None, verbose=True):
             if file_paths[name].endswith('.tar.gz'):
                 untar(file_paths[name])
             file_paths[name] = file_paths[name][:-7]  # FIXME: rename tar.gz file so that it mimics contents
+        else:
+            df = pd.read_html(DATA_INFO['url'][name], **DATA_INFO['downloader_kwargs'][name])[-1]
+            df.columns = clean_columns(df.columns)
+            file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
+            df.to_csv(file_paths[name])
     return file_paths
 
 
