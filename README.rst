@@ -11,3 +11,11 @@ Description
 
 A community-developed book about building Natural Language Processing pipelines for prosocial chatbots that contribute to communities.
 
+Getting Started
+===============
+
+    > pip install -r requirements.txt
+
+    > pip install -r test-requirements.txt
+
+
