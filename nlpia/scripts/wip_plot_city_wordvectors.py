@@ -6,6 +6,9 @@ from seaborn import plt
 from gensim.models.word2vec import Word2Vec
 from sklearn.manifold import TSNE
 import pandas as pd
+import re
+from pugnlp.util import clean_columns, remove_invalid_chars
+
 capitals = pd.read_html('https://en.wikipedia.org/wiki/List_of_capitals_in_the_United_States')[0]
 import pickle
 pickle.load(open('/data/nlpia/tsne_world_cities_w2v.pickle2', 'rb'))
@@ -141,18 +144,6 @@ capitals['population_2010_metro'] = capitals.notes.astype(int)
 capitals['population_2010_metro'] = capitals.notes.astype(float)
 capitals['population_2010_rank'] = capitals.unnamed_8.astype(int)
 ''.join(re.findall('\w', '\thello_w orld& '))
-import re
-''.join(re.findall('\w', '\thello_w orld& '))
-def remove_invalid_chars(str_or_seq, valid_regex=r'\w'):
-    seq = [str_or_seq] if isinstance(str_or_seq, str) else str_or_seq
-    seq = [''.join(re.findall(valid_regex, s)) for s in str_or_seq]
-    return seq if isinstance(str_or_seq, str) else str_or_seq[0]
-
-
-def clean_columns(columns, valid_regex=r'\w', lower=True):
-    columns = [re.sub('\s', '_', c).lower() for c in columns]
-    columns = remove_invalid_chars(columns, valid_chars=r'\w')
-    return columns
 capitals
 capitals.columns = clean_columns(capitals.columns)
 %paste
