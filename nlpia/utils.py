@@ -8,10 +8,10 @@ import pandas as pd
 from sklearn.manifold import TSNE
 from gensim.models.word2vec import Word2Vec
 
-from pugnlp import find_files
+from pugnlp.futil import find_files
 
-from nlpia.constants import secrets
-from nlpia.data import get_data, DATA_PATH
+from nlpia.constants import secrets, DATA_PATH
+from nlpia.data import get_data
 
 
 def stdout_logging(loglevel=logging.INFO):
