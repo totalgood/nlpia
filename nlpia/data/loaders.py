@@ -42,6 +42,14 @@ BIG_URLS = {
         'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1',
         3112841563,  # 3112841312,
     ),
+    'lsa_tweets_pickle': (
+        'https://www.dropbox.com/s/7k0nvl2dx3hsbqp/lsa_tweets_5589798_2003588x200.pkl.projection.u.npy?dl=1',
+        2990000000,
+    ),
+    'ubuntu_dialog': (
+        'https://www.dropbox.com/s/krvi79fbsryytc2/ubuntu_dialog.csv.gz?dl=1',
+        296098788,  # 3112841312,
+    ),
     'imdb': (
         'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
         3112841563,  # 3112841312,
