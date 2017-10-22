@@ -14,6 +14,13 @@ A community-developed book about building Natural Language Processing pipelines 
 Getting Started
 ===============
 
+1. Download [Python](https://www.python.org/downloads/)  
+2. From terminal:
+
+    > sudo easy_install pip
+    
+    > sudo xcodebuild -license
+
     > pip install -r requirements.txt
 
     > pip install -r test-requirements.txt
