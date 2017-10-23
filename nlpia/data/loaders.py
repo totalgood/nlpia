@@ -40,7 +40,7 @@ BIG_URLS = {
     ),
     'lsa_tweets': (
         'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1',
-        3112841563,  # 3112841312,
+        3112841563,
     ),
     'lsa_tweets_pickle': (
         'https://www.dropbox.com/s/7k0nvl2dx3hsbqp/lsa_tweets_5589798_2003588x200.pkl.projection.u.npy?dl=1',
@@ -48,7 +48,7 @@ BIG_URLS = {
     ),
     'ubuntu_dialog': (
         'https://www.dropbox.com/s/krvi79fbsryytc2/ubuntu_dialog.csv.gz?dl=1',
-        296098788,  # 3112841312,
+        296098788,
     ),
     'imdb': (
         'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
@@ -142,7 +142,7 @@ def download(names=None, verbose=True):
           and store the name: url in data_info.csv before downloading
     """
     names = [names] if isinstance(names, (str, bytes)) else names
-    names = names or BIG_URLS.keys()
+    # names = names or list(BIG_URLS.keys())  # download them all, if none specified!
     file_paths = {}
     for name in names:
         name = name.lower().strip()
@@ -180,7 +180,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
 
     stat = path_status(file_path)
     print('local size: {}'.format(stat.get('size', None)))
-    if stat['type'] == 'file' and stat['size'] == size:  # TODO: check md5 or get the right size of remote file
+    if stat['type'] == 'file' and stat['size'] >= size:  # TODO: check md5 or get the right size of remote file
         r.close()
         return file_path
 
@@ -194,6 +194,53 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     r.close()
     return file_path
 
+
+def read_named_csv(name, data_path=DATA_PATH):
+    try:
+        return read_csv(os.path.join(data_path, name + '.csv.gz'))
+    except IOError:
+        pass
+    try:
+        return read_csv(os.path.join(data_path, name + '.csv'))
+    except IOError:
+        pass
+    try:
+        return read_json(os.path.join(data_path, name + '.json'))
+    except IOError:
+        pass
+    try:
+        with open(os.path.join(BIGDATA_PATH, name + '.txt')) as fin:
+            return fin.read().split('\n')
+    except IOError:
+        pass
+
+
+def get_data(name='sms-spam'):
+    """ Load data from a json, csv, or txt file if it exists in the data dir.
+
+    References:
+      [cities_air_pollution_index](https://www.numbeo.com/pollution/rankings.jsp)
+      [cities](http://download.geonames.org/export/dump/cities.zip)
+      [cities_us](http://download.geonames.org/export/dump/cities_us.zip)
+
+    >>> from nlpia.data.loaders import get_data
+    >>> words = get_data('words_ubuntu_us')
+    >>> len(words)
+    99171
+    >>> words[:8]
+    ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
+    """
+    if name in BIG_URLS:
+        print('Downloading {}'.format(name))
+        download(name)
+        return read_named_csv(name, data_path=BIGDATA_PATH)
+    elif name in DATASET_NAME2FILENAME:
+        return read_named_csv(name, data_path=DATA_PATH)
+
+    msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, .json, or .txt\n'.format(name)
+    msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
+    logger.error(msg)
+    raise IOError(msg)
 
 def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1, 5)], header=0, index_col=None):
     """Like pandas.read_csv, but loads and concatenates (df.append(df)s) DataFrames together"""
@@ -231,48 +278,6 @@ DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.json')]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.txt')]
 DATASET_NAMES = sorted([f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]])
 DATASET_NAME2FILENAME = dict(zip(DATASET_NAMES, DATASET_FILENAMES))
-
-
-def get_data(name='sms-spam'):
-    """ Load data from a json, csv, or txt file if it exists in the data dir.
-
-    References:
-      [cities_air_pollution_index](https://www.numbeo.com/pollution/rankings.jsp)
-      [cities](http://download.geonames.org/export/dump/cities.zip)
-      [cities_us](http://download.geonames.org/export/dump/cities_us.zip)
-
-    >>> from nlpia.data.loaders import get_data
-    >>> words = get_data('words_ubuntu_us')
-    >>> len(words)
-    99171
-    >>> words[:8]
-    ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
-    """
-    if name in DATASET_NAME2FILENAME:
-        # if name == 'cities1000':
-        #     return load_geonames(os.path.join(DATA_PATH, name + '.txt'))
-        try:
-            return read_csv(os.path.join(DATA_PATH, name + '.csv.gz'))
-        except IOError:
-            pass
-        try:
-            return read_csv(os.path.join(DATA_PATH, name + '.csv'))
-        except IOError:
-            pass
-        try:
-            return read_json(os.path.join(DATA_PATH, name + '.json'))
-        except IOError:
-            pass
-        try:
-            with open(os.path.join(DATA_PATH, name + '.txt')) as fin:
-                return fin.read().split('\n')
-        except IOError:
-            pass
-
-    msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, .json, or .txt\n'.format(name)
-    msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
-    logger.error(msg)
-    raise IOError(msg)
 
 
 def str2int(s):
