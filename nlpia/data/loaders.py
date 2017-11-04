@@ -94,6 +94,7 @@ def read_csv(*args, **kwargs):
     if isinstance(args[0], pd.DataFrame):
         df = args[0]
     else:
+        print('Reading CSV with `read_csv(*{}, **{})`...'.format(args, kwargs))
         df = pd.read_csv(*args, **kwargs)
     if ((df.columns[0] in index_names or (df[df.columns[0]] == df.index).all()) or
         (df[df.columns[0]] == np.arange(len(df))).all() or
@@ -152,6 +153,7 @@ def download(names=None, verbose=True):
                                              size=BIG_URLS[name][1],
                                              verbose=verbose)
             if file_paths[name].endswith('.tar.gz'):
+                print('Extracting {}'.format(file_paths[name]))
                 untar(file_paths[name])
             file_paths[name] = file_paths[name][:-7]  # FIXME: rename tar.gz file so that it mimics contents
         else:

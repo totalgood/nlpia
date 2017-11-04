@@ -1,15 +1,18 @@
 """ Translate documents in some way, like `sed`, only a bit more complex """
+import os
 import requests
 import re
 import json
 
 from pugnlp.futil import find_files
 
-from .constants import secrets
+from .constants import secrets, DATA_PATH
 
 
 def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified', access_token=None):
-    """ Use bitly or similar minifier to shrink all URLs in text files within a folder structure, like the NLPIA manuscript directory
+    """ Use bitly or similar minifier to shrink all URLs in text files within a folder structure.
+
+    Used for the NLPIA manuscript directory for Manning Publishing
 
     bitly API: https://dev.bitly.com/links.html
 
@@ -34,7 +37,8 @@ def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified'
             url = match.group()
             start = match.start()
             altered_text += text[:start]
-            resp = requests.get('https://api-ssl.bitly.com/v3/shorten?access_token={}&longUrl={}'.format(access_token, url))
+            resp = requests.get('https://api-ssl.bitly.com/v3/shorten?access_token={}&longUrl={}'.format(
+                access_token, url))
             js = resp.json()
             short_url = js['shortUrl']
             altered_text += short_url
@@ -43,6 +47,35 @@ def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified'
         with open(filemeta['path'] + (output_ext or ''), 'wt') as fout:
             fout.write(altered_text)
     return altered_text
+
+
+class TokenNormalizer:
+
+    def __init__(self, mapping=None):
+        self.mapping = {}
+        if mapping is None or (isinstance(mapping, str) and os.path.isfile(mapping)):
+            self.mapping = self.read_mapping(mapping)
+        elif hasattr(mapping, 'get') and hasattr(mapping, '__getitem__'):
+            self.mapping = mapping
+
+    def read_mapping(self, file_path=None):
+        if file_path is None:
+            file_path = os.path.join(DATA_PATH, 'emnlp_dict.txt')
+        reg = re.compile("^([^\t\n]+)\t([^\t\n]+)\n$")
+        result = {}
+        with open(file_path) as f:
+            for line in f:
+                m = reg.match(line)
+                if m is not None:
+                    result[m.group(1)] = m.group(2)
+                else:
+                    print('WARN: TokenNormalizer.read_mapping() skipped: {}'.format(repr(line)))
+        return result
+
+    def normalize(self, word):
+        if word in self.dict:
+            return self.dict[word]
+        return word
 
 
 def segment_sentences(filepath, ext='asc'):
