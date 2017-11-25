@@ -26,6 +26,7 @@ annoy>=1.9.5,<2.0.0
 will>=1.0.2,<1.1.0
 ChatterBot>=0.7.6,<0.8.0
 lxml>=4.1.0,<4.2.0
+aiml>=0.8.6,<0.9.0
 # git+https://github.com/totalgood/pugnlp.git@master#egg=pugnlp
 
 
