@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<aiml version="2.0">
+<aiml version="1.0">
 <category>
-    <pattern>HI</pattern>
-<template>Hi!</template>
+    <pattern>HELLO</pattern>
+    <template>Hi Human, How are you?</template>
 </category>
-<category>
-    <pattern>[HELLO HI YO YOH YO'] [ROSA ROSE CHATTY CHATBOT BOT CHATTERBOT]</pattern>
-    <template>Hi , How are you?</template>
+<category> 
+    <pattern>HELLO *</pattern> 
+    <template><srai>HELLO</srai> <sr/> </template> 
 </category>
-<category>
-    <pattern>[HELLO HI YO YOH YO' 'SUP SUP OK HEY] [HAL YOU U]</pattern>
-    <template>Good one.</template>
-</category>
+<category><pattern>HELLO ROSA</pattern><template>Hi Human, How are you?</template></category>
+<category><pattern>HELLO ROSE</pattern><template>Hi Human, How are you?</template></category>
+<category><pattern>HELLO CHATTY</pattern><template>Hi Human, How are you?</template></category>
+<category><pattern>HELLO CHATBOT</pattern><template>Hi Human, How are you?</template></category>
+<category><pattern>HELLO ROSE</pattern><template>Hi Human, How are you?</template></category>
+<category><pattern>HI</pattern><template><srai>HELLO</srai></template></category>
+<category><pattern>YO</pattern><template><srai>HELLO</srai></template></category>
+<category><pattern>YOH</pattern><template><srai>HELLO</srai></template></category>
+<category><pattern>YO'</pattern><template><srai>HELLO</srai></template></category>
+<category><pattern>YO'</pattern><template><srai>HELLO</srai></template></category>
 </aiml>
