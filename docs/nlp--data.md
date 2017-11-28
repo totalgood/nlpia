@@ -9,10 +9,18 @@ Lexica are collections of words like dictionaries, thesauruses, N-gram collectio
 
 - [niderhoff list of NLP datasets](https://github.com/niderhoff/nlp-datasets)
 
+## Dialog Corpora
+
+- [Deep Mind Q&A Dialog Corpus](https://cs.nyu.edu/~kcho/DMQA/)
+- [Twitter post dialog (1 GB/mo scraper)](https://github.com/Marsan-Ma/twitter_scraper)
+- [Reddit comment dialog (.5 TB bz2)](http://files.pushshift.io/reddit/comments/)
+- [Ubuntu IRC dialog (.5 GB tgz)](http://dataset.cs.mcgill.ca/ubuntu-corpus-1.0/)
+- [Supreme Court law dialog (80 MB .zip)](http://scdb.wustl.edu/data.php)
+- [Cornel-labeled movie dialog (300k utterances, 10 MB .gz)](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html)
+
 ## Corpora
 
 - [keyword extraction datasets](https://github.com/zelandiya/keyword-extraction-datasets)
-- [Cornell movie dialog corpus](https://github.com/suriyadeepan/datasets/tree/master/seq2seq/cornell_movie_corpus)
 - [Manually Annotated Sub-Corpus (MASC) for American English](http://www.anc.org/data/masc/downloads/data-download/)
 - [PCAP packet logs](http://pen-testing.sans.org/holiday-challenge/2013)
 - Twitter [Bullying Traces Data Set](http://research.cs.wisc.edu/bullying/data.html)
