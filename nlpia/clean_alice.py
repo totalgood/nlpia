@@ -1,3 +1,7 @@
+import zipfile
+from nlpia.constant import DATA_PATH
+
+
 f = zipfile.ZipFile('aiml-en-us-foundation-alice.v1-9.zip')
 with f.open() as fin:
     for line in fin:
@@ -19,3 +23,11 @@ for name in f.namelist():
         if happyending != (i, line):
             print('!!!!BAD: ' + name)
             print(i, line)
+
+
+def extract_alice():
+    f = zipfile.ZipFile('aiml-en-us-foundation-alice.v1-9.zip')
+    for name in f.namelist():
+        if '.hg/' in name:
+            continue
+        f.extract(name, path=DATA_PATH)
