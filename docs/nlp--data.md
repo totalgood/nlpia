@@ -31,14 +31,41 @@ Lexica are collections of words like dictionaries, thesauruses, N-gram collectio
 
 ## Lexica
 
-- [All Top Level Domains (for URI regexes)](https://domainpunch.com/tlds/)
+Lexica are lists of words that can be used in:
+
+- spell checkers
+- regular expressions
+- ML classifiers that recognize kinds of words
+- lemmatizers, stemmers, and tokenizers
+- machine learning systems that predict string labels like part of speech (POS)
+- whether it's a URL, or whether it's a proper word spelling in a particular language or dialect.
+
+- [All Top Level Domains (great for regexes that recognize URIs or URLs)](https://domainpunch.com/tlds/)
+- [GNU `aspell` Dictionaries in various languages](ftp://ftp.gnu.org/gnu/aspell/dict/0index.html)
+- [SCOWL word lists](http://wordlist.aspell.net/)
+- [WordNet](http://wordnet.princeton.edu/)
+- [dict.org gcide dictionary with definitions](ftp://ftp.gnu.org/gnu/gcide)
+
 ### Password Cracking Dictionaries
 
 **!!BE CAREFUL!!**
 
-[word lists for password cracking](https://hashcat.net/forum/thread-1236.html) 
-[Crack Station 15GB password list](https://crackstation.net/buy-crackstation-wordlist-password-cracking-dictionary.htm) <--donate at your own risk
+Password cracking may be illegal in your jurisdiction and the websites that support are often run by people with hacking and cracking "skilz".
+So they may try to exploit OS and browser bugs to "own" your machine if you visit these websites.
+Some compression formats and implementations have vulnerabilities that allow hackers to run software on your machine when you decompress them.  I've downloaded these files without noticable adverse affects... but a good hack wouldn't be "noticeable" by me. 
 
+- [word lists for password cracking](https://hashcat.net/forum/thread-1236.html)
+- [Crack Station 15GB password list](https://crackstation.net/buy-crackstation-wordlist-password-cracking-dictionary.htm) <--donate at your own risk
+
+## AIML (Patterns & Templates)
+
+Open source Artificial Intelligence Markup Language (AIML) files are a great way to give your chatbot a [head start](https://eclkc.ohs.acf.hhs.gov/) in its education:
+Though AIML files are referred to as "knowledge bases" by AIML's creators, it's really just a way to specify and share NLP grammars and response templates.
+So you can use them anywhere you need grammars or templates.
+
+- Loebner Prize-winning Mitsuku [AIML files](http://www.square-bear.co.uk/aiml) 
+- The first AIML-based chatbot, [ALICE](https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/aiml-en-us-foundation-alice/aiml-en-us-foundation-alice.v1-9.zip)
+- [ALICE AIML files for other languages](http://www.alicebot.org/downloads/sets.html)
 
 ## Trained Models
 
