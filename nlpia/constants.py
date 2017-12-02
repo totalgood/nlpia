@@ -1,6 +1,6 @@
 from __future__ import print_function, unicode_literals, division, absolute_import
 from future import standard_library
-standard_library.install_aliases()  # noqa: Counter, OrderedDict, 
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 from builtins import *  # noqa
 
 import logging
@@ -29,13 +29,6 @@ LOGGING_CONFIG = {
     },
 
     'handlers': {
-        'logging.handlers.SysLogHandler': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.SysLogHandler',
-            'facility': 'local7',
-            'formatter': 'django',
-            'address': '/dev/log',
-        },
         'console': {
             'class': 'logging.StreamHandler',
             'level': 'DEBUG',
@@ -46,13 +39,30 @@ LOGGING_CONFIG = {
 
     'loggers': {
         'loggly': {
-            'handlers': ['console', 'logging.handlers.SysLogHandler'],
+            'handlers': ['console'],
             'propagate': True,
             'format': 'django: %(message)s',
             'level': 'DEBUG',
         },
     },
 }
+
+
+SYSLOG_PATH = '/dev/log' if os.path.isdir('/dev/log') else None
+
+
+# for Django apps
+# set up syslogger for loggly if the /dev socket path is available
+if SYSLOG_PATH:
+    LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.SysLogHandler']
+    LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler']: {
+        'level': 'DEBUG',
+        'class': 'logging.handlers.SysLogHandler',
+        'facility': 'local7',
+        'formatter': 'django',
+        'address': '/dev/log',
+    }
+
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
