@@ -55,7 +55,7 @@ SYSLOG_PATH = '/dev/log' if os.path.isdir('/dev/log') else None
 # set up syslogger for loggly if the /dev socket path is available
 if SYSLOG_PATH:
     LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.SysLogHandler']
-    LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler']: {
+    LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler'] = {
         'level': 'DEBUG',
         'class': 'logging.handlers.SysLogHandler',
         'facility': 'local7',
