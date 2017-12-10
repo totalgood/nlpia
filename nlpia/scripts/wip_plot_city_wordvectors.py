@@ -217,13 +217,8 @@ us['state_'] = us.state.str.replace(' ', '_').str.strip()
 us['city_'] = us.city.str.replace(' ', '_').str.strip()
 us300 = pd.DataFrame([model.wv[a] + model.wv[b] + model.wv[c]
                       for a, b, c in zip(us.city_, us.state_, us.state_abbreviation) if a in vocab], index=us.index)
-'South_Carolina' in vocab
-'South Carolina' in vocab
+
 'South Carolina' in model.wv
-us300 = pd.DataFrame([model.wv[a] + (model.wv[b] if b in vocab else zeros(300)) + model.wv[c]
-                      for a, b, c in zip(us.city_, us.state_, us.state_abbreviation) if a in vocab], index=us.index)
-us300 = pd.DataFrame([model.wv[a] + (model.wv[b] if b in vocab else pd.np.zeros(300)) + model.wv[c]
-                      for a, b, c in zip(us.city_, us.state_, us.state_abbreviation) if a in vocab], index=us.index)
 us300 = pd.DataFrame([[i] + list(model.wv[a] + (model.wv[b] if b in vocab else 0) + model.wv[c])
                       for a, b, c, i in zip(us.city_, us.state_, us.state_abbreviation, us.index) if a in vocab])
 us300.set_index(0, drop=True)
