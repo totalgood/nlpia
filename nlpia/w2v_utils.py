@@ -6,8 +6,9 @@ from builtins import object  # NOQA
 
 from gensim.models import Word2Vec
 
+
 class W2V(object):
     w2v = None
 
-    def __init__(self, path='/data/Googl'):
-
+    def __init__(self, path='/data/Google'):
+        pass

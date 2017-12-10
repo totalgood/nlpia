@@ -15,7 +15,7 @@ source:
 
 build:
   number: 0
-  script: python setup.py install --single-version-externally-managed --record=record.txt
+  script: cd /Users/hobs/src/nlpia && python setup.py install --single-version-externally-managed --record=record.txt
 
 requirements:
   build:

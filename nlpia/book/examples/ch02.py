@@ -1,4 +1,5 @@
 # Chapter 2 Code Examples
+import pandas as pd
 
 
 sentence = "Thomas Jefferson began building Monticello at the age of twenty-six."
@@ -6,7 +7,6 @@ sentence.split()
 # ['Thomas', 'Jefferson', 'began', 'building', 'Monticello', 'at', 'the', 'age', 'of', 'twenty-six.']
 
 # As you can see, this simple Python function already does a decent job tokenizing the example sentence. A couple more vanilla python statements and you can create numerical vector representations for each word.
-
 sorted(dict([(token, 1) for token in sentence.split()]).items())
 [('Jefferson', 1),
  ('Monticello', 1),
@@ -22,7 +22,7 @@ sorted(dict([(token, 1) for token in sentence.split()]).items())
 
 # A slightly better data structure
 
-import pandas as pd
+
 sentence = "Thomas Jefferson began building Monticello at the age of 26."
 df = pd.DataFrame(pd.Series(dict([(token, 1) for token in sentence.split()])), columns=['sent']).T
 df
@@ -32,19 +32,8 @@ df
 
 # And a pandas dataframe is great for holding multiple texts (sentences, tweets, or documents)
 sentences = "Construction was done mostly by local masons and carpenters.\n" \
-            "He moved into the South Pavilion in 1770.\n" \
-            "Turning Monticello into a neoclassical masterpiece in the Palladian style was his perennial project.\n" \
+    "He moved into the South Pavilion in 1770.\n" \
+    "Turning Monticello into a neoclassical masterpiece in the Palladian style was his perennial project.\n"
+
 for i, sent in enumerate(sentences.split('\n')):
-    df['sent{}'.format(i)] = dict([token, 1 for token in sent.split()])
-
-#       26.  Jefferson  Monticello  Thomas  age  at  began  building  of  the
-# sent    1          1           1       1    1   1      1         1   1    1
-
-
-# And a pandas dataframe is great for holding multiple texts (sentences, tweets, or documents)
-sentences = "Construction was done mostly by local masons and carpenters.\n" \
-            "He moved into the South Pavilion in 1770.\n" \
-            "Turning Monticello into a neoclassical masterpiece in the Palladian style was his perennial project.\n"
-for i, sent in enumerate(sentences.split('\n')):
-    df['sent{}'.format(i)] = dict([token, 1 for token in sent.split()])
-
+    df['sent{}'.format(i)] = dict([(token, 1) for token in sent.split()])

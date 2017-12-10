@@ -1,22 +1,20 @@
 topic = {}
 tfidf = dict(list(zip('cat dog apple lion NYC love'.split(), [1, 1, 1, 1, 1, 1])))
-topic['pet']     = (.3 * tfidf['cat']  + .3 * tfidf['dog'] +  0 * tfidf['apple']
-                  +  0 * tfidf['lion'] - .2 * tfidf['NYC'] + .2 * tfidf['love'])
-topic['animal']  = (.1 * tfidf['cat']  + .1 * tfidf['dog'] - .1 * tfidf['apple']
-                  + .5 * tfidf['lion'] + .1 * tfidf['NYC'] - .1 * tfidf['love'])
-topic['city']    = ( 0 * tfidf['cat']  - .1 * tfidf['dog'] + .2 * tfidf['apple']
-                  - .1 * tfidf['lion'] + .5 * tfidf['NYC'] + .1 * tfidf['love'])
-
+topic['pet'] = (.3 * tfidf['cat'] + .3 * tfidf['dog'] + 0 * tfidf['apple']
+                + 0 * tfidf['lion'] - .2 * tfidf['NYC'] + .2 * tfidf['love'])
+topic['animal'] = (.1 * tfidf['cat'] + .1 * tfidf['dog'] - .1 * tfidf['apple']
+                   + .5 * tfidf['lion'] + .1 * tfidf['NYC'] - .1 * tfidf['love'])
+topic['city'] = (0 * tfidf['cat'] - .1 * tfidf['dog'] + .2 * tfidf['apple']
+                 - .1 * tfidf['lion'] + .5 * tfidf['NYC'] + .1 * tfidf['love'])
 
 
 word_vector = {}
-word_vector['cat']   =  .3 * topic['pet'] + .1 * topic['animal'] +  0 * topic['city']
-word_vector['dog']   =  .3 * topic['pet'] + .1 * topic['animal'] - .1 * topic['city']
-word_vector['apple'] =   0 * topic['pet'] - .1 * topic['animal'] + .2 * topic['city']
-word_vector['lion']  =   0 * topic['pet'] + .5 * topic['animal'] - .1 * topic['city']
-word_vector['NYC']   = -.2 * topic['pet'] + .1 * topic['animal'] + .5 * topic['city']
-word_vector['love']  =  .2 * topic['pet'] - .1 * topic['animal'] + .1 * topic['city']
-
+word_vector['cat'] = .3 * topic['pet'] + .1 * topic['animal'] + 0 * topic['city']
+word_vector['dog'] = .3 * topic['pet'] + .1 * topic['animal'] - .1 * topic['city']
+word_vector['apple'] = 0 * topic['pet'] - .1 * topic['animal'] + .2 * topic['city']
+word_vector['lion'] = 0 * topic['pet'] + .5 * topic['animal'] - .1 * topic['city']
+word_vector['NYC'] = -.2 * topic['pet'] + .1 * topic['animal'] + .5 * topic['city']
+word_vector['love'] = .2 * topic['pet'] - .1 * topic['animal'] + .1 * topic['city']
 
 
 import pandas as pd
@@ -32,7 +30,6 @@ df2d.plot(kind='scatter', x='x', y='y')
 plt.show()
 
 
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.tokenize.casual import casual_tokenize
 from nlpia.data import get_data
@@ -45,14 +42,12 @@ sms.head(3)
 # 2     1  Free entry in 2 a wkly comp to win FA Cup fina...
 
 
-
 tfidf = TfidfVectorizer(tokenizer=casual_tokenize)
 tfidf_docs = tfidf.fit_transform(raw_documents=sms.text).toarray()
 tfidf_docs.shape
 # (4837, 9232)
 sms.spam.sum()
 # 638
-
 
 
 from sklearn.decomposition import PCA
@@ -72,9 +67,9 @@ pca_topic_vectors.head()
 
 # # can't replicate this or find the svddists code
 import numpy as np
-df = pd.DataFrame(np.array([svddists.reshape(len(sms)),pcadists.reshape(len(sms)),sms.spam]).T,
+df = pd.DataFrame(np.array([svddists.reshape(len(sms)), pcadists.reshape(len(sms)), sms.spam])).T,
 # ...              columns='SVD_dist_to_doc3 PCA_dist_to_doc3 spam'.split())
-df.corr()  <1>
+df.corr()  # < 1 >
 #                   SVD_dist_to_doc3  PCA_dist_to_doc3      spam
 # SVD_dist_to_doc3          1.000000          0.862478 -0.591911
 # PCA_dist_to_doc3          0.862478          1.000000 -0.595148

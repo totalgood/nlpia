@@ -55,5 +55,6 @@ nlpia/data/*.zip
 # OSX
 .DS_STore
 
-# conda
+# Anaconda conda
 envs/
+record.txt
