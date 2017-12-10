@@ -50,6 +50,10 @@ nlpia/bigdata/*
 nlpia/data/*.gz
 nlpia/data/*.bz2
 nlpia/data/*.xz
+nlpia/data/*.zip
 
 # OSX
 .DS_STore
+
+# conda
+envs/

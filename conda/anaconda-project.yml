@@ -1,0 +1,164 @@
+# This is an Anaconda project file.
+#
+# Here you can describe your project and how to run it.
+# Use `anaconda-project run` to run the project.
+# The file is in YAML format, please see http://www.yaml.org/start.html for more.
+#
+
+#
+# Set the 'name' key to name your project
+#
+name: nlpia
+#
+# Set the 'icon' key to give your project an icon
+#
+icon:
+#
+# Set a one-sentence-or-so 'description' key with project details
+#
+description:
+#
+# In the commands section, list your runnable scripts, notebooks, and other code.
+# Use `anaconda-project add-command` to add commands.
+#
+commands:
+  nlpia/book/examples/ch03_2.ipynb:
+    notebook: nlpia/book/examples/ch03_2.ipynb
+    env_spec: default
+  nlpia/book/examples/ch05_2.ipynb:
+    notebook: nlpia/book/examples/ch05_2.ipynb
+    env_spec: default
+  nlpia/book/examples/ch07.ipynb:
+    notebook: nlpia/book/examples/ch07.ipynb
+    env_spec: default
+  nlpia/book/examples/ch08.ipynb:
+    notebook: nlpia/book/examples/ch08.ipynb
+    env_spec: default
+  nlpia/book/examples/ch09.ipynb:
+    notebook: nlpia/book/examples/ch09.ipynb
+    env_spec: default
+  nlpia/data/ubuntu-irc/.ipynb_checkpoints/Untitled-checkpoint.ipynb:
+    notebook: nlpia/data/ubuntu-irc/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+    env_spec: default
+#
+# In the variables section, list any environment variables your code depends on.
+# Use `anaconda-project add-variable` to add variables.
+#
+variables: {}
+#
+# In the services section, list any services that should be
+# available before your code runs.
+# Use `anaconda-project add-service` to add services.
+#
+services: {}
+#
+# In the downloads section, list any URLs to download to local files
+# before your code runs.
+# Use `anaconda-project add-download` to add downloads.
+#
+downloads: {}
+#
+# In the packages section, list any packages that must be installed
+# before your code runs.
+# Use `anaconda-project add-packages` to add packages.
+#
+packages:
+- pip:
+  - django>=1.11.1,<1.12.0
+  - future>=0.16.0
+  - jupyter>=1.0.0,<2.0.0
+  - matplotlib>=2.0.2
+  - nltk>=3.2.2,<3.3.0
+  - pandas>=0.19.2
+  - pip>=8.1.2
+  - pypandoc>=1.4.0
+  - plotly
+  - cufflinks
+  - python-Levenshtein>=0.12.0
+  - scikit-learn>=0.18.1
+  - scipy>=0.19.0
+  - seaborn>=0.8
+  - tqdm>=4.11.2
+  - tweepy>=3.5.0
+  - twython>=3.5.0
+  - wheel>=0.30.0a0
+  - gensim>=2.1.0,<3.0.0
+  - pandas-datareader>=0.5.0
+  - pugnlp>=0.0.12,<0.1.0
+  - Keras==2.0.8
+  - tensorflow>=1.3.0<2.0.0
+  - annoy>=1.9.5,<2.0.0
+  - will>=1.0.2,<1.1.0
+  - ChatterBot>=0.7.6,<0.8.0
+  - lxml>=4.1.0,<4.2.0
+  - aiml>=0.8.6,<0.9.0
+#
+# In the channels section, list any Conda channel URLs to be searched
+# for packages.
+#
+# For example,
+#
+# channels:
+#    - mychannel
+#
+channels: []
+#
+# In the platforms section, list platforms the project should work on
+# Examples: "linux-64", "osx-64", "win-64"
+# Use `anaconda-project add-platforms` to add platforms.
+#
+platforms:
+- linux-64
+- osx-64
+- win-64
+#
+# You can define multiple, named environment specs.
+# Each inherits any global packages or channels,
+# but can have its own unique ones also.
+# Use `anaconda-project add-env-spec` to add environment specs.
+#
+env_specs:
+  default:
+    packages:
+    - notebook
+    channels: []
+  nlpia:
+    packages:
+    - opencv=3.3.0
+    - redis-py=2.10.6
+    - matplotlib=2.1.0
+    - pillow=4.3.0
+    - pyqt=5.6.0
+    - pytest=3.2.1
+    - pip:
+      - aiml>=0.8.6,<0.9.0
+      - annoy>=1.9.5,<2.0.0
+      - ChatterBot>=0.7.6,<0.8.0
+      - cufflinks
+      - django>=1.11.1,<1.12.0
+      - future>=0.16.0
+      - gensim>=2.1.0,<3.0.0
+      - jupyter>=1.0.0,<2.0.0
+      - Keras==2.0.8
+      - lxml>=4.1.0,<4.2.0
+      - matplotlib>=2.0.2
+      - nltk>=3.2.2,<3.3.0
+      - pandas-datareader>=0.5.0
+      - pandas>=0.19.2
+      - pip>=8.1.2
+      - plotly
+      - pugnlp>=0.0.12,<0.1.0
+      - pypandoc>=1.4.0
+      - python-Levenshtein>=0.12.0
+      - scikit-learn>=0.18.1
+      - scipy>=0.19.0
+      - seaborn>=0.8
+      - tensorflow>=1.3.0<2.0.0
+      - tqdm>=4.11.2
+      - tweepy>=3.5.0
+      - twython>=3.5.0
+      - wheel>=0.30.0a0
+      - will>=1.0.2,<1.1.0
+    channels:
+    - conda-forge
+    - defaults
