@@ -28,6 +28,15 @@ Lexica are collections of words like dictionaries, thesauruses, N-gram collectio
 - [Google NGrams (up to 5-Grams) for 15% of all books up to 2012](http://storage.googleapis.com/books/ngrams/books/datasetsv2.html)
 - [Music Match Dataset](http://labrosa.ee.columbia.edu/millionsong/musixmatch#getting)
 - [Kaggle news article summarization challenge](https://www.kaggle.com/sunnysai12345/news-summary/data)
+- [First billion characters from wikipedia](http://mattmahoney.net/dc/enwik9.zip)
+- [Matt Mahoney's page](http://mattmahoney.net/dc/textdata.html)
+- [Latest Wikipedia dump](http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2)
+- [WMT11 site, multiple languages](http://www.statmt.org/wmt11/translation-task.html#download)
+- [Dataset from "One Billion Word Language Modeling Benchmark"]
+(http://www.statmt.org/lm-benchmark/1-billion-word-language-modeling-benchmark-r13output.tar.gz)
+- [3B word UMBC webbase corpus](http://ebiquity.umbc.edu/redirect/to/resource/id/351/UMBC-webbase-corpus), [info here](http://ebiquity.umbc.edu/blogger/2013/05/01/umbc-webbase-corpus-of-3b-english-words/)
+- [corpora for word-embeddings for non-English words statmt.org](http://statmt.org/)
+- [Polyglot project](https://sites.google.com/site/rmyeid/projects/polyglot#TOC-Download-Wikipedia-Text-Dumps)
 
 ## Lexica
 
@@ -72,3 +81,8 @@ So you can use them anywhere you need grammars or templates.
 [Official Google News Word2Vec Code & Data](https://code.google.com/archive/p/word2vec/)
 [GitHub Mirror of Google News Word2Vec Code & Data](https://github.com/mmihaltz/word2vec-GoogleNews-vectors)
 Download Google Drive 1.5GB Word2Vec Model[GoogleNews-vectors-negative300.bin.gz](https://drive.google.com/uc?export=download&id=0B7XkCwpI5KDYNlNUTTlSS21pQmM)
+
+## Knowledge Bases
+
+- largest, broadest open source KB: [:BaseKB (nee FreeBase)](http://basekb.com/)
+- facts extracted from Wikipedia tables and info boxes: [WikiData](https://www.wikidata.org/wiki/Wikidata:Database_download)
