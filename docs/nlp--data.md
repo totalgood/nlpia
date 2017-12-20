@@ -82,6 +82,15 @@ So you can use them anywhere you need grammars or templates.
 [GitHub Mirror of Google News Word2Vec Code & Data](https://github.com/mmihaltz/word2vec-GoogleNews-vectors)
 Download Google Drive 1.5GB Word2Vec Model[GoogleNews-vectors-negative300.bin.gz](https://drive.google.com/uc?export=download&id=0B7XkCwpI5KDYNlNUTTlSS21pQmM)
 
+## Semantically Labeled Images & Video
+
+- [Open Images](https://github.com/openimages/dataset) -- 9M images, thousands of classes
+- Common Objects in Context (COCO) [competition](https://places-coco2017.github.io/#winners) and [data set](http://cocodataset.org/#overview) -- 200K images
+- Pascal VOC 2010 [dataset](http://www.cs.stanford.edu/~roxozbeh/pascal-context/#statistics) -- 10k images
+- IIIT's [500 semantically segmented images](https://cvit.iiit.ac.in/research/projects/cvit-projects/iiit-seed-dataset)
+- NYU [Kinect labeled depth map videos](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html)
+- IIIT's 5000 word database [~1000 images of brands and logos](http://cvit.iiit.ac.in/projects/SceneTextUnderstanding/IIIT5K.html)
+
 ## Knowledge Bases
 
 - largest, broadest open source KB: [:BaseKB (nee FreeBase)](http://basekb.com/)
