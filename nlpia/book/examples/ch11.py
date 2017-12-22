@@ -44,20 +44,51 @@ def extract_latlon(s):
 
 us = r'(([01]?\d)[-/]([0123]?\d)([-/]([012]\d)?\d\d)?)'
 re.findall(us, 'Santa came on 12/25/2017 and a star appeared 12/12')
-[('12/25/2017', '12', '25', '/2017', '20'), ('12/12', '12', '12', '', '')]
+# [('12/25/2017', '12', '25', '/2017', '20'), ('12/12', '12', '12', '', '')]
 
 eu = r'(([0123]?\d)[-/]([01]?\d)([-/]([012]\d)?\d\d)?)'
 re.findall(eu, 'Alan Mathison Turing OBE FRS (23/6/1912-7/6/1954) was an English computer scientist.')
 [('23/6/1912', '23', '6', '/1912', '19'),
  ('7/6/1954', '7', '6', '/1954', '19')]
 
-months = 'January February March April May June July ' \
-    'August September Octover November December'
-mon = '|'.join('{}|{}|{}'.format(m, m[:4], m[:3]) for m in months.split())
-digit_0n = '|'.join('{:02d}|{}'.format(i, i) for i in range(1, 9))
-day = digit_0n + '|' + '|'.join('{}'.format(i, i) for i in range(10, 31))
-yr_yy = digit_0n + '|00|' + '|'.join('{}'.format(i, i) for i in range(10, 99))  # <1>
-yr_cc = r'\b(' + '|'.join('{}|{:02d}'.format(i, i) for i in range(0, 39)) + r')?\b'  # <2>
+# Deal with 2-digit an d4-digit and even 1-digit years from Year 0  to 3999 AD
+# And lets name the parts of our year so we can easily coerce it into a datetime object
+yr_19xx = (
+    r'\b(?P<yr_19xx>' +
+    '|'.join('{}'.format(i) for i in range(30, 100)) +
+    r')\b'
+    )
+yr_20xx = (
+    r'\b(?P<yr_20xx>' +
+    '|'.join('{:02d}'.format(i) for i in range(10)) + '|' +
+    '|'.join('{}'.format(i) for i in range(10, 30)) +
+    r')\b'
+    )
+yr_cent = r'\b(?P<yr_cent>' + '|'.join('{}'.format(i) for i in range(1, 40)) + r')\b'
+yr_ccxx = r'\b(?P<yr_ccxx>' + '|'.join('{:02d}'.format(i) for i in range(0, 100)) + r')\b'
+yr = (
+    r'\b(?P<yr>' +
+    yr_19xx + '|' + yr_20xx + '|(?P<yr_xxxx>(' + yr_cent + ')(' + yr_ccxx + '))' +
+    r')\b'
+    )
+re.findall(yr, "0, 2000, 01, '08, 99, 1984, 2030/1970 85 47 `66")
+
+day = r'|'.join('{:02d}|{}'.format(i, i) for i in range(1, 32))
+
+mon_words = 'January February March April May June July ' \
+    'August September October November December'
+# mon = '|'.join('{}|{}|{}'.format(m, m[:4], m[:3]) for m in months.split())
+mon = '|'.join('{}|{}|{}|{}|{:02d}'.format(
+    m, m[:4], m[:3], i + 1, i + 1) for i, m in enumerate(mon_words.split()))
+
+eu = r'\b((' + day + r')\b[-,/ ]{0,2}\b(' + mon + r')\b[-,/ ]{0,2}\b(' + yr + r'))\b'
+
+re.findall(eu, '31 Oct, 1970 25/12/2017')
+# [('31 Oct, 1970', '31', 'Oct', '1970', '19', '70'),
+#  ('25/12/2017', '25', '12', '2017', '20', '17')]
+
+# [('0', '', '0'), ('2000', '20', '00'), ('01', '', '01'), ('99', '9', '9'), ('1984', '19', '84'), ('2030', '20', '30'), ('1970', '19', '70')]
+# re.findall(yr'0, 2000, 01, 99, 1984, 2030/1970 ')
 
 eu = r'(([0123]?\d)[-/ ]([01]?\d|' + mon + r')((\,[ ]|[-/ ])([012]\d)?\d\d)?)'
 re.findall(eu, 'Barack Hussein Obama II (born August 4, 1961) is an American politician...')

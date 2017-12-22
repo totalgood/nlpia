@@ -39,3 +39,7 @@
 
 - [Tweet Impact Predictor (twip)](http://github.com/totalgood/twip)
 - [There's Hope for Chatbots (hope)](http://github.com/totalgood/hope)
+
+## Talks
+
+- [ODSC West Tutorial -- Prosocial Chatbots](https://www.youtube.com/embed/wI63y3LTOM8)
