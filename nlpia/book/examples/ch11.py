@@ -94,3 +94,33 @@ eu = r'(([0123]?\d)[-/ ]([01]?\d|' + mon + r')((\,[ ]|[-/ ])([012]\d)?\d\d)?)'
 re.findall(eu, 'Barack Hussein Obama II (born August 4, 1961) is an American politician...')
 # <1> this catches year zero ("0")for the astronomical calendar
 # <2> this catches year integers 0 through 3999
+
+
+def token_dict(token):
+    return dict(
+        ORTH=token.orth_,
+        POS=token.pos_,
+        TAG=token.tag_,
+        DEP=token.dep_,
+        LEMMA=token.lemma_)
+
+
+def doc_dataframe(doc):
+    return pd.DataFrame([token_dict(tok) for tok in parsed_sent])
+
+
+doc_dataframe(en_model("In 1541 Desoto met the Pascagoula."))
+#          ORTH       LEMMA    POS  TAG    DEP
+# 0          In          in    ADP   IN   prep
+# 1        1541        1541    NUM   CD   pobj
+# 2      Desoto      desoto  PROPN  NNP  nsubj
+# 3         met        meet   VERB  VBD   ROOT
+# 4         the         the    DET   DT    det
+# 5  Pascagoula  pascagoula  PROPN  NNP   dobj
+# 6           .           .  PUNCT    .  punct
+
+from spacy.matcher import Matcher
+matcher = Matcher(en_model.vocab)
+pattern = [{'TAG': 'NNP'}, {'LEMMA': 'meet'}, {'IS_ALPHA': True, 'OP': '*'}, {'TAG': 'NNP'}]
+matcher.add('meeting', None, pattern)
+matcher(en_model())
