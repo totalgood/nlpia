@@ -58,3 +58,11 @@ nlpia/data/*.zip
 # Anaconda conda
 envs/
 record.txt
+
+# Backups
+*.bak.*
+*.old.*
+*.broke.*
+*.master.*
+*.develop.*
+
