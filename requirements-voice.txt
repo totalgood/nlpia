@@ -1,0 +1,12 @@
+pyaudio>=0.2.11,<0.3.0
+PocketSphinx>=0.3.1,<0.4.0
+-e git+https://github.com/hobson/pyttsx3.git@master#egg=pyttsx3
+
+# SpeechRecognizer requires PyAudio
+#$ sudo apt-get install install portaudio19-dev python-pyaudio
+# OR
+#$ brew install portaudio
+
+# Offline SpeechRecognizer requires pocketsphinx and swig
+# brew install cmu-pocketsphinx
+# brew install swig
