@@ -91,7 +91,6 @@ class OneNeuronRegressor(object):
         self.W = np.random.randn(self.n_outputs, self.n_inputs + 1)
         self.n_iter = n_iter
         self.alpha = alpha
-        return self
 
     def delta(self, X, y):
         X = getattr(X, 'values', X).reshape(len(X), 1)
