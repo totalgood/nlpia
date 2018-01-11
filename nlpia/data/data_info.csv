@@ -1,0 +1,3 @@
+"name","url","table_num","rows","columns","index_description","downloader","downloader_kwargs","cleaner","cleaner_kwargs","when_downloaded","description"
+"food_carbon","http://www.greeneatz.com/foods-carbon-footprint.html",0,16,4,,"read_html","{‘header’: 0}","clean_df",,09/26/17 09:00 AM,"Carbon footprint for several foods"
+"city_state_capitals","https://en.wikipedia.org/wiki/List_of_capitals_in_the_United_States",0,52,,,"read_html","{‘header’: 0}","clean_df",,09/26/17 09:00 AM,"US State Capitals"

@@ -107,7 +107,7 @@ def train_tsne(training_size=2000, metric='cosine', n_components=3, perplexity=1
     test_size = 1.0 - training_size if training_size < 1 else float(len(X) - training_size) / len(X)
     Xindex, Xindex_test, yindex, yindex_test = train_test_split(X.index.values, y.index.values, test_size=test_size)
     X, Xtest, y, ytest = X.loc[Xindex], X.loc[Xindex_test], y.loc[yindex], y.loc[yindex_test]
-    
+
     # labels_test = labels.loc[yindex_test]
     labels = labels.loc[yindex]
 

@@ -1,0 +1,12 @@
+package:
+  name: nlpia
+  version: 0.1.0
+
+build:
+  number: 1
+
+requirements:
+  run:
+    - python
+about:
+  summary: Anaconda meta-package for nlpia python package (example code for NLP In Action book by Manning Publishing)

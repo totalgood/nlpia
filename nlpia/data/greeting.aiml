@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+
+<category><pattern>HELLO</pattern>   <template>Hi there</template></category>
+<category><pattern>ROSA</pattern>    <template>, Human!</template></category>
+<category><pattern>SUP</pattern>     <template>Good one</template></category>
+
+<category><pattern>HELLO *</pattern> <template><srai>HELLO</srai><sr/></template></category>
+<category><pattern>* ROSA</pattern>  <template><sr/><srai>ROSA</srai></template></category>
+
+<category><pattern>HI *</pattern>        <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>HEY *</pattern>       <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>YO *</pattern>        <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>YOH *</pattern>       <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>YO' *</pattern>       <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>HOWDY *</pattern>     <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>HALLO *</pattern>     <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>HI THERE *</pattern>  <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>HEY THERE *</pattern> <template><srai>SUP</srai><sr/></template></category>
+
+<category><pattern>ROSE</pattern>    <template><srai>ROSA</srai></template></category>
+<category><pattern>CHATTY</pattern>  <template><srai>ROSA</srai></template></category>
+<category><pattern>CHATBOT</pattern> <template><srai>ROSA</srai></template></category>
+<category><pattern>HAL</pattern>     <template><srai>ROSA</srai></template></category>
+<category><pattern>BOT</pattern>     <template><srai>ROSA</srai></template></category>
+<category><pattern>YOU</pattern>     <template><srai>ROSA</srai></template></category>
+<category><pattern>ROS</pattern>     <template><srai>ROSA</srai></template></category>
+
+<category><pattern>* ROSE</pattern>    <template><sr/><srai>ROSA</srai></template></category>
+<category><pattern>* CHATTY</pattern>  <template><sr/><srai>ROSA</srai></template></category>
+<category><pattern>* CHATBOT</pattern> <template><sr/><srai>ROSA</srai></template></category>
+<category><pattern>* HAL</pattern>     <template><sr/><srai>ROSA</srai></template></category>
+<category><pattern>* BOT</pattern>     <template><sr/><srai>ROSA</srai></template></category>
+<category><pattern>* YOU</pattern>     <template><sr/><srai>ROSA</srai></template></category>
+<category><pattern>* ROS</pattern>     <template><sr/><srai>ROSA</srai></template></category>
+
+<category><pattern>HI</pattern>        <template><srai>HELLO</srai></template></category>
+<category><pattern>HEY</pattern>       <template><srai>HELLO</srai></template></category>
+<category><pattern>YO</pattern>        <template><srai>HELLO</srai></template></category>
+<category><pattern>YOH</pattern>       <template><srai>HELLO</srai></template></category>
+<category><pattern>YO</pattern>        <template><srai>HELLO</srai></template></category>
+<category><pattern>HOWDY</pattern>     <template><srai>HELLO</srai></template></category>
+<category><pattern>HALLO</pattern>     <template><srai>HELLO</srai></template></category>
+<category><pattern>HI THERE</pattern>  <template><srai>HELLO</srai></template></category>
+<category><pattern>HEY THERE</pattern> <template><srai>HELLO</srai></template></category>
+
+
+<category><pattern>SUP *</pattern> <template><srai>SUP</srai><sr/></template></category>
+
+
+
+
+</aiml>

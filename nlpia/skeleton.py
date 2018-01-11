@@ -21,7 +21,7 @@ import argparse
 import sys
 import logging
 
-from nlp_in_action import __version__
+from nlpia import __version__
 
 __author__ = "Hobson Lane"
 __copyright__ = "Hobson Lane"
@@ -39,8 +39,8 @@ def fib(n):
     """
     assert n > 0
     a, b = 1, 1
-    for i in range(n-1):
-        a, b = b, a+b
+    for i in range(n - 1):
+        a, b = b, a + b
     return a
 
 

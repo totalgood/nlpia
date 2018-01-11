@@ -10,6 +10,7 @@
 __pycache__/*
 .cache/*
 .*.swp
+.~*
 
 # Project files
 .ropeproject
@@ -49,3 +50,19 @@ nlpia/bigdata/*
 nlpia/data/*.gz
 nlpia/data/*.bz2
 nlpia/data/*.xz
+nlpia/data/*.zip
+
+# OSX
+.DS_STore
+
+# Anaconda conda
+envs/
+record.txt
+
+# Backups
+*.bak.*
+*.old.*
+*.broke.*
+*.master.*
+*.develop.*
+

@@ -20,7 +20,7 @@
 - Searching
   - semantic search
 - Matching (resumes-jobs)
-- Chat bot
+- [Chatbots](http://ai.wikia.com/wiki/List_Of_Chat_Bots)
   - Turing test
   - Video game behavior modification
   - AI characters

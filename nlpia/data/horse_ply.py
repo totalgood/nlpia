@@ -1,5 +1,5 @@
 from seaborn import plt
-from mpl_toolkits.mplot3d import   # noqa
+from mpl_toolkits.mplot3d import *  # noqa
 
 import pandas as pd
 

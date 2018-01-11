@@ -1,0 +1,2372 @@
+REP 114
+REP a ei
+REP a ey
+REP ai ie
+REP air ear
+REP air ere
+REP are air
+REP are ear
+REP are eir
+REP cc k
+REP ch k
+REP ch s
+REP ch te
+REP ch ti
+REP ch tu
+REP ci s
+REP ck qu
+REP ck que
+REP dg j
+REP di j
+REP ear air
+REP ear are
+REP ear ere
+REP ear ier
+REP eau o
+REP ee i
+REP eg e.g.
+REP ei a
+REP eir are
+REP eir ere
+REP eness ity
+REP ere air
+REP ere ear
+REP ere eir
+REP ew o
+REP ew oo
+REP ew u
+REP ew ue
+REP ew ui
+REP ey a
+REP f gh
+REP f gh
+REP f ph
+REP f ugh
+REP ff ugh
+REP ge j
+REP gg j
+REP gh f
+REP gh f
+REP ght t
+REP gotten got
+REP i ee
+REP i igh
+REP i uy
+REP ie ai
+REP ie i.e.
+REP ier ear
+REP ieu oo
+REP ieu u
+REP igh i
+REP j dg
+REP j di
+REP j ge
+REP j gg
+REP k cc
+REP k ch
+REP k qu
+REP kw qu
+REP leness ility
+REP ness ity
+REP ness ivity
+REP o eau
+REP o ew
+REP oe u
+REP og ogue
+REP ok OK
+REP oo ew
+REP oo ieu
+REP oo u
+REP oo ui
+REP ph f
+REP ph f
+REP qu k
+REP qu w
+REP rised rose
+REP s ch
+REP s ci
+REP s ti
+REP shun cion
+REP shun sion
+REP shun tion
+REP ss z
+REP t ght
+REP te ch
+REP teached taught
+REP ti ch
+REP ti s
+REP tion ssion
+REP ts ce
+REP tu ch
+REP u ew
+REP u ieu
+REP u oe
+REP u oo
+REP u ough
+REP ue ew
+REP uf ough
+REP uff ough
+REP ui ew
+REP ui oo
+REP uy i
+REP w qu
+REP w ugh
+REP ys ies
+REP z ss
+
+FLAG num
+SFX 105 Y 1
+SFX 105 0 ra .
+SFX 339 Y 1
+SFX 339 0 rd .
+SFX 785 Y 1
+SFX 785 0 re .
+SFX 820 Y 1
+SFX 820 0 ngton's .
+SFX 540 Y 1
+SFX 540 0 ri .
+SFX 403 Y 1
+SFX 403 0 rs .
+SFX 526 Y 1
+SFX 526 0 rt .
+SFX 234 Y 1
+SFX 234 0 ry .
+SFX 171 Y 1
+SFX 171 0 sa .
+SFX 503 Y 1
+SFX 503 0 ten's .
+SFX 184 Y 1
+SFX 184 0 se .
+SFX 751 Y 1
+SFX 751 0 sh .
+SFX 579 Y 1
+SFX 579 0 lock's .
+SFX 636 Y 1
+SFX 636 0 dley .
+SFX 391 Y 1
+SFX 391 0 sy .
+SFX 5 Y 1
+SFX 5 0 a .
+SFX 667 Y 1
+SFX 667 0 al's .
+SFX 113 Y 1
+SFX 113 0 d .
+SFX 3 Y 1
+SFX 3 0 e .
+SFX 59 Y 1
+SFX 59 0 g .
+SFX 43 Y 1
+SFX 43 0 h .
+SFX 29 Y 1
+SFX 29 0 i .
+SFX 157 Y 1
+SFX 157 0 k .
+SFX 19 Y 1
+SFX 19 0 l .
+SFX 294 Y 1
+SFX 294 0 m .
+SFX 9 Y 1
+SFX 9 0 n .
+SFX 39 Y 1
+SFX 39 0 o .
+SFX 542 Y 1
+SFX 542 0 p .
+SFX 37 Y 1
+SFX 37 0 r .
+SFX 783 Y 1
+SFX 783 0 rell's .
+SFX 7 Y 1
+SFX 7 0 s .
+SFX 25 Y 1
+SFX 25 0 t .
+SFX 688 Y 1
+SFX 688 0 w .
+SFX 13 Y 1
+SFX 13 0 y .
+SFX 674 Y 1
+SFX 674 0 z .
+SFX 962 Y 1
+SFX 962 0 cie's .
+SFX 35 Y 1
+SFX 35 0 ta .
+SFX 127 Y 1
+SFX 127 0 te .
+SFX 387 Y 1
+SFX 387 0 ti .
+SFX 168 Y 1
+SFX 168 0 tt .
+SFX 274 Y 1
+SFX 274 0 ty .
+SFX 152 Y 1
+SFX 152 0 wood's .
+SFX 612 Y 1
+SFX 612 0 ington .
+SFX 202 Y 1
+SFX 202 0 us .
+SFX 92 Y 1
+SFX 92 0 lle's .
+SFX 497 Y 1
+SFX 497 0 tine's .
+SFX 818 Y 1
+SFX 818 0 nia's .
+SFX 48 Y 1
+SFX 48 0 la's .
+SFX 968 Y 1
+SFX 968 0 bra's .
+SFX 696 Y 1
+SFX 696 0 va .
+SFX 295 Y 1
+SFX 295 0 lin's .
+SFX 796 Y 1
+SFX 796 0 ot's .
+SFX 436 Y 1
+SFX 436 0 lynn's .
+SFX 461 Y 1
+SFX 461 0 gan's .
+SFX 481 Y 1
+SFX 481 0 ya's .
+SFX 292 Y 1
+SFX 292 0 mond's .
+SFX 371 Y 1
+SFX 371 0 ham .
+SFX 458 Y 1
+SFX 458 0 han .
+SFX 663 Y 1
+SFX 663 0 any's .
+SFX 939 Y 1
+SFX 939 0 encia .
+SFX 974 Y 1
+SFX 974 0 atha's .
+SFX 50 Y 1
+SFX 50 0 ina's .
+SFX 744 Y 1
+SFX 744 0 sley's .
+SFX 332 Y 1
+SFX 332 0 sen's .
+SFX 788 Y 1
+SFX 788 0 rda's .
+SFX 707 Y 1
+SFX 707 0 topher's .
+SFX 580 Y 1
+SFX 580 0 lock .
+SFX 199 Y 1
+SFX 199 0 by's .
+SFX 482 Y 1
+SFX 482 0 ya .
+SFX 993 Y 1
+SFX 993 0 ye .
+SFX 608 Y 1
+SFX 608 0 isha .
+SFX 991 Y 1
+SFX 991 0 yl .
+SFX 228 Y 1
+SFX 228 0 yn .
+SFX 98 Y 1
+SFX 98 0 ce's .
+SFX 971 Y 1
+SFX 971 0 bie's .
+SFX 673 Y 1
+SFX 673 0 za .
+SFX 449 Y 1
+SFX 449 0 io's .
+SFX 846 Y 1
+SFX 846 0 lis's .
+SFX 963 Y 1
+SFX 963 0 cie .
+SFX 356 Y 1
+SFX 356 0 lene .
+SFX 624 Y 1
+SFX 624 0 house .
+SFX 976 Y 1
+SFX 976 0 ara's .
+SFX 841 Y 1
+SFX 841 0 mae .
+SFX 878 Y 1
+SFX 878 0 kin's .
+SFX 117 Y 1
+SFX 117 0 man .
+SFX 70 Y 1
+SFX 70 0 ley's .
+SFX 372 Y 1
+SFX 372 0 ger's .
+SFX 616 Y 1
+SFX 616 0 iko's .
+SFX 170 Y 1
+SFX 170 0 sa's .
+SFX 112 Y 1
+SFX 112 0 d's .
+SFX 569 Y 1
+SFX 569 0 ms's .
+SFX 574 Y 1
+SFX 574 0 mer .
+SFX 859 Y 1
+SFX 859 0 less .
+SFX 765 Y 1
+SFX 765 0 rose .
+SFX 386 Y 1
+SFX 386 0 ti's .
+SFX 299 Y 1
+SFX 299 0 lia's .
+SFX 960 Y 1
+SFX 960 0 co's .
+SFX 872 Y 1
+SFX 872 0 lah's .
+SFX 789 Y 1
+SFX 789 0 rda .
+SFX 241 Y 1
+SFX 241 0 nette's .
+SFX 938 Y 1
+SFX 938 0 encia's .
+SFX 28 Y 1
+SFX 28 0 i's .
+SFX 982 Y 1
+SFX 982 0 ala's .
+SFX 906 Y 1
+SFX 906 0 inson's .
+SFX 427 Y 1
+SFX 427 0 mie .
+SFX 85 Y 1
+SFX 85 0 etta .
+SFX 67 Y 1
+SFX 67 0 ette .
+SFX 275 Y 1
+SFX 275 0 tie's .
+SFX 781 Y 1
+SFX 781 0 ret .
+SFX 346 Y 1
+SFX 346 0 nd's .
+SFX 687 Y 1
+SFX 687 0 way .
+SFX 249 Y 1
+SFX 249 0 land's .
+SFX 507 Y 1
+SFX 507 0 tal's .
+SFX 454 Y 1
+SFX 454 0 igan's .
+SFX 429 Y 1
+SFX 429 0 ma's .
+SFX 8 Y 1
+SFX 8 0 n's .
+SFX 539 Y 1
+SFX 539 0 ria .
+SFX 186 Y 1
+SFX 186 0 rie .
+SFX 237 Y 1
+SFX 237 0 ni's .
+SFX 672 Y 1
+SFX 672 0 za's .
+SFX 791 Y 1
+SFX 791 0 pson .
+SFX 394 Y 1
+SFX 394 0 sie's .
+SFX 430 Y 1
+SFX 430 0 marie's .
+SFX 956 Y 1
+SFX 956 0 de's .
+SFX 268 Y 1
+SFX 268 0 ella .
+SFX 125 Y 1
+SFX 125 0 elle .
+SFX 88 Y 1
+SFX 88 0 an's .
+SFX 6 Y 1
+SFX 6 0 s's .
+SFX 437 Y 1
+SFX 437 0 lynn .
+SFX 794 Y 1
+SFX 794 0 ott's .
+SFX 130 Y 1
+SFX 130 0 nn's .
+SFX 144 Y 1
+SFX 144 0 nne's .
+SFX 84 Y 1
+SFX 84 0 etta's .
+SFX 266 Y 1
+SFX 266 0 ford .
+SFX 174 Y 1
+SFX 174 0 nda's .
+SFX 473 Y 1
+SFX 473 0 een .
+SFX 185 Y 1
+SFX 185 0 rie's .
+SFX 309 Y 1
+SFX 309 0 ena's .
+SFX 223 Y 1
+SFX 223 0 as's .
+SFX 365 Y 1
+SFX 365 0 ise's .
+SFX 34 Y 1
+SFX 34 0 ta's .
+SFX 549 Y 1
+SFX 549 0 ns's .
+SFX 46 Y 1
+SFX 46 0 er's .
+SFX 840 Y 1
+SFX 840 0 mae's .
+SFX 424 Y 1
+SFX 424 0 more's .
+SFX 654 Y 1
+SFX 654 0 bury .
+SFX 230 Y 1
+SFX 230 0 ston .
+SFX 225 Y 1
+SFX 225 0 anna's .
+SFX 4 Y 1
+SFX 4 0 a's .
+SFX 552 Y 1
+SFX 552 0 nor's .
+SFX 658 Y 1
+SFX 658 0 belle .
+SFX 293 Y 1
+SFX 293 0 mond .
+SFX 945 Y 1
+SFX 945 0 eka .
+SFX 196 Y 1
+SFX 196 0 ela .
+SFX 53 Y 1
+SFX 53 0 ell .
+SFX 635 Y 1
+SFX 635 0 dley's .
+SFX 759 Y 1
+SFX 759 0 ryl .
+SFX 231 Y 1
+SFX 231 0 ssa's .
+SFX 745 Y 1
+SFX 745 0 sley .
+SFX 946 Y 1
+SFX 946 0 dt's .
+SFX 310 Y 1
+SFX 310 0 ena .
+SFX 123 Y 1
+SFX 123 0 ene .
+SFX 425 Y 1
+SFX 425 0 more .
+SFX 508 Y 1
+SFX 508 0 tal .
+SFX 970 Y 1
+SFX 970 0 bi's .
+SFX 10 Y 1
+SFX 10 0 na's .
+SFX 764 Y 1
+SFX 764 0 rose's .
+SFX 537 Y 1
+SFX 537 0 rick .
+SFX 621 Y 1
+SFX 621 0 ica's .
+SFX 824 Y 1
+SFX 824 0 nes's .
+SFX 1 Y 1
+SFX 1 0 's .
+SFX 201 Y 1
+SFX 201 0 us's .
+SFX 657 Y 1
+SFX 657 0 belle's .
+SFX 102 Y 1
+SFX 102 0 ann's .
+SFX 748 Y 1
+SFX 748 0 sh's .
+SFX 345 Y 1
+SFX 345 0 nell .
+SFX 154 Y 1
+SFX 154 0 k's .
+SFX 317 Y 1
+SFX 317 0 don's .
+SFX 937 Y 1
+SFX 937 0 era .
+SFX 469 Y 1
+SFX 469 0 ers .
+SFX 467 Y 1
+SFX 467 0 ert .
+SFX 221 Y 1
+SFX 221 0 dy's .
+SFX 506 Y 1
+SFX 506 0 tel .
+SFX 632 Y 1
+SFX 632 0 ery .
+SFX 504 Y 1
+SFX 504 0 ten .
+SFX 278 Y 1
+SFX 278 0 ter .
+SFX 296 Y 1
+SFX 296 0 line's .
+SFX 342 Y 1
+SFX 342 0 ora's .
+SFX 150 Y 1
+SFX 150 0 ee's .
+SFX 362 Y 1
+SFX 362 0 ko's .
+SFX 370 Y 1
+SFX 370 0 ham's .
+SFX 959 Y 1
+SFX 959 0 dale .
+SFX 630 Y 1
+SFX 630 0 eth .
+SFX 111 Y 1
+SFX 111 0 ett .
+SFX 995 Y 1
+SFX 995 0 yce .
+SFX 22 Y 1
+SFX 22 0 on's .
+SFX 782 Y 1
+SFX 782 0 re's .
+SFX 389 Y 1
+SFX 389 0 tha .
+SFX 908 Y 1
+SFX 908 0 inda's .
+SFX 708 Y 1
+SFX 708 0 topher .
+SFX 541 Y 1
+SFX 541 0 p's .
+SFX 276 Y 1
+SFX 276 0 tie .
+SFX 267 Y 1
+SFX 267 0 ella's .
+SFX 718 Y 1
+SFX 718 0 tin .
+SFX 305 Y 1
+SFX 305 0 ha's .
+SFX 352 Y 1
+SFX 352 0 len's .
+SFX 217 Y 1
+SFX 217 0 field's .
+SFX 466 Y 1
+SFX 466 0 ert's .
+SFX 919 Y 1
+SFX 919 0 gton .
+SFX 844 Y 1
+SFX 844 0 low's .
+SFX 72 Y 1
+SFX 72 0 tta's .
+SFX 975 Y 1
+SFX 975 0 atha .
+SFX 660 Y 1
+SFX 660 0 bel .
+SFX 930 Y 1
+SFX 930 0 esha's .
+SFX 775 Y 1
+SFX 775 0 rine .
+SFX 463 Y 1
+SFX 463 0 gan .
+SFX 277 Y 1
+SFX 277 0 ter's .
+SFX 629 Y 1
+SFX 629 0 eth's .
+SFX 935 Y 1
+SFX 935 0 erson .
+SFX 931 Y 1
+SFX 931 0 esha .
+SFX 343 Y 1
+SFX 343 0 ora .
+SFX 801 Y 1
+SFX 801 0 ore .
+SFX 593 Y 1
+SFX 593 0 les's .
+SFX 55 Y 1
+SFX 55 0 ton .
+SFX 218 Y 1
+SFX 218 0 field .
+SFX 256 Y 1
+SFX 256 0 in's .
+SFX 74 Y 1
+SFX 74 0 nie's .
+SFX 26 Y 1
+SFX 26 0 le's .
+SFX 631 Y 1
+SFX 631 0 ery's .
+SFX 178 Y 1
+SFX 178 0 ana's .
+SFX 795 Y 1
+SFX 795 0 ott .
+SFX 972 Y 1
+SFX 972 0 bie .
+SFX 990 Y 1
+SFX 990 0 yll .
+SFX 992 Y 1
+SFX 992 0 ye's .
+SFX 373 Y 1
+SFX 373 0 ger .
+SFX 873 Y 1
+SFX 873 0 lah .
+SFX 671 Y 1
+SFX 671 0 z's .
+SFX 40 Y 1
+SFX 40 0 ine's .
+SFX 682 Y 1
+SFX 682 0 yne .
+SFX 219 Y 1
+SFX 219 0 et's .
+SFX 934 Y 1
+SFX 934 0 erson's .
+SFX 134 Y 1
+SFX 134 0 is's .
+SFX 73 Y 1
+SFX 73 0 tta .
+SFX 65 Y 1
+SFX 65 0 tte .
+SFX 869 Y 1
+SFX 869 0 ldo .
+SFX 659 Y 1
+SFX 659 0 bell .
+SFX 259 Y 1
+SFX 259 0 ida's .
+SFX 271 Y 1
+SFX 271 0 beth's .
+SFX 297 Y 1
+SFX 297 0 line .
+SFX 852 Y 1
+SFX 852 0 ling .
+SFX 524 Y 1
+SFX 524 0 rt's .
+SFX 685 Y 1
+SFX 685 0 worth .
+SFX 119 Y 1
+SFX 119 0 lee .
+SFX 426 Y 1
+SFX 426 0 mie's .
+SFX 357 Y 1
+SFX 357 0 len .
+SFX 863 Y 1
+SFX 863 0 ler .
+SFX 595 Y 1
+SFX 595 0 les .
+SFX 71 Y 1
+SFX 71 0 ley .
+SFX 80 Y 1
+SFX 80 0 lyn's .
+SFX 229 Y 1
+SFX 229 0 ston's .
+SFX 62 Y 1
+SFX 62 0 ey's .
+SFX 918 Y 1
+SFX 918 0 gton's .
+SFX 565 Y 1
+SFX 565 0 nce's .
+SFX 954 Y 1
+SFX 954 0 dia's .
+SFX 183 Y 1
+SFX 183 0 se's .
+SFX 42 Y 1
+SFX 42 0 h's .
+SFX 300 Y 1
+SFX 300 0 lia .
+SFX 212 Y 1
+SFX 212 0 lie .
+SFX 233 Y 1
+SFX 233 0 ry's .
+SFX 298 Y 1
+SFX 298 0 lin .
+SFX 969 Y 1
+SFX 969 0 bra .
+SFX 849 Y 1
+SFX 849 0 lis .
+SFX 848 Y 1
+SFX 848 0 lisa .
+SFX 54 Y 1
+SFX 54 0 ton's .
+SFX 32 Y 1
+SFX 32 0 ia's .
+SFX 211 Y 1
+SFX 211 0 lie's .
+SFX 210 Y 1
+SFX 210 0 lla .
+SFX 93 Y 1
+SFX 93 0 lle .
+SFX 272 Y 1
+SFX 272 0 beth .
+SFX 354 Y 1
+SFX 354 0 lene's .
+SFX 388 Y 1
+SFX 388 0 tha's .
+SFX 695 Y 1
+SFX 695 0 va's .
+SFX 380 Y 1
+SFX 380 0 ah's .
+SFX 291 Y 1
+SFX 291 0 m's .
+SFX 265 Y 1
+SFX 265 0 ford's .
+SFX 851 Y 1
+SFX 851 0 ling's .
+SFX 215 Y 1
+SFX 215 0 ika's .
+SFX 691 Y 1
+SFX 691 0 ville's .
+SFX 209 Y 1
+SFX 209 0 lla's .
+SFX 578 Y 1
+SFX 578 0 lon .
+SFX 845 Y 1
+SFX 845 0 low .
+SFX 716 Y 1
+SFX 716 0 tina's .
+SFX 950 Y 1
+SFX 950 0 dora's .
+SFX 804 Y 1
+SFX 804 0 op's .
+SFX 20 Y 1
+SFX 20 0 son's .
+SFX 187 Y 1
+SFX 187 0 ly's .
+SFX 907 Y 1
+SFX 907 0 inson .
+SFX 378 Y 1
+SFX 378 0 am's .
+SFX 36 Y 1
+SFX 36 0 r's .
+SFX 242 Y 1
+SFX 242 0 nette .
+SFX 715 Y 1
+SFX 715 0 tin's .
+SFX 181 Y 1
+SFX 181 0 sha's .
+SFX 148 Y 1
+SFX 148 0 el's .
+SFX 989 Y 1
+SFX 989 0 yll's .
+SFX 197 Y 1
+SFX 197 0 ca's .
+SFX 52 Y 1
+SFX 52 0 ell's .
+SFX 250 Y 1
+SFX 250 0 land .
+SFX 637 Y 1
+SFX 637 0 di's .
+SFX 642 Y 1
+SFX 642 0 den .
+SFX 915 Y 1
+SFX 915 0 ian .
+SFX 477 Y 1
+SFX 477 0 ar's .
+SFX 683 Y 1
+SFX 683 0 w's .
+SFX 648 Y 1
+SFX 648 0 cock .
+SFX 622 Y 1
+SFX 622 0 ica .
+SFX 262 Y 1
+SFX 262 0 ice .
+SFX 260 Y 1
+SFX 260 0 ida .
+SFX 66 Y 1
+SFX 66 0 ette's .
+SFX 344 Y 1
+SFX 344 0 nell's .
+SFX 680 Y 1
+SFX 680 0 yne's .
+SFX 955 Y 1
+SFX 955 0 dia .
+SFX 953 Y 1
+SFX 953 0 die .
+SFX 81 Y 1
+SFX 81 0 lyn .
+SFX 656 Y 1
+SFX 656 0 bell's .
+SFX 122 Y 1
+SFX 122 0 ene's .
+SFX 390 Y 1
+SFX 390 0 sy's .
+SFX 126 Y 1
+SFX 126 0 te's .
+SFX 655 Y 1
+SFX 655 0 bel's .
+SFX 108 Y 1
+SFX 108 0 ing's .
+SFX 566 Y 1
+SFX 566 0 nce .
+SFX 649 Y 1
+SFX 649 0 ck's .
+SFX 455 Y 1
+SFX 455 0 igan .
+SFX 60 Y 1
+SFX 60 0 ll's .
+SFX 175 Y 1
+SFX 175 0 nda .
+SFX 847 Y 1
+SFX 847 0 lisa's .
+SFX 653 Y 1
+SFX 653 0 bury's .
+SFX 320 Y 1
+SFX 320 0 anne's .
+SFX 2 Y 1
+SFX 2 0 e's .
+SFX 988 Y 1
+SFX 988 0 yl's .
+SFX 417 Y 1
+SFX 417 0 ner .
+SFX 825 Y 1
+SFX 825 0 nes .
+SFX 208 Y 1
+SFX 208 0 ney .
+SFX 110 Y 1
+SFX 110 0 ett's .
+SFX 318 Y 1
+SFX 318 0 don .
+SFX 216 Y 1
+SFX 216 0 ika .
+SFX 752 Y 1
+SFX 752 0 sey's .
+SFX 618 Y 1
+SFX 618 0 iko .
+SFX 717 Y 1
+SFX 717 0 tina .
+SFX 665 Y 1
+SFX 665 0 anda's .
+SFX 498 Y 1
+SFX 498 0 tine .
+SFX 116 Y 1
+SFX 116 0 man's .
+SFX 416 Y 1
+SFX 416 0 ner's .
+SFX 837 Y 1
+SFX 837 0 maria .
+SFX 431 Y 1
+SFX 431 0 marie .
+SFX 911 Y 1
+SFX 911 0 ila .
+SFX 910 Y 1
+SFX 910 0 ila's .
+SFX 666 Y 1
+SFX 666 0 anda .
+SFX 816 Y 1
+SFX 816 0 ning's .
+SFX 669 Y 1
+SFX 669 0 ae's .
+SFX 780 Y 1
+SFX 780 0 ret's .
+SFX 819 Y 1
+SFX 819 0 nia .
+SFX 75 Y 1
+SFX 75 0 nie .
+SFX 270 Y 1
+SFX 270 0 dra .
+SFX 472 Y 1
+SFX 472 0 een's .
+SFX 289 Y 1
+SFX 289 0 my's .
+SFX 333 Y 1
+SFX 333 0 sen .
+SFX 383 Y 1
+SFX 383 0 well .
+SFX 51 Y 1
+SFX 51 0 ina .
+SFX 41 Y 1
+SFX 41 0 ine .
+SFX 109 Y 1
+SFX 109 0 ing .
+SFX 753 Y 1
+SFX 753 0 sey .
+SFX 606 Y 1
+SFX 606 0 isha's .
+SFX 16 Y 1
+SFX 16 0 ne's .
+SFX 647 Y 1
+SFX 647 0 cock's .
+SFX 261 Y 1
+SFX 261 0 ice's .
+SFX 836 Y 1
+SFX 836 0 maria's .
+SFX 338 Y 1
+SFX 338 0 rd's .
+SFX 182 Y 1
+SFX 182 0 sha .
+SFX 30 Y 1
+SFX 30 0 da's .
+SFX 572 Y 1
+SFX 572 0 mer's .
+SFX 505 Y 1
+SFX 505 0 tel's .
+SFX 623 Y 1
+SFX 623 0 house's .
+SFX 944 Y 1
+SFX 944 0 eka's .
+SFX 979 Y 1
+SFX 979 0 anie .
+SFX 38 Y 1
+SFX 38 0 o's .
+SFX 395 Y 1
+SFX 395 0 sie .
+SFX 610 Y 1
+SFX 610 0 ington's .
+SFX 132 Y 1
+SFX 132 0 nna .
+SFX 145 Y 1
+SFX 145 0 nne .
+SFX 131 Y 1
+SFX 131 0 nna's .
+SFX 799 Y 1
+SFX 799 0 ore's .
+SFX 958 Y 1
+SFX 958 0 dale's .
+SFX 903 Y 1
+SFX 903 0 isa .
+SFX 348 Y 1
+SFX 348 0 ndra .
+SFX 367 Y 1
+SFX 367 0 ise .
+SFX 641 Y 1
+SFX 641 0 den's .
+SFX 817 Y 1
+SFX 817 0 ning .
+SFX 180 Y 1
+SFX 180 0 tt's .
+SFX 815 Y 1
+SFX 815 0 non .
+SFX 874 Y 1
+SFX 874 0 ks's .
+SFX 536 Y 1
+SFX 536 0 rick's .
+SFX 553 Y 1
+SFX 553 0 nor .
+SFX 83 Y 1
+SFX 83 0 ita .
+SFX 468 Y 1
+SFX 468 0 ers's .
+SFX 543 Y 1
+SFX 543 0 or's .
+SFX 532 Y 1
+SFX 532 0 ri's .
+SFX 790 Y 1
+SFX 790 0 pson's .
+SFX 538 Y 1
+SFX 538 0 ria's .
+SFX 479 Y 1
+SFX 479 0 all's .
+SFX 24 Y 1
+SFX 24 0 t's .
+SFX 124 Y 1
+SFX 124 0 elle's .
+SFX 902 Y 1
+SFX 902 0 isa's .
+SFX 226 Y 1
+SFX 226 0 anna .
+SFX 861 Y 1
+SFX 861 0 ler's .
+SFX 321 Y 1
+SFX 321 0 anne .
+SFX 551 Y 1
+SFX 551 0 no's .
+SFX 68 Y 1
+SFX 68 0 en's .
+SFX 684 Y 1
+SFX 684 0 worth's .
+SFX 273 Y 1
+SFX 273 0 ty's .
+SFX 21 Y 1
+SFX 21 0 son .
+SFX 670 Y 1
+SFX 670 0 ae .
+SFX 381 Y 1
+SFX 381 0 ah .
+SFX 668 Y 1
+SFX 668 0 al .
+SFX 379 Y 1
+SFX 379 0 am .
+SFX 89 Y 1
+SFX 89 0 an .
+SFX 478 Y 1
+SFX 478 0 ar .
+SFX 224 Y 1
+SFX 224 0 as .
+SFX 662 Y 1
+SFX 662 0 ay .
+SFX 599 Y 1
+SFX 599 0 ld's .
+SFX 858 Y 1
+SFX 858 0 less's .
+SFX 868 Y 1
+SFX 868 0 ldo's .
+SFX 412 Y 1
+SFX 412 0 ow's .
+SFX 814 Y 1
+SFX 814 0 non's .
+SFX 973 Y 1
+SFX 973 0 bi .
+SFX 64 Y 1
+SFX 64 0 tte's .
+SFX 200 Y 1
+SFX 200 0 by .
+SFX 153 Y 1
+SFX 153 0 wood .
+SFX 198 Y 1
+SFX 198 0 ca .
+SFX 99 Y 1
+SFX 99 0 ce .
+SFX 319 Y 1
+SFX 319 0 ch .
+SFX 650 Y 1
+SFX 650 0 ck .
+SFX 961 Y 1
+SFX 961 0 co .
+SFX 774 Y 1
+SFX 774 0 rine's .
+SFX 12 Y 1
+SFX 12 0 y's .
+SFX 155 Y 1
+SFX 155 0 ka's .
+SFX 31 Y 1
+SFX 31 0 da .
+SFX 957 Y 1
+SFX 957 0 de .
+SFX 640 Y 1
+SFX 640 0 di .
+SFX 947 Y 1
+SFX 947 0 dt .
+SFX 222 Y 1
+SFX 222 0 dy .
+SFX 936 Y 1
+SFX 936 0 era's .
+SFX 812 Y 1
+SFX 812 0 nt's .
+SFX 86 Y 1
+SFX 86 0 es's .
+SFX 232 Y 1
+SFX 232 0 ssa .
+SFX 474 Y 1
+SFX 474 0 ch's .
+SFX 983 Y 1
+SFX 983 0 ala .
+SFX 151 Y 1
+SFX 151 0 ee .
+SFX 821 Y 1
+SFX 821 0 ngton .
+SFX 480 Y 1
+SFX 480 0 all .
+SFX 149 Y 1
+SFX 149 0 el .
+SFX 69 Y 1
+SFX 69 0 en .
+SFX 47 Y 1
+SFX 47 0 er .
+SFX 87 Y 1
+SFX 87 0 es .
+SFX 220 Y 1
+SFX 220 0 et .
+SFX 63 Y 1
+SFX 63 0 ey .
+SFX 850 Y 1
+SFX 850 0 li's .
+SFX 980 Y 1
+SFX 980 0 ane's .
+SFX 402 Y 1
+SFX 402 0 rs's .
+SFX 179 Y 1
+SFX 179 0 ana .
+SFX 981 Y 1
+SFX 981 0 ane .
+SFX 166 Y 1
+SFX 166 0 ard's .
+SFX 103 Y 1
+SFX 103 0 ann .
+SFX 664 Y 1
+SFX 664 0 any .
+SFX 661 Y 1
+SFX 661 0 ay's .
+SFX 692 Y 1
+SFX 692 0 ville .
+SFX 306 Y 1
+SFX 306 0 ha .
+SFX 106 Y 1
+SFX 106 0 ny's .
+SFX 33 Y 1
+SFX 33 0 ia .
+SFX 686 Y 1
+SFX 686 0 way's .
+SFX 15 Y 1
+SFX 15 0 ie .
+SFX 258 Y 1
+SFX 258 0 in .
+SFX 451 Y 1
+SFX 451 0 io .
+SFX 135 Y 1
+SFX 135 0 is .
+SFX 382 Y 1
+SFX 382 0 well's .
+SFX 269 Y 1
+SFX 269 0 dra's .
+SFX 58 Y 1
+SFX 58 0 g's .
+SFX 880 Y 1
+SFX 880 0 kin .
+SFX 977 Y 1
+SFX 977 0 ara .
+SFX 156 Y 1
+SFX 156 0 ka .
+SFX 167 Y 1
+SFX 167 0 ard .
+SFX 363 Y 1
+SFX 363 0 ko .
+SFX 875 Y 1
+SFX 875 0 ks .
+SFX 227 Y 1
+SFX 227 0 yn's .
+SFX 118 Y 1
+SFX 118 0 lee's .
+SFX 951 Y 1
+SFX 951 0 dora .
+SFX 914 Y 1
+SFX 914 0 ian's .
+SFX 978 Y 1
+SFX 978 0 anie's .
+SFX 49 Y 1
+SFX 49 0 la .
+SFX 600 Y 1
+SFX 600 0 ld .
+SFX 27 Y 1
+SFX 27 0 le .
+SFX 857 Y 1
+SFX 857 0 li .
+SFX 61 Y 1
+SFX 61 0 ll .
+SFX 188 Y 1
+SFX 188 0 ly .
+SFX 195 Y 1
+SFX 195 0 ela's .
+SFX 435 Y 1
+SFX 435 0 ma .
+SFX 577 Y 1
+SFX 577 0 lon's .
+SFX 570 Y 1
+SFX 570 0 ms .
+SFX 290 Y 1
+SFX 290 0 my .
+SFX 104 Y 1
+SFX 104 0 ra's .
+SFX 11 Y 1
+SFX 11 0 na .
+SFX 349 Y 1
+SFX 349 0 nd .
+SFX 17 Y 1
+SFX 17 0 ne .
+SFX 560 Y 1
+SFX 560 0 ng .
+SFX 238 Y 1
+SFX 238 0 ni .
+SFX 133 Y 1
+SFX 133 0 nn .
+SFX 554 Y 1
+SFX 554 0 no .
+SFX 550 Y 1
+SFX 550 0 ns .
+SFX 813 Y 1
+SFX 813 0 nt .
+SFX 107 Y 1
+SFX 107 0 ny .
+SFX 952 Y 1
+SFX 952 0 die's .
+SFX 18 Y 1
+SFX 18 0 l's .
+SFX 23 Y 1
+SFX 23 0 on .
+SFX 805 Y 1
+SFX 805 0 op .
+SFX 546 Y 1
+SFX 546 0 or .
+SFX 797 Y 1
+SFX 797 0 ot .
+SFX 413 Y 1
+SFX 413 0 ow .
+SFX 994 Y 1
+SFX 994 0 yce's .
+SFX 559 Y 1
+SFX 559 0 ng's .
+SFX 347 Y 1
+SFX 347 0 ndra's .
+SFX 82 Y 1
+SFX 82 0 ita's .
+SFX 909 Y 1
+SFX 909 0 inda .
+SFX 784 Y 1
+SFX 784 0 rell .
+SFX 457 Y 1
+SFX 457 0 han's .
+SFX 14 Y 1
+SFX 14 0 ie's .
+SFX 758 Y 1
+SFX 758 0 ryl's .
+SFX 207 Y 1
+SFX 207 0 ney's .
+SFX 835 Y 1
+SFX 835 e mer e
+SFX 881 Y 1
+SFX 881 i ki i
+SFX 418 Y 1
+SFX 418 a nda's a
+SFX 573 Y 1
+SFX 573 l mer l
+SFX 563 Y 1
+SFX 563 e nda's e
+SFX 160 Y 1
+SFX 160 a ine's a
+SFX 966 Y 1
+SFX 966 a ca's a
+SFX 368 Y 1
+SFX 368 e ine's e
+SFX 374 Y 1
+SFX 374 a etta's a
+SFX 530 Y 1
+SFX 530 n rley n
+SFX 615 Y 1
+SFX 615 a iko's a
+SFX 588 Y 1
+SFX 588 i li i
+SFX 311 Y 1
+SFX 311 a ee's a
+SFX 742 Y 1
+SFX 742 n sman n
+SFX 561 Y 1
+SFX 561 m ndra's m
+SFX 322 Y 1
+SFX 322 a ton's a
+SFX 769 Y 1
+SFX 769 n rlene n
+SFX 494 Y 1
+SFX 494 e ton's e
+SFX 585 Y 1
+SFX 585 a line's a
+SFX 711 Y 1
+SFX 711 h ton's h
+SFX 172 Y 1
+SFX 172 a on's a
+SFX 162 Y 1
+SFX 162 a er's a
+SFX 964 Y 1
+SFX 964 a cia's a
+SFX 710 Y 1
+SFX 710 k ton's k
+SFX 493 Y 1
+SFX 493 l ton's l
+SFX 287 Y 1
+SFX 287 e on's e
+SFX 323 Y 1
+SFX 323 a ton a
+SFX 728 Y 1
+SFX 728 l ter's l
+SFX 584 Y 1
+SFX 584 i line's i
+SFX 709 Y 1
+SFX 709 n ton's n
+SFX 501 Y 1
+SFX 501 n ter's n
+SFX 806 Y 1
+SFX 806 h on's h
+SFX 414 Y 1
+SFX 414 i on's i
+SFX 496 Y 1
+SFX 496 e ton e
+SFX 645 Y 1
+SFX 645 a dall's a
+SFX 547 Y 1
+SFX 547 l on's l
+SFX 714 Y 1
+SFX 714 h ton h
+SFX 713 Y 1
+SFX 713 k ton k
+SFX 495 Y 1
+SFX 495 l ton l
+SFX 158 Y 1
+SFX 158 a ita's a
+SFX 712 Y 1
+SFX 712 n ton n
+SFX 754 Y 1
+SFX 754 n sette's n
+SFX 723 Y 1
+SFX 723 e ther's e
+SFX 251 Y 1
+SFX 251 e ita's e
+SFX 409 Y 1
+SFX 409 i ri i
+SFX 591 Y 1
+SFX 591 a ley's a
+SFX 535 Y 1
+SFX 535 m ri m
+SFX 337 Y 1
+SFX 337 n ri n
+SFX 772 Y 1
+SFX 772 a ris's a
+SFX 213 Y 1
+SFX 213 e ley's e
+SFX 392 Y 1
+SFX 392 n ssie's n
+SFX 440 Y 1
+SFX 440 i ley's i
+SFX 901 Y 1
+SFX 901 a ise a
+SFX 587 Y 1
+SFX 587 a line a
+SFX 406 Y 1
+SFX 406 n ris's n
+SFX 359 Y 1
+SFX 359 e land's e
+SFX 586 Y 1
+SFX 586 i line i
+SFX 932 Y 1
+SFX 932 a esa's a
+SFX 627 Y 1
+SFX 627 a ford's a
+SFX 922 Y 1
+SFX 922 e ford's e
+SFX 761 Y 1
+SFX 761 n rtha n
+SFX 614 Y 1
+SFX 614 a ing a
+SFX 871 Y 1
+SFX 871 d lcock d
+SFX 523 Y 1
+SFX 523 n rt's n
+SFX 646 Y 1
+SFX 646 a dall a
+SFX 855 Y 1
+SFX 855 i lia's i
+SFX 689 Y 1
+SFX 689 i vin's i
+SFX 533 Y 1
+SFX 533 i rine's i
+SFX 281 Y 1
+SFX 281 n rd's n
+SFX 601 Y 1
+SFX 601 d ks's d
+SFX 476 Y 1
+SFX 476 a by a
+SFX 737 Y 1
+SFX 737 n ssell n
+SFX 499 Y 1
+SFX 499 e th's e
+SFX 699 Y 1
+SFX 699 n ugh's n
+SFX 894 Y 1
+SFX 894 a issa's a
+SFX 282 Y 1
+SFX 282 n rd n
+SFX 163 Y 1
+SFX 163 a er a
+SFX 405 Y 1
+SFX 405 n rrie n
+SFX 721 Y 1
+SFX 721 n th's n
+SFX 491 Y 1
+SFX 491 n tton n
+SFX 521 Y 1
+SFX 521 i ry's i
+SFX 746 Y 1
+SFX 746 i sie's i
+SFX 736 Y 1
+SFX 736 n ssell's n
+SFX 400 Y 1
+SFX 400 n ry's n
+SFX 515 Y 1
+SFX 515 n sie's n
+SFX 943 Y 1
+SFX 943 a ela a
+SFX 408 Y 1
+SFX 408 i ri's i
+SFX 531 Y 1
+SFX 531 m ri's m
+SFX 336 Y 1
+SFX 336 n ri's n
+SFX 613 Y 1
+SFX 613 a ing's a
+SFX 916 Y 1
+SFX 916 e he's e
+SFX 997 Y 1
+SFX 997 e xton e
+SFX 316 Y 1
+SFX 316 a dy a
+SFX 704 Y 1
+SFX 704 n tte's n
+SFX 460 Y 1
+SFX 460 e gan's e
+SFX 475 Y 1
+SFX 475 a by's a
+SFX 703 Y 1
+SFX 703 s tte's s
+SFX 557 Y 1
+SFX 557 e ngton's e
+SFX 727 Y 1
+SFX 727 m te's m
+SFX 770 Y 1
+SFX 770 n rita's n
+SFX 967 Y 1
+SFX 967 a ca a
+SFX 800 Y 1
+SFX 800 e or e
+SFX 529 Y 1
+SFX 529 n rley's n
+SFX 619 Y 1
+SFX 619 a ika's a
+SFX 700 Y 1
+SFX 700 n ugh n
+SFX 747 Y 1
+SFX 747 i sie i
+SFX 246 Y 1
+SFX 246 i lyn i
+SFX 245 Y 1
+SFX 245 i lyn's i
+SFX 516 Y 1
+SFX 516 n sie n
+SFX 442 Y 1
+SFX 442 a le's a
+SFX 194 Y 1
+SFX 194 a ena a
+SFX 247 Y 1
+SFX 247 e le's e
+SFX 121 Y 1
+SFX 121 a ey a
+SFX 735 Y 1
+SFX 735 e ss's e
+SFX 594 Y 1
+SFX 594 i le's i
+SFX 925 Y 1
+SFX 925 d ey d
+SFX 335 Y 1
+SFX 335 n rry n
+SFX 763 Y 1
+SFX 763 o rry o
+SFX 328 Y 1
+SFX 328 n ss's n
+SFX 448 Y 1
+SFX 448 e io's e
+SFX 264 Y 1
+SFX 264 a ha a
+SFX 79 Y 1
+SFX 79 a da a
+SFX 694 Y 1
+SFX 694 t va's t
+SFX 562 Y 1
+SFX 562 m ndra m
+SFX 459 Y 1
+SFX 459 e ha e
+SFX 90 Y 1
+SFX 90 a na's a
+SFX 421 Y 1
+SFX 421 d na's d
+SFX 128 Y 1
+SFX 128 e na's e
+SFX 896 Y 1
+SFX 896 a ison's a
+SFX 933 Y 1
+SFX 933 a esa a
+SFX 830 Y 1
+SFX 830 i na's i
+SFX 809 Y 1
+SFX 809 a ona's a
+SFX 643 Y 1
+SFX 643 a dell's a
+SFX 567 Y 1
+SFX 567 l na's l
+SFX 203 Y 1
+SFX 203 e son's e
+SFX 420 Y 1
+SFX 420 m na's m
+SFX 867 Y 1
+SFX 867 i lena i
+SFX 512 Y 1
+SFX 512 l son's l
+SFX 45 Y 1
+SFX 45 a ia a
+SFX 314 Y 1
+SFX 314 a ea a
+SFX 511 Y 1
+SFX 511 n son's n
+SFX 808 Y 1
+SFX 808 n ona's n
+SFX 771 Y 1
+SFX 771 n rita n
+SFX 77 Y 1
+SFX 77 e ia e
+SFX 767 Y 1
+SFX 767 n rna n
+SFX 739 Y 1
+SFX 739 r son's r
+SFX 743 Y 1
+SFX 743 m 's m
+SFX 169 Y 1
+SFX 169 n 's n
+SFX 921 Y 1
+SFX 921 a ger a
+SFX 839 Y 1
+SFX 839 i maine i
+SFX 193 Y 1
+SFX 193 a ena's a
+SFX 205 Y 1
+SFX 205 a ra's a
+SFX 284 Y 1
+SFX 284 e ra's e
+SFX 91 Y 1
+SFX 91 a na a
+SFX 544 Y 1
+SFX 544 a ora's a
+SFX 340 Y 1
+SFX 340 i ra's i
+SFX 423 Y 1
+SFX 423 d na d
+SFX 129 Y 1
+SFX 129 e na e
+SFX 690 Y 1
+SFX 690 i vin i
+SFX 446 Y 1
+SFX 446 e isa's e
+SFX 283 Y 1
+SFX 283 m ra's m
+SFX 831 Y 1
+SFX 831 i na i
+SFX 142 Y 1
+SFX 142 n ra's n
+SFX 802 Y 1
+SFX 802 i ora's i
+SFX 568 Y 1
+SFX 568 l na l
+SFX 422 Y 1
+SFX 422 m na m
+SFX 638 Y 1
+SFX 638 a die's a
+SFX 777 Y 1
+SFX 777 e rina e
+SFX 843 Y 1
+SFX 843 i ly i
+SFX 889 Y 1
+SFX 889 a ka a
+SFX 141 Y 1
+SFX 141 a sa a
+SFX 927 Y 1
+SFX 927 a et a
+SFX 280 Y 1
+SFX 280 e sa e
+SFX 862 Y 1
+SFX 862 a ler a
+SFX 486 Y 1
+SFX 486 s ty s
+SFX 471 Y 1
+SFX 471 a ella a
+SFX 729 Y 1
+SFX 729 l ter l
+SFX 502 Y 1
+SFX 502 n ter n
+SFX 926 Y 1
+SFX 926 a et's a
+SFX 190 Y 1
+SFX 190 a la a
+SFX 115 Y 1
+SFX 115 a ta a
+SFX 376 Y 1
+SFX 376 a el's a
+SFX 361 Y 1
+SFX 361 e la e
+SFX 327 Y 1
+SFX 327 e ta e
+SFX 897 Y 1
+SFX 897 a ison a
+SFX 941 Y 1
+SFX 941 a elia a
+SFX 302 Y 1
+SFX 302 i la i
+SFX 732 Y 1
+SFX 732 l ta l
+SFX 326 Y 1
+SFX 326 s ta s
+SFX 522 Y 1
+SFX 522 i ry i
+SFX 401 Y 1
+SFX 401 n ry n
+SFX 576 Y 1
+SFX 576 e ma e
+SFX 996 Y 1
+SFX 996 e xton's e
+SFX 120 Y 1
+SFX 120 a ey's a
+SFX 434 Y 1
+SFX 434 l ma l
+SFX 924 Y 1
+SFX 924 d ey's d
+SFX 778 Y 1
+SFX 778 e rie's e
+SFX 877 Y 1
+SFX 877 i kin's i
+SFX 410 Y 1
+SFX 410 i rie's i
+SFX 592 Y 1
+SFX 592 a ley a
+SFX 206 Y 1
+SFX 206 a ra a
+SFX 214 Y 1
+SFX 214 e ley e
+SFX 286 Y 1
+SFX 286 e ra e
+SFX 510 Y 1
+SFX 510 n ston n
+SFX 492 Y 1
+SFX 492 e tt e
+SFX 341 Y 1
+SFX 341 i ra i
+SFX 441 Y 1
+SFX 441 i ley i
+SFX 832 Y 1
+SFX 832 i mie's i
+SFX 285 Y 1
+SFX 285 m ra m
+SFX 143 Y 1
+SFX 143 n ra n
+SFX 702 Y 1
+SFX 702 n tt n
+SFX 811 Y 1
+SFX 811 a ona a
+SFX 545 Y 1
+SFX 545 a ora a
+SFX 450 Y 1
+SFX 450 e io e
+SFX 489 Y 1
+SFX 489 r tt r
+SFX 693 Y 1
+SFX 693 t va t
+SFX 833 Y 1
+SFX 833 i mie i
+SFX 803 Y 1
+SFX 803 i ora i
+SFX 500 Y 1
+SFX 500 e th e
+SFX 375 Y 1
+SFX 375 a etta a
+SFX 810 Y 1
+SFX 810 n ona n
+SFX 940 Y 1
+SFX 940 a elia's a
+SFX 722 Y 1
+SFX 722 n th n
+SFX 625 Y 1
+SFX 625 e ham's e
+SFX 756 Y 1
+SFX 756 e se's e
+SFX 866 Y 1
+SFX 866 i lena's i
+SFX 44 Y 1
+SFX 44 a ia's a
+SFX 519 Y 1
+SFX 519 n se's n
+SFX 76 Y 1
+SFX 76 e ia's e
+SFX 483 Y 1
+SFX 483 e wood's e
+SFX 1000 Y 1
+SFX 1000 i wood's i
+SFX 928 Y 1
+SFX 928 a essa's a
+SFX 879 Y 1
+SFX 879 i kin i
+SFX 525 Y 1
+SFX 525 n rt n
+SFX 883 Y 1
+SFX 883 e ke's e
+SFX 604 Y 1
+SFX 604 e ko e
+SFX 999 Y 1
+SFX 999 t wood's t
+SFX 484 Y 1
+SFX 484 e wood e
+SFX 882 Y 1
+SFX 882 i ke's i
+SFX 998 Y 1
+SFX 998 t wood t
+SFX 651 Y 1
+SFX 651 a ce's a
+SFX 555 Y 1
+SFX 555 m nisha's m
+SFX 384 Y 1
+SFX 384 n ttie's n
+SFX 575 Y 1
+SFX 575 e ma's e
+SFX 307 Y 1
+SFX 307 a ette's a
+SFX 146 Y 1
+SFX 146 a ina's a
+SFX 428 Y 1
+SFX 428 l ma's l
+SFX 191 Y 1
+SFX 191 e ina's e
+SFX 834 Y 1
+SFX 834 e mer's e
+SFX 204 Y 1
+SFX 204 e son e
+SFX 768 Y 1
+SFX 768 n rlene's n
+SFX 571 Y 1
+SFX 571 l mer's l
+SFX 360 Y 1
+SFX 360 e land e
+SFX 514 Y 1
+SFX 514 l son l
+SFX 513 Y 1
+SFX 513 n son n
+SFX 313 Y 1
+SFX 313 a ea's a
+SFX 740 Y 1
+SFX 740 r son r
+SFX 726 Y 1
+SFX 726 r tha r
+SFX 488 Y 1
+SFX 488 e tt's e
+SFX 904 Y 1
+SFX 904 a ira's a
+SFX 404 Y 1
+SFX 404 n rrie's n
+SFX 798 Y 1
+SFX 798 e or's e
+SFX 652 Y 1
+SFX 652 a ce a
+SFX 701 Y 1
+SFX 701 n tt's n
+SFX 96 Y 1
+SFX 96 a en's a
+SFX 487 Y 1
+SFX 487 r tt's r
+SFX 856 Y 1
+SFX 856 i lia i
+SFX 633 Y 1
+SFX 633 a dra's a
+SFX 165 Y 1
+SFX 165 a ene a
+SFX 786 Y 1
+SFX 786 n rdon's n
+SFX 779 Y 1
+SFX 779 e rie e
+SFX 411 Y 1
+SFX 411 i rie i
+SFX 438 Y 1
+SFX 438 e ll's e
+SFX 393 Y 1
+SFX 393 n ssie n
+SFX 917 Y 1
+SFX 917 e he e
+SFX 870 Y 1
+SFX 870 d lcock's d
+SFX 581 Y 1
+SFX 581 i ll's i
+SFX 137 Y 1
+SFX 137 a ell a
+SFX 634 Y 1
+SFX 634 a dra a
+SFX 865 Y 1
+SFX 865 a lene a
+SFX 597 Y 1
+SFX 597 e lene e
+SFX 255 Y 1
+SFX 255 a in's a
+SFX 490 Y 1
+SFX 490 n tton's n
+SFX 355 Y 1
+SFX 355 i lene i
+SFX 452 Y 1
+SFX 452 e in's e
+SFX 57 Y 1
+SFX 57 a ie a
+SFX 312 Y 1
+SFX 312 a ee a
+SFX 95 Y 1
+SFX 95 e ie e
+SFX 470 Y 1
+SFX 470 a ella's a
+SFX 517 Y 1
+SFX 517 i sey's i
+SFX 334 Y 1
+SFX 334 n rry's n
+SFX 762 Y 1
+SFX 762 o rry's o
+SFX 558 Y 1
+SFX 558 e ngton e
+SFX 147 Y 1
+SFX 147 a ina a
+SFX 822 Y 1
+SFX 822 e ney's e
+SFX 244 Y 1
+SFX 244 a ne a
+SFX 315 Y 1
+SFX 315 a dy's a
+SFX 192 Y 1
+SFX 192 e ina e
+SFX 589 Y 1
+SFX 589 a lie's a
+SFX 101 Y 1
+SFX 101 e ne e
+SFX 912 Y 1
+SFX 912 e igh's e
+SFX 644 Y 1
+SFX 644 a dell a
+SFX 527 Y 1
+SFX 527 n rri's n
+SFX 853 Y 1
+SFX 853 e lie's e
+SFX 891 Y 1
+SFX 891 i juana i
+SFX 350 Y 1
+SFX 350 i lie's i
+SFX 984 Y 1
+SFX 984 a yn's a
+SFX 776 Y 1
+SFX 776 e rina's e
+SFX 620 Y 1
+SFX 620 a ika a
+SFX 534 Y 1
+SFX 534 i rine i
+SFX 676 Y 1
+SFX 676 i yn's i
+SFX 433 Y 1
+SFX 433 a man a
+SFX 887 Y 1
+SFX 887 e ke e
+SFX 757 Y 1
+SFX 757 e se e
+SFX 675 Y 1
+SFX 675 n yn's n
+SFX 603 Y 1
+SFX 603 e ko's e
+SFX 177 Y 1
+SFX 177 e man e
+SFX 886 Y 1
+SFX 886 i ke i
+SFX 139 Y 1
+SFX 139 a een a
+SFX 520 Y 1
+SFX 520 n se n
+SFX 377 Y 1
+SFX 377 a el a
+SFX 159 Y 1
+SFX 159 a ita a
+SFX 445 Y 1
+SFX 445 a le a
+SFX 252 Y 1
+SFX 252 e ita e
+SFX 734 Y 1
+SFX 734 n ster n
+SFX 248 Y 1
+SFX 248 e le e
+SFX 598 Y 1
+SFX 598 i le i
+SFX 829 Y 1
+SFX 829 l ndy l
+SFX 828 Y 1
+SFX 828 m ndy m
+SFX 730 Y 1
+SFX 730 m te m
+SFX 263 Y 1
+SFX 263 a ha's a
+SFX 138 Y 1
+SFX 138 a een's a
+SFX 464 Y 1
+SFX 464 a es's a
+SFX 456 Y 1
+SFX 456 e ha's e
+SFX 485 Y 1
+SFX 485 s ty's s
+SFX 725 Y 1
+SFX 725 r tha's r
+SFX 766 Y 1
+SFX 766 n rna's n
+SFX 114 Y 1
+SFX 114 a ta's a
+SFX 823 Y 1
+SFX 823 e ney e
+SFX 773 Y 1
+SFX 773 a ris a
+SFX 325 Y 1
+SFX 325 e ta's e
+SFX 899 Y 1
+SFX 899 a isha a
+SFX 842 Y 1
+SFX 842 i ly's i
+SFX 136 Y 1
+SFX 136 a ell's a
+SFX 419 Y 1
+SFX 419 a nda a
+SFX 949 Y 1
+SFX 949 a ds a
+SFX 607 Y 1
+SFX 607 e isha e
+SFX 731 Y 1
+SFX 731 l ta's l
+SFX 611 Y 1
+SFX 611 e ington e
+SFX 564 Y 1
+SFX 564 e nda e
+SFX 407 Y 1
+SFX 407 n ris n
+SFX 913 Y 1
+SFX 913 e igh e
+SFX 324 Y 1
+SFX 324 s ta's s
+SFX 860 Y 1
+SFX 860 a ler's a
+SFX 905 Y 1
+SFX 905 a ira a
+SFX 609 Y 1
+SFX 609 e ington's e
+SFX 583 Y 1
+SFX 583 i li's i
+SFX 893 Y 1
+SFX 893 e itt e
+SFX 189 Y 1
+SFX 189 a la's a
+SFX 253 Y 1
+SFX 253 a is's a
+SFX 628 Y 1
+SFX 628 a ford a
+SFX 358 Y 1
+SFX 358 e la's e
+SFX 679 Y 1
+SFX 679 n yne's n
+SFX 923 Y 1
+SFX 923 e ford e
+SFX 364 Y 1
+SFX 364 e is's e
+SFX 301 Y 1
+SFX 301 i la's i
+SFX 920 Y 1
+SFX 920 a ger's a
+SFX 303 Y 1
+SFX 303 a ice's a
+SFX 986 Y 1
+SFX 986 t yne's t
+SFX 254 Y 1
+SFX 254 a is a
+SFX 236 Y 1
+SFX 236 n re n
+SFX 465 Y 1
+SFX 465 a es a
+SFX 366 Y 1
+SFX 366 e is e
+SFX 443 Y 1
+SFX 443 i leen's i
+SFX 243 Y 1
+SFX 243 a ne's a
+SFX 697 Y 1
+SFX 697 a us's a
+SFX 929 Y 1
+SFX 929 a essa a
+SFX 100 Y 1
+SFX 100 e ne's e
+SFX 518 Y 1
+SFX 518 i sey i
+SFX 439 Y 1
+SFX 439 e ll e
+SFX 308 Y 1
+SFX 308 a ette a
+SFX 582 Y 1
+SFX 582 i ll i
+SFX 447 Y 1
+SFX 447 e isa e
+SFX 78 Y 1
+SFX 78 a da's a
+SFX 720 Y 1
+SFX 720 i tie i
+SFX 787 Y 1
+SFX 787 n rdon n
+SFX 164 Y 1
+SFX 164 a ene's a
+SFX 885 Y 1
+SFX 885 e ker e
+SFX 895 Y 1
+SFX 895 a issa a
+SFX 240 Y 1
+SFX 240 e ng e
+SFX 617 Y 1
+SFX 617 a iko a
+SFX 900 Y 1
+SFX 900 a ise's a
+SFX 602 Y 1
+SFX 602 d ks d
+SFX 738 Y 1
+SFX 738 e ss e
+SFX 235 Y 1
+SFX 235 n re's n
+SFX 444 Y 1
+SFX 444 i leen i
+SFX 329 Y 1
+SFX 329 n ss n
+SFX 793 Y 1
+SFX 793 e per e
+SFX 792 Y 1
+SFX 792 e per's e
+SFX 257 Y 1
+SFX 257 a in a
+SFX 97 Y 1
+SFX 97 a en a
+SFX 453 Y 1
+SFX 453 e in e
+SFX 698 Y 1
+SFX 698 a us a
+SFX 706 Y 1
+SFX 706 n tte n
+SFX 705 Y 1
+SFX 705 s tte s
+SFX 331 Y 1
+SFX 331 a sha a
+SFX 462 Y 1
+SFX 462 e gan e
+SFX 827 Y 1
+SFX 827 l ndy's l
+SFX 304 Y 1
+SFX 304 a ice a
+SFX 826 Y 1
+SFX 826 m ndy's m
+SFX 741 Y 1
+SFX 741 n sman's n
+SFX 399 Y 1
+SFX 399 m sha m
+SFX 398 Y 1
+SFX 398 n sha n
+SFX 590 Y 1
+SFX 590 a lie a
+SFX 890 Y 1
+SFX 890 i juana's i
+SFX 942 Y 1
+SFX 942 a ela's a
+SFX 854 Y 1
+SFX 854 e lie e
+SFX 750 Y 1
+SFX 750 r sha r
+SFX 385 Y 1
+SFX 385 n ttie n
+SFX 755 Y 1
+SFX 755 n sette n
+SFX 351 Y 1
+SFX 351 i lie i
+SFX 639 Y 1
+SFX 639 a die a
+SFX 173 Y 1
+SFX 173 a on a
+SFX 288 Y 1
+SFX 288 e on e
+SFX 892 Y 1
+SFX 892 e itt's e
+SFX 807 Y 1
+SFX 807 h on h
+SFX 415 Y 1
+SFX 415 i on i
+SFX 548 Y 1
+SFX 548 l on l
+SFX 965 Y 1
+SFX 965 a cia a
+SFX 898 Y 1
+SFX 898 a isha's a
+SFX 330 Y 1
+SFX 330 a sha's a
+SFX 605 Y 1
+SFX 605 e isha's e
+SFX 397 Y 1
+SFX 397 m sha's m
+SFX 396 Y 1
+SFX 396 n sha's n
+SFX 749 Y 1
+SFX 749 r sha's r
+SFX 528 Y 1
+SFX 528 n rri n
+SFX 626 Y 1
+SFX 626 e ham e
+SFX 948 Y 1
+SFX 948 a ds's a
+SFX 864 Y 1
+SFX 864 a lene's a
+SFX 987 Y 1
+SFX 987 a yn a
+SFX 596 Y 1
+SFX 596 e lene's e
+SFX 509 Y 1
+SFX 509 n ston's n
+SFX 760 Y 1
+SFX 760 n rtha's n
+SFX 733 Y 1
+SFX 733 n ster's n
+SFX 681 Y 1
+SFX 681 n yne n
+SFX 724 Y 1
+SFX 724 e ther e
+SFX 353 Y 1
+SFX 353 i lene's i
+SFX 140 Y 1
+SFX 140 a sa's a
+SFX 239 Y 1
+SFX 239 e ng's e
+SFX 56 Y 1
+SFX 56 a ie's a
+SFX 678 Y 1
+SFX 678 i yn i
+SFX 719 Y 1
+SFX 719 i tie's i
+SFX 161 Y 1
+SFX 161 a ine a
+SFX 985 Y 1
+SFX 985 t yne t
+SFX 279 Y 1
+SFX 279 e sa's e
+SFX 94 Y 1
+SFX 94 e ie's e
+SFX 677 Y 1
+SFX 677 n yn n
+SFX 369 Y 1
+SFX 369 e ine e
+SFX 884 Y 1
+SFX 884 e ker's e
+SFX 556 Y 1
+SFX 556 m nisha m
+SFX 432 Y 1
+SFX 432 a man's a
+SFX 176 Y 1
+SFX 176 e man's e
+SFX 876 Y 1
+SFX 876 i ki's i
+SFX 888 Y 1
+SFX 888 a ka's a
+SFX 838 Y 1
+SFX 838 i maine's i
+
+#   PHONEtic_english.h - #PHONEtic transformation rules for use with #PHONEtic.c
+#   Copyright (C) 2000 Björn Jacke
+#
+#   This rule set is based on Lawrence Phillips original metaPHONE 
+#   algorithm with modifications made by Michael Kuhn in his
+#   C implantation, more modifications by Björn Jacke when
+#   converting the algorithm to a rule set and minor 
+#   touch ups by Kevin Atkinson
+#
+#   This library is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Lesser General Public
+#   License version 2.1 as published by the Free Software Foundation;
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this library; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#   Björn Jacke may be reached by email at bjoern.jacke@gmx.de
+#
+#   Changelog:
+#
+#   2000-01-05  Björn Jacke <bjoern.jacke@gmx.de>
+#               - first version with translation rules derived from
+#                 metaPHONE.cc distributed with aspell 0.28.3
+#               - "TH" is now representated as "@" because "0" is a
+#                 meta character
+#               - removed TH(!vowel) --> T; always use TH --> # instead
+#               - dropped "^AE" -> "E" (redundant)
+#               - "ing" is transformed to "N", not "NK"
+#               - "SCH(EO)" transforms to "SK" now
+#               - added R --> SILENT if (after a vowel) and no (vowel or
+#                 "y" follows) like in "Marcy" or "abort"
+#               - H is SILENT in RH at beginning of words
+#               - H is SILENT if vowel leads and "Y" follows
+#               - some ".OUGH.."  --> ...F exceptions added
+#               - "^V" transforms to "W"
+#   2000-01-07  Kevin Atkinson <kevinatk@home.com>
+#               Converted from header to data file.
+#
+#   2007-08-23  LÃ¡szlÃ³ NÃ©meth <nemeth AT OOo>
+#               Add PHONE header and #PHONE keywords
+#
+# version 1.1
+
+# Documentation: http://aspell.net/man-html/PHONEtic-Code.html
+
+PHONE 105
+PHONE AH(AEIOUY)-^         *H
+PHONE AR(AEIOUY)-^         *R
+PHONE A(HR)^               *
+PHONE A^                   *
+PHONE AH(AEIOUY)-          H
+PHONE AR(AEIOUY)-          R
+PHONE A(HR)                _
+PHONE BB-                  _
+PHONE B                    B
+PHONE CQ-                  _
+PHONE CIA                  X
+PHONE CH                   X
+PHONE C(EIY)-              S
+PHONE CK                   K
+PHONE COUGH^               KF
+PHONE CC<                  C
+PHONE C                    K
+PHONE DG(EIY)              K
+PHONE DD-                  _
+PHONE D                    T
+PHONE É<                   E
+PHONE EH(AEIOUY)-^         *H
+PHONE ER(AEIOUY)-^         *R
+PHONE E(HR)^               *
+PHONE ENOUGH^$             *NF
+PHONE E^                   *
+PHONE EH(AEIOUY)-          H
+PHONE ER(AEIOUY)-          R
+PHONE E(HR)                _
+PHONE FF-                  _
+PHONE F                    F
+PHONE GN^                  N
+PHONE GN$                  N
+PHONE GNS$                 NS
+PHONE GNED$                N
+PHONE GH(AEIOUY)-          K
+PHONE GH                   _
+PHONE GG9                  K
+PHONE G                    K
+PHONE H                    H
+PHONE IH(AEIOUY)-^         *H
+PHONE IR(AEIOUY)-^         *R
+PHONE I(HR)^               *
+PHONE I^                   *
+PHONE ING6                 N
+PHONE IH(AEIOUY)-          H
+PHONE IR(AEIOUY)-          R
+PHONE I(HR)                _
+PHONE J                    K
+PHONE KN^                  N
+PHONE KK-                  _
+PHONE K                    K
+PHONE LAUGH^               LF
+PHONE LL-                  _
+PHONE L                    L
+PHONE MB$                  M
+PHONE MM                   M
+PHONE M                    M
+PHONE NN-                  _
+PHONE N                    N
+PHONE OH(AEIOUY)-^         *H
+PHONE OR(AEIOUY)-^         *R
+PHONE O(HR)^               *
+PHONE O^                   *
+PHONE OH(AEIOUY)-          H
+PHONE OR(AEIOUY)-          R
+PHONE O(HR)                _
+PHONE PH                   F
+PHONE PN^                  N
+PHONE PP-                  _
+PHONE P                    P
+PHONE Q                    K
+PHONE RH^                  R
+PHONE ROUGH^               RF
+PHONE RR-                  _
+PHONE R                    R
+PHONE SCH(EOU)-            SK
+PHONE SC(IEY)-             S
+PHONE SH                   X
+PHONE SI(AO)-              X
+PHONE SS-                  _
+PHONE S                    S
+PHONE TI(AO)-              X
+PHONE TH                   @
+PHONE TCH--                _
+PHONE TOUGH^               TF
+PHONE TT-                  _
+PHONE T                    T
+PHONE UH(AEIOUY)-^         *H
+PHONE UR(AEIOUY)-^         *R
+PHONE U(HR)^               *
+PHONE U^                   *
+PHONE UH(AEIOUY)-          H
+PHONE UR(AEIOUY)-          R
+PHONE U(HR)                _
+PHONE V^                   W
+PHONE V                    F
+PHONE WR^                  R
+PHONE WH^                  W
+PHONE W(AEIOU)-            W
+PHONE X^                   S
+PHONE X                    KS
+PHONE Y(AEIOU)-            Y
+PHONE ZZ-                  _
+PHONE Z                    S
+
+#The rules in a different view:
+#
+# Exceptions:
+#
+#  Beginning of word: "gn", "kn-", "pn-", "wr-"  ----> drop first letter
+#                     "Aebersold", "Gnagy", "Knuth", "Pniewski", "Wright"
+#
+#  Beginning of word: "x"                                ----> change to "s"
+#                                     as in "Deng Xiaopeng"
+#
+#  Beginning of word: "wh-"                              ----> change to "w"
+#                                     as in "Whalen"
+#  Beginning of word: leading vowels are transformed to "*"
+#
+#  "[crt]ough" and "enough" are handled separately because of "F" sound
+#
+#
+#  A --> A      at beginning
+#          _      otherwise
+#
+#  B --> B      unless at the end of word after "m", as in "dumb", "McComb"
+#
+#  C --> X      (sh) if "-cia-" or "-ch-"
+#          S      if "-ci-", "-ce-", or "-cy-"
+#                 SILENT if "-sci-", "-sce-", or "-scy-", or "-cq-"
+#          K      otherwise, including in "-sch-"
+#
+#  D --> K      if in "-dge-", "-dgy-", or "-dgi-"
+#          T      otherwise
+#
+#  E --> A      at beginnig
+#          _      SILENT otherwise
+#  
+#  F --> F
+#
+#  G -->        SILENT if in "-gh-" and not at end or before a vowel
+#                            in "-gn" or "-gned" or "-gns"
+#                           in "-dge-" etc., as in above rule
+#          K      if before "i", or "e", or "y" if not double "gg"
+#
+#          K      otherwise (incl. "GG"!)
+#
+#  H -->        SILENT if after vowel and no vowel or "Y" follows
+#                        or after "-ch-", "-sh-", "-ph-", "-th-", "-gh-"
+#                        or after "rh-" at beginning
+#          H      otherwise
+#
+#  I --> A      at beginning
+#          _      SILENT otherwise
+#
+#  J --> K
+#
+#  K -->        SILENT if after "c"
+#          K      otherwise
+#
+#  L --> L
+#
+#  M --> M
+#  
+#  N --> N
+#
+#  O --> A      at beginning
+#          _      SILENT otherwise
+#
+#  P --> F      if before "h"
+#          P      otherwise
+#
+#  Q --> K
+#
+#  R -->        SILENT if after vowel and no vowel or "Y" follows
+#          R      otherwise
+#
+#  S --> X      (sh) if before "h" or in "-sio-" or "-sia-"
+#          SK     if followed by "ch(eo)" (SCH(EO))
+#          S      otherwise
+#
+#  T --> X      (sh) if "-tia-" or "-tio-"
+#          0      (th) if before "h"
+#                 silent if in "-tch-"
+#          T      otherwise
+#
+#  U --> A      at beginning
+#          _      SILENT otherwise
+#
+#  V --> V      if first letter of word
+#          F      otherwise
+#
+#  W -->        SILENT if not followed by a vowel
+#          W      if followed by a vowel
+#
+#  X --> KS
+#
+#  Y -->        SILENT if not followed by a vowel
+#          Y      if followed by a vowel
+# 
+#  Z --> S
