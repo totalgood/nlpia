@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+
+<category><pattern>HELLO ROSA </pattern><template>Hi Human!</template></category>
+<category><pattern>HELLO STUPID </pattern><template>Good one, human.</template></category>
+
+</aiml>

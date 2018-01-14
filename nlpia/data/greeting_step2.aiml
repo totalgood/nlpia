@@ -1,0 +1,12 @@
+<aiml version="1.0.1">
+
+<category><pattern>HELO *        </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HI *          </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HIYA *        </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HYA *         </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HY *          </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HEY *         </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>WHATS UP *    </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>WHAT IS UP *  </pattern><template><srai>HELLO <star/></srai></template></category>
+
+</aiml>

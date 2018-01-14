@@ -1,0 +1,19 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<aiml version = "1.0.1">
+   <category>
+      <pattern> WHO IS ALBERT EINSTEIN </pattern>
+      <template>Albert Einstein was a German physicist.</template>
+   </category>
+   
+   <category>
+      <pattern> WHO IS ISAAC NEWTON </pattern>
+      <template>Isaac Newton was a English physicist and mathematician.</template>
+   </category>
+   
+   <category>
+      <pattern>DO YOU KNOW WHO * IS</pattern>
+      <template>
+         <srai>WHO IS <star/></srai>
+      </template>
+   </category>
+</aiml>
