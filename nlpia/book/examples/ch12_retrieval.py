@@ -3,11 +3,17 @@
 """ Natural Language Processing in Action -- Chapter 12 Getting Chatty -- 3. Retrieval (Search) section
 """
 import os
-from nlpia.constants import DATA_PATH
+import re
+
+import tqdm
 import aiml_bot
+
+from nlpia.constants import DATA_PATH
+from nlpia.data.loaders import get_data
 
 
 def split_turns(s, splitter=re.compile('__eot__')):
+    """ Split a string on __eot__ markders (turns) """
     for utterance in splitter.split(s):
         utterance = utterance.replace('__eou__', '\n')
         utterance = utterance.replace('__eot__', '')
@@ -15,61 +21,36 @@ def split_turns(s, splitter=re.compile('__eot__')):
             yield utterance
 
 
-for i, record in df.head(4).iterrows():
-    statement = list(split_turns(record.Context))[-1]  # <1>
-    reply = list(split_turns(record.Utterance))[-1]  # <2>
-    print('Statement: {}'.format(statement))
-    print('Reply: {}'.format(reply))
-# <1> We need to use `list` to force iteration through the generator
-# <2> The `[-1]` index retrievs the last "turn" in the sequence, discarding everything else
+def preprocess_ubuntu_corpus(df):
+    """Split all strings in df.Context and df.Utterance on __eot__ (turn) markers """
+    statements = []
+    replies = []
+    for i, record in tqdm(df.iterrows()):
+        turns = list(split_turns(record.Context))
+        statement = turns[-1] if len(turns) else '\n'  # <1>
+        statements.append(statement)
+        turns = list(split_turns(record.Utterance))
+        reply = turns[-1] if len(turns) else '\n'
+        replies.append(reply)
+    df['statement'] = statements
+    df['reply'] = replies
+    return df
 
 
-""" AIML Step 1
-<category><pattern>HELLO ROSA </pattern><template>Hi Human!</template></category>
-<category><pattern>HELLO TROLL </pattern><template>Good one, human.</template></category>
-"""
-bot = aiml_bot.Bot(learn=os.path.join(DATA_PATH, 'greeting_step1.aiml'))
-# Loading /Users/hobs/src/nlpia/nlpia/data/greeting_step1.aiml...
-# done (0.00 seconds)
-# Loading /Users/hobs/src/nlpia/nlpia/data/greeting_step1.aiml...
-# done (0.00 seconds)
+def format_ubuntu_dialog(df):
+    """ Print statements paired with replies, formatted for easy review """
+    s = ''
+    for i, record in df.iterrows():
+        statement = list(split_turns(record.Context))[-1]  # <1>
+        reply = list(split_turns(record.Utterance))[-1]  # <2>
+        s += 'Statement: {}\n'.format(statement)
+        s += 'Reply: {}\n\n'.format(reply)
+    return s
+    # <1> We need to use `list` to force iteration through the generator
+    # <2> The `[-1]` index retrievs the last "turn" in the sequence, discarding everything else
 
-""" AIML Patterns Step1: Good ones """
-bot.respond("Hello Rosa,")
-# 'Hi there!'
-bot.respond("hello **troll** !!!")
-# 'Good one, human.'
 
-""" AIML Patterns Step1: Mismatches """
-bot.respond("Helo Rosa")
-# WARNING: No match found for input: Helo Rosa
-# ''
-bot.respond("Hello t-r-o-l-l")
-# WARNING: No match found for input: Hello t-r-o-l-l
-# Out[4]: ''
-
-""" AIML Patterns Step2: Synonyms """
-bot.learn(os.path.join(DATA_PATH, 'greeting_step2.aiml'))
-bot.respond("Hey Rosa")
-'Hi there!'
-bot.respond("Hi Rosa")
-'Hi there!'
-bot.respond("Helo Rosa")
-'Hi there!'
-bot.respond("hello **troll** !!!")  # <1>
-'Good one, human.'
-
-""" AIML Patterns Step2: Mismatches """
-bot.respond("Hello t-r-o-l-l")
-# WARNING: No match found for input: Hello t-r-o-l-l
-# Out[4]: ''
-
-""" AIML Patterns Step3: Random Responses and Lists """
-bot = aiml_bot.Bot(learn=os.path.join(DATA_PATH, 'greeting_step3.aiml'))
-bot.learn(os.path.join(DATA_PATH, 'greeting_step3.aiml'))
-bot.respond("Hey Rosa")
-'Hello friend'
-bot.respond("Hey Rosa")
-'Hey you :)'
-bot.respond("Hey Rosa")
-'Hi Human!'
+if __name__ == '__main__':
+    df = get_data('ubuntu_dialog')
+    df = preprocess_ubuntu_corpus(df)
+    print(format_ubuntu_dialog(df.head(4)))
