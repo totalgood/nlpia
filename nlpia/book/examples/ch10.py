@@ -1,3 +1,5 @@
+# code is adopted to Francois Chollet's example: https://blog.keras.io/a-ten-minute-introduction-to-sequence-to-sequence-learning-in-keras.html
+
 from keras.models import Model
 from keras.layers import Input, LSTM, Dense
 
