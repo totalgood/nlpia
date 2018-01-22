@@ -112,7 +112,8 @@ class OneNeuronRegressor(object):
                 batch = slice(i, min(i + 10, len(X)))
                 Xbatch, ybatch = X[batch, :], y[batch]
                 X_1_batch = X_1[batch, :]
-                self.W += (self.alpha / len(X) ** 1.5) * self.delta(Xbatch, ybatch).reshape((len(Xbatch), 1)).T.dot(X_1_batch)
+                self.W += (self.alpha / len(X) ** 1.5) * (
+                    self.delta(Xbatch, ybatch).reshape((len(Xbatch), 1)).T.dot(X_1_batch))
         return self
 
     def predict(self, X):
