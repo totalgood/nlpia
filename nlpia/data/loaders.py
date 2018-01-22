@@ -94,7 +94,7 @@ def read_csv(*args, **kwargs):
     if isinstance(args[0], pd.DataFrame):
         df = args[0]
     else:
-        print('Reading CSV with `read_csv(*{}, **{})`...'.format(args, kwargs))
+        logger.info('Reading CSV with `read_csv(*{}, **{})`...'.format(args, kwargs))
         df = pd.read_csv(*args, **kwargs)
     if ((df.columns[0] in index_names or (df[df.columns[0]] == df.index).all()) or
         (df[df.columns[0]] == np.arange(len(df))).all() or
@@ -111,6 +111,22 @@ def read_csv(*args, **kwargs):
             logger.info('Unable to coerce DataFrame.index into a datetime using pd.to_datetime([{},...])'.format(
                 df.index.values[0]))
     return df
+
+
+def read_txt(fin, nrows=None, verbose=True):
+    lines = []
+    if isinstance(fin, str):
+        fin = open(fin)
+    if verbose:
+        tqdm_prog = tqdm
+    else:
+        tqdm_prog = no_tqdm
+    with fin:
+        for line in tqdm_prog(fin):
+            lines += [line.rstrip('\n').rstrip('\r')]
+            if nrows is not None and len(lines) >= nrows:
+                break
+    return lines
 
 
 for filename in CSVS:
@@ -197,13 +213,13 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     return file_path
 
 
-def read_named_csv(name, data_path=DATA_PATH):
+def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
     try:
-        return read_csv(os.path.join(data_path, name + '.csv.gz'))
+        return read_csv(os.path.join(data_path, name + '.csv.gz'), nrows=nrows)
     except IOError:
         pass
     try:
-        return read_csv(os.path.join(data_path, name + '.csv'))
+        return read_csv(os.path.join(data_path, name + '.csv'), nrows=nrows)
     except IOError:
         pass
     try:
@@ -211,13 +227,16 @@ def read_named_csv(name, data_path=DATA_PATH):
     except IOError:
         pass
     try:
-        with open(os.path.join(BIGDATA_PATH, name + '.txt')) as fin:
-            return fin.read().split('\n')
+        return read_txt(os.path.join(data_path, name + '.txt'), verbose=verbose)
+    except IOError:
+        pass
+    try:
+        return read_txt(os.path.join(BIGDATA_PATH, name + '.txt'), verbose=verbose)
     except IOError:
         pass
 
 
-def get_data(name='sms-spam'):
+def get_data(name='sms-spam', nrows=None):
     """ Load data from a json, csv, or txt file if it exists in the data dir.
 
     References:
@@ -235,9 +254,9 @@ def get_data(name='sms-spam'):
     if name in BIG_URLS:
         print('Downloading {}'.format(name))
         download(name)
-        return read_named_csv(name, data_path=BIGDATA_PATH)
+        return read_named_csv(name, data_path=BIGDATA_PATH, nrows=nrows)
     elif name in DATASET_NAME2FILENAME:
-        return read_named_csv(name, data_path=DATA_PATH)
+        return read_named_csv(name, data_path=DATA_PATH, nrows=nrows)
 
     msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, .json, or .txt\n'.format(name)
     msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
