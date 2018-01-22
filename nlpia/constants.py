@@ -10,10 +10,19 @@ import os
 import configparser
 
 from pugnlp.util import dict2obj
-from sys import platform as _platform
+import platform
 
-SYSLOG_PATH = '/var/run/syslog' if _platform == "darwin" else '/dev/log'
-SYSLOG_PATH = SYSLOG_PATH if os.path.isdir(SYSLOG_PATH) else None
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+system_name = platform.system()
+if system_name == 'Darwin':
+    SYSLOG_PATH = os.path.join(os.path.sep, 'var', 'run', 'syslog')
+elif system_name == 'Linux':
+    SYSLOG_PATH = os.path.join('dev', 'log')
+else:
+    SYSLOG_PATH = None
+if SYSLOG_PATH and not os.path.exists(SYSLOG_PATH):
+    SYSLOG_PATH = None
 
 LOGGING_CONFIG = {
     'version': 1,
@@ -30,15 +39,7 @@ LOGGING_CONFIG = {
             'format': '%(asctime)s %(levelname)s:%(name)s:%(message)s'
         },
     },
-
     'handlers': {
-        'logging.handlers.SysLogHandler': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.SysLogHandler',
-            'facility': 'local7',
-            'formatter': 'django',
-            'address': SYSLOG_PATH,
-        },
         'console': {
             'class': 'logging.StreamHandler',
             'level': 'DEBUG',
@@ -57,15 +58,23 @@ LOGGING_CONFIG = {
     },
 }
 
-# for Django apps set up syslogger for loggly if the /dev socket path is available
-if SYSLOG_PATH:
+
+# Set up syslogger for loggly service if the /dev socket exists or use NTEventLogHandler on Windows (no syslog /dev).
+if system_name == 'Windows':
+    LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.NTEventLogHandler']
+    LOGGING_CONFIG['handlers']['logging.handlers.NTEventLogHandler'] = {
+        'level': 'DEBUG',
+        'class': 'logging.handlers.NTEventLogHandler',
+        'formatter': 'django'
+        }
+elif SYSLOG_PATH:
     LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.SysLogHandler']
     LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler'] = {
         'level': 'DEBUG',
         'class': 'logging.handlers.SysLogHandler',
         'facility': 'local7',
         'formatter': 'django',
-        'address': '/dev/log',
+        'address': SYSLOG_PATH,
     }
 
 
