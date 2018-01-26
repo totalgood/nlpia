@@ -15,6 +15,9 @@ from pugnlp.constants import MAX_INT64 as MAX_INT
 import pandas as pd
 import tarfile
 
+from gensim.models import KeyedVectors
+
+
 """Loaders and downloaders for data files and models required for the examples in NLP in Action
 
 >>> from nlpia.data import download
@@ -214,6 +217,13 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
 
 
 def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
+    """ Convert a dataset in a local file (usually a CSV) into a Pandas DataFrame 
+
+    TODO: should be called read_named_dataset
+
+    Args:
+    `name` is assumed not to have an extension (like ".csv"), alternative extensions are tried automatically.file
+    """
     try:
         return read_csv(os.path.join(data_path, name + '.csv.gz'), nrows=nrows)
     except IOError:
@@ -230,9 +240,17 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
         return read_txt(os.path.join(data_path, name + '.txt'), verbose=verbose)
     except IOError:
         pass
+
+    # BIGDATA files are usually not loadable into dataframes
     try:
         return read_txt(os.path.join(BIGDATA_PATH, name + '.txt'), verbose=verbose)
     except IOError:
+        pass
+    try:
+        return KeyedVectors.load_word2vec_format(os.path.join(BIGDATA_PATH, name + '.bin.gz'), binary=True)
+    except IOError:
+        pass
+    except ValueError:
         pass
 
 
@@ -262,6 +280,7 @@ def get_data(name='sms-spam', nrows=None):
     msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
     logger.error(msg)
     raise IOError(msg)
+
 
 def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1, 5)], header=0, index_col=None):
     """Like pandas.read_csv, but loads and concatenates (df.append(df)s) DataFrames together"""
@@ -297,7 +316,8 @@ DATASET_FILENAMES = [f['name'] for f in find_files(DATA_PATH, '.csv.gz')]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.csv')]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.json')]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.txt')]
-DATASET_NAMES = sorted([f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]])
+DATASET_NAMES = sorted(
+    [f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]])
 DATASET_NAME2FILENAME = dict(zip(DATASET_NAMES, DATASET_FILENAMES))
 
 
