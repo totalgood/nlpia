@@ -2,12 +2,12 @@ django>=1.11.1,<1.12.0
 future>=0.16.0
 jupyter>=1.0.0,<2.0.0
 h5py>=2.7.1,<2.8.0
-matplotlib>=2.0.2
+matplotlib==2.1.0
 nltk>=3.2.2,<3.3.0
 pandas>=0.19.2
 pip>=8.1.2
 pypandoc>=1.4.0
-plotly
+plotly>=2.3.0,<2.4.0
 cufflinks
 # python-igraph>=0.7.1.post6
 python-Levenshtein>=0.12.0
