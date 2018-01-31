@@ -318,7 +318,7 @@ vec_list = tokenize_and_vectorize([(1, sample_1)])
 # Tokenize returns a list of the data (length 1 here)
 test_vec_list = pad_trunc(vec_list, maxlen)
 
-test_vec = np.reshape(test_vec, (len(test_vec_list), maxlen, embedding_dims))
+test_vec = np.reshape(test_vec_list, (len(test_vec_list), maxlen, embedding_dims))
 model.predict(test_vec)
 
 
