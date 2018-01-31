@@ -142,7 +142,7 @@ def pre_process_data(filepath):
     
     return dataset
 
-dataset = pre_process_data('./aclImdb_v1/train')
+dataset = pre_process_data('./aclImdb/train')
 print(dataset[0])
 
 
