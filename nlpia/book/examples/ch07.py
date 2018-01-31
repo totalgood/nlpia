@@ -7,7 +7,7 @@
 import os
 import re
 import tarfile
-
+import tqdm
 import requests
 
 from pugnlp.futil import path_status, find_files
