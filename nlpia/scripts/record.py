@@ -143,7 +143,7 @@ def deepspeech_main(args):
     print('Inference took %0.3fs for %0.3fs audio file.' % (inference_end, audio_length), file=sys.stderr)
 
 
-if __name__ == '__main__':
+def main():
     args = parse_args()
     i = 0
     while True:
@@ -169,4 +169,6 @@ if __name__ == '__main__':
     print("And this is what I sound like saying that...")
     print('Used the voice named {}'.format(tts(text)))
 
+
+if __name__ == '__main__':
     main()
