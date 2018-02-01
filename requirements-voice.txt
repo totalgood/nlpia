@@ -1,5 +1,6 @@
 pyaudio>=0.2.11,<0.3.0
-PocketSphinx>=0.3.1,<0.4.0
+# pocketsphinx==1.3.1
+pocketsphinx
 -e git+https://github.com/hobson/pyttsx3.git@master#egg=pyttsx3
 
 # SpeechRecognizer requires PyAudio

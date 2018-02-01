@@ -3,7 +3,9 @@
 
 import os
 
-from seaborn import plt
+import seaborn
+from matplotlib import pyplot as plt
+
 from mpl_toolkits.mplot3d import Axes3D  # noqa
 import pandas as pd
 
