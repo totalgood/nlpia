@@ -12,6 +12,7 @@ from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH
 from tqdm import tqdm
 from pugnlp.futil import path_status, find_files
 from pugnlp.constants import MAX_INT64 as MAX_INT
+from pugnlp.constants import MIN_INT64 as MIN_INT
 import pandas as pd
 import tarfile
 
@@ -389,7 +390,8 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
     canonical = pd.DataFrame([list(row) for row in df.canonical_name.str.split(',').values])
 
     def cleaner(row):
-        cleaned = pd.np.array([s for i, s in enumerate(row.values) if s not in ('Downtown', None) and (i > 3 or row[i + 1] != s)])
+        cleaned = pd.np.array(
+            [s for i, s in enumerate(row.values) if s not in ('Downtown', None) and (i > 3 or row[i + 1] != s)])
         if len(cleaned) == 2:
             cleaned = [cleaned[0], None, cleaned[1], None, None]
         else:
@@ -402,4 +404,24 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
     cleancanon.columns = 'city region country extra extra2'.split()
     df['region'] = cleancanon.region
     df['country'] = cleancanon.country
+    return df
+
+
+def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),
+                  index_col=False, sep='\t', lineterminator='\r', error_bad_lines=False, **kwargs):
+    """ Load and clean tab-separated files saved on Windows OS ('\r\n') """
+    df = pd.read_csv(filepath, index_col=index_col, sep=sep, lineterminator=lineterminator,
+                     error_bad_lines=error_bad_lines, **kwargs)
+    index_col = df.columns[0]
+    original_len = len(df)
+    if df[index_col].values[-1] == '\n':
+        df.iloc[-1, 0] = np.nan
+        original_len = len(df) - 1
+    df.dropna(how='all', inplace=True)
+    df[index_col] = df[index_col].str.strip().apply(lambda x: x if x else str(MIN_INT)).astype(int)
+    df = df[~(df[index_col] == INT_NAN)]
+    df.set_index(index_col, inplace=True)
+    if len(df) != original_len:
+        logger.warn(('Loaded {} rows from tsv. Original file, "{}", contained {} seemingly valid lines.' +
+                     'Index column: {}').format(len(df), original_len, filepath, index_col))
     return df
