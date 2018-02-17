@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
-import os
 from traceback import format_exc
 
 import speech_recognition as sr
@@ -11,6 +10,23 @@ from io import BytesIO
 import pyttsx3
 
 import argparse
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Record an audio clip.')
+    parser.add_argument('-n', '--num', '--num_recordings', type=int, default=0, dest='num_recordings',
+                        help='Record N audio clips.')
+    parser.add_argument('-r', '--record', '--recordpath', type=str, default='', dest='recordpath',
+                        help='Record N audio clips (delimitted by silence).')
+
+    parser.add_argument('-b', '--begin', '--begining', type=int, default=0, dest='begin',
+                        help='Sample number to begin clip')
+    parser.add_argument('-e', '--end', type=int, default=-1, dest='end',
+                        help='Sample number to end clip')
+    parser.add_argument('-p', '--play', type=str, default='', dest='playpath',
+                        help='Path of audio file to play.')
+    args = parser.parse_args()
+    return args
 
 
 def record_audio(source='Microphone'):
@@ -81,23 +97,6 @@ def save_audio(audio, path='audio.wav'):
     return path
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description='Record an audio clip.')
-    parser.add_argument('-n', '--num', '--num_recordings', type=int, default=0, dest='num_recordings',
-                        help='Record N audio clips.')
-    parser.add_argument('-r', '--record', '--recordpath', type=str, default='', dest='recordpath',
-                        help='Record N audio clips (delimitted by silence).')
-
-    parser.add_argument('-b', '--begin', '--begining', type=int, default=0, dest='begin',
-                        help='Sample number to begin clip')
-    parser.add_argument('-e', '--end', type=int, default=-1, dest='end',
-                        help='Sample number to end clip')
-    parser.add_argument('-p', '--play', type=str, default='', dest='playpath',
-                        help='Path of audio file to play.')
-    args = parser.parse_args()
-    return args
-
-
 def try_tts(audio):
     text = []
     try:
@@ -110,30 +109,27 @@ def try_tts(audio):
     return text
 
 
-def main():
+def main_full_circle():
     args = parse_args()
-    i, j = 0, 0
-    for i in range(args.num_recordings):
+    i = 0
+    while True:
         print("Say something! I'm listening...")
         audio = record_audio()
-        base_dir = '.'
-        ext = '.wav'
-        filepath = os.path.join(base_dir, 'audio-{}{}'.format(i, ext))
-        while os.path.exists(filepath):
-            j += 1
-            filepath = os.path.join(base_dir, 'audio-{}{}'.format(j + i, ext))
-            print("filepath '{}'".format(filepath))
-        save_audio(audio, filepath)
-        print("Saved audio clip to '{}'".format(filepath))
-        print("Playing audio clip ...")
-        play_audio(audio)
-        print("Done.")
+        if args.num_recordings > i:
+            i += 1
+            save_audio(audio, 'record{}.wav'.format(i))
+        else:
+            break
 
-    if args.playpath:
-        print("Playing {}[{}:{}]".format(args.playpath, args.begin, args.end))
-        play_audio(args.playpath)
+    print('This is what your microphone picked up...')
+    play_audio(audio)
 
+    text = try_tts(audio)
+
+    print("This is what I understood:\n{}\n".format(text))
+
+    print("And this is what I sound like saying that...")
 
 
 if __name__ == '__main__':
-    main()
+    main_full_circle()

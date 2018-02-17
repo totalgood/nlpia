@@ -11,7 +11,6 @@ plotly>=2.3.0,<2.4.0
 cufflinks
 # python-igraph>=0.7.1.post6
 python-Levenshtein>=0.12.0
-redis==2.10.6
 scikit-learn>=0.18.1
 scipy>=0.19.0
 seaborn>=0.8
@@ -22,18 +21,28 @@ wheel>=0.30.0a0
 gensim>=2.1.0,<3.0.0
 pandas-datareader>=0.5.0
 pugnlp>=0.0.12,<0.1.0
+# git+https://github.com/totalgood/pugnlp.git@master#egg=pugnlp
+
+# Deep Learning Requirements (`pip install nlpia[deep]`)
 Keras==2.0.8
 tensorflow>=1.3.0<2.0.0
 annoy>=1.9.5,<2.0.0
+
+# Chatbot Requirements (`pip install nlpia[chat]`)
+redis==2.10.6
 will>=2.1.0,<2.2.0
 ChatterBot>=0.7.6,<0.8.0
 lxml>=4.1.0,<4.2.0
 aiml>=0.8.6,<0.9.0
-pyaudio>=0.2.11,<0.3.0
 
+# Chatbot Voice Interface Requirements (`pip install nlpia[voice]`)
+pyaudio>=0.2.11,<0.3.0
+pocketsphinx>=0.1.3,<0.2.0
+deepspeech>=0.1.1,<0.2.0
+SpeechRecognition>=3.8.1,<3.9.0
 -e git+https://github.com/hobson/pyttsx3.git@master#egg=pyttsx3
 
-# git+https://github.com/totalgood/pugnlp.git@master#egg=pugnlp
+
 
 
 # ###################################################
