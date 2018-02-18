@@ -34,15 +34,7 @@ will>=2.1.0,<2.2.0
 ChatterBot>=0.7.6,<0.8.0
 lxml>=4.1.0,<4.2.0
 aiml>=0.8.6,<0.9.0
-
-# Chatbot Voice Interface Requirements (`pip install nlpia[voice]`)
-pyaudio>=0.2.11,<0.3.0
-pocketsphinx>=0.1.3,<0.2.0
-deepspeech>=0.1.1,<0.2.0
-SpeechRecognition>=3.8.1,<3.9.0
--e git+https://github.com/hobson/pyttsx3.git@master#egg=pyttsx3
-
-
+aichat>=0.5.0
 
 
 # ###################################################
