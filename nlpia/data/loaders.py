@@ -11,12 +11,15 @@ from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH
 
 from tqdm import tqdm
 from pugnlp.futil import path_status, find_files
-from pugnlp.constants import MAX_INT64 as MAX_INT
-from pugnlp.constants import MIN_INT64 as MIN_INT
+
+
 import pandas as pd
 import tarfile
 
 from gensim.models import KeyedVectors
+
+INT_MAX = INT64_MAX = 2 ** 63 - 1
+INT_MIN = INT64_MIN = - 2 ** 63
 
 
 """Loaders and downloaders for data files and models required for the examples in NLP in Action
@@ -324,7 +327,7 @@ DATASET_NAME2FILENAME = dict(zip(DATASET_NAMES, DATASET_FILENAMES))
 
 def str2int(s):
     s = ''.join(c for c in s if c in '0123456789')
-    return int(s or - MAX_INT)
+    return int(s or INT_MIN)
 
 
 def clean_toxoplasmosis(url='http://www.rightdiagnosis.com/t/toxoplasmosis/stats-country.htm'):
@@ -418,7 +421,7 @@ def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),
         df.iloc[-1, 0] = np.nan
         original_len = len(df) - 1
     df.dropna(how='all', inplace=True)
-    df[index_col] = df[index_col].str.strip().apply(lambda x: x if x else str(MIN_INT)).astype(int)
+    df[index_col] = df[index_col].str.strip().apply(lambda x: x if x else str(INT_MIN)).astype(int)
     df = df[~(df[index_col] == INT_NAN)]
     df.set_index(index_col, inplace=True)
     if len(df) != original_len:

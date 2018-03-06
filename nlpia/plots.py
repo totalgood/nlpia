@@ -261,7 +261,7 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
     marker['sizeref'] gives the denominator of the circle scaling factor.
       Typically it should be about a tenth of the minimum 'size' column value
 
-    >>> from nlpia.data import get_data
+    >>> from nlpia.data.loaders import get_data
     >>> from nlpia.plots import offline_plotly_scatter_bubble
     >>> df = get_data('cities_us_wordvectors_pca2_meta')
     >>> html = offline_plotly_scatter_bubble(

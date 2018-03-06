@@ -18,9 +18,28 @@ import scipy.io.wavfile as wav
 from deepspeech.model import Model
 
 
-def record_audio(source='Microphone'):
+def record_audio(source='Microphone', energy_threshold=300, pause_threshold=.9,
+                 dynamic_energy_ratio=1.5, dynamic_energy_adjustment_damping=.15, **kwargs):
+    """ Listten for a single utterance (concluded with a 2 sec pause) and return a recording in an Audio object
+
+    Arguments:
+        energy_threshold (int): minimum audio energy to trigger start of recording (default=300)
+        dynamic_energy_adjustment_damping (float): dyn thresh adjustment slowness: 1=static energy_threshold (.15)
+        dynamic_energy_ratio (float): sound energy change that triggers recording: 1=static energy_threshold (1.5)
+        pause_threshold (float): non-speaking audio seconds before a phrase is considered complete (.9)
+        operation_timeout (float): internal operation timeout in seconds: None=never
+        self.phrase_threshold (float): minimum speaking duration in seconds to record (.3)
+        self.non_speaking_duration (float): nonspeaking audio seconds to retain before+after recording (pause_threshold)
+ """
     r = sr.Recognizer()
-    audio = r.listen(sr.Microphone)
+    r.energy_threshold = energy_threshold
+    r.pause_threshold = pause_threshold
+    r.dynamic_energy_threshold = dynamic_energy_ratio > 1 and dynamic_energy_adjustment_damping < 1
+    r.dynamic_energy_ratio = dynamic_energy_ratio
+    r.dynamic_energy_adjustment_damping = dynamic_energy_adjustment_damping
+    r.__dict__.update(kwargs)
+    with getattr(sr, 'Microphone', sr.Microphone)() as audio_source:
+        audio = r.listen(source=audio_source)
     return audio
 
 

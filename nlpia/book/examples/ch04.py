@@ -21,7 +21,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 import seaborn
 from matplotlib import pyplot as plt
-from nlpia.data import get_data
+from nlpia.data.loaders import get_data
 
 df = get_data('pointcloud').sample(1000)
 pca = PCA(n_components=2)
@@ -32,7 +32,7 @@ plt.show()
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.tokenize.casual import casual_tokenize
-from nlpia.data import get_data
+from nlpia.data.loaders import get_data
 
 sms = get_data('sms-spam')
 sms.head(3)

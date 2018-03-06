@@ -20,7 +20,7 @@ A community-developed book about building Natural Language Processing pipelines 
 
 ```bash
 # cd nlpia
-# conda install conda/environment.yml
+# conda env create -f conda/environment.yml
 ```
 4. Activate this new environment
 

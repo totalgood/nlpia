@@ -5,7 +5,7 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.tokenize.casual import casual_tokenize
-from nlpia.data import get_data
+from nlpia.data.loaders import get_data
 
 sms = get_data('sms-spam')
 tfidf = TfidfVectorizer(tokenizer=casual_tokenize)

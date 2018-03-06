@@ -11,7 +11,7 @@ from gensim.models.word2vec import Word2Vec
 from pugnlp.futil import find_files
 
 from nlpia.constants import secrets, DATA_PATH
-from nlpia.data import get_data
+from nlpia.data.loaders import get_data
 
 
 def stdout_logging(loglevel=logging.INFO):

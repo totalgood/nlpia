@@ -8,7 +8,7 @@ from nltk.tokenize.casual import casual_tokenize
 from matplotlib import pyplot as plt
 import seaborn  # noqa
 
-from nlpia.data import get_data
+from nlpia.data.loaders import get_data
 
 from nltk.sentiment import SentimentIntensityAnalyzer
 from nlpia.models import LinearRegressor

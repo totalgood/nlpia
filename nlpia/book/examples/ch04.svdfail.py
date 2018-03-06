@@ -6,7 +6,7 @@ X_train, X_test, y_train, y_test = train_test_split(svd_topic_vectors, sms.spam,
 lda = LDA(n_components=1)
 lda = lda.fit(X_train, y_train)
 sms['svd16_spam'] = lda.predict(pca_topic_vectors)
-from nlpia.data import get_data
+from nlpia.data.loaders import get_data
 sms = get_data('sms-spam')
 
 from sklearn.feature_extraction.text import TfidfVectorizer
