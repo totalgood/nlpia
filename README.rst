@@ -26,7 +26,7 @@ Getting Started
 .. code:: bash
 
     # cd nlpia
-    # conda install conda/environment.yml
+    # conda env create -f conda/environment.yml
 
 4. Activate this new environment
 
