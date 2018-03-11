@@ -63,7 +63,11 @@ BIG_URLS = {
     ),
 }
 DATA_NAMES = {
-    'pointcloud': os.path.join(DATA_PATH, 'pointcloud.csv.gz')
+    'pointcloud': os.path.join(DATA_PATH, 'pointcloud.csv.gz'),
+    'hutto_tweets': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/tweets_GroundTruth.csv.gz'),
+    'hutto_nyt': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/nytEditorialSnippets_GroundTruth.csv.gz'),
+    'hutto_movies': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/movieReviewSnippets_GroundTruth.csv.gz'),
+    'hutto_products': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/amazonReviewSnippets_GroundTruth.csv.gz'),
 }
 
 DDL_DS_QUESTIONS_URL = 'http://minimum-entropy.districtdatalabs.com/api/questions/?format=json'

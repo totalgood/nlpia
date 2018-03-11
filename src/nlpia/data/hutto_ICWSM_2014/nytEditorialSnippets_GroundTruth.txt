@@ -1,3 +1,4 @@
+id	sentiment	text
 1_1	0.4	On Dec. 19, around noon, New York City's Union Square Business Improvement District plans the First Santa Claus Ulympics (that's yule-lympics), in which about 50 contestants, in red suits and beards, will compete.
 1_2	0.15	Events include sprinting, broad jumping, yule log rolling, wreath tossing and a toy sack relay.
 1_3	1.5	It's mainly a holiday celebration - toys from the sacks will be distributed to homeless kids.

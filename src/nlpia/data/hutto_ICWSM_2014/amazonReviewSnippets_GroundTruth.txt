@@ -1,3 +1,4 @@
+id	sentiment	text
 1_1	-0.9	troubleshooting ad-2500 and ad-2600 no picture scrolling b/w.
 1_2	-0.15	repost from january 13, 2004 with a better fit title.
 1_3	-0.2	does your apex dvd player only play dvd audio without video?

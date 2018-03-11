@@ -1,3 +1,4 @@
+id	sentiment	text
 1	2.26666666667	The Rock is destined to be the 21st Century's new ''Conan'' and that he's going to make a splash even greater than Arnold Schwarzenegger, Jean Claud Van Damme or Steven Segal.
 2	3.53333333333	The gorgeously elaborate continuation of ''The Lord of the Rings'' trilogy is so huge that a column of words cannot adequately describe co writer/director Peter Jackson's expanded vision of J.R.R. Tolkien's Middle earth.
 3	-0.6	Effective but too tepid biopic

@@ -1,3 +1,4 @@
+id	sentiment	text
 1	2.726315789	Somehow I was blessed with some really amazing friends in my life who love me and send encouragement when I'm not feeling awesome. So lucky.
 2	1.443298969	Yay. Another good phone interview.
 3	2.873684211	We were 17 deep last night &amp; the love was so strong everybody felt it. Even the band. I love love love having good ppl in my corner.
