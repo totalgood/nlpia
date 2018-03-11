@@ -1,7 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-source = NLP_in_Action
+source = */nlpia/*
 # omit = bad_file.py
 
 [report]

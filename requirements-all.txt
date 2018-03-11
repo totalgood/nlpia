@@ -25,13 +25,13 @@ pugnlp>=0.0.12,<0.1.0
 
 
 # Twitter Clients (`pip install nlpia[twitter]`)
-# -r requirements-twitter.txt
+-r requirements-twitter.txt
 
 # Deep Learning Requirements (`pip install nlpia[deep]`)
-# -r requirements-deep.txt
+-r requirements-deep.txt
 
 # Chatbot Requirements (`pip install nlpia[chat]`)
-# -r requirements-chat.txt
+-r requirements-chat.txt
 
 
 # ###################################################

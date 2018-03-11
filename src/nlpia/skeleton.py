@@ -6,7 +6,7 @@ console script. To run this script uncomment the following line in the
 entry_points section in setup.cfg:
 
     console_scripts =
-     fibonacci = NLP_in_Action.skeleton:run
+     fibonacci = nlpia.skeleton:run
 
 Then run `python setup.py install` which will install the command `fibonacci`
 inside your current environment.
@@ -31,32 +31,36 @@ _logger = logging.getLogger(__name__)
 
 
 def fib(n):
-    """
-    Fibonacci example function
+    """Fibonacci example function
 
-    :param n: integer
-    :return: n-th Fibonacci number
+    Args:
+      n (int): integer
+
+    Returns:
+      int: n-th Fibonacci number
     """
     assert n > 0
     a, b = 1, 1
-    for i in range(n - 1):
-        a, b = b, a + b
+    for i in range(n-1):
+        a, b = b, a+b
     return a
 
 
 def parse_args(args):
-    """
-    Parse command line parameters
+    """Parse command line parameters
 
-    :param args: command line parameters as list of strings
-    :return: command line parameters as :obj:`argparse.Namespace`
+    Args:
+      args ([str]): command line parameters as list of strings
+
+    Returns:
+      :obj:`argparse.Namespace`: command line parameters namespace
     """
     parser = argparse.ArgumentParser(
         description="Just a Fibonnaci demonstration")
     parser.add_argument(
         '--version',
         action='version',
-        version='NLP_in_Action {ver}'.format(ver=__version__))
+        version='nlpia {ver}'.format(ver=__version__))
     parser.add_argument(
         dest="n",
         help="n-th Fibonacci number",
@@ -79,15 +83,33 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def setup_logging(loglevel):
+    """Setup basic logging
+
+    Args:
+      loglevel (int): minimum loglevel for emitting messages
+    """
+    logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
+    logging.basicConfig(level=loglevel, stream=sys.stdout,
+                        format=logformat, datefmt="%Y-%m-%d %H:%M:%S")
+
+
 def main(args):
+    """Main entry point allowing external calls
+
+    Args:
+      args ([str]): command line parameter list
+    """
     args = parse_args(args)
-    logging.basicConfig(level=args.loglevel, stream=sys.stdout)
+    setup_logging(args.loglevel)
     _logger.debug("Starting crazy calculations...")
     print("The {}-th Fibonacci number is {}".format(args.n, fib(args.n)))
     _logger.info("Script ends here")
 
 
 def run():
+    """Entry point for console_scripts
+    """
     main(sys.argv[1:])
 
 

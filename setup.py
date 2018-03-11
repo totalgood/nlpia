@@ -1,21 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    Setup file for NLP_in_Action.
+    Setup file for nlpia.
 
-    This file was generated with PyScaffold 2.5.6, a tool that easily
-    puts up a scaffold for your new Python project. Learn more under:
-    http://pyscaffold.readthedocs.org/
+    This file was generated with PyScaffold 3.0.
+    PyScaffold helps you to put up the scaffold of your new Python project.
+    Learn more under: http://pyscaffold.readthedocs.org/
 """
 
 import sys
 from setuptools import setup
 
+# Add here console scripts and other entry points in ini-style format
+entry_points = """
+[console_scripts]
+audio = nlpia.script.audio:main
+"""
+
 
 def setup_package():
     needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
     sphinx = ['sphinx'] if needs_sphinx else []
-    setup(setup_requires=['six', 'pyscaffold>=2.5a0,<2.6a0'] + sphinx,
+    setup(setup_requires=['pyscaffold>=3.0a0,<3.1a0'] + sphinx,
+          entry_points=entry_points,
           use_pyscaffold=True)
 
 
