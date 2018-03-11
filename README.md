@@ -14,14 +14,31 @@ A community-developed book about building Natural Language Processing pipelines 
 
 ```bash
 # git clone https://github.com/totalgood/nlpia.git
+# cd nlpia
 ```
 
-3. Create a conda environment called nlpia and install its requirements
+3. Use `conda-env` OR `pip` to install dependencies
+
+Depending on your OS you may have better luck using conda to install the dependencies
+
+#### Use `conda-env`
+
+The environment.yml file creates a conda environment called `conda_env_nlpia`
 
 ```bash
-# cd nlpia
 # conda env create -f conda/environment.yml
+# source activate conda_env_nlpia
 ```
+
+#### Use `pip`
+
+```bash
+# conda create -y -n conda_env_nlpia
+# source activate conda_env_nlpia
+# conda install -y pip
+# pip install -e .
+```
+
 4. Activate this new environment
 
 ```bash
