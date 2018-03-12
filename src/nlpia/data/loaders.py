@@ -62,9 +62,11 @@ BIG_URLS = {
         3112841563,  # 3112841312,
     ),
 }
+BIG_URLS['word2vec'] = BIG_URLS['w2v']
 DATA_NAMES = {
     'pointcloud': os.path.join(DATA_PATH, 'pointcloud.csv.gz'),
-    'hutto_tweets': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/tweets_GroundTruth.csv.gz'),
+    'hutto_tweets0': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/tweets_GroundTruth.csv.gz'),
+    'hutto_tweets': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/tweets_GroundTruth.csv'),
     'hutto_nyt': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/nytEditorialSnippets_GroundTruth.csv.gz'),
     'hutto_movies': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/movieReviewSnippets_GroundTruth.csv.gz'),
     'hutto_products': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/amazonReviewSnippets_GroundTruth.csv.gz'),
@@ -137,6 +139,11 @@ def read_txt(fin, nrows=None, verbose=True):
             lines += [line.rstrip('\n').rstrip('\r')]
             if nrows is not None and len(lines) >= nrows:
                 break
+        if all('\t' in line for line in lines):
+            num_tabs = [sum([1 for c in line if c == '\t']) for line in lines]
+            if all(i == num_tabs[0] for i in num_tabs):
+                fin.seek(0)
+                return read_csv(fin, sep='\t', header=None)
     return lines
 
 
@@ -182,7 +189,7 @@ def download(names=None, verbose=True):
             if file_paths[name].endswith('.tar.gz'):
                 print('Extracting {}'.format(file_paths[name]))
                 untar(file_paths[name])
-            file_paths[name] = file_paths[name][:-7]  # FIXME: rename tar.gz file so that it mimics contents
+                file_paths[name] = file_paths[name][:-7]  # FIXME: rename tar.gz file so that it mimics contents
         else:
             df = pd.read_html(DATA_INFO['url'][name], **DATA_INFO['downloader_kwargs'][name])[-1]
             df.columns = clean_columns(df.columns)
@@ -232,6 +239,19 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
     Args:
     `name` is assumed not to have an extension (like ".csv"), alternative extensions are tried automatically.file
     """
+    if os.path.isfile(name):
+        try:
+            return read_json(name)
+        except (IOError, UnicodeDecodeError, json.JSONDecodeError):
+            pass
+        try:
+            return read_csv(name, nrows=nrows)
+        except (IOError, pd.errors.ParserError):
+            pass
+        try:
+            return read_txt(name, nrows=nrows)
+        except (IOError, UnicodeDecodeError):
+            pass
     try:
         return read_csv(os.path.join(data_path, name + '.csv.gz'), nrows=nrows)
     except IOError:
@@ -279,10 +299,16 @@ def get_data(name='sms-spam', nrows=None):
     """
     if name in BIG_URLS:
         print('Downloading {}'.format(name))
-        download(name)
-        return read_named_csv(name, data_path=BIGDATA_PATH, nrows=nrows)
+        filepaths = download(name)
+        return filepaths[name]
     elif name in DATASET_NAME2FILENAME:
         return read_named_csv(name, data_path=DATA_PATH, nrows=nrows)
+    elif name in DATA_NAMES:
+        return read_named_csv(DATA_NAMES[name], nrows=nrows)
+    elif os.path.isfile(name):
+        return read_named_csv(name, nrows=nrows)
+    elif os.path.isfile(os.path.join(DATA_PATH, name)):
+        return read_named_csv(os.path.join(DATA_PATH, name), nrows=nrows)
 
     msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, .json, or .txt\n'.format(name)
     msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
@@ -320,10 +346,10 @@ def get_wikidata_qnum(wikiarticle, wikisite):
     return list(resp['entities'])[0]
 
 
-DATASET_FILENAMES = [f['name'] for f in find_files(DATA_PATH, '.csv.gz')]
-DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.csv')]
-DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.json')]
-DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.txt')]
+DATASET_FILENAMES = [f['name'] for f in find_files(DATA_PATH, '.csv.gz', level=0)]
+DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.csv', level=0)]
+DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.json', level=0)]
+DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.txt', level=0)]
 DATASET_NAMES = sorted(
     [f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]])
 DATASET_NAME2FILENAME = dict(zip(DATASET_NAMES, DATASET_FILENAMES))
