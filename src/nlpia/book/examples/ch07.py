@@ -7,7 +7,7 @@
 import os
 import re
 import tarfile
-
+import tqdm
 import requests
 
 from pugnlp.futil import path_status, find_files
@@ -142,7 +142,7 @@ def pre_process_data(filepath):
     
     return dataset
 
-dataset = pre_process_data('./aclImdb_v1/train')
+dataset = pre_process_data('./aclImdb/train')
 print(dataset[0])
 
 
@@ -318,7 +318,7 @@ vec_list = tokenize_and_vectorize([(1, sample_1)])
 # Tokenize returns a list of the data (length 1 here)
 test_vec_list = pad_trunc(vec_list, maxlen)
 
-test_vec = np.reshape(test_vec, (len(test_vec_list), maxlen, embedding_dims))
+test_vec = np.reshape(test_vec_list, (len(test_vec_list), maxlen, embedding_dims))
 model.predict(test_vec)
 
 
