@@ -1,3 +1,11 @@
+""" Loaders and downloaders for data files and models required for the examples in NLP in Action
+
+>>> get_data('cities_us').iloc[:3,:2]
+        geonameid                           city
+131484    4295856  Indian Hills Cherokee Section
+137549    5322551                         Agoura
+134468    4641562 
+"""
 from __future__ import print_function, unicode_literals, division, absolute_import
 from future import standard_library
 standard_library.install_aliases()  # noqa
@@ -21,15 +29,6 @@ from gensim.models import KeyedVectors
 INT_MAX = INT64_MAX = 2 ** 63 - 1
 INT_MIN = INT64_MIN = - 2 ** 63
 
-
-"""Loaders and downloaders for data files and models required for the examples in NLP in Action
-
->>> get_data('cities_us').iloc[:3,:2]
-        geonameid                           city
-131484    4295856  Indian Hills Cherokee Section
-137549    5322551                         Agoura
-134468    4641562 
-"""
 np = pd.np
 logger = logging.getLogger(__name__)
 

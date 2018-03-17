@@ -3,11 +3,11 @@
 Share your ideas with your fellow [NLP enthusiasts](AUTHORS)! This community-driven project is built on the contributions of NLPIA readers. 
 We love
 
-- Bug reports (github issues)
-- Even better, bug fixes! (pull requests)
-- Documentation
-- Feature ideas
-- Even better, feature implementations! (pull requests)
+ - Bug reports (github issues)
+ - Even better, bug fixes! (pull requests)
+ - Documentation
+ - Feature ideas
+ - Even better, feature implementations! (pull requests)
 
 You can get ideas from other readers [in the GitHub repo](https://github.com/totalgood/nlpia/issues). Feel free to jump on any of them by submitting a [pull request (PR)](https://github.com/totalgood/nlpia/pulls).
  
@@ -30,6 +30,11 @@ Our MIT [`LICENSE`](https://github.com/totalgood/nlpia/blob/master/LICENSE) does
 
 Your aren't done until `python setup.py test` runs your code and passes. 
 If you've written doctests in step 2 above, this this is as easy as pushing your commit and waiting for [Travis](travis-ci.org) to update the "tests pass" badge to green on your branch. 
+
+Your reward for reading this is knowing that early contributors will get their "name in lights" in [the book](https://bit.ly/nlpiabook). 
+You just need to get your PR in before it goes to print this Spring (2018)... and you get 42% off if you use the **discount code "sllane"** during checkout. 
+
+And if you contribute to the parts of `nlpia` that are actually generating some of the text in the book... well, then you can say that you taught one of the authors how to write ;)
 
 ## Style Guide
 

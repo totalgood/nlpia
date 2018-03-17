@@ -1,6 +1,6 @@
 # NLPIA
 
-The code and data for [Natural Language Processing in Action](https://www.manning.com/books/natural-language-processing-in-action).
+The community-driven code for [**N**atural **L**anguage **P**rocessing **i**n **A**ction](https://bit.ly/nlpiabook).
 
 ## Description
 
