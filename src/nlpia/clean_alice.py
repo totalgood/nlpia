@@ -1,5 +1,5 @@
 import zipfile
-from nlpia.constant import DATA_PATH
+from nlpia.constants import DATA_PATH
 from aiml_bot.aiml_parser import Bot
 import os
 

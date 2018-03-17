@@ -101,8 +101,8 @@ def get_array(df, x, default=None):
 def offline_plotly_scatter3d(df, x=0, y=1, z=-1):
     """ Plot an offline scatter plot colored according to the categories in the 'name' column.
 
-    >>> df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/iris.csv')
-    >>> offline_plotly(df)
+    >> df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/iris.csv')
+    >> offline_plotly(df)
     """
     data = []
     # clusters = []
@@ -180,7 +180,7 @@ def annotate(row, ax, x='x', y='y', text='name', xytext=(7, -5), textcoords='off
     return row[text]
 
 
-def offline_plotly_data(data, filename='plotly.html', config=None, validate=True,
+def offline_plotly_data(data, filename=None, config=None, validate=True,
                         default_width='100%', default_height=525, global_requirejs=False):
     """ Write a plotly scatter plot to HTML file that doesn't require server
 
@@ -199,7 +199,7 @@ def offline_plotly_data(data, filename='plotly.html', config=None, validate=True
     >>>      ],
     >>>      'layout': Layout(xaxis=XAxis(title='Life Expectancy'), yaxis=YAxis(title='GDP per Capita', type='log'))
     >>> }
-    >>> html = offline_plotly_data(data)
+    >>> html = offline_plotly_data(data, filename=None)
     """
     config_default = dict(DEFAULT_PLOTLY_CONFIG)
     if config is not None:
