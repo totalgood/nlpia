@@ -1,3 +1,48 @@
+""" AIML Loader that can load zipped AIML2.0 XML files with an AIML1.0 parser in python 3 
+
+>>> bot = create_bot()
+>>> len(bot._brain._root.keys())
+3445
+>>> bot._brain._root['HI']
+...
+ 3: {1: {4: {1: {2: ['template',
+      {},
+      ['srai', {}, ['text', {'xml:space': 'default'}, 'HELLO']]]}}},
+  'WHAT': {'CAN': {'I': {'CALL': {'YOU': {4: {1: {2: ['template',
+          {},
+          ['text',
+           {'xml:space': 'default'},
+           'Hi there.  What is your name?']]}}}}}}}},
+ 'EVERYBODY': {3: {1: {4: {1: {2: ['template',
+       {},
+       ['text', {'xml:space': 'default'}, 'Hello there!']]}}}}},
+ 'HOW': {'ARE': {'YOU': {3: {1: {4: {1: {2: ['template',
+         {},
+         ['text',
+          {'xml:space': 'default'},
+          'Hello there! I am fine thanks how are you?']]}}}}}}},
+...
+
+>> bot.respond("Hi how are you?")
+'Hi there!. I am fine, thank you.'
+>> bot.respond("hi how are you?")
+"Hi there!. I'm doing fine thanks how are you?"
+>> bot.respond("hi how are you?")
+'Hi there!. I am doing very well. How are you  ?'
+>> bot.respond("hi how are you?")
+'Hi there!. My logic and cognitive functions are normal.'
+>> bot.respond("how are you?")
+'My logic and cognitive functions are normal.'
+>> bot.respond("how are you?")
+'I am functioning within normal parameters.'
+>> bot.respond("how are you?")
+'My logic and cognitive functions are normal.'
+>> bot.respond("how are you?")
+'I am functioning within normal parameters.'
+>> bot.respond("how are you?")
+'I am doing very well. How are you  ?'
+"""
+
 import zipfile
 from nlpia.constants import DATA_PATH
 from aiml_bot import Bot
@@ -58,3 +103,4 @@ def create_brain(path='aiml-en-us-foundation-alice.v1-9.zip'):
         print()
     print('Loaded {} trigger-response pairs from {} AIML files.'.format(bot._brain.template_count, len(paths)))
     return bot
+

@@ -3,6 +3,8 @@
 
 import os
 
+import matplotlib
+matplotlib.use('TkAgg')
 import seaborn
 from matplotlib import pyplot as plt
 

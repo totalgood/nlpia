@@ -84,3 +84,6 @@ pugnlp>=0.0.12,<0.1.0
 # NOTES
 # ###################################################
 
+plyfile
+MechanicalSoup
+aiml_bot

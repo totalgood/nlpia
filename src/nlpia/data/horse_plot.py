@@ -1,13 +1,16 @@
 # import matplotlib
 # matplotlib.use('TkAgg')
+import os
 
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa
 import pandas as pd
+
+from nlpia.constants import DATA_PATH
+
 np = pd.np
 
-
-h = pd.read_csv('pointcloud.csv.gz', header=0, index_col=0)
+h = pd.read_csv(os.path.join(DATA_PATH, 'pointcloud.csv.gz'), header=0, index_col=0)
 h = pd.DataFrame(h, columns='x y z'.split())
 h = h.sample(1000).copy()
 

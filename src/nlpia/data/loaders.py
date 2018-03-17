@@ -24,7 +24,7 @@ INT_MIN = INT64_MIN = - 2 ** 63
 
 """Loaders and downloaders for data files and models required for the examples in NLP in Action
 
->>> from nlpia.data import download
+>>> from nlpia.data.loaders import download
 >> download()  Will take hours and 8GB of storage
 >>> get_data('cities_us').iloc[:3,:2]
         geonameid                           city

@@ -137,6 +137,8 @@ sms['neuron'] = nn.predict(sms[['topic4']])
 ##########################
 
 from matplotlib import pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
 import seaborn
 
 

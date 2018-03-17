@@ -8,7 +8,7 @@ import gzip
 from gensim.models import TfidfModel, LsiModel
 from gensim.corpora import Dictionary
 
-from nlpia.data import BIGDATA_PATH, read_csv
+from nlpia.data.loaders import BIGDATA_PATH, read_csv
 
 KEEP_N = 300000  # max vocab size
 NO_BELOW = 5      # min DF (count)

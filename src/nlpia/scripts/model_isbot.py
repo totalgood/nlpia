@@ -24,7 +24,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
 
 from nlpia.constants import BIGDATA_PATH
-from nlpia.data import read_csv
+from nlpia.data.loaders import read_csv
 
 from nlpia.embedders import positive_distances
 

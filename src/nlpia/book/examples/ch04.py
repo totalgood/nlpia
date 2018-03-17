@@ -19,7 +19,13 @@ word_vector['love'] = .2 * topic['pet'] - .1 * topic['animal'] + .1 * topic['cit
 
 import pandas as pd
 from sklearn.decomposition import PCA
+
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib
+matplotlib.use('TkAgg')
 import seaborn
+
 from matplotlib import pyplot as plt
 from nlpia.data.loaders import get_data
 
