@@ -1,22 +1,23 @@
 # Travis configuration file using the build matrix feature
 # Read more under http://docs.travis-ci.com/user/build-configuration/
+# THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
 
-sudo: true
+sudo: false
 language: python
 virtualenv:
   system_site_packages: true
 env:
   matrix:
-    # - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"  # ipython 6.0 install fails, must install LTS release 5.0 for 2.7
+    # - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
     # - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
     # - DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
-    - DISTRIB="conda" PYTHON_VERSION="3.5" COVERAGE="false"
-    - DISTRIB="ubuntu" PYTHON_VERSION="3.5" COVERAGE="false"
+    - DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="true"
+    - DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="true" ENVIRONMENT_YML="conda/environment.yml"
 addons:
   apt:
     packages:
       - git
-      - python3-pip
+      - python-pip
       - gfortran
       - libopenblas-dev
       - liblapack-dev
@@ -29,6 +30,7 @@ addons:
       # - python3-scipy
 install:
   - source tests/travis_install.sh
+  - pip install -r requirements-test.txt
   - pip install --upgrade pip
   - pip install -r requirements.txt
 before_script:

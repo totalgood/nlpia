@@ -1,0 +1,87 @@
+# Add your pinned requirements so that they can be easily installed with:
+# pip install -r requirements.txt
+# Remember to also add them in setup.cfg but unpinned (unversioned).
+future>=0.16.0
+jupyter>=1.0.0,<2.0.0
+h5py>=2.7.1,<2.8.0
+matplotlib==2.1.0
+nltk>=3.2.2,<3.3.0
+pandas>=0.19.2
+pip>=8.1.2
+pypandoc>=1.4.0
+plotly>=2.3.0,<2.4.0
+cufflinks
+# python-igraph>=0.7.1.post6
+python-Levenshtein>=0.12.0
+scikit-learn>=0.18.1
+scipy>=0.19.0
+seaborn>=0.8
+tqdm>=4.11.2
+wheel>=0.30.0a0
+gensim>=2.1.0,<3.0.0
+pandas-datareader>=0.5.0
+pugnlp>=0.0.12,<0.1.0
+# git+https://github.com/totalgood/pugnlp.git@master#egg=pugnlp
+
+
+# Twitter Clients (`pip install nlpia[twitter]`)
+-r requirements-twitter.txt
+
+# Deep Learning Requirements (`pip install nlpia[deep]`)
+-r requirements-deep.txt
+
+# Chatbot Requirements (`pip install nlpia[chat]`)
+-r requirements-chat.txt
+
+
+# ###################################################
+# NOTES
+#
+
+###########################
+# Ubuntu (apt)
+
+# On newish Ubuntu OSes you need the python header files:
+#$ sudo apt-get install python-dev python3.5-dev python3-virtualenv python-pip build-essential gfortran
+
+# But python-igraph often requires the binary igraph package
+#$ sudo apt-get install python-igraph
+
+# SpeechRecognizer requires PyAudio
+#$ sudo apt-get install install portaudio19-dev python-pyaudio
+
+###########################
+# Mac OSX (homebrew)
+
+# On Mac OSX you need python3 and pip (brew installs the python-dev header files automatically?):
+#$ brew install python3
+
+# SpeechRecognizer requires PyAudio
+#$ brew install portaudio
+
+# offline SpeechRecognizer requires pocketsphinx and swig
+# brew install cmu-pocketsphinx
+# brew install swig
+
+
+############################
+# scipy requires:
+#$ sudo apt-get install gfortran libopenblas-dev liblapack-dev python-scipy python-matplotlib python-numpy
+
+# matplotlib requires:
+#$ sudo apt-get install libpng12-dev libfreetype6-dev
+
+# matplotlib requires a backend (see matplotlibrc), tkagg is one option:
+#$ sudo apt-get install tcl-dev tk-dev python-tk python3-tk
+
+# pugnlp includes:
+# coverage>=4.3.4 nltk>=3.2.2 fuzzywuzzy>=0.15.0 python-slugify>=1.2.4 nlup>=0.5
+
+# optional packages:
+# boto==2.46
+# editdistance>=0.3.1
+
+#
+# NOTES
+# ###################################################
+

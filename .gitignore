@@ -11,6 +11,7 @@ __pycache__/*
 .cache/*
 .*.swp
 .~*
+*/.ipynb_checkpoints/*
 
 # Project files
 .ropeproject
@@ -31,6 +32,7 @@ htmlcov/*
 .tox
 junit.xml
 coverage.xml
+.pytest_cache/*
 
 # Build and docs folder/files
 build/*
@@ -46,6 +48,11 @@ secret*
 !secrets.cfg.EXAMPLE_TEMPLATE
 
 # big data
+src/nlpia/bigdata/*
+src/nlpia/data/*.gz
+src/nlpia/data/*.bz2
+src/nlpia/data/*.xz
+src/nlpia/data/*.zip
 nlpia/bigdata/*
 nlpia/data/*.gz
 nlpia/data/*.bz2
@@ -62,6 +69,8 @@ record.txt
 # Backups
 *.bak.*
 *.old.*
+*.new.*
+*.fixed.*
 *.broke.*
 *.master.*
 *.develop.*

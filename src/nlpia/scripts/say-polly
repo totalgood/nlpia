@@ -1,0 +1,15 @@
+#!/bin/bash
+# Example usage: say-polly "What do you think of this?" 7
+# Output: 'say-polly.mp3' that is immediately played through your output audio device
+
+voice=Joanna
+voices=(Joanna Salli Kimberly Kendra Ivy Matthew Justin Joey)
+for i in "${!voices[@]}"; do
+   if [[ "${voices[$i]}" = "$2" ]]; then
+       voice="$2";
+   elif [[ "$i" = "$2" ]]; then
+       voice="${voices[$i]}";
+   fi
+done
+
+aws polly synthesize-speech --text="$1" --voice-id="$voice" --output-format mp3 say-polly.mp3 > say-polly-response.json && afplay say-polly.mp3
