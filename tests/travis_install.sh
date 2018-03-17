@@ -27,10 +27,15 @@ if [[ "$DISTRIB" == "conda" ]]; then
     export PATH=$HOME/miniconda/bin:$PATH
     conda update --yes conda
 
-    # Configure the conda environment and put it in the path using the
-    # provided versions
-    conda create -n testenv --yes python=$PYTHON_VERSION pip
+    # Configure the conda environment and put it in the path using the provided versions
+    if [[ "$ENVIRONMENT_YML" ]]; then
+        conda env create -n testenv -f "$ENVIRONMENT_YML"
+    else
+        conda create -n testenv --yes python=$PYTHON_VERSION pip
+    fi
     source activate testenv
+    which python
+    python --version
 elif [[ "$DISTRIB" == "ubuntu" ]]; then
     # Use standard ubuntu packages in their default version
     echo $DISTRIB
