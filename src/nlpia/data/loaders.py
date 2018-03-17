@@ -26,6 +26,11 @@ INT_MIN = INT64_MIN = - 2 ** 63
 
 >>> from nlpia.data import download
 >> download()  Will take hours and 8GB of storage
+>>> get_data('cities_us').iloc[:3,:2]
+        geonameid                           city
+131484    4295856  Indian Hills Cherokee Section
+137549    5322551                         Agoura
+134468    4641562 
 """
 np = pd.np
 logger = logging.getLogger(__name__)
