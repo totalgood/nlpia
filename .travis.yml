@@ -28,8 +28,8 @@ addons:
       # - python3-numpy
       # - python3-scipy
 install:
-  - pip install -r requirements-test.txt
   - source tests/travis_install.sh
+  - pip install -r requirements-test.txt
   - pip install --upgrade pip
   - pip install -r requirements.txt
 before_script:
