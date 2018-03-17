@@ -1,6 +1,6 @@
 import zipfile
 from nlpia.constants import DATA_PATH
-from aiml_bot.aiml_parser import Bot
+from aiml_bot import Bot
 import os
 
 
@@ -35,10 +35,12 @@ def extract_aiml(path='aiml-en-us-foundation-alice.v1-9.zip'):
         path = os.path.join(DATA_PATH, path)
 
     zf = zipfile.ZipFile(path)
+    paths = []
     for name in zf.namelist():
         if '.hg/' in name:
             continue
-        zf.extract(name, path=DATA_PATH)
+        paths.append(zf.extract(name, path=DATA_PATH))
+    return paths
 
 
 def create_brain(path='aiml-en-us-foundation-alice.v1-9.zip'):
@@ -46,6 +48,13 @@ def create_brain(path='aiml-en-us-foundation-alice.v1-9.zip'):
         path = os.path.join(DATA_PATH, path)
 
     bot = Bot()
-    extract_aiml()
-    bot.learn(os.path.join(DATA_PATH, '*'))
+    num_templates = bot._brain.template_count
+    paths = extract_aiml(path=path)
+    for path in paths:
+        # print('Loading AIML pattern-templates in {}'.format(path))
+        bot.learn(os.path.join(path))
+        num_templates = bot._brain.template_count - num_templates
+        print('Loaded {} trigger-response pairs.'.format(num_templates))
+        print()
+    print('Loaded {} trigger-response pairs from {} AIML files.'.format(bot._brain.template_count, len(paths)))
     return bot
