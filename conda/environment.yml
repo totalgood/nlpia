@@ -42,6 +42,7 @@ dependencies:
     - twython>=3.5.0,<3.6.0
     - wheel>=0.30.0a0
     - will>=2.1.0,<2.2.0
+    - SpeechRecognition>=3.8.1,<4.0.0
     - MechanicalSoup
     - plyfile
     - pyttsx3

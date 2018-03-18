@@ -8,7 +8,6 @@ matplotlib==2.1.0
 nltk>=3.2.2,<3.3.0
 pandas>=0.19.2
 pip>=8.1.2
-pypandoc>=1.4.0
 plotly>=2.3.0,<2.4.0
 cufflinks
 # python-igraph>=0.7.1.post6
