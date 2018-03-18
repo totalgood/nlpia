@@ -34,6 +34,9 @@ if [[ "$DISTRIB" == "conda" ]]; then
         conda create -n testenv --yes python=$PYTHON_VERSION pip
     fi
     source activate testenv
+    conda install --yes pip
+    pip install --upgrade spacy
+    python -m spacy download en
     which python
     python --version
 elif [[ "$DISTRIB" == "ubuntu" ]]; then
