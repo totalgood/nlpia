@@ -13,7 +13,7 @@
 -r requirements-chat.txt
 
 # Chatbot Requirements (`pip install nlpia[chat]`)
--r requirements-voice.txt
+# -r requirements-voice.txt
 
 
 # ###################################################
