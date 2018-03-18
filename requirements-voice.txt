@@ -14,3 +14,4 @@ deepspeech>=0.1.1,<0.2.0
 # Offline SpeechRecognizer requires pocketsphinx and swig
 # brew install cmu-pocketsphinx
 # brew install swig
+pyttsx3
