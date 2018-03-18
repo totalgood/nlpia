@@ -1,6 +1,8 @@
 from gensim.models.word2vec import Word2Vec
 from sklearn.manifold import TSNE
-from seaborn import plt
+import matplotlib
+matplotlib.use('TkAgg')
+from matplotlib import pyplot as plt
 
 import pandas as pd
 import numpy as np
