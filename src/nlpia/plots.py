@@ -264,8 +264,7 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
       Typically it should be about a tenth of the minimum 'size' column value
 
     >>> from nlpia.data.loaders import get_data
-    >>> from nlpia.plots import offline_plotly_scatter_bubble
-    >>> df = get_data('cities_us_wordvectors_pca2_meta')
+    >>> df = get_data('cities_us_wordvectors_pca2_meta').iloc[:100]
     >>> html = offline_plotly_scatter_bubble(
     ...     df.sort_values('population', ascending=False)[:350].copy().sort_values('population'),
     ...     filename='plotly_scatter_bubble.html',
