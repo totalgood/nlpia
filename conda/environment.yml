@@ -32,7 +32,6 @@ dependencies:
     - pip>=8.1.2
     - plotly>=2.3.0,<2.4.0
     - pugnlp>=0.0.12,<0.1.0
-    - pypandoc>=1.4.0
     - python-Levenshtein>=0.12.0
     - scikit-learn>=0.18.1
     - scipy>=0.19.0
