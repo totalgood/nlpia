@@ -23,7 +23,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
     chmod +x $DOWNLOAD_DIR/anaconda3.sh && \
         bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3 && \
         # rm -r -d -f $DOWNLOAD_DIR
-    export PATH=$HOME/anaconda/bin:$PATH
+    export PATH=$HOME/anaconda3/bin:$PATH
     conda update --yes conda
     conda install pip
 
