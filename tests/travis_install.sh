@@ -37,6 +37,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
     conda install --yes pip
     pip install --upgrade spacy
     python -m spacy download en
+    python -c "import nltk; nltk.download('punkt'); nltk.download('treebank'); nltk.download('wordnet');"
     which python
     python --version
 elif [[ "$DISTRIB" == "ubuntu" ]]; then
