@@ -25,7 +25,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
         # rm -r -d -f $DOWNLOAD_DIR
     export PATH=$HOME/anaconda3/bin:$PATH
     conda update --yes conda
-    conda install pip
+    conda install --yes pip
 
     # Configure the conda environment and put it in the path using the provided versions
     if [[ "$ENVIRONMENT_YML" ]]; then
