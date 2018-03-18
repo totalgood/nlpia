@@ -266,7 +266,6 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
     >>> df = get_data('cities_us_wordvectors_pca2_meta').iloc[:100]
     >>> html = offline_plotly_scatter_bubble(
     ...     df.sort_values('population', ascending=False)[:350].copy().sort_values('population'),
-    ...     filename='plotly_scatter_bubble.html',
     ...     x='x', y='y',
     ...     size_col='population', text_col='name', category_col='timezone',
     ...     xscale=None, yscale=None,  # 'log' or None

@@ -2,7 +2,10 @@
 [run]
 branch = True
 source = */nlpia/*
-# omit = bad_file.py
+omit = 
+   src/nlpia/book/examples/*
+   src/nlpia/data/*
+   src/nlpia/book/*
 
 [report]
 # Regexes for lines to exclude from consideration
