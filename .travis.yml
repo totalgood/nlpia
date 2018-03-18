@@ -22,6 +22,7 @@ addons:
       - libopenblas-dev
       - liblapack-dev
       - python3-matplotlib
+      - pandoc
       # - python-numpy
       # - python-scipy
       # - python-matplotlib
