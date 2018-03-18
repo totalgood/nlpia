@@ -1,16 +1,12 @@
-from gensim.models.word2vec import Word2Vec
-from sklearn.manifold import TSNE
+from gensim.models import KeyedVectors
 import matplotlib
-matplotlib.use('TkAgg')
-from matplotlib import pyplot as plt
+matplotlib.use('TkAgg')  # noqa
 
 import pandas as pd
 import numpy as np
 
 from nlpia.data.loaders import get_data
 
-from nlpia.data.loaders import BIGDATA_PATH
-from gensim.models.word2vec import KeyedVectors
 
 wv = None
 

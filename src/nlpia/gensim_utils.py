@@ -3,7 +3,7 @@ from future import standard_library
 standard_library.install_aliases() # noqa
 from builtins import *  # noqa
 
-# from gensim.models import Word2Vec
+# from gensim.models import KeyedVectors
 from gensim import corpora
 from gensim import utils
 
@@ -40,7 +40,7 @@ def return_none(*args, **kwargs):
 
 
 def to_unicode(sorb, allow_eval=False):
-    """Ensure that strings are unicode (UTF-8 encoded).
+    r"""Ensure that strings are unicode (UTF-8 encoded).
 
     Evaluate bytes literals that are sometimes accidentally created by str(b'whatever')
 
@@ -55,11 +55,11 @@ def to_unicode(sorb, allow_eval=False):
     >>> to_unicode(str(b'whatever'))
     'whatever'
     """
-    if isinstance(sorb, bytes):
-        sorb = sorb.decode('utf-8')
     if sorb and (sorb[:2] == "b'" and sorb[-1] == "'") or (sorb[:2] == 'b"' and sorb[-1] == '"'):
         sorb = eval(sorb, {'__builtins__': None}, {})
-    return str(sorb)
+    if isinstance(sorb, bytes):
+        return sorb.decode('utf-8')
+    return sorb
 
 
 class TweetCorpus(corpora.TextCorpus):

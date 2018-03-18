@@ -1,6 +1,6 @@
 import os
 from nlpia.data.loaders import BIGDATA_PATH
-from gensim.models.word2vec import KeyedVectors
+from gensim.models import KeyedVectors
 path = os.path.join(BIGDATA_PATH, 'GoogleNews-vectors-negative300.bin.gz')
 wv = KeyedVectors.load_word2vec_format(path, binary=True)
 len(wv.vocab)

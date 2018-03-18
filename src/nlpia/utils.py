@@ -6,7 +6,7 @@ import re
 
 import pandas as pd
 from sklearn.manifold import TSNE
-from gensim.models.word2vec import Word2Vec
+from gensim.models import KeyedVectors
 
 from pugnlp.futil import find_files
 

@@ -47,7 +47,7 @@ automate the search for synonyms with higher than 60% similarity, walking a shal
 
 import pandas as pd
 from nlpia.data.loaders import get_data
-from gensim.models.keyedvectors import KeyedVectors
+from gensim.models import KeyedVectors
 
 wordvector_path = get_data('word2vec')
 word_vectors = KeyedVectors.load_word2vec_format(wordvector_path, binary=True)

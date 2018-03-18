@@ -1,6 +1,6 @@
 """ AIML Loader that can load zipped AIML2.0 XML files with an AIML1.0 parser in python 3 
 
->>> bot = create_bot()
+>>> bot = create_brain()
 >>> len(bot._brain._root.keys())
 3445
 >>> bot._brain._root['HI']
@@ -42,11 +42,14 @@
 >> bot.respond("how are you?")
 'I am doing very well. How are you  ?'
 """
-
-import zipfile
-from nlpia.constants import DATA_PATH
-from aiml_bot import Bot
 import os
+import zipfile
+from traceback import format_exc
+
+from aiml_bot import Bot
+from aiml_bot.aiml_parser import AimlParserError
+
+from nlpia.constants import DATA_PATH
 
 
 def concatenate_aiml(path='aiml-en-us-foundation-alice.v1-9.zip', outfile='aiml-en-us-foundation-alice.v1-9.aiml'):
@@ -56,6 +59,8 @@ def concatenate_aiml(path='aiml-en-us-foundation-alice.v1-9.zip', outfile='aiml-
 
     zf = zipfile.ZipFile(path)
     for name in zf.namelist():
+        if not name.lower().endswith('.aiml'):
+            continue
         with zf.open(name) as fin:
             # print(name)
             happyending = '#!*@!!BAD'
@@ -96,11 +101,15 @@ def create_brain(path='aiml-en-us-foundation-alice.v1-9.zip'):
     num_templates = bot._brain.template_count
     paths = extract_aiml(path=path)
     for path in paths:
-        # print('Loading AIML pattern-templates in {}'.format(path))
-        bot.learn(os.path.join(path))
+        if not path.lower().endswith('.aiml'):
+            continue
+        try:
+            bot.learn(path)
+        except AimlParserError:
+            print(format_exc())
+            print('AIML Parse Error: {}'.format(path))
         num_templates = bot._brain.template_count - num_templates
         print('Loaded {} trigger-response pairs.'.format(num_templates))
         print()
     print('Loaded {} trigger-response pairs from {} AIML files.'.format(bot._brain.template_count, len(paths)))
     return bot
-

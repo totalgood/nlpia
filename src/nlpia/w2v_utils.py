@@ -4,7 +4,7 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import object  # NOQA
 
-from gensim.models import Word2Vec
+from gensim.models import KeyedVectors
 
 
 class W2V(object):

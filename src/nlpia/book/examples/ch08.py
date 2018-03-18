@@ -138,7 +138,7 @@ def pre_process_data(filepath):
 
 
 from nltk.tokenize import TreebankWordTokenizer
-from gensim.models.keyedvectors import KeyedVectors
+from gensim.models import KeyedVectors
 word_vectors = KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin.gz', binary=True, limit=200000)
 
 def tokenize_and_vectorize(dataset):
