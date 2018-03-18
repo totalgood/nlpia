@@ -5,24 +5,7 @@ Loading ...
 >>> len(bot._brain._root.keys())
 3445
 >>> bot._brain._root['HI']
-...
- 3: {1: {4: {1: {2: ['template',
-      {},
-      ['srai', {}, ['text', {'xml:space': 'default'}, 'HELLO']]]}}},
-  'WHAT': {'CAN': {'I': {'CALL': {'YOU': {4: {1: {2: ['template',
-          {},
-          ['text',
-           {'xml:space': 'default'},
-           'Hi there.  What is your name?']]}}}}}}}},
- 'EVERYBODY': {3: {1: {4: {1: {2: ['template',
-       {},
-       ['text', {'xml:space': 'default'}, 'Hello there!']]}}}}},
- 'HOW': {'ARE': {'YOU': {3: {1: {4: {1: {2: ['template',
-         {},
-         ['text',
-          {'xml:space': 'default'},
-          'Hello there! I am fine thanks how are you?']]}}}}}}},
-...
+{'EVERYBODY': {3: {1: {4: {1: {2: ['template', {}, ...
 
 >> bot.respond("Hi how are you?")
 'Hi there!. I am fine, thank you.'

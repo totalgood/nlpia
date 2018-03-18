@@ -47,18 +47,44 @@ def to_unicode(sorb, allow_eval=False):
     >>> to_unicode(b'whatever')
     'whatever'
     >>> to_unicode(b'b"whatever"')
-    "b'whatever'"
-    >>> '"{}"'.format(b'whatever')
-    '"b\'whatever\'"'
-    >>> str(b'wat')
-    "b'wat'"
-    >>> to_unicode(str(b'whatever'))
     'whatever'
+    >>> to_unicode(repr(b'b"whatever"'))
+    'whatever'
+    >>> to_unicode(str(b'b"whatever"'))
+    'whatever'
+    >>> to_unicode(str(str(b'whatever')))
+    'whatever'
+    >>> to_unicode(bytes(u'whatever', 'utf-8'))
+    'whatever'
+    >>> to_unicode(b'u"whatever"')
+    'whatever'
+    >>> to_unicode(u'b"whatever"')
+    'whatever'
+
+    There seems to be a bug in python3 core:
+    >>> str(b'whatever')  # user intended str.decode(b'whatever') (str coercion) rather than python code repr
+    "b'whatever'"
+    >>> repr(str(b'whatever'))
+    '"b\'whatever\'"'
+    >>> str(repr(str(b'whatever')))
+    '"b\'whatever\'"'
+    >>> repr(str(repr(str(b'whatever'))))
+    '\'"b\\\'whatever\\\'"\''
+    >>> repr(repr(b'whatever'))
+    '"b\'whatever\'"'
+    >>> str(str(b'whatever'))
+    "b'whatever'"
+    >>> str(repr(b'whatever'))
+    "b'whatever'"
     """
-    if sorb and (sorb[:2] == "b'" and sorb[-1] == "'") or (sorb[:2] == 'b"' and sorb[-1] == '"'):
-        sorb = eval(sorb, {'__builtins__': None}, {})
+    if sorb is None:
+        return sorb
     if isinstance(sorb, bytes):
-        return sorb.decode('utf-8')
+        sorb = sorb.decode()
+    for i, s in enumerate(["b'", 'b"', "u'", 'u"']):
+        if (sorb.startswith(s) and sorb.endswith(s[-1])):
+            # print(i)
+            return to_unicode(eval(sorb, {'__builtins__': None}, {}))
     return sorb
 
 

@@ -1,10 +1,11 @@
 """ Loaders and downloaders for data files and models required for the examples in NLP in Action
 
->>> get_data('cities_us').iloc[:3,:2]
+>>> df = get_data('cities_us')
+>>> df.iloc[:3,:2]
         geonameid                           city
 131484    4295856  Indian Hills Cherokee Section
 137549    5322551                         Agoura
-134468    4641562 
+134468    4641562                         Midway
 """
 from __future__ import print_function, unicode_literals, division, absolute_import
 from future import standard_library
@@ -99,22 +100,43 @@ for filename in TEXTS:
 del fin
 
 
-def read_csv(*args, **kwargs):
-    """Like pandas.read_csv, only little smarter (checks first column to see if it should be the data frame index)
+def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
+    """ Tries to infer if the Series (usually leftmost column) should be the index_col
 
-    >>> read_csv('mavis-batey-greetings.csv').head()
+    >>> looks_like_index(pd.Series(np.arange(100)))
+    True
     """
-    index_names = ('Unnamed: 0', 'pk', 'index', '')
+    if series.name in index_names:
+        return True
+    if (series == series.index.values).all():
+        return True
+    if (series == np.arange(len(series))).all():
+        return True
+    if ((series.index == np.arange(len(series))).all() and
+        str(series.dtype).startswith('int') and
+        (series.count() == len(df))):
+        return True
+    return False
+
+
+def read_csv(*args, **kwargs):
+    """Like pandas.read_csv, only little smarter: check left column to see if it should be the index_col
+
+    >>> read_csv(os.path.join(DATA_PATH, 'mavis-batey-greetings.csv')).head()
+                                                    sentence  is_greeting
+    0     It was a strange little outfit in the cottage.            0
+    1  Organisation is not a word you would associate...            0
+    2  When I arrived, he said: "Oh, hello, we're bre...            0
+    3                                       That was it.            0
+    4                I was never really told what to do.            0
+    """
     kwargs.update({'low_memory': False})
     if isinstance(args[0], pd.DataFrame):
         df = args[0]
     else:
         logger.info('Reading CSV with `read_csv(*{}, **{})`...'.format(args, kwargs))
         df = pd.read_csv(*args, **kwargs)
-    if ((df.columns[0] in index_names or (df[df.columns[0]] == df.index).all()) or
-        (df[df.columns[0]] == np.arange(len(df))).all() or
-        ((df.index == np.arange(len(df))).all() and str(df[df.columns[0]].dtype).startswith('int') and
-         df[df.columns[0]].count() == len(df))):
+    if looks_like_index(df[df.columns[0]]):
         df = df.set_index(df.columns[0], drop=True)
         if df.index.name in ('Unnamed: 0', ''):
             df.index.name = None
