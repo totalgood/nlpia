@@ -28,9 +28,10 @@ class LinearRegressor(object):
         >>> y = 3.14 * X + np.random.randn(*X.shape) + intercept
         >>> line = LinearRegressor()
         >>> line.fit(X, y)
+        <nlpia.models.LinearRegressor object ...
         >>> abs(line.slope - slope) < abs(0.02 * (slope + 1))
         True
-        >>> abs(line.intercept - intercept) < abs(0.02 * (intercept + 1))
+        >>> abs(line.intercept - intercept) < 0.2 * (abs(intercept) + 1)
         True
         """
 
@@ -57,18 +58,22 @@ class LinearRegressor(object):
 class OneNeuronRegressor(object):
     """ Full batch learning using the Delta rule (weights += error * weights)
 
-    >>> n_samples = 10
-    >>> X = np.arange(10).reshape((n_samples, 1))
-    >>> y = 3.14 * X + np.random.randn(*X.shape)
-    >>> nn = OneNeuronRegressor(alpha=0.01 / n_samples, n_iter=1)
-    >>> e = np.zeros(10)
-    >>> for i in range(10):
-    ...     e[i] = np.abs(nn.delta(X,y)).sum()
-    ...     nn = nn.fit(X, y)
-    ...     print(nn.W)
-    ...     print(e[1])
-    >>> n_samples - (e[1:] < e[:-1]).sum()
-    1
+    >>> n_samples = 100
+    >>> x = np.random.randn(n_samples, 1)  # 100 random x values
+    >>> slope = 3.1
+    >>> intercept = -2.7
+    >>> noise = .1
+    >>> noise = noise * np.random.randn(*x.shape)
+    >>> y = slope * x + intercept + noise
+    >>> n_epochs = 10000
+    >>> nn = OneNeuronRegressor(alpha=0.01, n_iter=1)
+    >>> error = np.zeros(n_epochs)
+    >>> for i in range(n_epochs):
+    ...     error[i] = np.abs(nn.delta(x, y)).sum()
+    ...     nn = nn.fit(x, y)
+    ...     # print(nn.W, error[i])
+    >>> nn.W.round(1)  # intercept, slope
+    array([[-2.7,  3.1]])  
 
     X = pca_topic_vectors[['topic4']].values[:5, :]
     y = scores['compound'].reshape(len(scores), 1).values[:5, :]

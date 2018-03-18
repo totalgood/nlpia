@@ -184,23 +184,21 @@ def annotate(row, ax, x='x', y='y', text='name', xytext=(7, -5), textcoords='off
 
 def offline_plotly_data(data, filename=None, config=None, validate=True,
                         default_width='100%', default_height=525, global_requirejs=False):
-    """ Write a plotly scatter plot to HTML file that doesn't require server
+    r""" Write a plotly scatter plot to HTML file that doesn't require server
 
-    >>> import pandas as pd
-    >>> from plotly.offline.offline import _plot_html
     >>> from plotly.graph_objs import Scatter, Marker, Layout, YAxis, XAxis
     >>> df = pd.read_csv('https://plot.ly/~etpinard/191.csv')
     >>> df.columns = [eval(c) if c[0] in '"\'' else str(c) for c in df.columns]
     >>> data = {'data': [
-    >>>          Scatter(x=df[continent+', x'],
-    >>>                  y=df[continent+', y'],
-    >>>                  text=df[continent+', text'],
-    >>>                  marker=Marker(size=df[continent+', size'], sizemode='area', sizeref=131868,),
-    >>>                  mode='markers',
-    >>>                  name=continent) for continent in ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
-    >>>      ],
-    >>>      'layout': Layout(xaxis=XAxis(title='Life Expectancy'), yaxis=YAxis(title='GDP per Capita', type='log'))
-    >>> }
+    ...          Scatter(x=df[continent+', x'],
+    ...                  y=df[continent+', y'],
+    ...                  text=df[continent+', text'],
+    ...                  marker=Marker(size=df[continent+', size'], sizemode='area', sizeref=131868,),
+    ...                  mode='markers',
+    ...                  name=continent) for continent in ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
+    ...      ],
+    ...      'layout': Layout(xaxis=XAxis(title='Life Expectancy'), yaxis=YAxis(title='GDP per Capita', type='log'))
+    ... }
     >>> html = offline_plotly_data(data, filename=None)
     """
     config_default = dict(DEFAULT_PLOTLY_CONFIG)
@@ -238,13 +236,13 @@ def normalize_etpinard_df(df='https://plot.ly/~etpinard/191.csv', columns='x y s
 
 def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='text',
                                   category_col='category', possible_categories=None,
-                                  filename='offline_plotly_scatter_bubble.html',
+                                  filename=None,
                                   config={'displaylogo': False},
                                   xscale=None, yscale='log',
                                   layout={'hovermode': 'closest', 'showlegend': False, 'autosize': True},
                                   marker={'sizemode': 'area'},
                                   ):
-    """Interactive scatterplot of a DataFrame with the size and color of circles linke to two columns
+    r"""Interactive scatterplot of a DataFrame with the size and color of circles linke to two columns
 
     config keys:
       fillFrame setBackground displaylogo sendData showLink linkText staticPlot scrollZoom plot3dPixelRatio displayModeBar
@@ -299,7 +297,6 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
         masks = [np.array(df[category_col] == label) for label in possible_categories]
     else:
         masks = [np.array([True] * len(df))] * len(possible_categories)
-    print(marker_default)
     data = {'data': [
             graph_objs.Scatter(x=df[x][mask].values,
                                y=df[y][mask].values,

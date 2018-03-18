@@ -11,6 +11,7 @@ from nlpia.constants import DATA_PATH
 
 np = pd.np
 
+
 def plot_ply(plyfile=os.path.join(DATA_PATH, 'horse.ply')):
     h = pd.read_csv(os.path.join(DATA_PATH, 'pointcloud.csv.gz'), header=0, index_col=0)
     h = pd.DataFrame(h, columns='x y z'.split())
