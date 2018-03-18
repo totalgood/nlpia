@@ -187,7 +187,8 @@ def offline_plotly_data(data, filename=None, config=None, validate=True,
     r""" Write a plotly scatter plot to HTML file that doesn't require server
 
     >>> from plotly.graph_objs import Scatter, Marker, Layout, YAxis, XAxis
-    >>> df = pd.read_csv('https://plot.ly/~etpinard/191.csv')
+    >>> from nlpia.loaders import get_data
+    >>> df = get_data('etpinard')
     >>> df.columns = [eval(c) if c[0] in '"\'' else str(c) for c in df.columns]
     >>> data = {'data': [
     ...          Scatter(x=df[continent+', x'],
