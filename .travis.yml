@@ -33,7 +33,8 @@ install:
   - source tests/travis_install.sh
   - pip install -r requirements-test.txt
   - pip install --upgrade pip
-  - pip install -r requirements-all.txt
+  - pip install -r requirements.txt
+  - pip install -r requirements-voice.txt
 before_script:
   - git config --global user.email "travis.nlpia@totalgood.com"
   - git config --global user.name "nlpia Travis tests"
