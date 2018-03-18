@@ -32,10 +32,10 @@ MechanicalSoup>=0.10.0,<1.0.0
 # -r requirements-twitter.txt
 
 # Deep Learning Requirements (`pip install nlpia[deep]`)
--r requirements-deep.txt
+# -r requirements-deep.txt
 
-# Chatbot Requirements (`pip install nlpia[chat]`)
--r requirements-voice.txt
+# Chatbot Requirements (`pip install nlpia[voice]`)
+# -r requirements-voice.txt
 
 # ###################################################
 # NOTES

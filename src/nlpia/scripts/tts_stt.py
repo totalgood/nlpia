@@ -55,6 +55,7 @@ def tts(text, rate=200, voice='Alex'):
     voice_names = [v.split('.')[-1] for v in voices]
     if rate:
         engine.setProperty('rate', int(rate))
+    voice = voice or engine.getProperty('voice').split('.')[-1]
     if voice in voice_names:
         engine.setProperty('voice', voices[voice_names.index(voice)])
     else:
@@ -63,7 +64,7 @@ def tts(text, rate=200, voice='Alex'):
         print("Using default voice named '{}'.".format(voice))
     engine.say(text)
     engine.runAndWait()
-    return voice
+    return text
 
 
 def save_audio(audio, path='audio.wav'):
@@ -159,11 +160,13 @@ def main():
     while True:
         print("Say something! I'm listening...")
         audio = record_audio()
-        if args.num_recordings > i:
-            i += 1
-            save_audio(audio, 'record{}.wav'.format(i))
-        else:
+        if args.num_recordings <= 1:
             break
+        if args.num_recordings > i:
+            save_audio(audio, 'record{}.wav'.format(i))
+            i += 1
+            continue
+        break
 
     print('This is what your microphone picked up...')
     play_audio(audio)
@@ -172,12 +175,12 @@ def main():
     try:
         text.append(stt(audio, api='sphinx'))
     except sr.RequestError:
-        text = stt(audio, api='google')
+        text.append(stt(audio, api='google'))
 
     print("This is what I understood: {}".format(text))
 
     print("And this is what I sound like saying that...")
-    print('Used the voice named {}'.format(tts(text)))
+    print('Used the voice named {}'.format(tts('.  '.join(text))))
 
 
 if __name__ == '__main__':
