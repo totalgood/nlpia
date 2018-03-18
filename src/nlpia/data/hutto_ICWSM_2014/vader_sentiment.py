@@ -1,36 +1,46 @@
 #!/usr/bin/python
-# coding: utf-8 
-'''
+# coding: utf-8
+"""
 Created on July 04, 2013
 @author: C.J. Hutto
 
 Citation Information
 
-If you use any of the VADER sentiment analysis tools 
-(VADER sentiment lexicon or Python code for rule-based sentiment 
-analysis engine) in your work or research, please cite the paper. 
+If you use any of the VADER sentiment analysis tools
+(VADER sentiment lexicon or Python code for rule-based sentiment
+analysis engine) in your work or research, please cite the paper.
 For example:
 
-  Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for 
-  Sentiment Analysis of Social Media Text. Eighth International Conference on 
+  Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for
+  Sentiment Analysis of Social Media Text. Eighth International Conference on
   Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.
-'''
+"""
+import os
+import math
+import re
+import fnmatch
+import string
 
-import math, re, sys, fnmatch, string
-reload(sys)
-
-f = 'vader_sentiment_lexicon.txt' # empirically derived valence ratings for words, emoticons, slang, swear words, acronyms/initialisms
-word_valence_dict = dict(map(lambda (w, m): (w, float(m)), [
-            wmsr.strip().split('\t')[0:2] for wmsr in open(f) ]))
+from nlpia.constants import DATA_PATH
 
 # for removing punctuation
 regex_remove_punctuation = re.compile('[%s]' % re.escape(string.punctuation))
+
+
+def load_valence_dict(filename=os.path.join(DATA_PATH, 'hutto_ICWSM_2014', 'vader_sentiment_lexicon.txt')):
+    # empirically derived valence ratings for words, emoticons, slang, swear words, acronyms/initialisms
+    with open(filename) as f:
+        vd = dict(map(
+            lambda w, m: (w, float(m)), [wmsr.strip().split('\t')[0:2] for wmsr in f]))
+    return vd
+
 
 def sentiment(text):
     """
     Returns a float for sentiment strength based on the input text.
     Positive values are positive valence, negative value are negative valence.
     """
+    sentiment.valence_dict = load_valence_dict() if sentiment.valence_dict is None else sentiment_valence_dict
     wordsAndEmoticons = str(text).split() #doesn't separate words from adjacent punctuation (keeps emoticons & contractions)
     text_mod = regex_remove_punctuation.sub('', text) # removes punctuation (but loses emoticons & contractions)
     wordsOnly = str(text_mod).split()
@@ -145,9 +155,9 @@ def sentiment(text):
             sentiments.append(v)
             continue
         item_lowercase = str(item).lower() 
-        if  item_lowercase in word_valence_dict:
+        if  item_lowercase in sentiment.valence_dict:
             #get the sentiment valence
-            v = float(word_valence_dict[item_lowercase])
+            v = float(sentiment.valence_dict[item_lowercase])
             
             #check if sentiment laden word is in ALLCAPS (while others aren't)
             c_incr = 0.733 #(empirically derived mean sentiment intensity rating increase for using ALLCAPs to emphasize a word)
@@ -168,11 +178,11 @@ def sentiment(text):
                         else:  scalar -= c_incr
                 return scalar
             n_scalar = -0.74
-            if i > 0 and str(wordsAndEmoticons[i-1]).lower() not in word_valence_dict:
+            if i > 0 and str(wordsAndEmoticons[i-1]).lower() not in sentiment.valence_dict:
                 s1 = scalar_inc_dec(wordsAndEmoticons[i-1], v)
                 v = v+s1
                 if negated([wordsAndEmoticons[i-1]]): v = v*n_scalar
-            if i > 1 and str(wordsAndEmoticons[i-2]).lower() not in word_valence_dict:
+            if i > 1 and str(wordsAndEmoticons[i-2]).lower() not in sentiment.valence_dict:
                 s2 = scalar_inc_dec(wordsAndEmoticons[i-2], v)
                 if s2 != 0: s2 = s2*0.95
                 v = v+s2
@@ -181,7 +191,7 @@ def sentiment(text):
                     v = v*1.5                    
                 # otherwise, check for negation/nullification
                 elif negated([wordsAndEmoticons[i-2]]): v = v*n_scalar
-            if i > 2 and str(wordsAndEmoticons[i-3]).lower() not in word_valence_dict:
+            if i > 2 and str(wordsAndEmoticons[i-3]).lower() not in sentiment.valence_dict:
                 s3 = scalar_inc_dec(wordsAndEmoticons[i-3], v)
                 if s3 != 0: s3 = s3*0.9
                 v = v+s3
@@ -221,11 +231,11 @@ def sentiment(text):
                     v = v+b_decr
             
             # check for negation case using "least"
-            if i > 1 and str(wordsAndEmoticons[i-1]).lower() not in word_valence_dict \
+            if i > 1 and str(wordsAndEmoticons[i-1]).lower() not in sentiment.valence_dict \
                 and str(wordsAndEmoticons[i-1]).lower() == "least":
                 if (str(wordsAndEmoticons[i-2]).lower() != "at" and str(wordsAndEmoticons[i-2]).lower() != "very"):
                     v = v*n_scalar
-            elif i > 0 and str(wordsAndEmoticons[i-1]).lower() not in word_valence_dict \
+            elif i > 0 and str(wordsAndEmoticons[i-1]).lower() not in sentiment.valence_dict \
                 and str(wordsAndEmoticons[i-1]).lower() == "least":
                 v = v*n_scalar
         sentiments.append(v) 
@@ -284,15 +294,15 @@ def sentiment(text):
         pos = math.fabs(pos_sum / total)
         neg = math.fabs(neg_sum / total)
         neu = math.fabs(neu_count / total)
-        
     else:
-        compound = 0.0; pos = 0.0; neg = 0.0; neu = 0.0
-        
-    s = {"neg" : round(neg, 3), 
+        compound, pos, neg, neu = 0., 0., 0., 0.
+
+    s = {"neg" : round(neg, 3),
          "neu" : round(neu, 3),
          "pos" : round(pos, 3),
          "compound" : round(compound, 4)}
     return s
+sentiment.valence_dict = None
 
 
 if __name__ == '__main__':
@@ -350,8 +360,11 @@ if __name__ == '__main__':
                         ]
     sentences.extend(tricky_sentences)
     for sentence in sentences:
-        print sentence,
+        print(sentence)
         ss = sentiment(sentence)
-        print "\t" + str(ss)
+        print("\t" + str(ss))
     
-    print "\n\n Done!"
+    print("\n\n Done!")
+
+
+
