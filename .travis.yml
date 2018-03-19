@@ -27,10 +27,6 @@ addons:
       - pandoc
       - portaudio19-dev
       - python-pyaudio
-      # - python-numpy
-      # - python-scipy
-      # - python-matplotlib
-      # - python3-pip
       # - python3-numpy
       # - python3-scipy
 install:
