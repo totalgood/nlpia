@@ -11,7 +11,7 @@ import sys
 from traceback import format_exc
 
 
-PWD = os.path.dirname(os.path.realpath(__file__))
+nlpia_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 def shell_quote(s):
@@ -19,17 +19,23 @@ def shell_quote(s):
 
 
 if __name__ == '__main__':
-    dirname = sys.argv[1] if len(sys.argv) > 1 else '.'
-    os.chdir(dirname)
+    manuscript_dir = os.path.abspath(os.path.expanduser(sys.argv[1] if len(sys.argv) > 1 else '.'))
+    renderas = sys.argv[2] if len(sys.argv) > 2 else 'html5'
+    renderext = 'html' if renderas == 'html5' else renderas
+    os.chdir(manuscript_dir)
     files = os.listdir()
+    lane_dir = os.path.dirname(manuscript_dir)
+    build_dir = os.path.join(lane_dir, 'build')
+    css_path = os.path.join(build_dir, 'manning.css')
+    asciidoctor = 'asciidoctor-pdf' if renderas == 'pdf' else 'asciidoctor'
 
     total_wc, chapters_wc = 0, 0
     for filename in files:
         if filename.lower().endswith('.asc'):
             print("-" * 40)
             print(filename + ':')
-            filename = shell_quote(filename)
-            result = subprocess.Popen("wc {}".format(filename),
+            quoted_filename = shell_quote(filename)
+            result = subprocess.Popen("wc {}".format(quoted_filename),
                                       shell=True, stdout=subprocess.PIPE)
             try:
                 wc = int(result.communicate()[0].split()[1])
@@ -41,8 +47,12 @@ if __name__ == '__main__':
             except:
                 print('  WC SHELL COMMAND FAILED!!!!!')
                 print(format_exc())
-            result = subprocess.Popen("asciidoctor -a stylesheet=manuscript/manning.css -b html5 -d book -B .. -o build/{} {}".format(
-                                      filename[:-4] + '.html', filename),
+            html_file_path = os.path.join(build_dir, filename[:-4] + '.' + renderext)
+            shellcmd = "{} -a stylesheet={} -b {} -d book -B {} -o {} {}".format(
+                asciidoctor, css_path, renderas, shell_quote(manuscript_dir),
+                shell_quote(html_file_path), shell_quote(filename))
+            print(shellcmd)
+            result = subprocess.Popen(shellcmd,
                                       shell=True, stdout=subprocess.PIPE)
             result.wait()  # don't let commit proceed until rendering is done
             try:
@@ -56,7 +66,9 @@ if __name__ == '__main__':
     print('Total words, pages: {}, {}'.format(total_wc, int(total_wc / 400.) + 1))
     print('Total chapter words, pages: {}, {}'.format(chapters_wc, int(chapters_wc / 400.) + 1))
 
-    result = subprocess.Popen("cd .. && git add manuscript/build/*.html ; cd .git", shell=True, stdout=subprocess.PIPE)
+    shellcmd = "cd {} && git add build/*.{}".format(lane_dir, renderext)
+    print(shellcmd)
+    result = subprocess.Popen(shellcmd, shell=True, stdout=subprocess.PIPE)
     msg = result.communicate()[0]
     # print('Committed newly-rendered HTML by aciidoctor:')
     # print(msg)
