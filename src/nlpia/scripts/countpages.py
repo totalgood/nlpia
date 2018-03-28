@@ -1,8 +1,43 @@
 #!/usr/bin/env python3
+""" Renders *.asc (asciidoc) files to PDF or HTML then counts pages & words
 
-# To use: create a symlink (or hard link) in .git/hooks
-# >>> cd .git/hooks/
+HTML or other render formats requires asciidoctor` ruby package/cli:
+
+```
+$ brew install asciidoctor || gem install asciidoctor
+```
+
+PDF rendering requires the ruby package and cli command `asciidoctor-pdf`:
+
+```bash
+$ gem install asciidoctor-pdf --pre
+```
+
+You probably also want syntax highlighting so:
+
+```
+$ gem install rouge
+$ gem install pygments.rb
+$ gem install coderay
+````
+
+You can activate the Rouge syntax highlighter with the following atttribute in your *.asc files:
+
+```asciidoc
+:source-highlighter: rouge
+```
+
+Usage:
+
+To render a folder `~/src/lane/manuscript/*.asc` files to PDF within a folder named "lane" that has 3 subfolders (`build/`, 'images/` and `manuscript/`):
+
+$ python countpages.py ~/src/lane/manuscript/ pdf
+
+
+create a symlink (or hard link) in .git/hooks
+>>> cd .git/hooks/
 # >>> ln -s ../../code/utils/pre-commit
+"""
 
 import os
 import subprocess
@@ -20,7 +55,7 @@ def shell_quote(s):
 
 if __name__ == '__main__':
     manuscript_dir = os.path.abspath(os.path.expanduser(sys.argv[1] if len(sys.argv) > 1 else '.'))
-    renderas = sys.argv[2] if len(sys.argv) > 2 else 'html5'
+    renderas = (sys.argv[2] if len(sys.argv) > 2 else 'html5').lower().strip()
     renderext = 'html' if renderas == 'html5' else renderas
     os.chdir(manuscript_dir)
     files = os.listdir()
