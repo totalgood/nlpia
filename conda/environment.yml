@@ -9,7 +9,7 @@ channels:
 dependencies:
   - opencv=3.3.0
   - redis-py=2.10.6
-  - matplotlib=2.1.0
+  - matplotlib=2.2.2
   - pillow=4.3.0
   - pyqt=5.6.0
   - pytest=3.2.1
@@ -22,7 +22,7 @@ dependencies:
     - cufflinks
     - django>=1.11.1,<1.12.0
     - future>=0.16.0
-    - gensim>=2.1.0,<3.0.0
+    - gensim>=3.4.0,<3.5.0
     - jupyter>=1.0.0,<2.0.0
     - Keras==2.0.8
     - lxml>=4.1.0,<4.2.0

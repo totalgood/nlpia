@@ -14,7 +14,8 @@ from setuptools import setup
 # Add here console scripts and other entry points in ini-style format
 entry_points = """
 [console_scripts]
-audio = nlpia.script.audio:main
+audio = nlpia.scripts.audio:main
+renderbook = nlpia.scripts.countpages:main
 """
 
 

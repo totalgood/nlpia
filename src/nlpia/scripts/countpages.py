@@ -53,14 +53,19 @@ def shell_quote(s):
     return "'" + s.replace("'", "'\\''") + "'"
 
 
-if __name__ == '__main__':
-    manuscript_dir = os.path.abspath(os.path.expanduser(sys.argv[1] if len(sys.argv) > 1 else '.'))
-    renderas = (sys.argv[2] if len(sys.argv) > 2 else 'html5').lower().strip()
+def parse_args(args=None):
+    args = sys.argv[1:] if args is None else args
+    manuscript_dir = os.path.abspath(os.path.expanduser(args[0] if len(args) > 0 else '.'))
+    renderas = (args[1] if len(args) > 1 else 'html5').lower().strip()
     renderext = 'html' if renderas == 'html5' else renderas
+    return {'manuscript_dir': manuscript_dir, 'renderas': renderas, 'renderext': renderext}
+
+
+def render(manuscript_dir='manuscript', renderas='html5', renderext='html'):
     os.chdir(manuscript_dir)
     files = os.listdir()
-    lane_dir = os.path.dirname(manuscript_dir)
-    build_dir = os.path.join(lane_dir, 'build')
+    project_dir = os.path.dirname(manuscript_dir)
+    build_dir = os.path.join(project_dir, 'build')
     css_path = os.path.join(build_dir, 'manning.css')
     asciidoctor = 'asciidoctor-pdf' if renderas == 'pdf' else 'asciidoctor'
 
@@ -77,10 +82,10 @@ if __name__ == '__main__':
                 total_wc += wc
                 if filename.lower().strip().startswith("'ch"):
                     chapters_wc += wc
-                print('  Word count: {}'.format(wc))
-                print('  Approximate Pages: {}'.format(int(wc / 400.) + 1))
+                print('    Word count: {}'.format(wc))
+                print('    Approximate Pages: {}'.format(int(wc / 400.) + 1))
             except:
-                print('  WC SHELL COMMAND FAILED!!!!!')
+                print('    ERROR: `wc` SHELL COMMAND FAILED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 print(format_exc())
             html_file_path = os.path.join(build_dir, filename[:-4] + '.' + renderext)
             shellcmd = "{} -a stylesheet={} -b {} -d book -B {} -o {} {}".format(
@@ -92,18 +97,31 @@ if __name__ == '__main__':
             result.wait()  # don't let commit proceed until rendering is done
             try:
                 ans = ' '.join(result.communicate()[0])
-                print('asciidoctor returned: {}'.format(ans))
+                print('    asciidoctor returned: {}'.format(ans))
             except:
-                print('  `asciidoctor` SHELL COMMAND FAILED!!!!!')
-                print('  You probably need to `gem install asciidoctor`')
+                print('    ERROR: `asciidoctor` SHELL COMMAND FAILED !!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                print('    You probably need to `gem install asciidoctor asciidoctor-pdf-cjk`')
 
     print('=' * 60)
     print('Total words, pages: {}, {}'.format(total_wc, int(total_wc / 400.) + 1))
     print('Total chapter words, pages: {}, {}'.format(chapters_wc, int(chapters_wc / 400.) + 1))
 
-    shellcmd = "cd {} && git add build/*.{}".format(lane_dir, renderext)
+
+def commit(project_dir='..', renderext='HTML'):
+    os.chdir(project_dir)
+    shellcmd = "git add -f build/*.{}".format(project_dir, renderext)
     print(shellcmd)
     result = subprocess.Popen(shellcmd, shell=True, stdout=subprocess.PIPE)
     msg = result.communicate()[0]
-    # print('Committed newly-rendered HTML by aciidoctor:')
-    # print(msg)
+    print('Committed newly-rendered asciidoc->{} files:'.format(renderext))
+    print(msg)
+
+
+def main():
+    args = parse_args(sys.argv[1:])
+    render(**args)
+    commit(args['renderas'])
+
+
+if __name__ == '__main__':
+    main()
