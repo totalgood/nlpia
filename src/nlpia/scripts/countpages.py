@@ -29,7 +29,8 @@ You can activate the Rouge syntax highlighter with the following atttribute in y
 
 Usage:
 
-To render a folder `~/src/lane/manuscript/*.asc` files to PDF within a folder named "lane" that has 3 subfolders (`build/`, 'images/` and `manuscript/`):
+Put all images in a folder called `images` and at the same level a directory called `manuscript` with the *.asc files.
+A `build` directory must also be present at the same level. Then to render ascidic files to PDF:
 
 $ python countpages.py ~/src/lane/manuscript/ pdf
 
@@ -109,7 +110,7 @@ def render(manuscript_dir='manuscript', renderas='html5', renderext='html'):
 
 def commit(project_dir='..', renderext='HTML'):
     os.chdir(project_dir)
-    shellcmd = "git add -f build/*.{}".format(project_dir, renderext)
+    shellcmd = "git add -f {}/build/*".format(project_dir)
     print(shellcmd)
     result = subprocess.Popen(shellcmd, shell=True, stdout=subprocess.PIPE)
     msg = result.communicate()[0]
@@ -120,7 +121,7 @@ def commit(project_dir='..', renderext='HTML'):
 def main():
     args = parse_args(sys.argv[1:])
     render(**args)
-    commit(args['renderas'])
+    commit(renderext=args['renderas'])
 
 
 if __name__ == '__main__':

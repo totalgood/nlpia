@@ -14,6 +14,11 @@ from nlpia.constants import secrets, DATA_PATH
 from nlpia.data.loaders import get_data
 
 
+UTF8_TABLE = get_data('utf8')
+UTF8_TO_MULTIASCII = dict(zip(utf8.char, utf8.multiascii))
+UTF8_TO_ASCII = dict(zip(utf8.char, utf8.ascii))
+
+
 def stdout_logging(loglevel=logging.INFO):
     """Setup basic logging
 
@@ -43,6 +48,22 @@ def embed_wordvecs(w2v=None, df=None, vocab='name', embedder=TSNE, **kwargs):
     tsne = embedder(**kwargs)
     tsne = tsne.fit(vectors)
     return pd.DataFrame(tsne.embedding_, columns=['x', 'y'])
+
+
+def unicode2ascii(text, expand=True):
+    """ Translate UTF8 characters to ASCII
+
+    >>> unicode2ascii("żółw")
+    zozw
+
+    utf8_letters =  'ą ę ć ź ż ó ł ń ś “ ” ’'.split()
+    ascii_letters = 'a e c z z o l n s " " \''
+    """
+    trans_dict = UTF8_TO_ASCII if not expand else UTF8_TO_MULTIASCII
+    output = ''
+    for c in text:
+        output += c if ord(c) < 128 else trans_dict[c] if c in trans_dict else ' '
+    return output
 
 
 """
