@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
-from timeit import default_timer as timer
 import os
-from traceback import format_exc
 
 import argparse
 
 from nlpia.data_utils import clean_df
+from nlpia.data.loaders import read_csv
 
 
 def parse_args():
