@@ -63,8 +63,7 @@ def parse_args(args=None):
 
 
 def render(manuscript_dir='manuscript', renderas='html5', renderext='html'):
-    os.chdir(manuscript_dir)
-    files = os.listdir()
+    files = os.listdir(manuscript_dir)
     project_dir = os.path.dirname(manuscript_dir)
     build_dir = os.path.join(project_dir, 'build')
     css_path = os.path.join(build_dir, 'manning.css')
@@ -75,7 +74,7 @@ def render(manuscript_dir='manuscript', renderas='html5', renderext='html'):
         if filename.lower().endswith('.asc'):
             print("-" * 40)
             print(filename + ':')
-            quoted_filename = shell_quote(filename)
+            quoted_filename = shell_quote(os.path.join(manuscript_dir, filename))
             result = subprocess.Popen("wc {}".format(quoted_filename),
                                       shell=True, stdout=subprocess.PIPE)
             try:

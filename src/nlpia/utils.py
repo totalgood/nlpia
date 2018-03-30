@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import logging
 import sys
 import os
@@ -11,12 +12,12 @@ from gensim.models import KeyedVectors
 from pugnlp.futil import find_files
 
 from nlpia.constants import secrets, DATA_PATH
-from nlpia.data.loaders import get_data
+from nlpia.data.loaders import get_data, read_csv
 
 
 UTF8_TABLE = get_data('utf8')
-UTF8_TO_MULTIASCII = dict(zip(utf8.char, utf8.multiascii))
-UTF8_TO_ASCII = dict(zip(utf8.char, utf8.ascii))
+UTF8_TO_MULTIASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.multiascii))
+UTF8_TO_ASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.ascii))
 
 
 def stdout_logging(loglevel=logging.INFO):
@@ -34,10 +35,10 @@ def stdout_logging(loglevel=logging.INFO):
 def embed_wordvecs(w2v=None, df=None, vocab='name', embedder=TSNE, **kwargs):
     w2v = os.path.join(DATA_PATH, 'GoogleNews-vectors-negative300.bin') if w2v is None else w2v
     try:
-        model = Word2Vec.loadWord2Vec.load_word2vec_format(w2v, binary=True) if isinstance(w2v, str) else w2v
+        model = KeyedVectors.load_word2vec_format(w2v, binary=True) if isinstance(w2v, str) else w2v
     except IOError:
         model = os.path.join(DATA_PATH, w2v)
-        model = Word2Vec.loadWord2Vec.load_word2vec_format(model, binary=True)
+        model = KeyedVectors.loadWord2Vec.load_word2vec_format(model, binary=True)
     if df is None:
         df = get_data('cities')
     if isinstance(vocab, str) and vocab in df.columns:
@@ -50,20 +51,7 @@ def embed_wordvecs(w2v=None, df=None, vocab='name', embedder=TSNE, **kwargs):
     return pd.DataFrame(tsne.embedding_, columns=['x', 'y'])
 
 
-def unicode2ascii(text, expand=True):
-    """ Translate UTF8 characters to ASCII
 
-    >>> unicode2ascii("żółw")
-    zozw
-
-    utf8_letters =  'ą ę ć ź ż ó ł ń ś “ ” ’'.split()
-    ascii_letters = 'a e c z z o l n s " " \''
-    """
-    trans_dict = UTF8_TO_ASCII if not expand else UTF8_TO_MULTIASCII
-    output = ''
-    for c in text:
-        output += c if ord(c) < 128 else trans_dict[c] if c in trans_dict else ' '
-    return output
 
 
 """

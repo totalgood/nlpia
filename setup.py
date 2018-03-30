@@ -16,6 +16,7 @@ entry_points = """
 [console_scripts]
 audio = nlpia.scripts.audio:main
 renderbook = nlpia.scripts.countpages:main
+cleandialog = nlpia.scripts.cleandialog:main
 """
 
 

@@ -55,3 +55,33 @@ def representative_sample(X, num_samples, save=False):
         if len(num_nns) < num_samples / 3.:
             num_nns = min(N, 1.3 * num_nns)
         j += 1
+    return samples
+
+
+def unicode2ascii(text, expand=True):
+    r""" Translate UTF8 characters to ASCII
+
+    >>> unicode2ascii("żółw")
+    zozw
+
+    utf8_letters =  'ą ę ć ź ż ó ł ń ś “ ” ’'.split()
+    ascii_letters = 'a e c z z o l n s " " \''
+    """
+    translate = UTF8_TO_ASCII if not expand else UTF8_TO_MULTIASCII
+    output = ''
+    for c in text:
+        output += c if ord(c) < 128 else translate[c] if c in translate else ' '
+    return output
+
+
+def clean_df(df, header=None, **read_csv_kwargs):
+    """ Convert UTF8 characters in a CSV file or dataframe into ASCII
+
+    Args:
+      df (DataFrame or str): DataFrame or path or url to CSV
+    """
+    df = read_csv(df, header=header, **read_csv_kwargs)
+    df = df.fillna(' ')
+    for col in df.columns:
+        df[col] = df[col].apply(unicode2ascii)
+    return df

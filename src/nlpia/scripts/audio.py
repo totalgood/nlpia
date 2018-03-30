@@ -5,17 +5,7 @@ from timeit import default_timer as timer
 import os
 from traceback import format_exc
 
-import speech_recognition as sr
-import pyaudio
-import wave
-from io import BytesIO
-import pyttsx3
-
-import argparse
-import sys
-import scipy.io.wavfile as wav
-
-from deepspeech.model import Model
+from nlpia.utils import 
 
 
 def record_audio(source='Microphone', energy_threshold=300, pause_threshold=.9,
