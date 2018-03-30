@@ -6,7 +6,6 @@ import os
 import argparse
 
 from nlpia.data_utils import clean_df
-from nlpia.data.loaders import read_csv
 
 
 def parse_args():
@@ -18,7 +17,8 @@ def parse_args():
     return args
 
 
-def main(dialogpath=None):
+def clean_csvs(dialogpath=None):
+    """ Translate non-ASCII characters to spaces or equivalent ASCII characters """
     if dialogpath is None:
         args = parse_args()
         dialogpath = os.path.abspath(os.path.expanduser(args.dialogpath))
@@ -29,8 +29,13 @@ def main(dialogpath=None):
     for filename in filenames:
         filepath = os.path.join(dialogdir, filename)
         df = clean_df(filepath)
-        df.to_csv(filepath, header=0)
+        df.to_csv(filepath, header=None)
     return filenames
+
+
+def main(dialogpath=None):
+    """ Parse the state transition graph for a set of dialog-definition tables to find an fix deadends """
+    return clean_csvs(dialogpath=dialogpath)
 
 
 if __name__ == '__main__':
