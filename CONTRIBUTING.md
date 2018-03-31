@@ -15,16 +15,19 @@ Our MIT [`LICENSE`](https://github.com/totalgood/nlpia/blob/master/LICENSE) does
 
 ## Bug Reports
 
- 1. Please include a Python snippet or instructions for reproducing the problem.
- 2. Attach or link to the data you used (if needed to recreate the bug)
- 3. Explain the behavior you expected, and how what you got was different
+  1. Please include a Python snippet or instructions for reproducing the problem.
+  2. Attach or link to the data you used (if needed to recreate the bug)
+  3. Explain the behavior you expected, and how what you got was different
 
 ## Pull Requests
 
- 1. When you start working on a feature, first create new branch from the latest master commit [GitHub master](https://github.com/slackha/pyJac/tree/master): `git checkout origin master -b feature/my-feature-123`
- 2. Your first commit should include docstrings and doctests in [Google/NumPy style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html#example-numpy)
- 3. Use [pythonic style](http://www.python.org/dev/peps/pep-0008/)
- 4. Superstars and professionals reference relevant GitHub issues in commit messages: `git commit -am "fixes #123"`
+  1. When you start working on a feature, first create new branch from the latest master commit [GitHub master](https://github.com/slackha/pyJac/tree/master): `git checkout origin master -b feature/my-feature-123`
+  2. Your first commit should include docstrings and doctests in [Google/NumPy style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html#example-numpy)
+  3. Use [pythonic style](http://www.python.org/dev/peps/pep-0008/)
+  4. Superstars and professionals reference relevant GitHub issues in commit messages: `git commit -am "fixes #123"`
+  5. Add your name to [AUTHORS](https://github.com/totalgood/nlpia/blob/master/AUTHORS)
+  6. Create a PR using the GitHub GUI.
+
 
 ## Tests and Docs
 
