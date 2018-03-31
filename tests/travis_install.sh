@@ -24,18 +24,19 @@ if [[ "$DISTRIB" == "conda" ]]; then
         bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3 && \
         # rm -r -d -f $DOWNLOAD_DIR
     export PATH=$HOME/anaconda3/bin:$PATH
-    conda update --yes conda
-    conda install --yes pip
+    conda update -y conda
+    conda install -y pip
+    conda install -y swig
 
     # Configure the conda environment and put it in the path using the provided versions
-    if [[ "$ENVIRONMENT_YML" ]]; then
+    if [[ -f "$ENVIRONMENT_YML" ]]; then
         conda env create -n testenv -f "$ENVIRONMENT_YML"
     else
+        echo "WARNING: Unable to find an environment.yml file !!!!!!"
         conda create -n testenv --yes python=$PYTHON_VERSION pip
     fi
     source activate testenv
     conda install -y pip
-    conda install -y swig
 
     # download spacy English language model
     pip install --upgrade spacy

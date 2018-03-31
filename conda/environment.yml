@@ -15,6 +15,8 @@ dependencies:
   - pytest=3.2.1
   - pandoc=2.1.2
   - spacy=2.0.9
+  - swig>=3.0.12
+  - nltk=3.2.5
   - pip:
     - aiml>=0.8.6,<0.9.0
     - annoy>=1.9.5,<2.0.0
@@ -27,7 +29,6 @@ dependencies:
     - Keras==2.0.8
     - lxml>=4.1.0,<4.2.0
     - matplotlib>=2.0.2
-    - nltk>=3.2.2,<3.3.0
     - pandas-datareader>=0.5.0
     - pandas>=0.19.2
     - pip>=8.1.2
