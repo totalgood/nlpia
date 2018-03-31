@@ -36,6 +36,8 @@ The environment.yml file creates a conda environment called `conda_env_nlpia`
 # conda create -y -n conda_env_nlpia
 # source activate conda_env_nlpia
 # conda install -y pip
+# pip install --upgrade pip
+# pip install -r requirements-test.txt
 # pip install -e .
 # pip install -r requirements-deep.txt
 ```

@@ -2,22 +2,13 @@
 import logging
 import sys
 import os
-import requests
-import re
 
 import pandas as pd
 from sklearn.manifold import TSNE
 from gensim.models import KeyedVectors
 
-from pugnlp.futil import find_files
-
-from nlpia.constants import secrets, DATA_PATH
-from nlpia.data.loaders import get_data, read_csv
-
-
-UTF8_TABLE = get_data('utf8')
-UTF8_TO_MULTIASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.multiascii))
-UTF8_TO_ASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.ascii))
+from nlpia.constants import DATA_PATH
+from nlpia.data.loaders import get_data
 
 
 def stdout_logging(loglevel=logging.INFO):
