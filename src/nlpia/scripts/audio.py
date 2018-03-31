@@ -5,7 +5,9 @@ from timeit import default_timer as timer
 import os
 from traceback import format_exc
 
-from nlpia.utils import 
+import pyaudio
+
+# from nlpia.utils import 
 
 
 def record_audio(source='Microphone', energy_threshold=300, pause_threshold=.9,

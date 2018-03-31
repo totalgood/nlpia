@@ -12,9 +12,9 @@ import sys
 from setuptools import setup
 
 # Add here console scripts and other entry points in ini-style format
+# audio = nlpia.scripts.audio:main
 entry_points = """
 [console_scripts]
-audio = nlpia.scripts.audio:main
 renderbook = nlpia.scripts.countpages:main
 cleandialog = nlpia.scripts.cleandialog:main
 """
