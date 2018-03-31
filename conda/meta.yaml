@@ -1,0 +1,60 @@
+{% set name = "nlpia" %}
+{% set version = "0.1.0" %}
+{% set file_ext = "tar.gz" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "684f6b7058a2b91937f7e89faf926a9165230ea4e70e7fc0991b140573ae250b" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  fn: '{{ name }}-{{ version }}.{{ file_ext }}'
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.{{ file_ext }}
+  '{{ hash_type }}': '{{ hash_value }}'
+
+build:
+  number: 0
+  script: cd /Users/hobs/src/nlpia && python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - python
+    - setuptools
+  run:
+    - python
+
+about:
+  home: The package home page
+  license: MIT License
+  license_family: MIT
+  license_file: ''
+  summary: Summary of the package
+  description: '=====
+
+    NLPIA
+
+    =====
+
+
+
+    The code and data for [Natural Language Processing in Action](https://www.manning.com/books/natural-language-processing-in-action)
+
+
+
+    Description
+
+    ===========
+
+
+    A community-developed book about building Natural Language Processing pipelines for prosocial chatbots that contribute to communities.
+
+
+
+
+    '
+  doc_url: ''
+  dev_url: ''
+
+extra:
+  recipe-maintainers: ''

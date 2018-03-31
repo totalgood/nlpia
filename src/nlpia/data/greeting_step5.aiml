@@ -1,0 +1,33 @@
+<aiml version="1.0.1">
+
+<category><pattern>HELLO ROSA </pattern><template><random>
+	<li>Hi Human!</li>
+	<li>Hello friend</li>
+	<li>Hi pal</li>
+	<li>Hi!</li>
+	<li>Hello!</li>
+	<li>Hello to you too!</li>
+	<li>Greetings Earthling ;)</li>
+	<li>Hey you :)</li>
+	<li>Hey you!</li>
+</random></template></category>
+
+<category><pattern>HELLO STUPID </pattern><template>Good one, human.</template></category>
+
+<category><pattern>HELO * </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HI * </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HEY * </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>SUP * </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>WHAT'S UP * </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>WHATS UP * </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>WHAT IS UP * </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>YO *</pattern>        <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>YOH *</pattern>       <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>YO' *</pattern>       <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>HOWDY *</pattern>     <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>HALLO *</pattern>     <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>HI THERE *</pattern>  <template><srai>SUP</srai><sr/></template></category>
+<category><pattern>HEY THERE *</pattern> <template><srai>SUP</srai><sr/></template></category>
+
+
+</aiml>

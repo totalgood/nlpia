@@ -1,0 +1,6 @@
+<aiml version="1.0.1">
+
+<category><pattern>HELLO ROSA </pattern><template>Hi Human!</template></category>
+<category><pattern>HELLO TROLL </pattern><template>Good one, human.</template></category>
+
+</aiml>

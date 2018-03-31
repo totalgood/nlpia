@@ -1,0 +1,14 @@
+<aiml version="1.0.1">
+
+<category><pattern>SUP ROSA      </pattern><template>Yo</template></category>
+
+<category><pattern>SUP *         </pattern><template><srai>SUP <star/></srai></template></category>
+<category><pattern>YO *          </pattern><template><srai>SUP <star/></srai></template></category>
+<category><pattern>YOH *         </pattern><template><srai>SUP <star/></srai></template></category>
+<category><pattern>YO' *         </pattern><template><srai>SUP <star/></srai></template></category>
+<category><pattern>HOWDY *       </pattern><template><srai>SUP <star/></srai></template></category>
+<category><pattern>HALLO *       </pattern><template><srai>SUP <star/></srai></template></category>
+<category><pattern>HI THERE *    </pattern><template><srai>SUP <star/></srai></template></category>
+<category><pattern>HEY THERE *   </pattern><template><srai>SUP <star/></srai></template></category>
+
+</aiml>

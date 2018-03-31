@@ -1,0 +1,17 @@
+pyaudio>=0.2.11,<0.3.0
+pocketsphinx>=0.1.3,<0.2.0
+SpeechRecognition>=3.8.1,<4.0.0
+pyttsx3>=2.7
+# -e git+https://github.com/hobson/pyttsx3.git@master#egg=pyttsx3
+
+# Mozilla DeepSpeech doesn't easily install on Ubuntu 14.04 Trusty because Trusty installs python 3.4 instead of 3.6
+deepspeech>=0.1.1,<0.2.0
+
+# SpeechRecognizer requires PyAudio
+#$ sudo apt install install portaudio* python-pyaudio
+# OR
+#$ brew install portaudio
+
+# Offline SpeechRecognizer requires pocketsphinx and swig
+# brew install cmu-pocketsphinx
+# brew install swig

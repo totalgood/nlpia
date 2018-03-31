@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0.1">
+
+<category><pattern>HELLO ROSA </pattern><template>Hi Human!</template></category>
+<category><pattern>HELLO TROLL </pattern><template>Good one, human.</template></category>
+
+<category><pattern>HELO *        </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HI *          </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HIYA *        </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HYA *         </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HY *          </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>HEY *         </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>WHATS UP *    </pattern><template><srai>HELLO <star/></srai></template></category>
+<category><pattern>WHAT IS UP *  </pattern><template><srai>HELLO <star/></srai></template></category>
+
+<category><pattern>HELLO ROSA </pattern><template>
+	<random>
+		<li>Hi Human!</li>
+		<li>Hello friend</li>
+		<li>Hi pal</li>
+		<li>Hi!</li>
+		<li>Hello!</li>
+		<li>Hello to you too!</li>
+		<li>Greetings Earthling ;)</li>
+		<li>Hey you :)</li>
+		<li>Hey you!</li>
+	</random></template>
+</category>
+<category><pattern>HELLO TROLL </pattern><template>
+	<random>
+		<li>Good one, Human.</li>
+		<li>Good one.</li>
+		<li>Nice one, Human.</li>
+		<li>Nice one.</li>
+		<li>Clever.<li>
+		<li>:)<li>
+	</random></template>
+</category>
+
+</aiml>

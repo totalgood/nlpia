@@ -1,8 +1,11 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-source = NLP_in_Action
-# omit = bad_file.py
+source = */nlpia/*
+omit = 
+   src/nlpia/book/examples/*
+   src/nlpia/data/*
+   src/nlpia/book/*
 
 [report]
 # Regexes for lines to exclude from consideration

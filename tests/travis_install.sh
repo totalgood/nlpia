@@ -15,21 +15,34 @@ if [[ "$DISTRIB" == "conda" ]]; then
     # conda-based environment instead
     deactivate
 
-    # Use the miniconda installer for faster download / install of conda
-    # itself
-    wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh \
-        -O miniconda.sh
-    chmod +x miniconda.sh && ./miniconda.sh -b -p $HOME/miniconda
-    export PATH=$HOME/miniconda/bin:$PATH
+    # Use the anaconda3 installer
+    DOWNLOAD_DIR=${DOWNLOAD_DIR:-$HOME/.tmp/anaconda3}
+    mkdir -p $DOWNLOAD_DIR
+    wget http://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh \
+        -O $DOWNLOAD_DIR/anaconda3.sh
+    chmod +x $DOWNLOAD_DIR/anaconda3.sh && \
+        bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3 && \
+        # rm -r -d -f $DOWNLOAD_DIR
+    export PATH=$HOME/anaconda3/bin:$PATH
     conda update --yes conda
+    conda install --yes pip
 
-    # Configure the conda environment and put it in the path using the
-    # provided versions
-    conda create -n testenv --yes python=$PYTHON_VERSION pip
+    # Configure the conda environment and put it in the path using the provided versions
+    if [[ "$ENVIRONMENT_YML" ]]; then
+        conda env create -n testenv -f "$ENVIRONMENT_YML"
+    else
+        conda create -n testenv --yes python=$PYTHON_VERSION pip
+    fi
     source activate testenv
-
+    conda install --yes pip
+    pip install --upgrade spacy
+    python -m spacy download en
+    python -c "import nltk; nltk.download('punkt'); nltk.download('treebank'); nltk.download('wordnet');"
+    which python
+    python --version
 elif [[ "$DISTRIB" == "ubuntu" ]]; then
-    echo "installing packages in .travis.yml"
+    # Use standard ubuntu packages in their default version
+    echo $DISTRIB
 fi
 
 if [[ "$COVERAGE" == "true" ]]; then

@@ -1,0 +1,196 @@
+>>> topic = {}
+>>> tfidf = dict(list(zip('cat dog apple lion NYC love'.split(), [1, 1, 1, 1, 1, 1])))  # <1>
+
+>>> topic['pet']     = (.3 * tfidf['cat']  + .3 * tfidf['dog'] +  0 * tfidf['apple']
+                      +  0 * tfidf['lion'] - .2 * tfidf['NYC'] + .2 * tfidf['love'])
+>>> topic['animal']  = (.1 * tfidf['cat']  + .1 * tfidf['dog'] - .1 * tfidf['apple']
+                      + .5 * tfidf['lion'] + .1 * tfidf['NYC'] - .1 * tfidf['love'])
+>>> topic['city']    = ( 0 * tfidf['cat']  - .1 * tfidf['dog'] + .2 * tfidf['apple']
+                      - .1 * tfidf['lion'] + .5 * tfidf['NYC'] + .1 * tfidf['love'])
+
+<1> `topic` and `tfidf` are arbitrary vectors to demonstrate how a human might combine term frequencies in a weighted sum to produce the values of topics
+
+
+>>> word_vector = {}  <1>
+>>> word_vector['cat']   =  .3 * topic['pet'] + .1 * topic['animal'] +  0 * topic['city']
+>>> word_vector['dog']   =  .3 * topic['pet'] + .1 * topic['animal'] - .1 * topic['city']
+>>> word_vector['apple'] =   0 * topic['pet'] - .1 * topic['animal'] + .2 * topic['city']
+>>> word_vector['lion']  =   0 * topic['pet'] + .5 * topic['animal'] - .1 * topic['city']
+>>> word_vector['NYC']   = -.2 * topic['pet'] + .1 * topic['animal'] + .5 * topic['city']
+>>> word_vector['love']  =  .2 * topic['pet'] - .1 * topic['animal'] + .1 * topic['city']
+
+<1> `word_vector` is an empty until we compute
+
+
+>>> import pandas as pd
+>>> pd.set_option('display.max_columns', 6)  # <1>
+>>> from sklearn.decomposition import PCA
+>>> import seaborn
+>>> from matplotlib import pyplot as plt
+>>> from nlpia.data import get_data
+
+>>> df = get_data('pointcloud').sample(1000)
+>>> pca = PCA(n_components=2)  # <2>
+>>> df2d = pd.DataFrame(pca.fit_transform(df), columns=list('xy'))
+>>> df2d.plot(kind='scatter', x='x', y='y')
+>>> plt.show()
+
+<1> Ensure that our `pd.DataFrame`s fit within the width of a page when printed
+<2> We're reducing a 3-D point cloud to a 2-D "projection" for display in a 2-D scatter plot
+
+
+
+>>> from sklearn.feature_extraction.text import TfidfVectorizer
+>>> from nltk.tokenize.casual import casual_tokenize
+>>> from nlpia.data import get_data
+
+>>> sms = get_data('sms-spam')
+>>> index = ['sms{}{}'.format(i, '!'*j) for (i,j) in zip(range(len(sms)), sms.spam)]  # <1>
+>>> sms = pd.DataFrame(sms.values, columns=sms.columns, index=index)
+>>> sms.spam = sms.spam.astype(int)
+>>> sms.head(6)
+      spam                                               text
+sms0     0  Go until jurong point, crazy.. Available only ...
+sms1     0                      Ok lar... Joking wif u oni...
+sms2!    1  Free entry in 2 a wkly comp to win FA Cup fina...
+sms3     0  U dun say so early hor... U c already then say...
+sms4     0  Nah I don't think he goes to usf, he lives aro...
+sms5!    1  FreeMsg Hey there darling it's been 3 week's n...
+
+<1> We've marked the SPAM SMS messages with an exclamation point in their label
+
+
+
+>>> tfidf = TfidfVectorizer(tokenizer=casual_tokenize)
+>>> tfidf_docs = tfidf.fit_transform(raw_documents=sms.text).toarray()
+>>> tfidf_docs = pd.DataFrame(tfidf_docs, index=index)
+>>> tfidf_docs = tfidf_docs - tfidf_docs.mean()
+>>> tfidf_docs.shape
+(4837, 9232)
+>>> sms.spam.sum()
+638
+
+
+
+>>> from sklearn.decomposition import PCA
+
+>>> pca = PCA(n_components=16)
+>>> pca = pca.fit(tfidf_docs)
+>>> pca_topic_vectors = pca.transform(tfidf_docs)
+>>> columns = ['topic{}'.format(i) for i in range(pca.n_components)]
+>>> pca_topic_vectors = pd.DataFrame(pca_topic_vectors, columns=columns, index=index)
+>>> pca_topic_vectors.round(3).head()
+       topic0  topic1  topic2   ...     topic13  topic14  topic15
+sms0    0.201   0.003   0.037   ...      -0.026   -0.019    0.039
+sms1    0.404  -0.094  -0.078   ...      -0.036    0.047   -0.036
+sms2!  -0.030  -0.048   0.090   ...      -0.017   -0.045    0.057
+sms3    0.329  -0.033  -0.035   ...      -0.065    0.022   -0.076
+sms4    0.002   0.031   0.038   ...       0.031   -0.081   -0.020
+
+
+
+>>> from sklearn.decomposition import TruncatedSVD
+
+>>> svd = TruncatedSVD(n_components=16, n_iter=300)  # <1>
+>>> svd_topic_vectors = svd.fit_transform(tfidf_docs)  # <2>
+>>> svd_topic_vectors = pd.DataFrame(svd_topic_vectors, columns=columns, index=index)
+>>> svd_topic_vectors.round(2).head(6)
+       topic0  topic1  topic2  topic3  topic4  topic5  topic6  topic7  topic8  ...
+sms0    0.117   0.197   0.002   0.047   0.031   0.023  -0.056   0.066  -0.078  ...
+sms1    0.111   0.421  -0.089   0.001   0.006  -0.097   0.050   0.032   0.045  ...
+sms2!   0.116  -0.047  -0.053   0.019   0.103  -0.074  -0.045   0.009   0.022  ...
+sms3    0.136   0.343  -0.031  -0.003   0.120  -0.011   0.034  -0.120  -0.101  ...
+sms4    0.118  -0.002   0.029   0.048  -0.026   0.068  -0.098  -0.046   0.079  ...
+sms5!   0.228   0.003   0.058   0.022   0.079  -0.106  -0.042   0.047   0.163  ...
+
+
+>>> import numpy as np
+
+>>> svd_topic_vectors = (svd_topic_vectors.T / np.linalg.norm(svd_topic_vectors, axis=1)).T  # <1>
+>>> svd_topic_vectors.iloc[:6].dot(svd_topic_vectors.iloc[:6].T).round(3)
+        sms0   sms1  sms2!   sms3   sms4  sms5!
+sms0   1.000  0.637 -0.068  0.648 -0.010 -0.337
+sms1   0.637  1.000 -0.155  0.781 -0.198  0.031
+sms2! -0.068 -0.155  1.000 -0.160  0.150  0.365
+sms3   0.648  0.781 -0.160  1.000 -0.174 -0.281
+sms4  -0.010 -0.198  0.150 -0.174  1.000  0.235
+sms5! -0.337  0.031  0.365 -0.281  0.235  1.000
+
+<1> Normalizing each topic vector by it's length (L^2^-norm) simplifies the cosine similarity computation into the dot product.
+
+
+
+>>> tfidf = TfidfVectorizer(tokenizer=casual_tokenize)
+>>> tfidf_docs = tfidf.fit_transform(raw_documents=sms.text).toarray()
+>>> pca = PCA(n_components=16)
+>>> pca16_topic_vectors = pca.fit_transform(tfidf_docs)
+
+
+
+>>> from sklearn.model_selection import train_test_split 
+>>> from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+
+>>> X_train, X_test, y_train, y_test = train_test_split(pca16_topic_vectors, sms.spam.astype(int), test_size=0.5, random_state=271828)
+>>> lda = LDA(n_components=1)
+>>> lda = lda.fit(X_train, y_train)
+>>> sms['pca16_spam'] = lda.predict(pca16_topic_vectors)
+>>> round(float(lda.score(X_test, y_test)), 3)
+0.963  # <1>s
+
+
+>>> from nlpia.data import get_data
+>>> sequence_of_texts = get_data('sms-spam').text
+>>> total_corpus_len = 0
+>>> for document_text in sequence_of_texts:
+...     total_corpus_len += len(document_text.split())
+>>> mean_document_len = total_corpus_len / len(sequence_of_texts)
+>>> round(mean_document_len, 2)
+18.12
+
+
+>>> texts = get_data('sms-spam').text
+>>> sum([len(t.split()) for t in texts]) * 1. / len(texts)
+18.119495555096133
+
+
+>>> counter = CountVectorizer(tokenizer=casual_tokenize)
+>>> bow_docs = pd.DataFrame(counter.fit_transform(raw_documents=sms.text).toarray(), index=index)
+>>> column_nums, terms = zip(*sorted(zip(counter.vocabulary_.values(), counter.vocabulary_.keys())))
+>>> bow_docs.columns = terms
+
+
+>>> from sklearn.decomposition import LatentDirichletAllocation as LDiA
+
+>>> ldia = LDiA(n_components=16, learning_method='batch')
+>>> ldia = ldia.fit(bow_docs)
+
+
+>>> lda = LDA(n_components=1)
+>>> lda = lda.fit(X_train, y_train.values)    # you will get this warning: "Variables are collinear."  # <1>
+>>> sms['ldia_spam'] = lda.predict(topic_vectors)
+>>> round(float(lda.score(X_train, y_train)), 3)
+0.951
+
+
+>>> components = pd.DataFrame(ldia.components_.T, index=terms, columns=columns)
+>>> components.round(2).head()
+       topic0  topic1  topic2   ...     topic13  topic14  topic15
+!       51.62   36.56    5.22   ...       16.65   450.05   100.99
+"       18.17    9.60    0.06   ...        7.10     0.10     0.06
+#        0.06    0.06    0.06   ...        0.06     0.06     0.06
+#150     0.06    0.06    0.06   ...        1.06     0.06     0.06
+#5000    0.06    0.06    0.06   ...        0.06     0.06     0.06
+
+
+# # can't replicate this or find the svddists code
+# >>> import numpy as np
+
+# >>> df = pd.DataFrame(np.array([svddists.reshape(len(sms)),pcadists.reshape(len(sms)),sms.spam]).T,
+                      columns='SVD_dist_to_doc3 PCA_dist_to_doc3 spam'.split())
+# >>> df.corr()  # <1>
+#                   SVD_dist_to_doc3  PCA_dist_to_doc3      spam
+# SVD_dist_to_doc3          1.000000          0.862478 -0.591911
+# PCA_dist_to_doc3          0.862478          1.000000 -0.595148
+# spam                     -0.591911         -0.595148  1.000000
+
+# <1> `DataFrame.corr()` computes the normalized covariance (similarity or correlation) between all the columns and rows of a DataFrame

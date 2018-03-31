@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+<category>
+    <pattern>HI</pattern>
+<template>Hi!</template>
+</category>
+<category>
+    <pattern>[HELLO HI YO YOH YO'] [ROSA ROSE CHATTY CHATBOT BOT CHATTERBOT]</pattern>
+    <template>Hi , How are you?</template>
+</category>
+<category>
+    <pattern>[HELLO HI YO YOH YO' 'SUP SUP OK HEY] [HAL YOU U]</pattern>
+    <template>Good one.</template>
+</category>
+</aiml>
