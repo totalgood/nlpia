@@ -34,7 +34,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
         conda create -n testenv --yes python=$PYTHON_VERSION pip
     fi
     source activate testenv
-    conda install --yes pip
+    conda install -y pip
     conda install -y swig
 
     # download spacy English language model
