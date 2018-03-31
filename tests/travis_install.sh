@@ -35,14 +35,35 @@ if [[ "$DISTRIB" == "conda" ]]; then
     fi
     source activate testenv
     conda install --yes pip
+    conda install -y swig
+
+    # download spacy English language model
     pip install --upgrade spacy
     python -m spacy download en
+
+    # download NLTK punkt, Penn Treebank, and wordnet corpora 
     python -c "import nltk; nltk.download('punkt'); nltk.download('treebank'); nltk.download('wordnet');"
     which python
     python --version
+
 elif [[ "$DISTRIB" == "ubuntu" ]]; then
     # Use standard ubuntu packages in their default version
     echo $DISTRIB
+    apt-get install -y build-essential swig gfortran
+    apt-get install -y python-dev python3-dev python-pip python3-pip 
+
+    apt-get install -y python-igraph
+
+    # SpeechRecognizer requires PyAudio
+    apt-get install -y portaudio19-dev python-pyaudio python3-pyaudio
+
+    # for scipy
+    apt-get install -y libopenblas-dev liblapack-dev
+    apt-get install -y python-scipy python3-scipy
+
+    # for matplotlib:
+    apt-get install -y libpng12-dev libfreetype6-dev
+    apt-get install -y tcl-dev tk-dev python-tk python3-tk
 fi
 
 if [[ "$COVERAGE" == "true" ]]; then
