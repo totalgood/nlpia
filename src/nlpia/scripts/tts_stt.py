@@ -5,11 +5,12 @@ from __future__ import absolute_import, division, print_function
 from timeit import default_timer as timer
 
 import speech_recognition as sr
-import pyaudio
-import wave
-from io import BytesIO
+# import pyaudio
+# import wave
+# from io import BytesIO
 import pyttsx3
 
+import simpleaudio as sa
 import argparse
 import sys
 import scipy.io.wavfile as wav
@@ -24,19 +25,15 @@ def record_audio(source='Microphone'):
     return audio
 
 
-def play_audio(audio):
-    p = pyaudio.PyAudio()
-    f = wave.openfp(BytesIO(audio.get_wav_data()))
-
-    stream = p.open(format=p.get_format_from_width(f.getsampwidth()),
-                    channels=f.getnchannels(),
-                    rate=f.getframerate(),
-                    output=True)
-    # play stream
-    data = f.readframes(1024)
-    while data:
-        stream.write(data)
-        data = f.readframes(1024)
+def play_audio(audio, start=0, stop=None, save=None, batch_size=1024):
+    if isinstance(audio, str):
+        # wave_stream = wave.openfp(open(audio, 'rb'))
+        wave_obj = sa.WaveObject.from_wave_file(audio)
+    else:
+        wave_obj = sa.WaveObject.from_wave_read(audio)
+    play_obj = wave_obj.play()
+    play_obj.wait_done()
+    return audio
 
 
 def stt(audio, api='google'):
