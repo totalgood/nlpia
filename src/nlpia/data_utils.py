@@ -12,7 +12,7 @@ from nlpia.constants import logging
 
 from annoy import AnnoyIndex
 
-from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
+from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII, DATA_PATH
 from nlpia.data.loaders import read_csv
 
 
@@ -53,9 +53,26 @@ NAME_ASCII = {
     }
 
 
-def parse_utf_table(url='https://www.fileformat.info/info/charset/UTF-8/list.htm'):
-    resp = requests.get(url)
+def iter_lines(url):
+    """ Return an iterator over the lines of a file or URI response. """
+    if url is None:
+        url = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
+    elif isinstance(url, str):
+        if os.path.isfile(os.path.join(DATA_PATH, url)):
+            fin = open(os.path.join(DATA_PATH, url))
+    fin = requests.get(url, stream=True)
     utf = pd.read_html(resp.text)
+
+
+def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
+    """ Parse HTML table UTF8 char descriptions returning DataFrame with `ascii` and `mutliascii`
+    
+    >>> 
+    """
+
+
+
+
     utf = [df for df in utf if len(df) > 1023 and len(df.columns) > 2][0]
     utf = utf.iloc[:1024] if len(utf) == 1025 else utf
     utf.columns = 'char name hex'.split()
