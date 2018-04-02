@@ -24,9 +24,9 @@ def format_hex(i, num_bytes=4, prefix='0x'):
     """ Format hexidecimal string from decimal integer value
 
     >>> format_hex(42, num_bytes=8, prefix=None)
-    0000002a
+    '0000002a'
     >>> format_hex(23)
-    0x0017
+    '0x0017'
     """
     prefix = str(prefix or '')
     i = int(i or 0)
