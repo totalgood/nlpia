@@ -1,17 +1,17 @@
 from __future__ import print_function, unicode_literals, division, absolute_import
 from future import standard_library
 standard_library.install_aliases()  # noqa: Counter, OrderedDict,
-from builtins import *  # noqa
+# from builtins import *  # noqa
 
 import logging
 import logging.config
 import os
-
 import configparser
+
+from pandas import read_csv
 
 from pugnlp.util import dict2obj
 import platform
-from pandas import read_csv
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -89,9 +89,10 @@ PROJECT_PATH = os.path.dirname(os.path.dirname(__file__))
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
 
-UTF8_TABLE = read_csv(os.path.join(DATA_PATH, 'utf8.csv'), header=0)
+UTF8_TABLE = read_csv(os.path.join(DATA_PATH, 'utf8.csv'))
 UTF8_TO_MULTIASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.multiascii))
 UTF8_TO_ASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.ascii))
+
 
 # rename secrets.cfg.EXAMPLE_TEMPLATE -> secrets.cfg then edit secrets.cfg to include your actual credentials
 secrets = configparser.RawConfigParser()
@@ -99,7 +100,8 @@ try:
     secrets.read(os.path.join(PROJECT_PATH, 'secrets.cfg'))
     secrets = secrets._sections
 except IOError:
-    logger.error('Unable to load/parse secrets.cfg file at "{}". Does it exist?'.format(os.path.join(PROJECT_PATH, 'secrets.cfg')))
+    logger.error('Unable to load/parse secrets.cfg file at "{}". Does it exist?'.format(
+                 os.path.join(PROJECT_PATH, 'secrets.cfg')))
     secrets = {}
 
 secrets = dict2obj(secrets)

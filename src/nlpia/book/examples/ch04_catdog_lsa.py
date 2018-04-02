@@ -10,14 +10,21 @@ from nltk.stem import PorterStemmer
 
 corpus = get_data('cats_and_dogs')
 
-STOPWORDS = 'a and the be do is are was with on in to he her she him I it me my we our you your ? , . !'.split()
+STOPWORDS = ('a an and or the do are with from for of on in by if at to into them' +
+             ' I it its it\'s that than me my our you your ? , . !').split()
+SYNONYMS = dict(zip('wolv people person women woman man human he  we  her she him his hers'.split(),
+                    'wolf her    her    her   her   her her   her her her her her her her'.split()))
+SYNONYMS.update(dict(zip('ate pat smarter have had isn\'t hasn\'t no  got get become been was were wa be'.split(),
+                         'eat pet smart   has  has not    not     not has has is     is   is  is   is is'.split())))
+
 tfidfer = TfidfVectorizer(min_df=2, max_df=.6)
 docs = [doc.lower() for doc in corpus]
 docs = [casual_tokenize(doc) for doc in docs]
+docs = [[SYNONYMS.get(w, w) for w in words if w not in STOPWORDS] for words in docs]
 stemmer = PorterStemmer()
 docs = [[stemmer.stem(w) for w in words if w not in STOPWORDS] for words in docs]
-docs = [[w for w in words if w not in STOPWORDS] for words in docs]
-docs = [' '.join(words) for words in docs]
+docs = [[SYNONYMS.get(w, w) for w in words if w not in STOPWORDS] for words in docs]
+docs = [' '.join(w for w in words if w not in STOPWORDS) for words in docs]
 
 
 tfidfer = TfidfVectorizer(min_df=2, max_df=.6)
@@ -26,16 +33,20 @@ id_words = [(i, w) for (w, i) in tfidfer.vocabulary_.items()]
 df.columns = list(zip(*sorted(id_words)))[1]
 
 pd.set_option('display.width', 150)
-df.round(1)
-#     ate  can  car  cat  chase  cute  die  dog  ferret  flower  ...    ran  squirrel  struck  took  tree  trick  turtl   up  vet  water
-# 0   0.0  0.0  0.0  0.4    0.0   0.0  0.0  0.0     0.0     0.0  ...    0.0       0.0     0.0   0.0   0.0    0.0    0.0  0.0  0.0    0.0
-# 1   0.9  0.0  0.0  0.5    0.0   0.0  0.0  0.0     0.0     0.0  ...    0.0       0.0     0.0   0.0   0.0    0.0    0.0  0.0  0.0    0.0
-# 2   0.0  0.0  0.0  0.5    0.8   0.0  0.0  0.0     0.0     0.0  ...    0.0       0.0     0.0   0.0   0.0    0.0    0.0  0.0  0.0    0.0
-# ...
-# 56  0.0  0.0  0.9  0.5    0.0   0.0  0.0  0.0     0.0     0.0  ...    0.0       0.0     0.0   0.0   0.0    0.0    0.0  0.0  0.0    0.0
-# 57  0.0  0.0  0.7  0.0    0.0   0.0  0.0  0.0     0.0     0.0  ...    0.0       0.0     0.0   0.0   0.0    0.0    0.0  0.0  0.0    0.0
-# 58  0.0  0.0  0.0  0.0    0.0   0.0  0.0  0.5     0.0     0.0  ...    0.0       0.0     0.0   0.9   0.0    0.0    0.0  0.0  0.0    0.0
-# [59 rows x 26 columns]
+df_docs = df.copy()
+df_docs['text'] = corpus
+df_docs[['dog', 'cat', 'bear', 'pet', 'hat', 'bike', 'chase', 'bark', 'meow', 'text']].head(10).round(1)
+#    dog  cat  bear  pet  hat  bike  chase  bark  meow                                         text
+# 0  0.0  0.4   0.0  0.0  0.9   0.0    0.0   0.0   0.0                           The Cat in the Hat
+# 1  0.0  0.5   0.0  0.0  0.0   0.0    0.0   0.0   0.0                           The cat ate a rat.
+# 2  0.0  0.6   0.0  0.0  0.0   0.0    0.8   0.0   0.0             The cat chased my laser pointer.
+# 3  0.3  0.0   0.0  0.0  0.0   0.6    0.4   0.6   0.0      A dog chased my bike and barked loudly.
+# 4  0.4  0.0   0.0  0.0  0.0   0.0    0.0   0.6   0.0                  I ran from the barking dog.
+# 5  0.4  0.0   0.0  0.0  0.0   0.0    0.5   0.6   0.0               A dog chased the car, barking.
+# 6  0.0  0.5   0.0  0.0  0.0   0.0    0.0   0.0   0.9                               The Cat's Meow
+# 7  0.0  0.3   0.0  0.4  0.0   0.0    0.0   0.0   0.5  The cat meowed so I pet it until it purred.
+# 8  0.0  0.5   0.0  0.0  0.0   0.0    0.0   0.0   0.9             A cat meowed on the hot tin roof
+# 9  0.5  0.4   0.0  0.0  0.0   0.0    0.0   0.0   0.0              Cats and dogs playing together.
 
 df.T.sum()
 # 0     1.334096
