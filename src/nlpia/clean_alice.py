@@ -64,21 +64,26 @@ def concatenate_aiml(path='aiml-en-us-foundation-alice.v1-9.zip', outfile='aiml-
                     name, i, line))
 
 
-def extract_aiml(path='aiml-en-us-foundation-alice.v1-9.zip'):
-    if not os.path.isfile(path):
+def extract_aiml(path='aiml-en-us-foundation-alice.v1-9'):
+    """ Extract an aiml.zip file if it hasn't been already and return a list of aiml file paths """
+    if not os.path.exists(path):
         path = os.path.join(DATA_PATH, path)
-
-    zf = zipfile.ZipFile(path)
-    paths = []
-    for name in zf.namelist():
-        if '.hg/' in name:
-            continue
-        paths.append(zf.extract(name, path=DATA_PATH))
+    if os.path.isdir(path):
+        paths = os.listdir(path)
+        paths = [os.path.join(path, p) for p in paths]
+    else:
+        zf = zipfile.ZipFile(path)
+        paths = []
+        for name in zf.namelist():
+            if '.hg/' in name:
+                continue
+            paths.append(zf.extract(name, path=DATA_PATH))
     return paths
 
 
-def create_brain(path='aiml-en-us-foundation-alice.v1-9.zip'):
-    if not os.path.isfile(path):
+def create_brain(path='aiml-en-us-foundation-alice.v1-9'):
+    """ Create an aiml_bot.Bot brain from an AIML zip file or directory of AIML files """
+    if not os.path.exists(path):
         path = os.path.join(DATA_PATH, path)
 
     bot = Bot()
