@@ -12,7 +12,7 @@ from nlpia.constants import logging
 
 from annoy import AnnoyIndex
 
-from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII, DATA_PATH
+from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII, DATA_PATH, BIGDATA_PATH
 from nlpia.data.loaders import read_csv
 
 
@@ -222,3 +222,11 @@ def representative_sample(X, num_samples, save=False):
             num_nns = min(N, 1.3 * num_nns)
         j += 1
     return samples
+
+
+def find_data_path(path):
+    for fullpath in [path, os.path.join(DATA_PATH, path), os.path.join(BIGDATA_PATH, path),
+                     os.path.abspath(os.path.join('.', path)), os.path.expanduser(os.path.join('~', path))]:
+        if os.path.exists(fullpath):
+            return fullpath
+    return None

@@ -36,12 +36,12 @@ from aiml_bot import Bot
 from aiml_bot.aiml_parser import AimlParserError
 
 from nlpia.constants import DATA_PATH
+from nlpia.data_utils import find_data_path
 
 
 def concatenate_aiml(path='aiml-en-us-foundation-alice.v1-9.zip', outfile='aiml-en-us-foundation-alice.v1-9.aiml'):
     """Strip trailing </aiml> tag and concatenate all valid AIML files found in the ZIP."""
-    if not os.path.isfile(path):
-        path = os.path.join(DATA_PATH, path)
+    path = find_data_path(path) or path
 
     zf = zipfile.ZipFile(path)
     for name in zf.namelist():
@@ -68,8 +68,7 @@ def concatenate_aiml(path='aiml-en-us-foundation-alice.v1-9.zip', outfile='aiml-
 
 def extract_aiml(path='aiml-en-us-foundation-alice.v1-9'):
     """ Extract an aiml.zip file if it hasn't been already and return a list of aiml file paths """
-    if not os.path.exists(path):
-        path = os.path.join(DATA_PATH, path)
+    path = find_data_path(path) or path
     if os.path.isdir(path):
         paths = os.listdir(path)
         paths = [os.path.join(path, p) for p in paths]
@@ -83,10 +82,9 @@ def extract_aiml(path='aiml-en-us-foundation-alice.v1-9'):
     return paths
 
 
-def create_brain(path='aiml-en-us-foundation-alice.v1-9'):
+def create_brain(path='aiml-en-us-foundation-alice.v1-9.zip'):
     """ Create an aiml_bot.Bot brain from an AIML zip file or directory of AIML files """
-    if not os.path.exists(path):
-        path = os.path.join(DATA_PATH, path)
+    path = find_data_path(path) or path
 
     bot = Bot()
     num_templates = bot._brain.template_count
