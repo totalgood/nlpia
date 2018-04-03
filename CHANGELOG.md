@@ -1,3 +1,16 @@
+<a name="0.1.22"></a>
+# [0.1.22](https://github.com/totalgood/nlpia/compare/0.1.22...0.1.21) (2018-04-02)
+
+### Bug Fixes
+
+* unittests run and pass on Travis!
+* improved unicode->ascii mapping
+
+### Features
+
+* hex_format() to generate hex strings like unicode code_point hex values
+* clean_utf_table() to interpret unicode description text like SMALL GREEK LETTER ETH WITH ACCENT
+
 <a name="0.1.21"></a>
 # [0.1.21](https://github.com/totalgood/nlpia/compare/0.1.21...0.1.0) (2018-03-31)
 
