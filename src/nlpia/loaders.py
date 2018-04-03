@@ -64,6 +64,12 @@ BIG_URLS = {
         'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
         3112841563,  # 3112841312,
     ),
+    'alice': (
+        # 'https://www.dropbox.com/s/py952zad3mntyvp/aiml-en-us-foundation-alice.v1-9.zip?dl=1',
+        'https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/' \
+        'aiml-en-us-foundation-alice/aiml-en-us-foundation-alice.v1-9.zip',
+        8249482,
+    ),
 }
 BIG_URLS['word2vec'] = BIG_URLS['w2v']
 DATA_NAMES = {
