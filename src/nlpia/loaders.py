@@ -120,7 +120,7 @@ def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
         return True
     if ((series.index == np.arange(len(series))).all() and
         str(series.dtype).startswith('int') and
-        (series.count() == len(df))):
+        (series.count() == len(series))):
         return True
     return False
 
