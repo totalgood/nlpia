@@ -10,7 +10,7 @@
 from __future__ import print_function, unicode_literals, division, absolute_import
 from future import standard_library
 standard_library.install_aliases()  # noqa
-# from builtins import *  # noqa
+from builtins import *  # noqa
 
 import os
 import re

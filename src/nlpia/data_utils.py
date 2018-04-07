@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 from future import standard_library
 standard_library.install_aliases()  # noqa
-# from builtins import *  # noqa
+from builtins import *  # noqa
 import tempfile
 import os
 import re
@@ -44,14 +44,14 @@ NAME_ACCENT = {
     'ACCUTE ACCENT': "'",
     'GRAVE ACCENT ABOVE': '`',
     'ACCUTE ACCENT ABOVE': "'",
-    }
+}
 
 NAME_ASCII = {
     'ETH': 'D',
     'AE': 'E',
     'SHARP S': 'B',
     'DOTLESS I': 'I',
-    }
+}
 
 
 def iter_lines(url):
@@ -60,13 +60,13 @@ def iter_lines(url):
         url = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
     elif isinstance(url, str):
         if os.path.isfile(os.path.join(DATA_PATH, url)):
-            fin = open(os.path.join(DATA_PATH, url))
-    fin = requests.get(url, stream=True)
-    utf = pd.read_html(resp.text)
+            return open(os.path.join(DATA_PATH, url))
+    return requests.get(url, stream=True)
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
     """ Parse HTML table UTF8 char descriptions returning DataFrame with `ascii` and `mutliascii` """
+    utf = pd.read_html(url)
     utf = [df for df in utf if len(df) > 1023 and len(df.columns) > 2][0]
     utf = utf.iloc[:1024] if len(utf) == 1025 else utf
     utf.columns = 'char name hex'.split()
@@ -94,13 +94,15 @@ def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
         gd['suffix'] = None
         gd['wordwith'] = None
 
-        withprefix = re.match(r'(?P<prefix>DOTLESS|TURNED|SMALL)(?P<name>.*)(?P<wordwith>WITH|SUPERSCRIPT|SUBSCRIPT|DIGRAPH)\s+(?P<suffix>[-_><a-z0-9A-Z\s ]+)',
-            gd['name'])
+        withprefix = re.match(r'(?P<prefix>DOTLESS|TURNED|SMALL)(?P<name>.*)' +
+                              r'(?P<wordwith>WITH|SUPERSCRIPT|SUBSCRIPT|DIGRAPH)\s+(?P<suffix>[-_><a-z0-9A-Z\s ]+)',
+                              gd['name'])
         if withprefix:
             gd.update(withprefix.groupdict())
 
-        withsuffix = re.match(r'(?P<name>.*)(?P<wordwith>WITH|SUPERSCRIPT|SUBSCRIPT|DIGRAPH)\s+(?P<suffix>[-_><a-z0-9A-Z\s ]+)',
-            gd['name'])
+        withsuffix = re.match(r'(?P<name>.*)(?P<wordwith>WITH|SUPERSCRIPT|SUBSCRIPT|DIGRAPH)\s+' +
+                              r'(?P<suffix>[-_><a-z0-9A-Z\s ]+)',
+                              gd['name'])
         if withsuffix:
             gd.update(withsuffix.groupdict())
 
@@ -206,12 +208,9 @@ def representative_sample(X, num_samples, save=False):
         if i in samples:
             continue
         nns = idx.get_nns_by_item(i, num_nns)
-        # FIXME: pick vector furthest from past K (K > 1) points or outside of a hypercube 
+        # FIXME: pick vector furthest from past K (K > 1) points or outside of a hypercube
         #        (sized to uniformly fill the space) around the last sample
-        try:
-            samples[j + 1] = np.setdiff1d(nns, samples)[-1]
-        except:
-            samples[j + 1]
+        samples[j + 1] = np.setdiff1d(nns, samples)[-1]
         if len(num_nns) < num_samples / 3.:
             num_nns = min(N, 1.3 * num_nns)
         j += 1
