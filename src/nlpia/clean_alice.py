@@ -36,7 +36,7 @@ from aiml_bot import Bot
 from aiml_bot.aiml_parser import AimlParserError
 
 from nlpia.constants import logging
-from nlpia.constants import DATA_PATH
+from nlpia.constants import BIGDATA_PATH
 from nlpia.data_utils import find_data_path
 
 logger = logging.getLogger(__name__)
@@ -80,7 +80,7 @@ def extract_aiml(path='aiml-en-us-foundation-alice.v1-9'):
         for name in zf.namelist():
             if '.hg/' in name:
                 continue
-            paths.append(zf.extract(name, path=DATA_PATH))
+            paths.append(zf.extract(name, path=BIGDATA_PATH))
     return paths
 
 
