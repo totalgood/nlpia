@@ -114,7 +114,7 @@ def untar(fname):
         with tarfile.open(fname) as tf:
             tf.extractall()
     else:
-        print("Not a tar.gz file: {}".format(fname))
+        logger.warn("Not a tar.gz file: {}".format(fname))
 
 
 for filename in TEXTS:
@@ -238,7 +238,7 @@ def download(names=None, verbose=True):
                                              size=BIG_URLS[name][1],
                                              verbose=verbose)
             if file_paths[name].endswith('.tar.gz'):
-                print('Extracting {}'.format(file_paths[name]))
+                logger.info('Extracting {}'.format(file_paths[name]))
                 untar(file_paths[name])
                 file_paths[name] = file_paths[name][:-7]  # FIXME: rename tar.gz file so that it mimics contents
         else:
@@ -258,21 +258,21 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         url = url[:-1] + '1'  # noninteractive download
     if verbose:
         tqdm_prog = tqdm
-        print('requesting URL: {}'.format(url))
+        logger.info('requesting URL: {}'.format(url))
     else:
         tqdm_prog = no_tqdm
     r = requests.get(url, stream=True, allow_redirects=True)
     size = r.headers.get('Content-Length', None) if size is None else size
-    print('remote size: {}'.format(size))
+    logger.info('remote size: {}'.format(size))
 
     stat = path_status(file_path)
-    print('local size: {}'.format(stat.get('size', None)))
+    logger.info('local size: {}'.format(stat.get('size', None)))
     if stat['type'] == 'file' and stat['size'] >= size:  # TODO: check md5 or get the right size of remote file
         r.close()
+        logger.info('retained: {}'.format(file_path))
         return file_path
 
-    print('Downloading to {}'.format(file_path))
-
+    logger.info('downloaded: {}'.format(file_path))
     with open(file_path, 'wb') as f:
         for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size)):
             if chunk:  # filter out keep-alive chunks
@@ -349,7 +349,7 @@ def get_data(name='sms-spam', nrows=None):
     ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
     """
     if name in BIG_URLS:
-        print('Downloading {}'.format(name))
+        logger.info('Downloading {}'.format(name))
         filepaths = download(name)
         return filepaths[name]
     elif name in DATASET_NAME2FILENAME:

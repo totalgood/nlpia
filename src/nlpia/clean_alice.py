@@ -1,12 +1,12 @@
-""" AIML Loader that can load zipped AIML2.0 XML files with an AIML1.0 parser in python 3 
+""" AIML Loader that can load zipped AIML2.0 XML files with an AIML1.0 parser in python 3
 
 >>> from nlpia.loaders import get_data
 >>> alice_path = get_data('alice')
->>> bot = create_brain(alice_path)
+>>> bot = create_brain(alice_path)  # doctest: +NORMALIZE_WHITESPACE, +ELLIPSIS
 Loading ...
->> len(bot._brain._root.keys())
+>>> len(bot._brain._root.keys())
 3445
->> bot._brain._root['HI']
+>>> bot._brain._root['HI']
 {'EVERYBODY': {3: {1: {4: {1: {2: ['template', {}, ...
 
 >> bot.respond("Hi how are you?")
@@ -35,8 +35,11 @@ from traceback import format_exc
 from aiml_bot import Bot
 from aiml_bot.aiml_parser import AimlParserError
 
+from nlpia.constants import logging
 from nlpia.constants import DATA_PATH
 from nlpia.data_utils import find_data_path
+
+logger = logging.getLogger(__name__)
 
 
 def concatenate_aiml(path='aiml-en-us-foundation-alice.v1-9.zip', outfile='aiml-en-us-foundation-alice.v1-9.aiml'):
@@ -48,7 +51,6 @@ def concatenate_aiml(path='aiml-en-us-foundation-alice.v1-9.zip', outfile='aiml-
         if not name.lower().endswith('.aiml'):
             continue
         with zf.open(name) as fin:
-            # print(name)
             happyending = '#!*@!!BAD'
             for i, line in enumerate(fin):
                 try:
@@ -95,10 +97,9 @@ def create_brain(path='aiml-en-us-foundation-alice.v1-9.zip'):
         try:
             bot.learn(path)
         except AimlParserError:
-            print(format_exc())
-            print('AIML Parse Error: {}'.format(path))
+            logger.error(format_exc())
+            logger.warn('AIML Parse Error: {}'.format(path))
         num_templates = bot._brain.template_count - num_templates
-        print('Loaded {} trigger-response pairs.'.format(num_templates))
-        print()
+        logger.info('Loaded {} trigger-response pairs.\n'.format(num_templates))
     print('Loaded {} trigger-response pairs from {} AIML files.'.format(bot._brain.template_count, len(paths)))
     return bot

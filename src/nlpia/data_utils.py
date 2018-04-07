@@ -61,7 +61,7 @@ def iter_lines(url):
     elif isinstance(url, str):
         if os.path.isfile(os.path.join(DATA_PATH, url)):
             return open(os.path.join(DATA_PATH, url))
-    return requests.get(url, stream=True)
+    return requests.get(url, stream=True, allow_redirects=True)
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
