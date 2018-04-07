@@ -79,9 +79,13 @@ BIG_URLS['word2vec'] = BIG_URLS['w2v']
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
 except IOError:
+    BIGDATA_INFO = pd.DataFrame(columns='name url file_size'.split())
     logger.warn('Unable to find BIGDATA index in {}'.format(BIGDATA_INFO_FILE))
-BIG_URLS.update(dict(zip(BIGDATA_INFO.name, zip(BIGDATA_INFO.url, BIGDATA_INFO.size))))
-
+BIG_URLS.update(dict(zip(BIGDATA_INFO.name, zip(BIGDATA_INFO.url, BIGDATA_INFO.file_size))))
+BIGDATA_INFO = pd.DataFrame(list(
+    zip(BIG_URLS.keys(), list(zip(*BIG_URLS.values()))[0], list(zip(*BIG_URLS.values()))[1])),
+    columns='name url file_size'.split())
+BIGDATA_INFO.to_csv(BIGDATA_INFO_FILE)
 
 # FIXME: consolidate with DATA_INFO or BIG_URLS
 DATA_NAMES = {
