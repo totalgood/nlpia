@@ -8,11 +8,12 @@ import re
 
 import requests
 import pandas as pd
-from nlpia.constants import logging
 
 from annoy import AnnoyIndex
 
-from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII, DATA_PATH, BIGDATA_PATH
+from nlpia.constants import logging
+from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
+from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH
 from nlpia.data.loaders import read_csv
 
 
@@ -65,14 +66,7 @@ def iter_lines(url):
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
-    """ Parse HTML table UTF8 char descriptions returning DataFrame with `ascii` and `mutliascii`
-    
-    >>> 
-    """
-
-
-
-
+    """ Parse HTML table UTF8 char descriptions returning DataFrame with `ascii` and `mutliascii` """
     utf = [df for df in utf if len(df) > 1023 and len(df.columns) > 2][0]
     utf = utf.iloc[:1024] if len(utf) == 1025 else utf
     utf.columns = 'char name hex'.split()
@@ -225,8 +219,13 @@ def representative_sample(X, num_samples, save=False):
 
 
 def find_data_path(path):
-    for fullpath in [path, os.path.join(DATA_PATH, path), os.path.join(BIGDATA_PATH, path),
-                     os.path.abspath(os.path.join('.', path)), os.path.expanduser(os.path.join('~', path))]:
+    for fullpath in [path,
+                     os.path.join(DATA_PATH, path),
+                     os.path.join(BIGDATA_PATH, path),
+                     os.path.join(BASE_DIR, path),
+                     os.path.expanduser(os.path.join('~', path)),
+                     os.path.abspath(os.path.join('.', path))
+                     ]:
         if os.path.exists(fullpath):
             return fullpath
     return None

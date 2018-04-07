@@ -10,25 +10,29 @@
 from __future__ import print_function, unicode_literals, division, absolute_import
 from future import standard_library
 standard_library.install_aliases()  # noqa
-from builtins import *  # noqa
+# from builtins import *  # noqa
 
 import os
 import re
 import json
 import requests
-from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH
-
-from tqdm import tqdm
-from pugnlp.futil import path_status, find_files
-
 
 import pandas as pd
 import tarfile
-
+from tqdm import tqdm
 from gensim.models import KeyedVectors
+from pugnlp.futil import path_status, find_files
+from pugnlp.util import clean_columns
+
+from nlpia.constants import logging
+from nlpia.constants import DATA_PATH, BIGDATA_PATH
+from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE
+
 
 INT_MAX = INT64_MAX = 2 ** 63 - 1
 INT_MIN = INT64_MIN = - 2 ** 63
+INT_NAN = INT64_NAN = INT64_MIN
+INT_MIN = INT64_MIN = INT64_MIN + 1
 
 np = pd.np
 logger = logging.getLogger(__name__)
@@ -72,6 +76,14 @@ BIG_URLS = {
     ),
 }
 BIG_URLS['word2vec'] = BIG_URLS['w2v']
+try:
+    BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
+except IOError:
+    logger.warn('Unable to find BIGDATA index in {}'.format(BIGDATA_INFO_FILE))
+BIG_URLS.update(dict(zip(BIGDATA_INFO.name, zip(BIGDATA_INFO.url, BIGDATA_INFO.size))))
+
+
+# FIXME: consolidate with DATA_INFO or BIG_URLS
 DATA_NAMES = {
     'pointcloud': os.path.join(DATA_PATH, 'pointcloud.csv.gz'),
     'hutto_tweets0': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/tweets_GroundTruth.csv.gz'),
@@ -81,6 +93,7 @@ DATA_NAMES = {
     'hutto_products': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/amazonReviewSnippets_GroundTruth.csv.gz'),
 }
 
+# FIXME: put these in BIG_URLS
 DDL_DS_QUESTIONS_URL = 'http://minimum-entropy.districtdatalabs.com/api/questions/?format=json'
 DDL_DS_ANSWERSS_URL = 'http://minimum-entropy.districtdatalabs.com/api/answers/?format=json'
 
@@ -89,7 +102,7 @@ W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
 
-DATA_INFO = pd.read_csv(os.path.join(DATA_PATH, 'data_info.csv'))
+DATA_INFO = pd.read_csv(DATA_INFO_FILE, header=0)
 
 
 def untar(fname):
@@ -118,9 +131,11 @@ def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
         return True
     if (series == np.arange(len(series))).all():
         return True
-    if ((series.index == np.arange(len(series))).all() and
+    if (
+        (series.index == np.arange(len(series))).all() and
         str(series.dtype).startswith('int') and
-        (series.count() == len(df))):
+        (series.count() == len(series))
+    ):
         return True
     return False
 
@@ -178,7 +193,8 @@ def read_txt(fin, nrows=None, verbose=True):
 
 
 for filename in CSVS:
-    locals()['df_' + filename.split('.')[0].replace('-', '_')] = read_csv(os.path.join(DATA_PATH, filename))
+    locals()['df_' + filename.split('.')[0].replace('-', '_')] = read_csv(
+        os.path.join(DATA_PATH, filename))
 
 
 harry_docs = ["The faster Harry got to the store, the faster and faster Harry would get home.",
@@ -199,9 +215,10 @@ def dropbox_basename(url):
 
 
 def download(names=None, verbose=True):
-    """ Download files or HTML tables listed in `names` and save them to DATA_PATH/`names`.csv
+    """ Download CSV or HTML tables listed in `names` and save them to DATA_PATH/`names`.csv
 
-    Uses table in data_info.csv to determin URL or file path from name.
+    Uses table in data_info.csv (internal DATA_INFO) to determine URL or file path from dataset name.
+    Also looks
 
     TODO: if name is a valid URL then download it and create a name
           and store the name: url in data_info.csv before downloading
@@ -262,7 +279,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
 
 
 def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
-    """ Convert a dataset in a local file (usually a CSV) into a Pandas DataFrame 
+    """ Convert a dataset in a local file (usually a CSV) into a Pandas DataFrame
 
     TODO: should be called read_named_dataset
 
@@ -340,7 +357,8 @@ def get_data(name='sms-spam', nrows=None):
     elif os.path.isfile(os.path.join(DATA_PATH, name)):
         return read_named_csv(os.path.join(DATA_PATH, name), nrows=nrows)
 
-    msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, .json, or .txt\n'.format(name)
+    msg = 'Unable to find dataset "{}"" in {} or {} (*.csv.gz, *.csv, *.json, *.zip, or *.txt)\n'.format(
+        name, DATA_PATH, BIGDATA_PATH)
     msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
     logger.error(msg)
     raise IOError(msg)
@@ -420,20 +438,24 @@ def load_geonames(path='http://download.geonames.org/export/dump/cities1000.zip'
     7  feature code      : see http://www.geonames.org/export/codes.html, varchar(10)
     8  country code      : ISO-3166 2-letter country code, 2 characters
     9  cc2               : alternate country codes, comma separated, ISO-3166 2-letter country code, 200 characters
-    10 admin1 code       : fipscode (subject to change to iso code), see exceptions below, see file admin1Codes.txt
-                           for display names of this code; varchar(20)
-    11 admin2 code       : code for the second administrative division, a county in the US, see file admin2Codes.txt; varchar(80)
+    10 admin1 code       : fipscode (subject to change to iso code), see exceptions below,
+                           see file admin1Codes.txt for display names of this code; varchar(20)
+    11 admin2 code       : code for the second administrative division, a county in the US,
+                           see file admin2Codes.txt; varchar(80)
     12 admin3 code       : code for third level administrative division, varchar(20)
     13 admin4 code       : code for fourth level administrative division, varchar(20)
     14 population        : bigint (8 byte int)
     15 elevation         : in meters, integer
-    16 dem               : digital elevation model, srtm3 or gtopo30, average elevation of 3''x3'' (ca 90mx90m) or 30''x30''
-                           (ca 900mx900m) area in meters, integer. srtm processed by cgiar/ciat.
+    16 dem               : digital elevation model, srtm3 or gtopo30, average elevation of
+                           (3''x3''ca 90mx90m) or 30''x30''(ca 900mx900m) area in meters, integer.
+                           srtm processed by cgiar/ciat.
     17 timezone          : the iana timezone id (see file timeZone.txt) varchar(40)
     18 modification date : date of last modification in yyyy-MM-dd format
     """
-    columns = ['geonameid', 'name', 'asciiname', 'alternatenames', 'latitude', 'longitude', 'feature class', 'feature code', 'country code']
-    columns += ['cc2', 'admin1_code', 'admin2_code', 'admin3_code', 'admin4_code', 'population', 'elevation', 'dem', 'timezone', 'modification date']
+    columns = ['geonameid', 'name', 'asciiname', 'alternatenames', 'latitude', 'longitude', 'feature class',
+               'feature code', 'country code']
+    columns += ['cc2', 'admin1_code', 'admin2_code', 'admin3_code', 'admin4_code', 'population', 'elevation',
+                'dem', 'timezone', 'modification date']
     columns = normalize_column_names(columns)
     df = pd.read_csv(path, sep='\t', index_col=None, low_memory=False, header=None)
     df.columns = columns
@@ -447,7 +469,7 @@ def normalize_column_names(df):
 
 
 def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz'):
-    """There are still quite a few errors in this table, even after all this cleaning, so it's not a good source of city names"""
+    """ WARN: Not a good source of city names. This table has many errors, even after cleaning"""
     df = pd.read_csv(filename, header=0, index_col=0, low_memory=False)
     df.columns = [c.replace(' ', '_').lower() for c in df.columns]
     canonical = pd.DataFrame([list(row) for row in df.canonical_name.str.split(',').values])

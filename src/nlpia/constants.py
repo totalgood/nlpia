@@ -86,8 +86,12 @@ logger = logging.getLogger(__name__)
 
 USER_HOME = os.path.expanduser("~")
 PROJECT_PATH = os.path.dirname(os.path.dirname(__file__))
+
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
+DATA_INFO_FILE = os.path.join(DATA_PATH, 'data_info.csv')
+
 BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
+BIGDATA_INFO_FILE = os.path.join(DATA_PATH, 'bigdata_info.csv')
 
 UTF8_TABLE = read_csv(os.path.join(DATA_PATH, 'utf8.csv'))
 UTF8_TO_MULTIASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.multiascii))
