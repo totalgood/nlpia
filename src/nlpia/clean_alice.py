@@ -1,10 +1,10 @@
 """ AIML Loader that can load zipped AIML2.0 XML files with an AIML1.0 parser in python 3 
 
->>> bot = create_brain()
+>> bot = create_brain()
 Loading ...
->>> len(bot._brain._root.keys())
+>> len(bot._brain._root.keys())
 3445
->>> bot._brain._root['HI']
+>> bot._brain._root['HI']
 {'EVERYBODY': {3: {1: {4: {1: {2: ['template', {}, ...
 
 >> bot.respond("Hi how are you?")
