@@ -1,6 +1,7 @@
 """ Deprecated Google Trends API """
 from __future__ import print_function, unicode_literals, division, absolute_import
-# from builtins import int, round, str
+from builtins import (bytes, dict, int, list, object, range, str, ascii, chr, hex, input,  # noqa
+    next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
 standard_library.install_aliases()  # NOQA
 
