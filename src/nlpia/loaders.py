@@ -253,9 +253,9 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     if filename is None:
         filename = dropbox_basename(url)
-    file_path = os.path.join(data_path, filename)
-    if url.endswith('?dl=0'):
-        url = url[:-1] + '1'  # noninteractive download
+    filepath = os.path.join(data_path, filename)
+    if url.endswith('dl=0'):
+        url = url[:-1] + '1'  # noninteractive Dropbox download
     if verbose:
         tqdm_prog = tqdm
         logger.info('requesting URL: {}'.format(url))
@@ -265,21 +265,22 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     size = r.headers.get('Content-Length', None) if size is None else size
     logger.info('remote size: {}'.format(size))
 
-    stat = path_status(file_path)
+    stat = path_status(filepath)
     logger.info('local size: {}'.format(stat.get('size', None)))
     if stat['type'] == 'file' and stat['size'] >= size:  # TODO: check md5 or get the right size of remote file
         r.close()
-        logger.info('retained: {}'.format(file_path))
-        return file_path
+        logger.info('retained: {}'.format(filepath))
+        return filepath
 
-    logger.info('downloaded: {}'.format(file_path))
-    with open(file_path, 'wb') as f:
+    mkdir_p(os.path.dirname(filepath))
+    logger.info('downloaded: {}'.format(filepath))
+    with open(filepath, 'wb') as f:
         for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size)):
             if chunk:  # filter out keep-alive chunks
                 f.write(chunk)
 
     r.close()
-    return file_path
+    return filepath
 
 
 def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
@@ -378,8 +379,8 @@ def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1,
     return df
 
 
-def read_json(file_path):
-    return json.load(open(file_path, 'rt'))
+def read_json(filepath):
+    return json.load(open(filepath, 'rt'))
 
 
 def get_wikidata_qnum(wikiarticle, wikisite):

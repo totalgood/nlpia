@@ -21,7 +21,7 @@ Our MIT [`LICENSE`](https://github.com/totalgood/nlpia/blob/master/LICENSE) does
 
 ## Pull Requests
 
-  1. When you start working on a feature, first create new branch from the latest master commit [GitHub master](https://github.com/slackha/pyJac/tree/master): `git checkout origin master -b feature/my-feature-123`
+  1. When you start working on a feature, first create new branch from the latest master commit [GitHub master](https://github.com/slackha/pyJac/tree/master): `git checkout origin master -b feature-my-feature-123`
   2. Your first commit should include docstrings and doctests in [Google/NumPy style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html#example-numpy)
   3. Use [pythonic style](http://www.python.org/dev/peps/pep-0008/)
   4. Superstars and professionals reference relevant GitHub issues in commit messages: `git commit -am "fixes #123"`
@@ -133,17 +133,17 @@ Assign the ticket to yourself.
 
 #### 2. Branch off `develop`
 
-Whenever you begin a new feature/task:
+Whenever you begin a new feature or task:
 
-`git checkout develop -b feature/my-awesome-new-feature`
-
-or
-
-`git checkout develop -b feature/NSF-123-my-awesome-new-feature`
+`git checkout develop -b feature-my-awesome-new-feature`
 
 or
 
-`git checkout develop -b bugfix/NSF-123-my-bug-fix`
+`git checkout develop -b feature-NLPIA-123-my-awesome-new-feature`
+
+or
+
+`git checkout develop -b bugfix-NLPIA-123-my-bug-fix`
 
 #### 3. Write a docstring
 
@@ -154,7 +154,7 @@ Minimum docstring:
 
 Optionally (to aid your development):
 
-* `Args:` see the Napoleon/Google/Numpy format example [above](https://github.com/aira/object_detector_app/blob/master/CONTRIBUTING.md#example-dosstring)
+* `Args:` see the Napoleon/Google/Numpy format example [above](https://github.com/totalgood/nlpia/blob/master/CONTRIBUTING.md#example-dosstring)
 
 #### 4. Commit often
 
@@ -164,14 +164,14 @@ Optionally (to aid your development):
 
 When you're ready to commit for the first time (like after you added your docstring):
 
-`git commit -am 'NSF-4 #start-progress add doctests for awesome new feature'`  
+`git commit -am 'NLPIA-4 #start-progress add doctests for awesome new feature'`  
 
 Send it to "#start-review" (the QA stage) rather than #done:
 
 
 or 
 
-`git commit -am 'NSF-4 #start-review finished adding color vectors'`  # when you are ready for someone to start code review
+`git commit -am 'NLPIA-4 #start-review finished adding color vectors'`  # when you are ready for someone to start code review
 
 #### 5. Test
 
@@ -187,7 +187,7 @@ $ python -m unittest discover -s object_detection -p "*_test.py"
 
 #### 6. PR
 
-* On github.com/aira issue a PR to the `develop` branch when you are ready for someone else on the team to run and review your changes.
+* On github.com/totalgood/nlpia issue a PR to the `develop` branch when you are ready for someone else on the team to run and review your changes.
 * Ask someone to comment on your PR.
 * Once your PR is Approved, all unittests and doctests pass, you or the reviewer may merge the PR and delete the feature branch
 

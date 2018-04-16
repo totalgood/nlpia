@@ -11,6 +11,7 @@ import configparser
 from pandas import read_csv
 
 from pugnlp.util import dict2obj
+from pugnlp.futil import touch_p
 import platform
 
 
@@ -69,7 +70,7 @@ if system_name == 'Windows':
         'level': 'DEBUG',
         'class': 'logging.handlers.NTEventLogHandler',
         'formatter': 'django'
-        }
+    }
 elif SYSLOG_PATH:
     LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.SysLogHandler']
     LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler'] = {
@@ -92,6 +93,7 @@ DATA_INFO_FILE = os.path.join(DATA_PATH, 'data_info.csv')
 
 BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
 BIGDATA_INFO_FILE = os.path.join(DATA_PATH, 'bigdata_info.csv')
+touch_p(BIGDATA_INFO_FILE, times=False)
 
 UTF8_TABLE = read_csv(os.path.join(DATA_PATH, 'utf8.csv'))
 UTF8_TO_MULTIASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.multiascii))
