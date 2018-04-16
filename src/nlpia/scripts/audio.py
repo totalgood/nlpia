@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
+from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from future import standard_library
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
+
 from timeit import default_timer as timer
 import os
+import sys
 from traceback import format_exc
 import argparse
 # from io import BytesIO
@@ -10,9 +16,10 @@ import argparse
 
 # import pyaudio  # only works with python2.7?
 import simpleaudio as sa
-# import wave
+import wave
 import speech_recognition as sr
 import pyttsx3
+from deepspeech.model import Model
 
 
 def record_audio(source='Microphone', energy_threshold=300, pause_threshold=.9,
@@ -184,7 +191,7 @@ def main_deepspeech(args):
         lm_load_end = timer() - lm_load_start
         print('Loaded language model in %0.3fs.' % (lm_load_end), file=sys.stderr)
 
-    fs, audio = wav.read(args.audio)
+    fs, audio = wave.read(args.audio)
     # We can assume 16kHz
     audio_length = len(audio) * (1 / 16000)
     assert fs == 16000, "Only 16000Hz input WAV files are supported for now!"

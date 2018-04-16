@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Round trip STT -> TTS demo using pocketSphinx, deepspeech, speech_recognition, and pyttsx3 """
-from __future__ import absolute_import, division, print_function
+from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from future import standard_library
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
+
 from timeit import default_timer as timer
 
 import speech_recognition as sr
@@ -71,7 +76,7 @@ def save_audio(audio, path='audio.wav'):
     return path
 
 
- # These constants control the beam search decoder
+# These constants control the beam search decoder
 
 # Beam width used in the CTC decoder when building candidate transcriptions
 BEAM_WIDTH = 500

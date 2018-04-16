@@ -1,7 +1,10 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+# -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
-standard_library.install_aliases()  # noqa
-from builtins import *  # noqa
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
+
 import tempfile
 import os
 import re
@@ -72,13 +75,13 @@ def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
     utf.columns = 'char name hex'.split()
     utf.name = utf.name.str.replace('<control>', 'CONTTROL CHARACTER')
     multiascii = [' '] * len(utf)
-    ascii = [' '] * len(utf)
+    asc = [' '] * len(utf)
     rows = []
     for i, name in enumerate(utf.name):
         if i < 128 and str.isprintable(chr(i)):
-            ascii[i] = chr(i)
+            asc[i] = chr(i)
         else:
-            ascii[i] = ' '
+            asc[i] = ' '
         big = re.findall(r'CAPITAL\ LETTER\ ([a-z0-9A-Z ]+$)', name)
         small = re.findall(r'SMALL\ LETTER\ ([a-z0-9A-Z ]+$)', name)
         pattern = r'(?P<description>' \
@@ -118,15 +121,15 @@ def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
                     m = big[0]
                     multiascii[i] = m
                     if len(m) == 1:
-                        ascii[i] = m
+                        asc[i] = m
                 elif small:
                     multiascii[i] = small[0].lower()
                     if len(multiascii[i]) == 1:
-                        ascii[i] = small[0].lower()
+                        asc[i] = small[0].lower()
         rows.append(gd)
     df = pd.DataFrame(rows)
     df.multiascii = df.multiascii.str.strip()
-    df.ascii = df.ascii.str.strip()
+    df['ascii'] = df['ascii'].str.strip()
     df.name = df.name.str.strip()
     return df
 

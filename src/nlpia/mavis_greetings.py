@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Constants and discovered values, like path to current installation of pug-nlp."""
-from __future__ import division, print_function, absolute_import, unicode_literals
-from builtins import (bytes, dict, int, list, object, range, str, ascii, chr, hex, input,  # noqa
-    next, oct, open, pow, round, super, filter, map, zip)
+# -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from future import standard_library
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 
 import os
 import pandas as pd
