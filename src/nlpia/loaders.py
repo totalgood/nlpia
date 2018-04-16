@@ -276,9 +276,12 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         logger.info('retained: {}'.format(filepath))
         return filepath
 
-    created_dir = mkdir_p(os.path.dirname(filepath))
+    filedir = os.path.dirname(filepath)
+    created_dir = mkdir_p(filedir)
     if verbose:
-        print(created_dir)
+        logger.info('data path created: {}'.format(created_dir))
+    assert os.path.isdir(filedir)
+    assert created_dir.endswith(filedir)
     logger.info('downloaded: {}'.format(filepath))
     with open(filepath, 'wb') as f:
         for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size)):
