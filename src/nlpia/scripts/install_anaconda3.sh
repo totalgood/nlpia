@@ -30,26 +30,23 @@ DOWNLOAD_DIR=${DOWNLOAD_DIR:-$HOME/.tmp/anaconda3}
 mkdir -p $DOWNLOAD_DIR
 
 if [ "$HOST_OS" == "linux" ] ; then
-    wget http://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh \
-        -O $DOWNLOAD_DIR/anaconda3.sh
+    wget http://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh -O $DOWNLOAD_DIR/anaconda3.sh
     chmod +x $DOWNLOAD_DIR/anaconda3.sh
     bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3
 elif [ "$HOST_OS" -eq "darwin" ] ; then
-    wget https://repo.continuum.io/archive/Anaconda2-5.1.0-MacOSX-x86_64.sh \
-        -O $DOWNLOAD_DIR/anaconda3.sh
+    wget https://repo.continuum.io/archive/Anaconda2-5.1.0-MacOSX-x86_64.sh -O $DOWNLOAD_DIR/anaconda3.sh
     chmod +x $DOWNLOAD_DIR/anaconda3.sh
     bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3
 else  # WARNING Windows (almost certainly will not work!!!!)
 	echo "Windoze enviornment detected with OSTYPE==$OSTYPE"
 	echo "WARNING: This almost certainly will not work!!!!"
-	wget https://repo.continuum.io/archive/Anaconda2-5.1.0-Windows-x86_64.exe \
-        -O $DOWNLOAD_DIR/anaconda3.exe
+	wget https://repo.continuum.io/archive/Anaconda2-5.1.0-Windows-x86_64.exe -O $DOWNLOAD_DIR/anaconda3.exe
     chmod +x $DOWNLOAD_DIR/anaconda3.exe
     $DOWNLOAD_DIR/anaconda3.exe -b -u -p $HOME/anaconda3
 fi
-chmod +x $DOWNLOAD_DIR/anaconda3.sh
-    bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3 && \
-    # rm -r -d -f $DOWNLOAD_DIR
+# chmod +x $DOWNLOAD_DIR/anaconda3.sh
+# bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3
+ # rm -r -d -f $DOWNLOAD_DIR
 export PATH=$HOME/anaconda3/bin:$PATH
 conda update --yes conda
 conda install --yes pip
