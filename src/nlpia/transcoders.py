@@ -4,6 +4,9 @@ import requests
 import re
 import json
 
+import nltk
+import spacy
+
 from pugnlp.futil import find_files
 
 from .constants import secrets, DATA_PATH
@@ -78,23 +81,65 @@ class TokenNormalizer:
         return word
 
 
-def segment_sentences(filepath, ext='asc'):
-    """ Insert and delete newlines in a text document to produce once sentence or heading per line.
+def clean_asciidoc(text):
+    """ Transform asciidoc formatted text into ASCII text that NL parsers can hangle
 
-    Lines are labeled with their classification as "sentence" or "phrase" (e.g title or heading)
-
-    1. process each line with an agressive sentence segmenter, like DetectorMorse
-    2. process our manuscript to create a complete-sentence and heading training set normalized/simplified syntax net tree is the input feature set
-       common words and N-grams inserted with their label as additional feature
-    3. process a training set with a grammar checker and sentax next to bootstrap a "complete sentence" labeler.
-    4. process each 1-3 line window (breaking on empty lines) with syntax net to label them
-    5. label each 1-3-line window of lines as "complete sentence, partial sentence/phrase, or multi-sentence"
+    TODO:
+      Tag lines and words with meta data like italics, underlined, bold, title, heading 1, etc
     """
+    text = re.sub(r'(\b|^)[[_*]{1,2}([a-zA-Z0-9])', r'"\2', text)
+    text = re.sub(r'([a-zA-Z0-9])[]_*]{1,2}', r'\1"', text)
+    return text
+
+
+def clean_markdown(text):
+    return clean_asciidoc(text)
+
+
+def split_sentences_nltk(text, language_model='tokenizers/punkt/english.pickle'):
+    sentence_detector = nltk.data.load(language_model)
+    return list(sentence_detector.tokenize(text.strip()))
+
+
+def split_sentences_spacy(text, language_model='en'):
+    """ You must download a spacy language model with python -m download 'en' """
+    try:
+        nlp = spacy.load(language_model)
+    except (OSError, IOError):
+        spacy.download(language_model)
+    parsed_text = nlp(text)
+    sentences = []
+    for w, span in enumerate(parsed_text.sents):
+        sent = ''.join(parsed_text[i].string for i in range(span.start, span.end)).strip()
+        if len(sent):
+            sentences.append(sent)
+    return sentences
+
+
+def segment_sentences(filepath, ext='asc', splitter=split_sentences_nltk):
+    """ Return a list of all sentences and empty lines.
+
+    TODO:
+        1. process each line with an agressive sentence segmenter, like DetectorMorse
+        2. process our manuscript to create a complete-sentence and heading training set normalized/simplified
+           syntax net tree is the input feature set common words and N-grams inserted with their label as additional feature
+        3. process a training set with a grammar checker and sentax next to bootstrap a "complete sentence" labeler.
+        4. process each 1-3 line window (breaking on empty lines) with syntax net to label them
+        5. label each 1-3-line window of lines as "complete sentence, partial sentence/phrase, or multi-sentence"
+    """
+    sentences = []
     for filemeta in find_files(filepath, ext=ext):
-        altered_text = ''
         with open(filemeta['path'], 'rt') as fin:
-            for line in fin:
-                altered_text += line
+            batch = []
+            for i, line in enumerate(fin):
+                if not line.strip():
+                    sentences.extend(splitter('\n'.join(batch)))
+                    batch = [line]  # may contain all whitespace
+                else:
+                    batch.append(line)
+            if len(batch):
+                sentences.extend(splitter('\n'.join(batch)))  # tag sentences with line + filename where they started
+    return sentences
 
 
 def fix_hunspell_json(badjson_path='en_us.json', goodjson_path='en_us_fixed.json'):

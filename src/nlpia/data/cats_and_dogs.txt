@@ -1,11 +1,37 @@
 The Cat in the Hat
 The cat ate a rat.
+I rode my bike home.
+The car is in the garage.
+Dogs like to chase cars.
+The post man likes our dog.
+Where do you live little guy?
+Where did you come from?
+The cat chased a mouse.
+A cute kitten played with its mother.
+I was in the dog house last night.
+He refused to sleep in the dog house.
+The cat steered clear of the dog house.
+He makes a good guard dog.
+You sure are cute.
+Go lie down on your bed.
+The dog jumped up on the bed.
+The dog rescued me from a hairy . 
 The cat chased my laser pointer.
 A dog chased my bike and barked loudly.
-I ran from the barking dog.
+I ran from the dog and jumped the bench.
 A dog chased the car, barking.
+Be a good boy and go on home now.
+That's a good boy.
+My dog is a good boy most of the time.
+The dog likes a scratch behind his ear.
+The cat likes a scratch under her chin.
+It rained cats and dogs.
+She keeps a clean house.
+The litter box is in the back of the house.
+Do all dogs go to heaven?
 The Cat's Meow
-The cat meowed so I pet it until it purred.
+The dog whined until I pet its head.
+The cat meowed and I pet it until it purred.
 A cat meowed on the hot tin roof
 Cats and dogs playing together.
 My cat has long hair.
@@ -76,15 +102,18 @@ Books taught me how to read people.
 Rascal taught me empathy and care.
 The cat crossed the lane and then the sidewalk.
 The dog walked up and sniffed my leg.
-I froze.
-An old dog can learn new tricks if they involve food.
+I froze as he sniffed.
+An old dog can learn new tricks if there's food involved.
 The raccoons ate all the cat food in the garage.
 Berk, the vet, has ideas about sports games for people.
 Rascal hated the car because it's associated with the vet.
 Char drooled with Pavlovian delight at the hotdog in my hand.
 Ashley had a wiener dog that she took boating up the river.
-The alligator ate several pets and ducks before Clayton caught him.
-The alligators and turtles and croakers coexist in the Inner Harbor.
+An alligator ate several pets and ducks before Clayton caught him.
+The Inner Harbor had an alligator, some turtles and lots of fish.
+Clinton helped Clayton catch the alligator.
+The ranger dragged the alligator over the seawall.
+He use duck tape to keep its mouth closed.
 Alligators and wolves compete for food on Horn Island.
 No man is an island, unless he's a lone wolf like Walter Anderson.
 Walter and Moon taught me how to crack video games.
@@ -102,7 +131,9 @@ You don't get a fever from Toxoplasmosis, you just get aggressive.
 Mice get attracted to the smell of cats when the have Toxoplasmosis.
 Women become more trusting once they get Toxoplasmosis.
 Men become more gullible once they get Toxoplasmosis.
-Ants get a brain virus that makes them sacrifice themselves on the tip of a blade of grass.
+Ants get a virus that makes crawl to the tip of a blade of grass.
+Humans harbor infectious diseases from domestic pets.
+Early humans slept in the barn with domesticated animals.
 Sheep and deer eat grass.
 Wolves eat deer and stay away from sheep if they smell humans.
 The litter box smells.
@@ -140,3 +171,27 @@ Ursa, a black lab, would beat her tail against the wall until it was raw.
 Dogs wag their tail when they are happy.
 Dogs and cats love raw meat.
 Lizards, turtles, and alligators are kind-of green and slimy.
+Some lizards can grow a new tail.
+The cat held the lizard's tail in its mouth.
+Fido chased the cat up the alley.
+She was an alley cat.
+Cats and dogs sleeping together.
+A turtle beat the rabbit in a race.
+The snapping turtle won the race.
+Mormor loved turtles and had them all over her house.
+My brother had an aquarium.
+Our neighbors raised baby alligators.
+Brian wanted to start an alligator farm.
+Billy never had any pets at his house.
+I loved frogs and the color green.
+Where do you keep a turtle in your house?
+How many pets do you have at home?
+Does your dog have a dog house?
+Are there turtles in your pond?
+Are there fish in the pond?
+Are there fish in your fountain?
+What about frogs in the pond?
+Can lizards swim under water?
+She caught a frog with her paw.
+She bit the frog with her teeth.
+

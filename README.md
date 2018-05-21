@@ -26,8 +26,9 @@ Depending on your OS you may have better luck using conda to install the depende
 The environment.yml file creates a conda environment called `conda_env_nlpia`
 
 ```bash
-# conda env create -f conda/environment.yml
-# source activate conda_env_nlpia
+# conda env create -n nlpiaenv -f conda/environment.yml
+# conda install pip  # to get the latest, more robust and informative version of pip
+# source activate nlpiaenv
 ```
 
 #### Use `pip`

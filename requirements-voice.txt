@@ -16,3 +16,6 @@ deepspeech>=0.1.1,<0.2.0
 # Offline SpeechRecognizer requires pocketsphinx and swig
 # brew install cmu-pocketsphinx
 # brew install swig
+
+
+libasound2-plugin-smixer libasound2-data libasound2-plugins-extra libasound2 libasound2-dev libasound2-plugins libasound2-doc libasound2-plugin-equal
