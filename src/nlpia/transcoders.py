@@ -116,7 +116,7 @@ def split_sentences_spacy(text, language_model='en'):
     return sentences
 
 
-def segment_sentences(filepath, ext='asc', splitter=split_sentences_nltk):
+def segment_sentences(text, ext='asc', splitter=split_sentences_nltk):
     """ Return a list of all sentences and empty lines.
 
     TODO:
@@ -126,6 +126,8 @@ def segment_sentences(filepath, ext='asc', splitter=split_sentences_nltk):
         3. process a training set with a grammar checker and sentax next to bootstrap a "complete sentence" labeler.
         4. process each 1-3 line window (breaking on empty lines) with syntax net to label them
         5. label each 1-3-line window of lines as "complete sentence, partial sentence/phrase, or multi-sentence"
+
+    >>> segment_se
     """
     sentences = []
     for filemeta in find_files(filepath, ext=ext):
@@ -138,7 +140,7 @@ def segment_sentences(filepath, ext='asc', splitter=split_sentences_nltk):
                 else:
                     batch.append(line)
             if len(batch):
-                sentences.extend(splitter('\n'.join(batch)))  # tag sentences with line + filename where they started
+                sentences.extend(splitter('\n'.join(batch)))  # TODO: tag sentences with line + filename where they started
     return sentences
 
 
