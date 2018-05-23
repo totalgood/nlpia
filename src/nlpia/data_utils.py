@@ -8,6 +8,10 @@ standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 import tempfile
 import os
 import re
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 import requests
 import pandas as pd
@@ -57,14 +61,31 @@ NAME_ASCII = {
 }
 
 
-def iter_lines(url):
-    """ Return an iterator over the lines of a file or URI response. """
-    if url is None:
-        url = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
-    elif isinstance(url, str):
-        if os.path.isfile(os.path.join(DATA_PATH, url)):
-            return open(os.path.join(DATA_PATH, url))
-    return requests.get(url, stream=True, allow_redirects=True)
+def iter_lines(url_or_text):
+    r""" Return an iterator over the lines of a file or URI response.
+
+    >>> len(list(iter_lines('cats_and_dogs.txt')))
+    197
+    >>> len(list(iter_lines(list('abcdefgh'))))
+    8
+    >>> len(list(iter_lines('abc\n def\n gh\n')))
+    3
+    >>> len(list(iter_lines('abc\n def\n gh')))
+    3
+    """
+    if url_or_text is None or not url_or_text:
+        return []
+        # url_or_text = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
+    elif isinstance(url_or_text, str):
+        if os.path.isfile(os.path.join(DATA_PATH, url_or_text)):
+            return open(os.path.join(DATA_PATH, url_or_text))
+        elif os.path.isfile(url_or_text):
+            return open(os.path.join(url_or_text))
+        else:
+            return StringIO(url_or_text)
+    elif isinstance(url_or_text, (list, tuple)):
+        return iter(url_or_text)
+    return requests.get(url_or_text, stream=True, allow_redirects=True)
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
