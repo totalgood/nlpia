@@ -1,4 +1,4 @@
-name: conda_env_nlpia
+name: nlpiaenv
 
 channels:
   - conda-forge
