@@ -8,6 +8,7 @@ import nltk
 import spacy
 
 from pugnlp.futil import find_files
+from nlpia.data_utils import iter_lines
 
 from .constants import secrets, DATA_PATH
 
@@ -106,7 +107,7 @@ def split_sentences_spacy(text, language_model='en'):
     try:
         nlp = spacy.load(language_model)
     except (OSError, IOError):
-        spacy.download(language_model)
+        spacy.cli.download(language_model)
     parsed_text = nlp(text)
     sentences = []
     for w, span in enumerate(parsed_text.sents):
@@ -116,7 +117,7 @@ def split_sentences_spacy(text, language_model='en'):
     return sentences
 
 
-def segment_sentences(text, ext='asc', splitter=split_sentences_nltk):
+def segment_sentences(path=os.path.join(DATA_PATH, 'book'), ext='asc', splitter=split_sentences_spacy):
     """ Return a list of all sentences and empty lines.
 
     TODO:
@@ -127,21 +128,70 @@ def segment_sentences(text, ext='asc', splitter=split_sentences_nltk):
         4. process each 1-3 line window (breaking on empty lines) with syntax net to label them
         5. label each 1-3-line window of lines as "complete sentence, partial sentence/phrase, or multi-sentence"
 
-    >>> segment_se
+    >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'book')))
+    8324
+    >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'book',
+    ...     'Chapter 00 -- Preface.asc'), splitter=split_sentences_nltk))
+    139
+    >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'book',
+    ...     'Chapter 01 -- Packets of Thought (Basic NLP).asc'), splitter=split_sentences_nltk))
+    585
     """
     sentences = []
-    for filemeta in find_files(filepath, ext=ext):
-        with open(filemeta['path'], 'rt') as fin:
-            batch = []
-            for i, line in enumerate(fin):
-                if not line.strip():
+    if os.path.isdir(path):
+        for filemeta in find_files(path, ext=ext):
+            with open(filemeta['path'], 'rt') as fin:
+                batch = []
+                for i, line in enumerate(fin):
+                    if not line.strip():
+                        sentences.extend(splitter('\n'.join(batch)))
+                        batch = [line]  # may contain all whitespace
+                    else:
+                        batch.append(line)
+                if len(batch):
+                    # TODO: tag sentences with line + filename where they started
                     sentences.extend(splitter('\n'.join(batch)))
-                    batch = [line]  # may contain all whitespace
-                else:
-                    batch.append(line)
-            if len(batch):
-                sentences.extend(splitter('\n'.join(batch)))  # TODO: tag sentences with line + filename where they started
+    else:
+        batch = []
+        for i, line in enumerate(iter_lines(path)):
+            # TODO: filter out code and meta lines using asciidoc or markdown parser
+            # split into batches based on empty lines
+            if not line.strip():
+                sentences.extend(splitter('\n'.join(batch)))
+                # first line may contain all whitespace
+                batch = [line]
+            else:
+                batch.append(line)
+        if len(batch):
+            # TODO: tag sentences with line + filename where they started
+            sentences.extend(splitter('\n'.join(batch)))
+
     return sentences
+
+
+def tag_code(line):
+    cleaned = line.strip().lower()
+    if cleaned.startswith('>>> ') or cleaned.startswith:
+        return 'code.python.doctest'
+
+
+def tag_code_lines(text, markup=None):
+    if (markup is None or markup.lower() in ('asc', '.asc', 'adoc', '.adoc', '.asciidoc') or (
+            os.path.isfile(text) and text.lower().split('.')[-1] in ('asc', 'adoc', 'asciidoc'))):
+        markup = 'asciidoc'
+    lines = []
+    within_codeblock = False
+    for i, line in enumerate(iter_lines(text)):
+        # TODO: filter out code and meta lines using asciidoc or markdown parser
+        # split into batches based on empty lines
+        tag = tag_code(line, markup=markup)
+        if within_codeblock or tag.startswith('code.'):
+            if tag.endswith('.end'):
+                within_codeblock = False
+            elif tag == 'code.start':
+                within_codeblock = True
+        lines.append(line, tag)
+    return lines
 
 
 def fix_hunspell_json(badjson_path='en_us.json', goodjson_path='en_us_fixed.json'):
