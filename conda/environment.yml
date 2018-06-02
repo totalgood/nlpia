@@ -11,6 +11,7 @@ dependencies:
   - pillow=4.3.0
   - pyqt=5.6.0
   - pytest=3.2.1
+  - pytest-cov=2.5.1
   - pandoc=2.1.2
   - spacy=2.0.9
   - swig>=3.0.12
