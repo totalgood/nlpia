@@ -1,8 +1,9 @@
 """ Translate documents in some way, like `sed`, only a bit more complex """
 import os
 import requests
-import re
+import regex
 import json
+from urllib.error import URLError
 
 import nltk
 import spacy
@@ -11,6 +12,9 @@ from pugnlp.futil import find_files
 from nlpia.data_utils import iter_lines
 
 from .constants import secrets, DATA_PATH
+
+from logging import getLogger
+logger = getLogger(__name__)
 
 
 def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified', access_token=None):
@@ -29,7 +33,7 @@ def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified'
     """
     access_token = access_token or secrets.bitly.access_token
     output_ext = output_ext or ''
-    url_regex = re.compile(url_regex) if isinstance(url_regex, str) else url_regex
+    url_regex = regex.compile(url_regex) if isinstance(url_regex, str) else url_regex
     filemetas = []
     for filemeta in find_files(filepath, ext=ext):
         filemetas += [filemeta]
@@ -65,7 +69,7 @@ class TokenNormalizer:
     def read_mapping(self, file_path=None):
         if file_path is None:
             file_path = os.path.join(DATA_PATH, 'emnlp_dict.txt')
-        reg = re.compile("^([^\t\n]+)\t([^\t\n]+)\n$")
+        reg = regex.compile("^([^\t\n]+)\t([^\t\n]+)\n$")
         result = {}
         with open(file_path) as f:
             for line in f:
@@ -88,8 +92,8 @@ def clean_asciidoc(text):
     TODO:
       Tag lines and words with meta data like italics, underlined, bold, title, heading 1, etc
     """
-    text = re.sub(r'(\b|^)[[_*]{1,2}([a-zA-Z0-9])', r'"\2', text)
-    text = re.sub(r'([a-zA-Z0-9])[]_*]{1,2}', r'\1"', text)
+    text = regex.sub(r'(\b|^)[[_*]{1,2}([a-zA-Z0-9])', r'"\2', text)
+    text = regex.sub(r'([a-zA-Z0-9])[]_*]{1,2}', r'\1"', text)
     return text
 
 
@@ -98,16 +102,50 @@ def clean_markdown(text):
 
 
 def split_sentences_nltk(text, language_model='tokenizers/punkt/english.pickle'):
-    sentence_detector = nltk.data.load(language_model)
+    try:
+        sentence_detector = nltk.data.load(language_model)
+    except LookupError:
+        try:
+            nltk.download('punkt', raise_on_error=True)
+        except ValueError:
+            return regex.text.split('.')
     return list(sentence_detector.tokenize(text.strip()))
 
 
+def split_sentences_regex(text):
+    """ Use dead-simple regex to split text into sentences. Very poor accuracy.
+
+    >>> split_sentences_regex("Hello World. I'm I.B.M.'s Watson. --Watson")
+    ['Hello World.', "I'm I.B.M.'s Watson.", '--Watson']
+    """
+    parts = regex.split(r'([a-zA-Z0-9][.?!])[\s$]', text)
+    sentences = [''.join(s) for s in zip(parts[0::2], parts[1::2])]
+    return sentences + [parts[-1]] if len(parts) % 2 else sentences
+
+
 def split_sentences_spacy(text, language_model='en'):
-    """ You must download a spacy language model with python -m download 'en' """
+    r""" You must download a spacy language model with python -m download 'en'
+
+    The default English language model for spacy tends to be a lot more agressive than NLTK's punkt:
+
+    >>> split_sentences_nltk("Hi Ms. Lovelace.\nI'm a wanna-\nbe human @ I.B.M. ;) --Watson 2.0")
+    ['Hi Ms. Lovelace.', "I'm a wanna-\nbe human @ I.B.M.", ';) --Watson 2.0']
+    >>> split_sentences_spacy("Hi Ms. Lovelace.\nI'm a wanna-\nbe human @ I.B.M. ;) --Watson 2.0")
+    ['Hi Ms. Lovelace.', "I'm a wanna-", 'be human @', 'I.B.M. ;) --Watson 2.0']
+
+    >>> split_sentences_spacy("Hi Ms. Lovelace. I'm at I.B.M. --Watson 2.0")
+    ['Hi Ms. Lovelace.', "I'm at I.B.M. --Watson 2.0"]
+    >>> split_sentences_nltk("Hi Ms. Lovelace. I'm at I.B.M. --Watson 2.0")
+    ['Hi Ms. Lovelace.', "I'm at I.B.M.", '--Watson 2.0']
+    """
     try:
         nlp = spacy.load(language_model)
     except (OSError, IOError):
-        spacy.cli.download(language_model)
+        try:
+            spacy.cli.download(language_model)
+        except URLError:
+            logger.warn("Unable to download Spacy language model '{}'. Using offline NLTK punkt sentence splitter instead.")
+            return split_sentences_nltk(text)
     parsed_text = nlp(text)
     sentences = []
     for w, span in enumerate(parsed_text.sents):
@@ -115,6 +153,27 @@ def split_sentences_spacy(text, language_model='en'):
         if len(sent):
             sentences.append(sent)
     return sentences
+
+
+def get_splitter(fun=None):
+    if fun is None:
+        fun = split_sentences_nltk
+    elif fun in locals():
+        fun = locals()[fun]
+    elif fun.lower().endswith('nltk'):
+        fun = split_sentences_nltk
+    elif fun.lower().endswith('spacy'):
+        fun = split_sentences_spacy
+
+    try:
+        fun('Test sentence.')
+    except:  # noqa
+        fun = None
+    if callable(fun):
+
+        return fun
+    else:
+        return None
 
 
 def segment_sentences(path=os.path.join(DATA_PATH, 'book'), ext='asc', splitter=split_sentences_nltk):
@@ -210,9 +269,9 @@ def fix_hunspell_json(badjson_path='en_us.json', goodjson_path='en_us_fixed.json
     with open(badjson_path, 'r') as fin:
         with open(goodjson_path, 'w') as fout:
             for i, line in enumerate(fin):
-                line2 = re.sub(r'\[(\w)', r'["\1', line)
-                line2 = re.sub(r'(\w)\]', r'\1"]', line2)
-                line2 = re.sub(r'(\w),(\w)', r'\1","\2', line2)
+                line2 = regex.sub(r'\[(\w)', r'["\1', line)
+                line2 = regex.sub(r'(\w)\]', r'\1"]', line2)
+                line2 = regex.sub(r'(\w),(\w)', r'\1","\2', line2)
                 fout.write(line2)
 
     with open(goodjson_path, 'r') as fin:
