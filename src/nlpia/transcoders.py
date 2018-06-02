@@ -117,7 +117,7 @@ def split_sentences_spacy(text, language_model='en'):
     return sentences
 
 
-def segment_sentences(path=os.path.join(DATA_PATH, 'book'), ext='asc', splitter=split_sentences_spacy):
+def segment_sentences(path=os.path.join(DATA_PATH, 'book'), ext='asc', splitter=split_sentences_nltk):
     """ Return a list of all sentences and empty lines.
 
     TODO:
