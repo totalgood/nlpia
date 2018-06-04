@@ -87,10 +87,13 @@ class TokenNormalizer:
 
 
 def clean_asciidoc(text):
-    """ Transform asciidoc formatted text into ASCII text that NL parsers can hangle
+    """ Transform asciidoc text into ASCII text that NL parsers can handle
 
     TODO:
       Tag lines and words with meta data like italics, underlined, bold, title, heading 1, etc
+
+    >>> clean_asciidoc('**Hello** _world_!')
+    '"Hello" "world"!'
     """
     text = regex.sub(r'(\b|^)[[_*]{1,2}([a-zA-Z0-9])', r'"\2', text)
     text = regex.sub(r'([a-zA-Z0-9])[]_*]{1,2}', r'\1"', text)
@@ -99,6 +102,31 @@ def clean_asciidoc(text):
 
 def clean_markdown(text):
     return clean_asciidoc(text)
+
+
+def split_text_blocks(text):
+    r""" Splits asciidoc and markdown files into a list of lists (blocks text in a list of lines of text)
+
+    >>> split_text_blocks("# Title \nHello world! \nI'm here today to\nstrip\nyour text.\n \t  \r\nNext block\n\nwas short.")
+    [['# Title \n',
+      'Hello world! \n',
+      "I'm here today to\n",
+      'strip\n',
+      'your text.\n',
+      ' \t  \r\n'],
+     ['Next block\n', '\n'],
+     ['was short.']]
+    """
+    blocks = []
+    block = []
+    for line in iter_lines(text):
+        block.append(line)
+        if not line.strip():
+            blocks.append(block)
+            block = []
+    if block:
+        blocks.append(block)
+    return blocks
 
 
 def split_sentences_nltk(text, language_model='tokenizers/punkt/english.pickle'):
