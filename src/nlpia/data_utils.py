@@ -65,7 +65,7 @@ def iter_lines(url_or_text):
     r""" Return an iterator over the lines of a file or URI response.
 
     >>> len(list(iter_lines('cats_and_dogs.txt')))
-    197
+    200
     >>> len(list(iter_lines(list('abcdefgh'))))
     8
     >>> len(list(iter_lines('abc\n def\n gh\n')))
