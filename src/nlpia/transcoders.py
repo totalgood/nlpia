@@ -101,6 +101,11 @@ def clean_asciidoc(text):
 
 
 def clean_markdown(text):
+    r""" Transform markdown text into ASCII natural language text that NL parsers can handle
+
+    >>> clean_markdown('**Hello** _world_!')
+    '"Hello" "world"!'
+    """
     return clean_asciidoc(text)
 
 
