@@ -121,6 +121,7 @@ def split_text_blocks(text):
       ' \t  \r\n'],
      ['Next block\n', '\n'],
      ['was short.']]
+    >>> split_text_blocks(os.path.join(DATA_PATH, 'book'))
     """
     blocks = []
     block = []
@@ -135,7 +136,6 @@ def split_text_blocks(text):
 
 
 def split_sentences_nltk(text, language_model='tokenizers/punkt/english.pickle'):
-    text = '\n'.join(iter_lines(text))
     try:
         sentence_detector = nltk.data.load(language_model)
     except LookupError:
@@ -154,7 +154,6 @@ def split_sentences_regex(text):
     >>> split_sentences_regex("Hello World. I'm I.B.M.'s Watson. --Watson")
     ['Hello World.', "I'm I.B.M.'s Watson.", '--Watson']
     """
-    text = '\n'.join(iter_lines(text))
     parts = regex.split(r'([a-zA-Z0-9][.?!])[\s$]', text)
     sentences = [''.join(s) for s in zip(parts[0::2], parts[1::2])]
     return sentences + [parts[-1]] if len(parts) % 2 else sentences
@@ -175,7 +174,6 @@ def split_sentences_spacy(text, language_model='en'):
     >>> split_sentences_nltk("Hi Ms. Lovelace. I'm at I.B.M. --Watson 2.0")
     ['Hi Ms. Lovelace.', "I'm at I.B.M.", '--Watson 2.0']
     """
-    text = '\n'.join(iter_lines(text))
     try:
         nlp = spacy.load(language_model)
     except (OSError, IOError):

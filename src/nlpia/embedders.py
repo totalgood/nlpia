@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """model_poly_tsne
 
 Run nlpia.data.download() to download GBs of models like W2V and the LSAmodel used here
 
 Computes a TSNE embedding for the tweet LSA model and then fit a 2nd degree polynomial to that embedding.
 """
+from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from future import standard_library
+from past.builtins import basestring
+standard_library.install_aliases()  # noqa
 
 import os
 import gc

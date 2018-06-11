@@ -8,16 +8,20 @@ from nltk.stem import PorterStemmer
 # nltk.download('wordnet')  # noqa
 # from nltk.stem.wordnet import WordNetLemmatizer
 
-corpus = get_data('cats_and_dogs')
+corpus = get_data('cats_and_dogs_sorted')[:40]
 
-STOPWORDS = ('a an and or the do are with from for of on in by if at to into them' +
-             'it its it\'s that than our you your ? , . !').split()
-SYNONYMS = dict(zip('wolv people person women woman man human he  we  her she him his hers'.split(),
-                    'wolf her    her    her   her   her her   her her her her her her her'.split()))
-SYNONYMS.update(dict(zip('ate pat smarter have had isn\'t hasn\'t no  got get become been was were wa be sat seat sit'.split(),
-                         'eat pet smart   has  has not    not     not has has is     is   is  is   is is sit sit  sit'.split())))
-SYNONYMS.update(dict(zip('i me my mine our ours catbird bird birds birder tortoise turtle turtles turtle\'s'.split(),
-                         'i i  i  i    i   i    bird    bird birds bird   turtle   turtle turtle  turtle'.split())))
+STOPWORDS = 'a an and or the do are with from for of on in by if at to into them'.split()
+STOPWORDS += 'to at it its it\'s that than our you your - -- " \' ? , . !'.split()
+
+SYNONYMS = dict(zip(
+    'wolv people person women woman man human he  we  her she him his hers'.split(),
+    'wolf her    her    her   her   her her   her her her her her her her'.split()))
+SYNONYMS.update(dict(zip(
+    'ate pat smarter have had isn\'t hasn\'t no  got get become been was were wa be sat seat sit'.split(),
+    'eat pet smart   has  has not    not     not has has is     is   is  is   is is sit sit  sit'.split())))
+SYNONYMS.update(dict(zip(
+    'i me my mine our ours catbird bird birds birder tortoise turtle turtles turtle\'s don\'t'.split(),
+    'i i  i  i    i   i    bird    bird birds bird   turtle   turtle turtle  turtle    not'.split())))
 
 docs = [doc.lower() for doc in corpus]
 docs = [casual_tokenize(doc) for doc in docs]
@@ -28,23 +32,72 @@ docs = [[SYNONYMS.get(w, w) for w in words if w not in STOPWORDS] for words in d
 docs = [' '.join(w for w in words if w not in STOPWORDS) for words in docs]
 
 
-tfidfer = TfidfVectorizer(min_df=2, max_df=.6, stop_wrods=None, token_pattern=r'(?u)\b\w+\b')
+tfidfer = TfidfVectorizer(min_df=2, max_df=.6, stop_words=None, token_pattern=r'(?u)\b\w+\b')
 tfidf_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())
 id_words = [(i, w) for (w, i) in tfidfer.vocabulary_.items()]
 tfidf_dense.columns = list(zip(*sorted(id_words)))[1]
+
+pd.options.display.width = 110
+pd.options.display.max_columns = 14
+pd.options.display.max_colwidth = 32
+fun_words = 'cat dog animal pet city apple NYC car bike hat'
+fun_stems = [stemmer.stem(w) for w in casual_tokenize(fun_words)]
+fun_words = fun_words.split()
+
+word_tfidf_dense = pd.DataFrame(tfidfer.transform(fun_stems).todense())
+word_tfidf_dense.columns = list(zip(*sorted(id_words)))[1]
+word_tfidf_dense.index = fun_stems
+"""
+>>> word_tfidf_dense[fun_stems]
+      cat  dog  anim  pet  citi  appl  nyc  car  bike  hat
+cat   1.0  0.0   0.0  0.0   0.0   0.0  0.0  0.0   0.0  0.0
+dog   0.0  1.0   0.0  0.0   0.0   0.0  0.0  0.0   0.0  0.0
+anim  0.0  0.0   1.0  0.0   0.0   0.0  0.0  0.0   0.0  0.0
+pet   0.0  0.0   0.0  1.0   0.0   0.0  0.0  0.0   0.0  0.0
+citi  0.0  0.0   0.0  0.0   1.0   0.0  0.0  0.0   0.0  0.0
+appl  0.0  0.0   0.0  0.0   0.0   1.0  0.0  0.0   0.0  0.0
+nyc   0.0  0.0   0.0  0.0   0.0   0.0  1.0  0.0   0.0  0.0
+car   0.0  0.0   0.0  0.0   0.0   0.0  0.0  1.0   0.0  0.0
+bike  0.0  0.0   0.0  0.0   0.0   0.0  0.0  0.0   1.0  0.0
+hat   0.0  0.0   0.0  0.0   0.0   0.0  0.0  0.0   0.0  1.0
+"""
+
+tfidfer.use_idf = False
+tfidfer.norm = None
+bow_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())
+bow_dense.columns = list(zip(*sorted(id_words)))[1]
+bow_dense = bow_dense.astype(int)
+tfidfer.use_idf = True
+tfidfer.norm = 'l2'
+
 """
 >>> tfidf_dense.shape
 (200, 170)
 """
 
-pd.options.display.width = 150
-pd.options.display.max_columns = 16
+
+bow_pretty = bow_dense.copy()
+bow_pretty = bow_pretty[fun_stems]
+bow_pretty['text'] = corpus
+for col in fun_stems:
+    bow_pretty.loc[bow_pretty[col] == 0, col] = ''
+bow_pretty.head(16)
+
 tfidf_pretty = tfidf_dense.copy()
-tfidf_pretty = tfidf_pretty[['bike', 'cat', 'car', 'chase', 'dog', 'hat', 'i']].head(10).round(1)
-tfidf_pretty[tfidf_pretty == 0] = ''
-tfidf_pretty['...'] = ''
-tfidf_pretty['text'] = corpus[:10]
-tfidf_pretty
+tfidf_pretty = tfidf_pretty[fun_stems]
+tfidf_pretty['text'] = corpus
+# tfidf_pretty['diversity'] = tfidf_pretty[fun_stems].T.astype(bool).sum()
+# tfidf_pretty = tfidf_pretty.sort_values('diversity', ascending=False).round(2)
+# from nlpia.constants import DATA_PATH
+# with open(DATA_PATH + '/cats_and_dogs_sorted.txt', 'w') as fout:
+#     fout.write('\n'.join(list(tfidf_pretty.text.values)))
+tfidf_pretty = tfidf_pretty.round(2)
+for col in fun_stems:
+    tfidf_pretty.loc[tfidf_pretty[col] == 0, col] = ''
+# tfidf_pretty[:text]tfidf_pretty.text.str[:16]
+tfidf_pretty.head(16)
+
+
 """
 >>> pd.options.display.width = 150
 >>> pd.options.display.max_columns = 16
@@ -85,28 +138,38 @@ tfidf_zeros
 """
 
 from sklearn.decomposition import PCA
-pcaer = PCA(n_components=3)
+pcaer = PCA(n_components=4)
 
-doc_topic_vectors = pd.DataFrame(pcaer.fit_transform(tfidf_dense.values), columns='A B C'.split())
+doc_topic_vectors = pd.DataFrame(pcaer.fit_transform(tfidf_dense.values), columns='topic_A topic_B topic_C topic_D'.split())
+doc_topic_vectors['text'] = corpus
+pd.options.display.max_colwidth = 55
 doc_topic_vectors.round(1)
-#        A    B    C
-# 0    0.0  0.4 -0.1
-# 1    0.0  0.5 -0.2
-# 2    0.5 -0.2 -0.0
-# ...
-# 197 -0.2 -0.2 -0.0
-# 198 -0.2 -0.2 -0.0
-# 199  0.4 -0.2 -0.0
 """
-doc_topic_vectors.round(2)
-        A     B     C
-0    0.01  0.38 -0.14
-1    0.03  0.48 -0.17
-2    0.49 -0.21 -0.01
-3   -0.14  0.03  0.08
-...
+>>> doc_topic_vectors.round(1)
+    topic_A  topic_B  topic_C  topic_D                                                             text
+0      -0.2      0.1      0.5     -0.2  Animals don't drive cars, but my pet dog likes to stick his ...
+1       0.1      0.1     -0.0     -0.3              The Cat in the Hat is not about an animal or a hat.
+2       0.1     -0.2      0.5     -0.3                   Cats don't like riding into the city in a car.
+3      -0.2     -0.5      0.0      0.3                      Dogs love to chase cars, trucks, and bikes.
+4      -0.2     -0.3      0.2      0.1        Wild cats chase bikes and runners but not cars or trucks.
+5      -0.1     -0.0      0.6     -0.2              Animals, including pets, don't like riding in cars.
+6       0.6      0.0     -0.1      0.0                                 NYC is a city that never sleeps.
+7       0.7      0.1      0.0      0.2                                  Come to NYC. See the Big Apple!
+8       0.8      0.1      0.0      0.2                                   NYC is known as the Big Apple.
+9       0.7      0.1     -0.0      0.1  NYC is the only city where you can hardly find a typical Ame...
+10     -0.2     -0.1     -0.5     -0.3                                         It rained cats and dogs.
+11     -0.4      0.5     -0.0      0.4                                               I love my pet cat.
+12      0.3      0.1     -0.1      0.4                                      I love New York City (NYC).
+13     -0.2      0.3      0.2     -0.2                                      He pet the dog on the head.
+14     -0.2     -0.5      0.2      0.0                                         Dogs like to chase cars.
+15     -0.2     -0.1     -0.3     -0.1                          The cat steered clear of the dog house.
+16     -0.1     -0.4      0.3      0.1                                         The car had a bike rack.
 """
 
+word_topic_vectors = pd.DataFrame(pcaer.transform(word_tfidf_dense.values),
+                                  columns='topic_A topic_B topic_C topic_D'.split())
+word_topic_vectors.index = fun_stems
+word_topic_vectors.round(1)
 
 """
 >>> tfidf_similarity = []
@@ -183,3 +246,29 @@ tokenize('A Rotweiller barked at my car incessantly.')
 list(df.columns)
 # ['ate', 'can', 'car', 'cat', 'chase', 'cute', 'die', 'dog', 'ferret', 'flower', 'hair', 'hat', 'have', 'it', 'kitten', 'pet', 'ran',
 #   'squirrel', 'struck', 'took', 'tree', 'trick', 'turtl', 'up', 'vet', 'water'],
+"""
+
+U, Sigma, VT = np.linalg.svd(tfidf_dense)
+S = Sigma.copy()
+S[4:] = 0
+doc_labels = ['doc{}'.format(i) for i in range(len(tfidf_dense))]
+U_df = pd.DataFrame(U, index=doc_labels, columns=doc_labels).head(8)
+VT_df = pd.DataFrame(VT, index=tfidf_dense.columns, columns=tfidf_dense.columns)
+"""
+Try to reconstruct an approximate TFIDF:
+
+>>> U[:32,:32] @ (S @ VT)
+array([[ 0.12191697,  0.01013273,  0.04009995, ...,  0.06057937,
+         0.07675374, -0.00521042],
+       [ 0.0352883 ,  0.07193914,  0.00248612, ...,  0.00928599,
+         0.02413519,  0.02511732],
+       [ 0.0886943 ,  0.0689894 ,  0.06191171, ...,  0.08041404,
+        -0.0090325 ,  0.01368156],
+       ...,
+       [-0.00116523,  0.00980797,  0.00397578, ..., -0.00540478,
+         0.04008382,  0.01717131],
+       [ 0.08695312,  0.01880789,  0.04888827, ...,  0.0604496 ,
+         0.04363558,  0.00425347],
+       [ 0.06353676, -0.01267888,  0.0766847 , ...,  0.07791765,
+         0.01870914,  0.00097211]])
+"""

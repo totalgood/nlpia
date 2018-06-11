@@ -13,8 +13,10 @@
 >> plt.show()
 """
 import pandas as pd
-pd.set_option('display.max_columns', 6)  
-from sklearn.decomposition import PCA  
+pd.set_option('display.max_columns', 6)
+from sklearn.decomposition import PCA
+import matplotlib
+matplotlib.use('TkAgg')  # noqa
 import seaborn
 from matplotlib import pyplot as plt
 from nlpia.data.loaders import get_data

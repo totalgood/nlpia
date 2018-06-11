@@ -12,7 +12,8 @@ from __future__ import print_function, unicode_literals, division, absolute_impo
 from builtins import (bytes, dict, int, list, object, range, str,  # noqa
     ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
-standard_library.install_aliases()  # noqa: Counter, OrderedDict,
+standard_library.install_aliases()  # noqa
+from past.builtins import basestring
 
 import os
 import re
@@ -231,7 +232,7 @@ def download(names=None, verbose=True):
     TODO: if name is a valid URL then download it and create a name
           and store the name: url in data_info.csv before downloading
     """
-    names = [names] if isinstance(names, (str, bytes)) else names
+    names = [names] if isinstance(names, basestring) else names
     # names = names or list(BIG_URLS.keys())  # download them all, if none specified!
     file_paths = {}
     for name in names:

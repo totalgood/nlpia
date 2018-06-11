@@ -3,19 +3,23 @@ from __future__ import print_function, unicode_literals, division, absolute_impo
 from builtins import (bytes, dict, int, list, object, range, str,  # noqa
     ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
-standard_library.install_aliases()  # noqa: Counter, OrderedDict,
+from past.builtins import basestring
+standard_library.install_aliases()  # noqa
 
 import tempfile
 import os
 import re
+import itertools
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
 import requests
+from requests.adapters import HTTPAdapter
 import pandas as pd
 
+from pugnlp.futil import find_files
 from annoy import AnnoyIndex
 
 from nlpia.constants import logging
@@ -61,7 +65,40 @@ NAME_ASCII = {
 }
 
 
-def iter_lines(url_or_text):
+def is_valid_url(url):
+    """ Check URL to see if it is a valid web page, return the redirected location if it is
+
+    Returns:
+      None if ConnectionError
+      False if url is invalid (any HTTP error code)
+      cleaned up URL (following redirects and possibly adding HTTP schema "http://")
+    >>> is_valid_url("totalgood.org")
+    'http://totalgood.org'
+    """
+    if not isinstance(url, basestring):
+        return False
+    session = requests.Session()
+    session.mount(url, HTTPAdapter(max_retries=1))
+    try:
+        resp = session.get(url, allow_redirects=False)
+    except requests.exceptions.MissingSchema:
+        try:
+            url = 'https://' + url
+            resp = session.get(url, allow_redirects=False)
+        except requests.exceptions.MissingSchema:
+            url = 'http://' + url
+            resp = session.get(url, allow_redirects=False)
+    except requests.exceptions.ConnectionError:
+        return None
+    if resp.status_code == 200:
+        return url
+    elif resp.status_code == 302:
+        return resp.headers['location']
+    else:
+        return False
+
+
+def iter_lines(url_or_text, ext=None, mode='rt'):
     r""" Return an iterator over the lines of a file or URI response.
 
     >>> len(list(iter_lines('cats_and_dogs.txt')))
@@ -72,20 +109,27 @@ def iter_lines(url_or_text):
     3
     >>> len(list(iter_lines('abc\n def\n gh')))
     3
+    >>> len(list(iter_lines(os.path.join(DATA_PATH, 'book'))))
+    3
     """
     if url_or_text is None or not url_or_text:
         return []
         # url_or_text = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
-    elif isinstance(url_or_text, str):
+    elif isinstance(url_or_text, basestring):
         if os.path.isfile(os.path.join(DATA_PATH, url_or_text)):
-            return open(os.path.join(DATA_PATH, url_or_text))
+            return open(os.path.join(DATA_PATH, url_or_text), mode=mode)
         elif os.path.isfile(url_or_text):
-            return open(os.path.join(url_or_text))
+            return open(os.path.join(url_or_text), mode=mode)
+        elif os.path.isdir(url_or_text):
+            filepaths = [filemeta['path'] for filemeta in find_files(url_or_text, ext=ext)]
+            return itertools.chain.from_iterable(itertools.imap(open, filepaths))
+        url = is_valid_url(url_or_text)
+        if url:
+            return requests.get(url, stream=True, allow_redirects=True)
         else:
             return StringIO(url_or_text)
     elif isinstance(url_or_text, (list, tuple)):
-        return iter(url_or_text)
-    return requests.get(url_or_text, stream=True, allow_redirects=True)
+        return itertools.chain.from_iterable(itertools.imap(iter_lines, filepaths, ext=ext))
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
@@ -214,7 +258,7 @@ def representative_sample(X, num_samples, save=False):
     idx.build(int(np.log2(N)) + 1)
 
     if save:
-        if isinstance(save, (bytes, str)):
+        if isinstance(save, basestring):
             idxfilename = save
         else:
             idxfile = tempfile.NamedTemporaryFile(delete=False)

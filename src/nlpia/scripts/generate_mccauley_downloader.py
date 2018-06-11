@@ -7,7 +7,6 @@ from future import standard_library
 standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 
 from future.utils import viewitems  # noqa
-from past.builtins import basestring  # noqa
 
 import requests
 
