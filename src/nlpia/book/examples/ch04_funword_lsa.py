@@ -84,13 +84,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nlpia.data.loaders import get_data
 
 
-VOCABULARY = 'cat dog apple lion nyc love big small'.split()
+VOCABULARY = 'cat dog apple lion NYC love big small'.lower().split()
 DOCS = get_data('cats_and_dogs_sorted')[:12]
 
 
 def docs_to_tdm(docs=DOCS, vocabulary=VOCABULARY):
-    vocabulary = vocabulary.split() if isinstance(vocabulary, str) else list(vocabulary)
-
     tfidfer = TfidfVectorizer(min_df=1, max_df=.99, stop_words=None, token_pattern=r'(?u)\b\w+\b',
                               vocabulary=vocabulary)
     tfidf_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())
@@ -108,11 +106,8 @@ def docs_to_tdm(docs=DOCS, vocabulary=VOCABULARY):
     return bow_dense.T, tfidf_dense.T, tfidfer
 
 
-TDM = docs_to_tdm()
-
-
-def prettify_tdm(tdm=TDM, docs=DOCS, vocabulary=VOCABULARY):
-    bow_pretty = tdm.copy()
+def prettify_tdm(tdm, docs, vocabulary):
+    bow_pretty = tdm.T.copy()
     bow_pretty = bow_pretty[vocabulary]
     bow_pretty['text'] = docs
     for col in vocabulary:
@@ -200,23 +195,25 @@ def lsa(tdm):
         print('Error after zeroing out dim {}'.format(numdim))
         print(err[-1])
         # 1.6677932876555255
-    return {'U': u, 'S': s, 'VT': vt, 'Accuracy': 1. - np.aray(err)}
+    return {'U': u, 'S': s, 'VT': vt, 'Accuracy': 1. - np.array(err)}
 
 
-def plot_feature_selection(topic_model=lsa()):
-    err = topic_model['Accuracy']
-    plt.plot(range(len(err)), err)
-    plt.title('SVD Topic Model Accuracy')
+def plot_feature_selection(accuracy):
+    # accuracy = topic_model['Accuracy']
+    plt.plot(range(len(accuracy)), accuracy)
+    plt.title('LSA Model Accuracy')
     plt.xlabel('Number of Dimensions Eliminated')
     plt.ylabel('Reconstruction Accuracy')
     plt.grid(True)
     plt.tight_layout()
-    print(err)
+    print(accuracy)
     plt.show()
 
 
 if __name__ == '__main__':
-    tdm, tfidfdm, tfidfer = docs_to_tdm()
-    print(prettify_tdm(tdm))
-    model = lsa()
-    plot_feature_selection(topic_model=model)
+    vocabulary = 'cat dog apple lion NYC love big small'.lower().split()
+    docs = get_data('cats_and_dogs_sorted')[:12]
+    tdm, tfidfdm, tfidfer = docs_to_tdm(docs=docs, vocabulary=vocabulary)
+    print(prettify_tdm(tdm, docs=docs, vocabulary=vocabulary))
+    model = lsa(tdm=tdm)
+    plot_feature_selection(accuracy=model['Accuracy'])

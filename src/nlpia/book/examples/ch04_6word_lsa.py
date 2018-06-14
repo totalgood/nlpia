@@ -191,6 +191,7 @@ for numdim in range(len(s) - 1, 0, -1):
     print(err[-1])
     # 1.6677932876555255
 
+
 plt.plot(range(len(err)), err)
 plt.title('Dimension Reduction Error in Term Frequency')
 plt.xlabel('Number of Dimensions Eliminated')
