@@ -83,8 +83,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 from nlpia.data.loaders import get_data
 
+pd.options.display.width = 120
+pd.options.display.max_columns = 12
+
 corpus = docs = get_data('cats_and_dogs_sorted')[:12]
-vocabulary = 'cat dog apple lion nyc love big small'.split()
+vocabulary = 'cat dog apple lion nyc love big small bright'.split()
 tfidfer = TfidfVectorizer(min_df=1, max_df=.99, stop_words=None, token_pattern=r'(?u)\b\w+\b',
                           vocabulary=vocabulary)
 tfidf_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())

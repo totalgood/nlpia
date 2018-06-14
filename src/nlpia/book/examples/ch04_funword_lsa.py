@@ -73,6 +73,7 @@ trip    0.00  0.00  0.0  0.0  0.0  0.0
 
 
 """
+import sys
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -83,8 +84,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 from nlpia.data.loaders import get_data
 
+pd.options.display.width = 120
+pd.options.display.max_columns = 12
 
-VOCABULARY = 'cat dog apple lion NYC love big small'.lower().split()
+VOCABULARY = 'cat dog apple lion NYC love big small bright'.lower().split()
 DOCS = get_data('cats_and_dogs_sorted')[:12]
 
 
@@ -115,31 +118,11 @@ def prettify_tdm(tdm, docs, vocabulary):
     return bow_pretty
 
 
-def lsa(tdm):
-    print(tdm)
-    #         d0  d1  d2  d3  d4  d5
-    # ship     1   0   1   0   0   0
-    # boat     0   1   0   0   0   0
-    # ocean    1   1   0   0   0   0
-    # voyage   1   0   0   1   1   0
-    # trip     0   0   0   1   0   1
-
-    u, s, vt = np.linalg.svd(tdm)
-
-    u = pd.DataFrame(u, index=tdm.index)
-    print('U')
-    print(u.round(2))
-    #            0     1     2     3     4
-    # ship    0.44 -0.30 -0.57  0.58 -0.25
-    # boat    0.13 -0.33  0.59  0.00 -0.73
-    # ocean   0.48 -0.51  0.37  0.00  0.61
-    # voyage  0.70  0.35 -0.15 -0.58 -0.16
-    # trip    0.26  0.65  0.41  0.58  0.09
-
-    smat = np.zeros(tdm.shape)
+def accuracy_study(tdm, u, s, vt):
+    smat = np.zeros((len(u), len(vt)))
     for i, value in enumerate(s):
         smat[i, i] = value
-    smat = pd.DataFrame(smat, columns=tdm.columns, index=tdm.index)
+    smat = pd.DataFrame(smat, columns=vt.index, index=u.index)
     print('Sigma')
     print(smat.round(2))
     #            0     1     2    3     4
@@ -148,20 +131,6 @@ def lsa(tdm):
     # ocean   0.00  0.00  1.28  0.0  0.00
     # voyage  0.00  0.00  0.00  1.0  0.00
     # trip    0.00  0.00  0.00  0.0  0.39
-
-    vt = pd.DataFrame(vt, index=['d{}'.format(i) for i in range(len(vt))])
-    print('VT')
-    print(vt.round(2))
-    #        0     1     2     3     4     5
-    # d0  0.75  0.28  0.20  0.45  0.33  0.12
-    # d1 -0.29 -0.53 -0.19  0.63  0.22  0.41
-    # d2 -0.28  0.75 -0.45  0.20 -0.12  0.33
-    # d3 -0.00  0.00  0.58  0.00 -0.58  0.58
-    # d4  0.53 -0.29 -0.63 -0.19 -0.41  0.22
-    # d5  0.00 -0.00 -0.00 -0.58  0.58  0.58
-
-    # Reconstruct the original term-document matrix.
-    # The sum of the squares of the error is 0.
 
     print('Sigma without zeroing any dim')
     print(np.diag(smat.round(2)))
@@ -194,14 +163,52 @@ def lsa(tdm):
         err += [np.sqrt(((tdm_prime2 - tdm).values.flatten() ** 2).sum() / np.product(tdm.shape))]
         print('Error after zeroing out dim {}'.format(numdim))
         print(err[-1])
-        # 1.6677932876555255
+    return err
+
+
+def lsa(tdm):
+    print(tdm)
+    #         d0  d1  d2  d3  d4  d5
+    # ship     1   0   1   0   0   0
+    # boat     0   1   0   0   0   0
+    # ocean    1   1   0   0   0   0
+    # voyage   1   0   0   1   1   0
+    # trip     0   0   0   1   0   1
+
+    u, s, vt = np.linalg.svd(tdm)
+
+    u = pd.DataFrame(u, index=tdm.index)
+    print('U')
+    print(u.round(2))
+    #            0     1     2     3     4
+    # ship    0.44 -0.30 -0.57  0.58 -0.25
+    # boat    0.13 -0.33  0.59  0.00 -0.73
+    # ocean   0.48 -0.51  0.37  0.00  0.61
+    # voyage  0.70  0.35 -0.15 -0.58 -0.16
+    # trip    0.26  0.65  0.41  0.58  0.09
+
+    vt = pd.DataFrame(vt, index=['d{}'.format(i) for i in range(len(vt))])
+    print('VT')
+    print(vt.round(2))
+    #        0     1     2     3     4     5
+    # d0  0.75  0.28  0.20  0.45  0.33  0.12
+    # d1 -0.29 -0.53 -0.19  0.63  0.22  0.41
+    # d2 -0.28  0.75 -0.45  0.20 -0.12  0.33
+    # d3 -0.00  0.00  0.58  0.00 -0.58  0.58
+    # d4  0.53 -0.29 -0.63 -0.19 -0.41  0.22
+    # d5  0.00 -0.00 -0.00 -0.58  0.58  0.58
+
+    # Reconstruct the original term-document matrix.
+    # The sum of the squares of the error is 0.
+
+    err = accuracy_study(tdm, u, s, vt)
     return {'U': u, 'S': s, 'VT': vt, 'Accuracy': 1. - np.array(err)}
 
 
-def plot_feature_selection(accuracy):
+def plot_feature_selection(accuracy, title=None):
     # accuracy = topic_model['Accuracy']
     plt.plot(range(len(accuracy)), accuracy)
-    plt.title('LSA Model Accuracy')
+    plt.title(title or 'LSA Model Accuracy')
     plt.xlabel('Number of Dimensions Eliminated')
     plt.ylabel('Reconstruction Accuracy')
     plt.grid(True)
@@ -210,10 +217,19 @@ def plot_feature_selection(accuracy):
     plt.show()
 
 
-if __name__ == '__main__':
-    vocabulary = 'cat dog apple lion NYC love big small'.lower().split()
+def main(args):
+    if len(args):
+        vocabulary = list(set([w.lower() for w in args]))
+    else:
+        vocabulary = 'cat dog apple lion NYC love big small bright'.lower().split()
     docs = get_data('cats_and_dogs_sorted')[:12]
     tdm, tfidfdm, tfidfer = docs_to_tdm(docs=docs, vocabulary=vocabulary)
     print(prettify_tdm(tdm, docs=docs, vocabulary=vocabulary))
-    model = lsa(tdm=tdm)
-    plot_feature_selection(accuracy=model['Accuracy'])
+    lsa_bow_model = lsa(tdm=tdm)
+    plot_feature_selection(accuracy=lsa_bow_model['Accuracy'])
+    lsa_tfidf_model = lsa(tdm=tfidfdm)
+    plot_feature_selection(accuracy=lsa_tfidf_model['Accuracy'], title='TF-IDF LSA Model Accuracy')
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
