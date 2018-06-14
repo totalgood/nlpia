@@ -27,7 +27,6 @@ from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
 from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH
 from nlpia.data.loaders import read_csv
 
-
 np = pd.np
 logger = logging.getLogger(__name__)
 
@@ -129,14 +128,14 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
             return open(os.path.join(url_or_text), mode=mode)
         elif os.path.isdir(url_or_text):
             filepaths = [filemeta['path'] for filemeta in find_files(url_or_text, ext=ext)]
-            return itertools.chain.from_iterable(itertools.imap(open, filepaths))
+            return itertools.chain.from_iterable(map(open, filepaths))
         url = is_valid_url(url_or_text)
         if url:
             return requests.get(url, stream=True, allow_redirects=True)
         else:
             return StringIO(url_or_text)
     elif isinstance(url_or_text, (list, tuple)):
-        return itertools.chain.from_iterable(itertools.imap(iter_lines, filepaths, ext=ext))
+        return itertools.chain.from_iterable(map(iter_lines, filepaths, ext=ext))
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
