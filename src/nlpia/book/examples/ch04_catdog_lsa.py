@@ -1,37 +1,55 @@
 from nlpia.data.loaders import get_data
 from nltk.tokenize import casual_tokenize
 import pandas as pd
+import numpy as np
+import os
 from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.stem import PorterStemmer
+# from nltk.stem import PorterStemmer
+from sklearn.decomposition import PCA
+from nlpia.constants import DATA_PATH
 
 # import nltk
 # nltk.download('wordnet')  # noqa
 # from nltk.stem.wordnet import WordNetLemmatizer
 
-corpus = get_data('cats_and_dogs_sorted')[:40]
 
-STOPWORDS = 'a an and or the do are with from for of on in by if at to into them'.split()
-STOPWORDS += 'to at it its it\'s that than our you your - -- " \' ? , . !'.split()
+# STOPWORDS = 'a an and or the do are with from for of on in by if at to into them'.split()
+# STOPWORDS += 'to at it its it\'s that than our you your - -- " \' ? , . !'.split()
+STOPWORDS = []
 
-SYNONYMS = dict(zip(
-    'wolv people person women woman man human he  we  her she him his hers'.split(),
-    'wolf her    her    her   her   her her   her her her her her her her'.split()))
-SYNONYMS.update(dict(zip(
-    'ate pat smarter have had isn\'t hasn\'t no  got get become been was were wa be sat seat sit'.split(),
-    'eat pet smart   has  has not    not     not has has is     is   is  is   is is sit sit  sit'.split())))
-SYNONYMS.update(dict(zip(
-    'i me my mine our ours catbird bird birds birder tortoise turtle turtles turtle\'s don\'t'.split(),
-    'i i  i  i    i   i    bird    bird birds bird   turtle   turtle turtle  turtle    not'.split())))
+# SYNONYMS = dict(zip(
+#     'wolv people person women woman man human he  we  her she him his hers'.split(),
+#     'wolf her    her    her   her   her her   her her her her her her her'.split()))
+# SYNONYMS.update(dict(zip(
+#     'ate pat smarter have had isn\'t hasn\'t no  got get become been was were wa be sat seat sit'.split(),
+#     'eat pet smart   has  has not    not     not has has is     is   is  is   is is sit sit  sit'.split())))
+# SYNONYMS.update(dict(zip(
+#     'i me my mine our ours catbird bird birds birder tortoise turtle turtles turtle\'s don\'t'.split(),
+#     'i i  i  i    i   i    bird    bird birds bird   turtle   turtle turtle  turtle    not'.split())))
+SYNONYMS = {}
 
-docs = [doc.lower() for doc in corpus]
-docs = [casual_tokenize(doc) for doc in docs]
-docs = [[SYNONYMS.get(w, w) for w in words if w not in STOPWORDS] for words in docs]
-stemmer = PorterStemmer()
-docs = [[stemmer.stem(w) for w in words if w not in STOPWORDS] for words in docs]
-docs = [[SYNONYMS.get(w, w) for w in words if w not in STOPWORDS] for words in docs]
-docs = [' '.join(w for w in words if w not in STOPWORDS) for words in docs]
+stemmer = None  # PorterStemmer()
 
 
+def normalize_corpus_words(corpus, stemmer=stemmer, synonyms=SYNONYMS, stopwords=STOPWORDS):
+    docs = [doc.lower() for doc in corpus]
+    docs = [casual_tokenize(doc) for doc in docs]
+    docs = [[synonyms.get(w, w) for w in words if w not in stopwords] for words in docs]
+    if stemmer:
+        docs = [[stemmer.stem(w) for w in words if w not in stopwords] for words in docs]
+    docs = [[synonyms.get(w, w) for w in words if w not in stopwords] for words in docs]
+    docs = [' '.join(w for w in words if w not in stopwords) for words in docs]
+    return docs
+
+
+def tokenize(text, vocabulary, synonyms=SYNONYMS, stopwords=STOPWORDS):
+    doc = normalize_corpus_words([text.lower()], synonyms=synonyms, stopwords=stopwords)[0]
+    stems = [w for w in doc.split() if w in vocabulary]
+    return stems
+
+
+corpus = get_data('cats_and_dogs')
+docs = normalize_corpus_words(corpus, stemmer=None)
 tfidfer = TfidfVectorizer(min_df=2, max_df=.6, stop_words=None, token_pattern=r'(?u)\b\w+\b')
 tfidf_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())
 id_words = [(i, w) for (w, i) in tfidfer.vocabulary_.items()]
@@ -40,8 +58,8 @@ tfidf_dense.columns = list(zip(*sorted(id_words)))[1]
 pd.options.display.width = 110
 pd.options.display.max_columns = 14
 pd.options.display.max_colwidth = 32
-fun_words = 'cat dog animal pet city apple NYC car bike hat'
-fun_stems = [stemmer.stem(w) for w in casual_tokenize(fun_words)]
+fun_words = 'cat dog apple lion nyc love'
+fun_stems = normalize_corpus_words([fun_words])[0].split()
 fun_words = fun_words.split()
 
 word_tfidf_dense = pd.DataFrame(tfidfer.transform(fun_stems).todense())
@@ -86,16 +104,45 @@ bow_pretty.head(16)
 tfidf_pretty = tfidf_dense.copy()
 tfidf_pretty = tfidf_pretty[fun_stems]
 tfidf_pretty['text'] = corpus
-# tfidf_pretty['diversity'] = tfidf_pretty[fun_stems].T.astype(bool).sum()
-# tfidf_pretty = tfidf_pretty.sort_values('diversity', ascending=False).round(2)
-# from nlpia.constants import DATA_PATH
-# with open(DATA_PATH + '/cats_and_dogs_sorted.txt', 'w') as fout:
-#     fout.write('\n'.join(list(tfidf_pretty.text.values)))
+
+tfidf_pretty['diversity'] = tfidf_pretty[fun_stems].T.astype(bool).sum()
+tfidf_pretty = tfidf_pretty.sort_values('diversity', ascending=False).round(2)
+with open(os.path.join(DATA_PATH, 'cats_and_dogs_sorted.txt'), 'w') as fout:
+    fout.write('\n'.join(list(tfidf_pretty.text.values)))
+
+
+# do it all over again on a tiny portion of the corpus and vocabulary
+corpus = get_data('cats_and_dogs_sorted')[:12]
+docs = normalize_corpus_words(corpus)
+tfidfer = TfidfVectorizer(min_df=1, max_df=.99, stop_words=None, token_pattern=r'(?u)\b\w+\b',
+                          vocabulary=fun_stems)
+tfidf_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())
+id_words = [(i, w) for (w, i) in tfidfer.vocabulary_.items()]
+tfidf_dense.columns = list(zip(*sorted(id_words)))[1]
+tfidfer.use_idf = False
+tfidfer.norm = None
+bow_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())
+bow_dense.columns = list(zip(*sorted(id_words)))[1]
+bow_dense = bow_dense.astype(int)
+tfidfer.use_idf = True
+tfidfer.norm = 'l2'
+bow_pretty = bow_dense.copy()
+bow_pretty = bow_pretty[fun_stems]
+bow_pretty['text'] = corpus
+for col in fun_stems:
+    bow_pretty.loc[bow_pretty[col] == 0, col] = ''
+print(bow_pretty)
+word_tfidf_dense = pd.DataFrame(tfidfer.transform(fun_stems).todense())
+word_tfidf_dense.columns = list(zip(*sorted(id_words)))[1]
+word_tfidf_dense.index = fun_stems
+
+tfidf_pretty = tfidf_dense.copy()
+tfidf_pretty = tfidf_pretty[fun_stems]
 tfidf_pretty = tfidf_pretty.round(2)
 for col in fun_stems:
     tfidf_pretty.loc[tfidf_pretty[col] == 0, col] = ''
 # tfidf_pretty[:text]tfidf_pretty.text.str[:16]
-tfidf_pretty.head(16)
+print(tfidf_pretty)
 
 
 """
@@ -121,13 +168,12 @@ tfidf_pretty.head(16)
 """
 
 tfidf_zeros = tfidf_dense.T.sum()[tfidf_dense.T.sum() == 0]
-tfidf_zeros
+print(tfidf_zeros)
 """
 >>> tfidf_zeros = tfidf_dense.T.sum()[tfidf_dense.T.sum() == 0]
 >>> tfidf_zeros
 199    0.0
 """
-
 
 [corpus[i] for i in tfidf_zeros.index]
 """
@@ -137,7 +183,6 @@ tfidf_zeros
 # ['I flew a kite.', 'He froze.']
 """
 
-from sklearn.decomposition import PCA
 pcaer = PCA(n_components=4)
 
 doc_topic_vectors = pd.DataFrame(pcaer.fit_transform(tfidf_dense.values), columns='topic_A topic_B topic_C topic_D'.split())
@@ -194,22 +239,10 @@ word_topic_vectors.round(1)
 """
 
 
-def tokenize(text, corpus=tfidf_dense):
-    docs = [text.lower()]
-    docs = [casual_tokenize(doc) for doc in docs]
-    docs = [[SYNONYMS.get(w, w) for w in words if w not in STOPWORDS] for words in docs]
-    stemmer = PorterStemmer()
-    docs = [[stemmer.stem(w) for w in words if w not in STOPWORDS] for words in docs]
-    docs = [[SYNONYMS.get(w, w) for w in words if w not in STOPWORDS] for words in docs]
-    docs = [' '.join(w for w in words if w not in STOPWORDS) for words in docs]
-    stems = [w for w in docs[0].split() if w in corpus.columns]
-    return stems
-
-
 def tfidf_search(text, corpus=tfidf_dense, corpus_text=corpus):
     """ search for the most relevant document """
-    tokens = tokenize(text)
-    tfidf_vector_query = pd.np.array(tfidfer.transform([' '.join(tokens)]).todense())[0]
+    tokens = tokenize(text, vocabulary=corpus.columns)
+    tfidf_vector_query = np.array(tfidfer.transform([' '.join(tokens)]).todense())[0]
     query_series = pd.Series(tfidf_vector_query, index=corpus.columns)
 
     return corpus_text[query_series.dot(corpus.T).values.argmax()]
@@ -217,8 +250,8 @@ def tfidf_search(text, corpus=tfidf_dense, corpus_text=corpus):
 
 def topic_search(text, corpus=doc_topic_vectors, pcaer=pcaer, corpus_text=corpus):
     """ search for the most relevant document """
-    tokens = tokenize(text)
-    tfidf_vector_query = pd.np.array(tfidfer.transform([' '.join(tokens)]).todense())[0]
+    tokens = tokenize(text, vocabulary=corpus.columns)
+    tfidf_vector_query = np.array(tfidfer.transform([' '.join(tokens)]).todense())[0]
     topic_vector_query = pcaer.transform([tfidf_vector_query])
     query_series = pd.Series(topic_vector_query, index=corpus.columns)
     return corpus_text[query_series.dot(corpus.T).values.argmax()]
@@ -244,20 +277,50 @@ tokenize('A Rotweiller barked at my car incessantly.')
 # ['rotweil', 'bark', 'at', 'car', 'incessantli']
 
 list(df.columns)
-# ['ate', 'can', 'car', 'cat', 'chase', 'cute', 'die', 'dog', 'ferret', 'flower', 'hair', 'hat', 'have', 'it', 'kitten', 'pet', 'ran',
+# ['ate', 'can', 'car', 'cat', 'chase', 'cute', 'die', 'dog', 'ferret', 'flower', 'hair',
+# 'hat', 'have', 'it', 'kitten', 'pet', 'ran',
 #   'squirrel', 'struck', 'took', 'tree', 'trick', 'turtl', 'up', 'vet', 'water'],
 """
-
-U, Sigma, VT = np.linalg.svd(tfidf_dense)
+U, Sigma, VT = np.linalg.svd(tfidf_dense.T)  # <1> Transpose the doc-word tfidf matrix, because SVD works on column vectors
 S = Sigma.copy()
 S[4:] = 0
 doc_labels = ['doc{}'.format(i) for i in range(len(tfidf_dense))]
-U_df = pd.DataFrame(U, index=doc_labels, columns=doc_labels).head(8)
-VT_df = pd.DataFrame(VT, index=tfidf_dense.columns, columns=tfidf_dense.columns)
+U_df = pd.DataFrame(U, index=fun_stems, columns=fun_stems)
+VT_df = pd.DataFrame(VT, index=doc_labels, columns=doc_labels)
+ndim = 2
+truncated_tfidf = U[:, :ndim].dot(np.diag(Sigma)[:ndim, :ndim]).dot(VT.T[:, :ndim].T)
 """
-Try to reconstruct an approximate TFIDF:
+The left singular vectors tell you how to "rotate" the TF-IDF vectors into the topic space, equivalent to creating topics
 
->>> U[:32,:32] @ (S @ VT)
+>>> U_df
+       cat   dog  appl   nyc   car  bike   hat
+cat  -0.53  0.01 -0.50  0.31 -0.49 -0.00 -0.36
+dog  -0.60  0.25  0.19  0.43  0.56 -0.00  0.21
+appl -0.16 -0.63  0.17 -0.12  0.37 -0.00 -0.63
+nyc  -0.25 -0.69  0.06  0.04 -0.24  0.00  0.63
+car  -0.35  0.17  0.32 -0.45 -0.21  0.71 -0.03
+bike -0.35  0.17  0.32 -0.45 -0.21 -0.71 -0.03
+hat  -0.17  0.00 -0.69 -0.55  0.40  0.00  0.19
+
+>>> VT_df.round(2)
+        doc0  doc1  doc2  doc3  doc4  doc5  doc6  doc7  doc8  doc9  doc10  doc11
+doc0  -0.37 -0.34 -0.16 -0.22 -0.33 -0.33 -0.27 -0.15 -0.40 -0.40  -0.15  -0.15
+doc1   0.19  0.12  0.00  0.01  0.16  0.16 -0.29 -0.51  0.11  0.11  -0.51  -0.51
+doc2   0.33  0.11 -0.55 -0.58  0.25  0.25 -0.19  0.11 -0.13 -0.13   0.11   0.11
+doc3  -0.31 -0.39 -0.39 -0.27 -0.07 -0.07  0.21 -0.06  0.48  0.48  -0.06  -0.06
+doc4   0.03 -0.59  0.28  0.08  0.24  0.24 -0.61  0.14  0.10  0.10   0.14   0.14
+doc5   0.00  0.00  0.00 -0.00  0.71 -0.71 -0.00 -0.00  0.00  0.00  -0.00  -0.00
+doc6   0.16 -0.51  0.17 -0.10  0.27  0.27  0.62 -0.11 -0.23 -0.23  -0.11  -0.11
+doc7  -0.04 -0.07 -0.36  0.41  0.09  0.09  0.00  0.67 -0.06 -0.06  -0.33  -0.33
+doc8  -0.54  0.19  0.07 -0.08  0.27  0.27  0.00 -0.00  0.45 -0.55  -0.00  -0.00
+doc9  -0.54  0.19  0.07 -0.08  0.27  0.27  0.00 -0.00 -0.55  0.45  -0.00  -0.00
+doc10 -0.04 -0.07 -0.36  0.41  0.09  0.09  0.00 -0.33 -0.06 -0.06   0.67  -0.33
+doc11 -0.04 -0.07 -0.36  0.41  0.09  0.09  0.00 -0.33 -0.06 -0.06  -0.33   0.67
+Try to reconstruct an approximate TFIDF, using only 2 topics (from 7 words):
+
+>>> tfidf_compressed = U[:,:2] @ (pd.np.diag(S)[:2,:] @ VT[:2,:])
+>>> tfidf_compressed.shape
+
 array([[ 0.12191697,  0.01013273,  0.04009995, ...,  0.06057937,
          0.07675374, -0.00521042],
        [ 0.0352883 ,  0.07193914,  0.00248612, ...,  0.00928599,
