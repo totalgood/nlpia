@@ -79,38 +79,38 @@ import matplotlib
 matplotlib.use('TkAgg')  # noqa
 import seaborn  # noqa
 from matplotlib import pyplot as plt
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from nlpia.data.loaders import get_data
 
-corpus = get_data('cats_and_dogs_sorted')
-vocabulary = 'cat dog apple lion nyc love'
+corpus = docs = get_data('cats_and_dogs_sorted')[:12]
+vocabulary = 'cat dog apple lion nyc love big small'.split()
 tfidfer = TfidfVectorizer(min_df=1, max_df=.99, stop_words=None, token_pattern=r'(?u)\b\w+\b',
                           vocabulary=vocabulary)
 tfidf_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())
 id_words = [(i, w) for (w, i) in tfidfer.vocabulary_.items()]
 tfidf_dense.columns = list(zip(*sorted(id_words)))[1]
+
 tfidfer.use_idf = False
 tfidfer.norm = None
 bow_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())
 bow_dense.columns = list(zip(*sorted(id_words)))[1]
 bow_dense = bow_dense.astype(int)
+
 tfidfer.use_idf = True
 tfidfer.norm = 'l2'
 bow_pretty = bow_dense.copy()
-bow_pretty = bow_pretty[fun_stems]
+bow_pretty = bow_pretty[vocabulary]
 bow_pretty['text'] = corpus
-for col in fun_stems:
+for col in vocabulary:
     bow_pretty.loc[bow_pretty[col] == 0, col] = ''
 print(bow_pretty)
-word_tfidf_dense = pd.DataFrame(tfidfer.transform(fun_stems).todense())
-word_tfidf_dense.columns = list(zip(*sorted(id_words)))[1]
-word_tfidf_dense.index = fun_stems
+print(bow_pretty.T)
+print(tfidf_dense.T)
 
 
-tdm = pd.DataFrame([list(t) for t in '101000 010000 110000 100110 000101'.split()],
-                   columns=['d{}'.format(i) for i in range(6)],
-                   index='ship boat ocean voyage trip'.split()).astype(int)
-tdm
+tdm = bow_dense.T
+print(tdm)
 #         d0  d1  d2  d3  d4  d5
 # ship     1   0   1   0   0   0
 # boat     0   1   0   0   0   0
@@ -121,7 +121,8 @@ tdm
 u, s, vt = np.linalg.svd(tdm)
 
 u = pd.DataFrame(u, index=tdm.index)
-u.round(2)
+print('U')
+print(u.round(2))
 #            0     1     2     3     4
 # ship    0.44 -0.30 -0.57  0.58 -0.25
 # boat    0.13 -0.33  0.59  0.00 -0.73
@@ -133,7 +134,8 @@ smat = np.zeros(tdm.shape)
 for i, value in enumerate(s):
     smat[i, i] = value
 smat = pd.DataFrame(smat, columns=tdm.columns, index=tdm.index)
-smat.round(2)
+print('Sigma')
+print(smat.round(2))
 #            0     1     2    3     4
 # ship    2.16  0.00  0.00  0.0  0.00
 # boat    0.00  1.59  0.00  0.0  0.00
@@ -141,7 +143,8 @@ smat.round(2)
 # voyage  0.00  0.00  0.00  1.0  0.00
 # trip    0.00  0.00  0.00  0.0  0.39
 
-vt = pd.DataFrame(vt, index=['d{}'.format(i) for i in range(6)])
+vt = pd.DataFrame(vt, index=['d{}'.format(i) for i in range(len(corpus))])
+print('VT')
 print(vt.round(2))
 #        0     1     2     3     4     5
 # d0  0.75  0.28  0.20  0.45  0.33  0.12
@@ -154,7 +157,10 @@ print(vt.round(2))
 # Reconstruct the original term-document matrix.
 # The sum of the squares of the error is 0.
 
+print('Sigma without zeroing any dim')
+print(np.diag(smat.round(2)))
 tdm_prime = u.values.dot(smat.values).dot(vt.values)
+print('Reconstructed Term-Document Matrix')
 print(tdm_prime.round(2))
 # array([[ 1., -0.,  1., -0., -0., -0.],
 #        [-0.,  1., -0., -0.,  0., -0.],
@@ -162,6 +168,7 @@ print(tdm_prime.round(2))
 #        [ 1.,  0., -0.,  1.,  1.,  0.],
 #        [-0.,  0., -0.,  1.,  0.,  1.]])
 err = [np.sqrt(((tdm_prime - tdm).values.flatten() ** 2).sum() / np.product(tdm.shape))]
+print('Error without reducing dimensions')
 print(err[-1])
 2.3481474529927113e-15
 
@@ -169,6 +176,7 @@ print(err[-1])
 smat2 = smat.copy()
 for numdim in range(len(s) - 1, 0, -1):
     smat2.iloc[numdim, numdim] = 0
+    print('Sigma after zeroing out dim {}'.format(numdim))
     print(np.diag(smat2.round(2)))
     #           d0    d1   d2   d3   d4   d5
     # ship    2.16  0.00  0.0  0.0  0.0  0.0
@@ -179,6 +187,7 @@ for numdim in range(len(s) - 1, 0, -1):
 
     tdm_prime2 = u.values.dot(smat2.values).dot(vt.values)
     err += [np.sqrt(((tdm_prime2 - tdm).values.flatten() ** 2).sum() / np.product(tdm.shape))]
+    print('Error after zeroing out dim {}'.format(numdim))
     print(err[-1])
     # 1.6677932876555255
 
@@ -186,7 +195,7 @@ plt.plot(range(len(err)), err)
 plt.title('Dimension Reduction Error in Term Frequency')
 plt.xlabel('Number of Dimensions Eliminated')
 plt.ylabel('Mean Square Error in Term Frequency')
-plt.grid('on')
+plt.grid(True)
 plt.tight_layout()
 print(err)
 # plt.show()

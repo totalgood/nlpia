@@ -29,6 +29,7 @@ STOPWORDS = []
 SYNONYMS = {}
 
 stemmer = None  # PorterStemmer()
+NUM_PRETTY = None
 
 
 def normalize_corpus_words(corpus, stemmer=stemmer, synonyms=SYNONYMS, stopwords=STOPWORDS):
@@ -58,7 +59,7 @@ tfidf_dense.columns = list(zip(*sorted(id_words)))[1]
 pd.options.display.width = 110
 pd.options.display.max_columns = 14
 pd.options.display.max_colwidth = 32
-fun_words = 'cat dog apple lion nyc love'
+fun_words = vocabulary = 'cat dog apple lion nyc love big small'
 fun_stems = normalize_corpus_words([fun_words])[0].split()
 fun_words = fun_words.split()
 
@@ -88,6 +89,7 @@ bow_dense = bow_dense.astype(int)
 tfidfer.use_idf = True
 tfidfer.norm = 'l2'
 
+
 """
 >>> tfidf_dense.shape
 (200, 170)
@@ -97,22 +99,24 @@ tfidfer.norm = 'l2'
 bow_pretty = bow_dense.copy()
 bow_pretty = bow_pretty[fun_stems]
 bow_pretty['text'] = corpus
-for col in fun_stems:
-    bow_pretty.loc[bow_pretty[col] == 0, col] = ''
-bow_pretty.head(16)
 
 tfidf_pretty = tfidf_dense.copy()
 tfidf_pretty = tfidf_pretty[fun_stems]
+tfidf_pretty['diversity'] = tfidf_pretty[fun_stems].T.sum().values
 tfidf_pretty['text'] = corpus
-
-tfidf_pretty['diversity'] = tfidf_pretty[fun_stems].T.astype(bool).sum()
+# tfidf_pretty['diversity'] = [(row.diversity or 0) / ((float(row.iloc[i % (len(row) - 2)] or 1) ** 2))
+#                              for i, row in tfidf_pretty.iterrows()]
 tfidf_pretty = tfidf_pretty.sort_values('diversity', ascending=False).round(2)
 with open(os.path.join(DATA_PATH, 'cats_and_dogs_sorted.txt'), 'w') as fout:
     fout.write('\n'.join(list(tfidf_pretty.text.values)))
 
+for col in fun_stems:
+    bow_pretty.loc[bow_pretty[col] == 0, col] = ''
+print(bow_pretty.head(16))
+
 
 # do it all over again on a tiny portion of the corpus and vocabulary
-corpus = get_data('cats_and_dogs_sorted')[:12]
+corpus = get_data('cats_and_dogs_sorted')[:NUM_PRETTY]
 docs = normalize_corpus_words(corpus)
 tfidfer = TfidfVectorizer(min_df=1, max_df=.99, stop_words=None, token_pattern=r'(?u)\b\w+\b',
                           vocabulary=fun_stems)
