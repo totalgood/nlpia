@@ -212,7 +212,7 @@ def get_splitter(fun=None):
         return None
 
 
-def segment_sentences(path=os.path.join(DATA_PATH, 'book'), ext='asc', splitter=split_sentences_nltk):
+def segment_sentences(path=os.path.join(DATA_PATH, 'book'), splitter=split_sentences_nltk, **find_files_kwargs):
     """ Return a list of all sentences and empty lines.
 
     TODO:
@@ -224,25 +224,27 @@ def segment_sentences(path=os.path.join(DATA_PATH, 'book'), ext='asc', splitter=
         5. label each 1-3-line window of lines as "complete sentence, partial sentence/phrase, or multi-sentence"
 
     >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'book')))
-    8324
-    >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'book',
-    ...     'Chapter 00 -- Preface.asc'), splitter=split_sentences_nltk))
-    139
-    >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'book',
-    ...     'Chapter 01 -- Packets of Thought (Basic NLP).asc'), splitter=split_sentences_nltk))
-    585
+    17319
+    >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'psychology-scripts.txt'), splitter=split_sentences_nltk))
+    23
     """
     sentences = []
     if os.path.isdir(path):
-        for filemeta in find_files(path, ext=ext):
-            with open(filemeta['path'], 'rt') as fin:
-                batch = []
-                for i, line in enumerate(fin):
-                    if not line.strip():
-                        sentences.extend(splitter('\n'.join(batch)))
-                        batch = [line]  # may contain all whitespace
-                    else:
-                        batch.append(line)
+        for filemeta in find_files(path, **find_files_kwargs):
+            with open(filemeta['path']) as fin:
+                i, batch = 0, []
+                try:
+                    for i, line in enumerate(fin):
+                        if not line.strip():
+                            sentences.extend(splitter('\n'.join(batch)))
+                            batch = [line]  # may contain all whitespace
+                        else:
+                            batch.append(line)
+                except (UnicodeDecodeError, IOError):
+                    logger.error('UnicodeDecodeError or IOError on line {} in file {} from stat: {}'.format(
+                        i + 1, fin.name, filemeta))
+                    raise
+
                 if len(batch):
                     # TODO: tag sentences with line + filename where they started
                     sentences.extend(splitter('\n'.join(batch)))

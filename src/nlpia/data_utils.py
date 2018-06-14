@@ -72,8 +72,15 @@ def is_valid_url(url):
       None if ConnectionError
       False if url is invalid (any HTTP error code)
       cleaned up URL (following redirects and possibly adding HTTP schema "http://")
-    >>> is_valid_url("totalgood.org")
-    'http://totalgood.org'
+
+    >> is_valid_url("totalgood.org")
+    'https://totalgood.org'
+
+    >>> url = is_valid_url("totalgood.org")
+    >>> url.startswith('http')
+    True
+    >>> url.endswith('totalgood.org')
+    True
     """
     if not isinstance(url, basestring):
         return False
@@ -102,7 +109,7 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
     r""" Return an iterator over the lines of a file or URI response.
 
     >>> len(list(iter_lines('cats_and_dogs.txt')))
-    200
+    263
     >>> len(list(iter_lines(list('abcdefgh'))))
     8
     >>> len(list(iter_lines('abc\n def\n gh\n')))
