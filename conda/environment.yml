@@ -15,7 +15,9 @@ dependencies:
   - swig>=3.0.12
   - nltk=3.2.5
   - gensim>=3.4.0
+  - python-levenshtein>=0.12.0
   - boto3
+
   - pip:
     - -r ../requirements-base.txt
 
