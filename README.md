@@ -2,11 +2,11 @@
 
 The community - driven code for [**N**atural **L**anguage **P**rocessing **i**n **A**ction](https://bit.ly/nlpiabook).
 
-# Description
+## Description
 
 A community-developed book about building socially responsible NLP pipelines that give back to the communities they interact with.
 
-# Getting Started
+## Getting Started
 
 You'll need a bash terminal on your machine. 
 [Git-bash](https://git-scm.com/downloads) by GitHub has installers for all three major OSes. 
@@ -14,69 +14,78 @@ You'll need a bash terminal on your machine.
 Once you have Git installed, launch a bash terminal. 
 It will usually be found among your other applications with the name `git-bash`. 
 
-1. Install Python
 
-[Anaconda](https://docs.anaconda.com/anaconda/install/) or [miniconda](https://repo.continuum.io/miniconda/) are good ways to install python3 without messing up your system python on any machine (including Windows and Mac OSX). 
-Another advantage of the `conda` package manager that miniconda installs is that it can install some packages that pip cannot. 
-There are often binary dependencies for python packages like the `QtPython` dependency for `matplotlib` or `pyaudio` for `SpeechRecognition`.
- 
-```bash
-export OS=Linux  # or MacOSX or Windows
-if [ "$OS" == "Windows"; then
-    curl https://repo.anaconda.com/archive/Anaconda3-5.2.0-Windows-x86_64.exe -O
-    ./Anaconda3-5.2.0-Windows-x86_64.exe /S /D=$HOME/miniconda3/  # this will launch a GUI despite the "/S ilent" arg
-else
-    wget -c "https://repo.continuum.io/miniconda/Miniconda3-latest-${OS}-x86_64.sh" -o $HOME/install_miniconda3.sh
-    chmod +x $HOME/install_miniconda3.sh
-    cd $HOME
-    ./install_miniconda.sh -b -p $HOME/miniconda
-    export PATH=$HOME/miniconda/bin:$PATH
-    echo 'export PATH=$HOME/miniconda/bin:$PATH' >> $HOME/.bash_profile
-    bash $HOME/.bash_profile  # or just restart your terminal
-fi
-```
+1. Install [Anaconda3 (Python3.6)](https://docs.anaconda.com/anaconda/install/)
 
-If you're installing Anaconda using the Windows GUI be sure to check the box to install it in your PATH variable. 
-That way you can install pip in the next step:
+* [Linux](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.sh)
+* [MacOSX](https://repo.anaconda.com/archive/Anaconda3-5.2.0-MacOSX-x86_64.pkg)
+* [Windows](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Windows-x86_64.exe)
 
-2. Clone this repository
+If you're installing Anaconda using a GUI be sure to check the box to install it in your PATH variable. 
+Microsoft's VSCode is supposed to be a fine editor for Python if you want to install it along with Anaconda. 
+
+2. Install an Editor
+
+You can skip this step if you are happy using `jupyter notebook` to 
+[Sublime](https://www.sublimetext.com/3) is cleaner and far more mature. Plus it has more plugins written by individual developers like you.
+
+3. Install Git and Bash
+
+* Linux -- already installed
+* MacOSX -- already installed
+* [Windows]((https://git-scm.com/downloads)
+
+If you're on Linux or Mac OS, you're good to go. Just figure out how to launch a terminal and make sure you can run `ipython` or `jupyter notebook` in it. This is where you'll play around with your own NLP pipeline. 
+
+On Windows you have a bit more work to do. Supposedly Windows 10 will let you install Ubuntu with a terminal and bash. But the terminal and shell that comes with [`git`](https://git-scm.com/downloads) is probably a safer bet. It's mained by a broader open source community.
+
+4. Clone this repository
 
 ```bash
 git clone https://github.com/totalgood/nlpia.git
-cd nlpia
 ```
 
-3. Install `nlpia` and its dependencies
+5. Install `nlpia` 
 
-In most cases, conda will be able to install python packages faster and more reliably than pip. 
+You have two tools you can use to install `nlpia`:
 
-### Use `conda-env`
+5.1. `conda`
+5.2. `pip`
 
 
-Create a conda environment called `nlpiaenv`
+### 5.1. `conda`
+
+In most cases, conda will be able to install python packages faster and more reliably than pip, because packages like `python-levenshtein` require you to compile a C library during installation, and Windows doesn't have an installer that will "just work."
+
+So use conda (part of the Anaconda package that we already installed) to create an environment called `nlpiaenv`:
 
 ```bash
+cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`
 conda env create -n nlpiaenv -f conda/environment.yml
 conda install pip  # to get the latest version of pip
+pip install -e .
 ```
 
 Whenever you want to be able to import or run any `nlpia` modules, you'll need to activate this conda environment first:
 
 ```bash
 source activate nlpiaenv
+python -c "print(import nlpia)"
 ```
 
-Skip to Step 4 if you successfully created and activated an environment containing the `nlpia` packages.
 
-### Use `pip`
+Skip to Step 4 if you have successfully created and activated an environment containing the `nlpia` package.
+
+### 5.2. `pip`
 
 Linux-based OSes like Ubuntu and OSX come with C++ compilers built-in, so you may be able to install the dependencies using pip instead of `conda`. 
 But if you're on Windows and you want to install packages, like `python-levenshtein` that need compiled C++ libraries, you'll need a compiler. 
 Fortunately Microsoft still lets you [download a compiler for free](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_14.0_standalone:_Visual_C.2B-.2B-_Build_Tools_2015_.28x86.2C_x64.2C_ARM.29), just make sure you follow the links to the Visual Studio "Build Tools" and not the entire Visual Studio package.
 
-If you have a compiler on your OS you may be able to install `nlpia` using pip, without using `conda`:
+Once you have a compiler on your OS you can install `nlpia` using pip:
 
 ```bash
+cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`
 pip install --upgrade pip
 mkvirtualenv nlpiaenv
 source nlpiaenv/bin/activate
@@ -93,31 +102,22 @@ If you are on a Linux or Darwin(Mac OSX) system or want to try to help us debug 
 # pip install -r requirements-voice.txt
 ```
 
-4. Activate this new environment
 
-```bash
-source activate nlpia
-```
+6. Have Fun!
 
-5. Install an "editable" `nlpia` package in this conda environment (called `nlpiaenv`)
-
-```bash
-pip install -e .
-```
-
-6. Check out the code examples from the book in `nlpia/nlpia/book/examples`
+Check out the code examples from the book in `nlpia/nlpia/book/examples` to get ideas:
 
 ```bash
 cd nlpia/book/examples
 ls
 ```
 
-# Contributing
+## Contributing
 
 Help your fellow readers by contributing to your shared code and knowledge.
 Here are some ideas for a few features others might find handy.
 
-## Glossary Compiler
+### Feature 1: Glossary Compiler
 
 Skeleton code and APIs that could be added to the https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py:`transcoders.py` module.
 
@@ -161,7 +161,7 @@ def glossary_from_dir(path, format='asciidoc'):
 
 ```
 
-## Semantic Search
+### Feature 2: Semantic Search
 
 Use a parser to extract only natural language sentences and headings/titles from a list of lines/sentences from an asciidoc book like "Natural Language Processing in Action".
 Use a sentence segmenter in https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py:[nlpia.transcoders] to split a book, like _NLPIA_, into a seequence of sentences.
