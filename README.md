@@ -8,8 +8,8 @@ A community-developed book about building socially responsible NLP pipelines tha
 
 ## Getting Started
 
-You'll need a bash terminal on your machine. 
-[Git-bash](https://git-scm.com/downloads) by GitHub has installers for all three major OSes. 
+You'll need a bash shell on your machine. 
+[Git](https://git-scm.com/downloads) has installers that include bash shell for all three major OSes. 
 
 Once you have Git installed, launch a bash terminal. 
 It will usually be found among your other applications with the name `git-bash`. 
@@ -21,13 +21,17 @@ It will usually be found among your other applications with the name `git-bash`.
 * [MacOSX](https://repo.anaconda.com/archive/Anaconda3-5.2.0-MacOSX-x86_64.pkg)
 * [Windows](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Windows-x86_64.exe)
 
-If you're installing Anaconda using a GUI be sure to check the box to install it in your PATH variable. 
-Microsoft's VSCode is supposed to be a fine editor for Python if you want to install it along with Anaconda. 
+If you're installing Anaconda3 using a GUI, be sure to check the box that updates your PATH variable. 
+Also, at the end, the Anaconda3 installer will ask if you want to install VSCode. 
+Microsoft's VSCode is supposed to be an OK editor for Python so feel free to use it. 
 
 2. Install an Editor
 
-You can skip this step if you are happy using `jupyter notebook` to 
-[Sublime](https://www.sublimetext.com/3) is cleaner and far more mature. Plus it has more plugins written by individual developers like you.
+You can skip this step if you are happy using `jupyter notebook` or `VSCode` or the editor built into Anaconda3. 
+
+I like [Sublime Text](https://www.sublimetext.com/3). 
+It's a lot cleaner more mature. 
+Plus it has more plugins written by individual developers like you.
 
 3. Install Git and Bash
 
@@ -49,9 +53,8 @@ git clone https://github.com/totalgood/nlpia.git
 
 You have two tools you can use to install `nlpia`:
 
-5.1. `conda`
-
-5.2. `pip`
+5.1. `conda`  
+5.2. `pip`  
 
 
 ### 5.1. `conda`
