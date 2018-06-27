@@ -1,6 +1,6 @@
 # NLPIA
 
-The community - driven code for [**N**atural **L**anguage **P**rocessing **i**n **A**ction](https://bit.ly/nlpiabook).
+The community-driven code for [**N**atural **L**anguage **P**rocessing **i**n **A**ction](https://bit.ly/nlpiabook).
 
 ## Description
 
@@ -33,7 +33,7 @@ You can skip this step if you are happy using `jupyter notebook` to
 
 * Linux -- already installed
 * MacOSX -- already installed
-* [Windows]((https://git-scm.com/downloads)
+* [Windows](https://git-scm.com/downloads)
 
 If you're on Linux or Mac OS, you're good to go. Just figure out how to launch a terminal and make sure you can run `ipython` or `jupyter notebook` in it. This is where you'll play around with your own NLP pipeline. 
 

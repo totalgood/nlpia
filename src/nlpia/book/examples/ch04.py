@@ -125,14 +125,14 @@ sms4    0.002   0.031   0.038   ...       0.031   -0.081   -0.020
 ----
 """
 
-# # can't replicate this or find the svddists code
-import numpy as np
-df = pd.DataFrame(np.array([svddists.reshape(len(sms)), pcadists.reshape(len(sms)), sms.spam])).T,
-# ...              columns='SVD_dist_to_doc3 PCA_dist_to_doc3 spam'.split())
-df.corr()  # < 1 >
-#                   SVD_dist_to_doc3  PCA_dist_to_doc3      spam
-# SVD_dist_to_doc3          1.000000          0.862478 -0.591911
-# PCA_dist_to_doc3          0.862478          1.000000 -0.595148
-# spam                     -0.591911         -0.595148  1.000000
+# # # can't replicate this or find the svddists code
+# import numpy as np
+# df = pd.DataFrame(np.array([svddists.reshape(len(sms)), pcadists.reshape(len(sms)), sms.spam])).T,
+# # ...              columns='SVD_dist_to_doc3 PCA_dist_to_doc3 spam'.split())
+# df.corr()  # < 1 >
+# #                   SVD_dist_to_doc3  PCA_dist_to_doc3      spam
+# # SVD_dist_to_doc3          1.000000          0.862478 -0.591911
+# # PCA_dist_to_doc3          0.862478          1.000000 -0.595148
+# # spam                     -0.591911         -0.595148  1.000000
 
-# <1> `DataFrame.corr()` computes the normalized covariance (similarity or correlation) between all the columns and rows of a DataFrame
+# # <1> `DataFrame.corr()` computes the normalized covariance (similarity or correlation) between all the columns and rows of a DataFrame
