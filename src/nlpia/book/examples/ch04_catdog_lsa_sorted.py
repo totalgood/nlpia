@@ -1,5 +1,42 @@
-"""
-P
+""" Uses np.linalg.svd directly to illustrate LSA on a small corpus. 
+
+SEE ALSO: ch04_stanford_lsa.py
+
+>>> from nlpia.book.examples.ch04_catdog_lsa_sorted import lsa_models, prettify_tdm
+>>> bow_svd, tfidf_svd = lsa_models()  # <1>
+>>> prettify_tdm(**bow_svd)
+   lion dog nyc cat love apple                                             text
+0             1              1                            NYC is the Big Apple.
+1             1              1                   NYC is known as the Big Apple.
+2             1        1                                            I love NYC!
+3             1              1      I wore a hat to the Big Apple party in NYC.
+4             1              1                  Come to NYC. See the Big Apple!
+5                            1               Manhattan is called the Big Apple.
+6                 1                     New York is a big city for a small cat.
+7     1           1             The lion, a big cat, is the king of the jungle.
+8                 1    1                                     I love my pet cat.
+9             1        1                            I love New York City (NYC).
+10        1       1                                     Your dog chased my cat.
+
+
+>>> tdm = bow_svd['tdm']
+>>> tdm
+       0   1   2   3   4   5   6   7   8   9   10
+lion    0   0   0   0   0   0   0   1   0   0   0
+dog     0   0   0   0   0   0   0   0   0   0   1
+nyc     1   1   1   1   1   0   0   0   0   1   0
+cat     0   0   0   0   0   0   1   1   1   0   1
+love    0   0   1   0   0   0   0   0   1   1   0
+apple   1   1   0   1   1   1   0   0   0   0   0
+
+
+>>> import numpy as np
+>>> u, s, vt = np.linalg.svd(tdm)  # <1>
+
+>>> import pandas as pd
+>>> u = pd.DataFrame(u, index=tdm.index)
+>>> u.round(2)
+
 
 >>> main('cat dog apple lion NYC love'.lower().split())
 263it [00:00, 408405.02it/s]
@@ -199,60 +236,57 @@ def docs_to_tdm(docs=DOCS, vocabulary=VOCABULARY, verbosity=0):
     return bow_dense.T, tfidf_dense.T, tfidfer
 
 
-def prettify_tdm(tdm, docs, vocabulary):
-    bow_pretty = tdm.T.copy()
-    bow_pretty = bow_pretty[vocabulary]
+def prettify_tdm(tdm=None, docs=[], vocabulary=[], **kwargs):
+    bow_pretty = tdm.T.copy()[vocabulary]
     bow_pretty['text'] = docs
     for col in vocabulary:
         bow_pretty.loc[bow_pretty[col] == 0, col] = ''
     return bow_pretty
 
 
-def accuracy_study(tdm, u, s, vt):
+def accuracy_study(tdm=None, u=None, s=None, vt=None, verbosity=0, **kwargs):
     smat = np.zeros((len(u), len(vt)))
     for i, value in enumerate(s):
         smat[i, i] = value
     smat = pd.DataFrame(smat, columns=vt.index, index=u.index)
-    print('Sigma')
-    print(smat.round(2))
-    #            0     1     2    3     4
-    # ship    2.16  0.00  0.00  0.0  0.00
-    # boat    0.00  1.59  0.00  0.0  0.00
-    # ocean   0.00  0.00  1.28  0.0  0.00
-    # voyage  0.00  0.00  0.00  1.0  0.00
-    # trip    0.00  0.00  0.00  0.0  0.39
-
-    print('Sigma without zeroing any dim')
-    print(np.diag(smat.round(2)))
+    if verbosity:
+        print()
+        print('Sigma:')
+        print(smat.round(2))
+        print()
+        print('Sigma without zeroing any dim:')
+        print(np.diag(smat.round(2)))
     tdm_prime = u.values.dot(smat.values).dot(vt.values)
-    print('Reconstructed Term-Document Matrix')
-    print(tdm_prime.round(2))
-    # array([[ 1., -0.,  1., -0., -0., -0.],
-    #        [-0.,  1., -0., -0.,  0., -0.],
-    #        [ 1.,  1., -0.,  0., -0.,  0.],
-    #        [ 1.,  0., -0.,  1.,  1.,  0.],
-    #        [-0.,  0., -0.,  1.,  0.,  1.]])
+    if verbosity:
+        print()
+        print('Reconstructed Term-Document Matrix')
+        print(tdm_prime.round(2))
+
     err = [np.sqrt(((tdm_prime - tdm).values.flatten() ** 2).sum() / np.product(tdm.shape))]
-    print('Error without reducing dimensions')
-    print(err[-1])
+    if verbosity:
+        print()
+        print('Error without reducing dimensions:')
+        print(err[-1])
     # 2.3481474529927113e-15
 
     smat2 = smat.copy()
     for numdim in range(len(s) - 1, 0, -1):
         smat2.iloc[numdim, numdim] = 0
-        print('Sigma after zeroing out dim {}'.format(numdim))
-        print(np.diag(smat2.round(2)))
-        #           d0    d1   d2   d3   d4   d5
-        # ship    2.16  0.00  0.0  0.0  0.0  0.0
-        # boat    0.00  1.59  0.0  0.0  0.0  0.0
-        # ocean   0.00  0.00  0.0  0.0  0.0  0.0
-        # voyage  0.00  0.00  0.0  0.0  0.0  0.0
-        # trip    0.00  0.00  0.0  0.0  0.0  0.0
+        if verbosity:
+            print('Sigma after zeroing out dim {}'.format(numdim))
+            print(np.diag(smat2.round(2)))
+            #           d0    d1   d2   d3   d4   d5
+            # ship    2.16  0.00  0.0  0.0  0.0  0.0
+            # boat    0.00  1.59  0.0  0.0  0.0  0.0
+            # ocean   0.00  0.00  0.0  0.0  0.0  0.0
+            # voyage  0.00  0.00  0.0  0.0  0.0  0.0
+            # trip    0.00  0.00  0.0  0.0  0.0  0.0
 
         tdm_prime2 = u.values.dot(smat2.values).dot(vt.values)
         err += [np.sqrt(((tdm_prime2 - tdm).values.flatten() ** 2).sum() / np.product(tdm.shape))]
-        print('Error after zeroing out dim {}'.format(numdim))
-        print(err[-1])
+        if verbosity:
+            print('Error after zeroing out dim {}'.format(numdim))
+            print(err[-1])
     return err
 
 
@@ -327,14 +361,18 @@ def lsa_models(vocabulary='cat dog apple lion NYC love'.lower().split(), docs=11
         docs = get_data('cats_and_dogs_sorted')[:docs]
     tdm, tfidfdm, tfidfer = docs_to_tdm(docs=docs, vocabulary=vocabulary)
     lsa_bow_model = lsa(tdm=tdm)
+    lsa_bow_model['vocabulary'] = tdm.index.values
+    lsa_bow_model['docs'] = docs
     err = accuracy_study(verbosity=verbosity, **lsa_bow_model)
-    lsa_bow_model['err'] = np.array(err)
-    lsa_bow_model['accuracy'] = 1. - err
+    lsa_bow_model['err'] = err
+    lsa_bow_model['accuracy'] = list(1. - np.array(err))
     
     lsa_tfidf_model = lsa(tdm=tfidfdm)
+    lsa_bow_model['vocabulary'] = tfidfdm.index.values
+    lsa_tfidf_model['docs'] = docs
     err = accuracy_study(verbosity=verbosity, **lsa_tfidf_model)
-    lsa_tfidf_model['err'] = np.array(err)
-    lsa_tfidf_model['accuracy'] = 1. - err
+    lsa_tfidf_model['err'] = err
+    lsa_tfidf_model['accuracy'] = list(1. - np.array(err))
 
     return lsa_bow_model, lsa_tfidf_model
 
@@ -346,7 +384,7 @@ if __name__ == '__main__':
     lsa_bow_model, lsa_tfidf_model = lsa_models(vocabulary=vocabulary, docs=docs)
     tdm = lsa_bow_model['tdm']
     tfidfdm = lsa_tfidf_model['tdm']
-    print(prettify_tdm(tdm, docs=docs, vocabulary=vocabulary))
+    print(prettify_tdm(tdm=tdm, docs=docs, vocabulary=vocabulary))
     acc = plot_feature_selection(accuracy=lsa_bow_model['accuracy'])
     print("BOW accuracy after multiplying Truncated SVD back together")
     print(acc)
