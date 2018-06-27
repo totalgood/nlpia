@@ -50,6 +50,7 @@ git clone https://github.com/totalgood/nlpia.git
 You have two tools you can use to install `nlpia`:
 
 5.1. `conda`
+
 5.2. `pip`
 
 
