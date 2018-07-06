@@ -109,7 +109,7 @@ from nlpia.data.loaders import get_data
 pd.options.display.width = 120
 pd.options.display.max_columns = 16
 
-VOCABULARY = 'cat dog apple lion NYC love big small bright'.lower().split()
+VOCABULARY = vocabulary='cat dog apple lion NYC love'.lower().split()  # 'cat dog apple lion NYC love big small bright'.lower().split()
 DOCS = get_data('cats_and_dogs_sorted')
 
 

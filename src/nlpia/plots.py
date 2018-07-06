@@ -243,6 +243,7 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
                                   xscale=None, yscale='log',
                                   layout={'hovermode': 'closest', 'showlegend': False, 'autosize': True},
                                   marker={'sizemode': 'area'},
+                                  min_size=10,
                                   ):
     r"""Interactive scatterplot of a DataFrame with the size and color of circles linke to two columns
 
@@ -274,9 +275,9 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
     """
     config_default = dict(DEFAULT_PLOTLY_CONFIG)
     marker_default = {
-        'size': size_col,
+        'size': size_col or min_size,
         'sizemode': 'area',
-        'sizeref': int(df[size_col].min() * .8)}
+        'sizeref': int(df[size_col].min() * .8) if size_col else min_size}
     marker_default.update(marker)
     size_col = marker_default.pop('size')
     layout_default = {
@@ -294,7 +295,7 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
             category_labels = np.array(category_col)
         possible_categories = list(set(category_labels))
     possible_categories = [None] if possible_categories is None else possible_categories
-    if category_col in df:
+    if category_col and category_col in df:
         masks = [np.array(df[category_col] == label) for label in possible_categories]
     else:
         masks = [np.array([True] * len(df))] * len(possible_categories)

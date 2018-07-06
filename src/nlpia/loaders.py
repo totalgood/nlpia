@@ -19,14 +19,16 @@ import os
 import re
 import json
 import requests
+from zipfile import ZipFile
 
 import pandas as pd
 import tarfile
 from tqdm import tqdm
 from gensim.models import KeyedVectors
+from gensim.scripts.glove2word2vec import glove2word2vec
+
 from pugnlp.futil import path_status, find_files
 from pugnlp.util import clean_columns
-
 from nlpia.constants import logging
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE
@@ -43,11 +45,34 @@ np = pd.np
 logger = logging.getLogger(__name__)
 
 # SMALLDATA_URL = 'http://totalgood.org/static/data'
-W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
+W2V_FILES = [
+    'GoogleNews-vectors-negative300.bin.gz',
+    'glove.6B.zip', 'glove.twitter.27B.zip', 'glove.42B.300d.zip', 'glove.840B.300d.zip',
+    ]
 BIG_URLS = {
     'w2v': (
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
         1647046227,
+    ),
+    'glove-twitter': (
+        'https://nlp.stanford.edu/data/glove.twitter.27B.zip',
+        1000000000,
+    ),
+    'glove': (
+        'https://nlp.stanford.edu/data/glove.6B.zip',
+        862182613,
+    ),
+    'glove-small': (
+        'https://nlp.stanford.edu/data/glove.6B.zip',
+        862182613,
+    ),
+    'glove-large': (
+        'https://nlp.stanford.edu/data/glove.840B.300d.zip',
+        1000000000,
+    ),
+    'glove-medium': (
+        'https://nlp.stanford.edu/data/glove.42B.300d.zip',
+        1000000000,
     ),
     'slang': (
         'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
@@ -107,7 +132,7 @@ DDL_DS_QUESTIONS_URL = 'http://minimum-entropy.districtdatalabs.com/api/question
 DDL_DS_ANSWERSS_URL = 'http://minimum-entropy.districtdatalabs.com/api/answers/?format=json'
 
 
-W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
+W2V_PATHS = [os.path.join(BIGDATA_PATH, filename) for filename in W2V_FILES]
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
 
@@ -223,6 +248,23 @@ def dropbox_basename(url):
     return filename
 
 
+def normalize_glove(filepath):
+    """ https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
+
+
+def unzip(filepath):
+    z = ZipFile(filepath)
+    unzip_dir = os.path.join(BIGDATA_PATH, filepath[:-4])
+    if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist()):
+        z.extractall(path=unzip_dir)
+    w2v_paths = [os.path.join(BIGDATA_PATH, filename[:-4] + '.w2v.txt') for filename in os.listdir(unzip_dir)]
+    for (filename, word2vec_output_file) in zip(os.listdir(unzip_dir), w2v_paths):
+        if filename.lower().endswith('.txt'):
+            glove_input_file = os.path.join(unzip_dir, filename)
+            glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
+    return w2v_paths
+
+
 def download(names=None, verbose=True):
     """ Download CSV or HTML tables listed in `names` and save them to DATA_PATH/`names`.csv
 
@@ -246,6 +288,8 @@ def download(names=None, verbose=True):
                 logger.info('Extracting {}'.format(file_paths[name]))
                 untar(file_paths[name])
                 file_paths[name] = file_paths[name][:-7]  # FIXME: rename tar.gz file so that it mimics contents
+            if file_paths[name].endswith('.zip'):
+                file_paths[name] = unzip(file_paths[name])
         else:
             df = pd.read_html(DATA_INFO['url'][name], **DATA_INFO['downloader_kwargs'][name])[-1]
             df.columns = clean_columns(df.columns)
@@ -331,17 +375,19 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
     except IOError:
         pass
 
+    # FIXME: mapping from short name to uncompressed filename
     # BIGDATA files are usually not loadable into dataframes
-    try:
-        return read_txt(os.path.join(BIGDATA_PATH, name + '.txt'), verbose=verbose)
-    except IOError:
-        pass
     try:
         return KeyedVectors.load_word2vec_format(os.path.join(BIGDATA_PATH, name + '.bin.gz'), binary=True)
     except IOError:
         pass
     except ValueError:
         pass
+    try:
+        return read_txt(os.path.join(BIGDATA_PATH, name + '.txt'), verbose=verbose)
+    except IOError:
+        pass
+
 
 
 def get_data(name='sms-spam', nrows=None):
@@ -362,6 +408,17 @@ def get_data(name='sms-spam', nrows=None):
     if name in BIG_URLS:
         logger.info('Downloading {}'.format(name))
         filepaths = download(name)
+        filepath = filepaths[name][0] if isinstance(filepaths[name], list) else filepaths[name]
+        if filepath.lower().endswith('.w2v.txt'):
+            try:
+                return KeyedVectors.load_word2vec_format(filepath, binary=False)
+            except (TypeError, UnicodeError):
+                pass
+        if filepath.lower().endswith('.w2v.bin'):
+            try:
+                return KeyedVectors.load_word2vec_format(filepath, binary=True)
+            except (TypeError, UnicodeError):
+                pass
         return filepaths[name]
     elif name in DATASET_NAME2FILENAME:
         return read_named_csv(name, data_path=DATA_PATH, nrows=nrows)

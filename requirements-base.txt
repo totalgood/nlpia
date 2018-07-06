@@ -12,6 +12,7 @@ MechanicalSoup>=0.10.0,<1.0.0
 nltk>=3.2.2,<3.3.0
 pandas-datareader>=0.5.0
 pandas>=0.19.2
+pathlib>=1.0.1,<2.0.0
 pip>=8.1.2
 plotly>=2.3.0,<2.4.0
 plyfile>=0.5.0,<1.0.0
@@ -21,6 +22,7 @@ pytest>=3.2.1
 pytest-cov>=2.5.1
 # python-igraph>=0.7.1.post6
 python-Levenshtein>=0.12.0
+regex==2017.4.5
 scikit-learn>=0.18.1
 scipy>=0.19.0
 seaborn>=0.8

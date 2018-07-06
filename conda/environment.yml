@@ -11,11 +11,11 @@ dependencies:
   - pillow=4.3.0
   - pyqt=5.6.0
   - pandoc=2.1.2
-  - spacy=2.0.9
-  - swig>=3.0.12
+  - spacy=2.0.11
+  - swig=3.0.12
   - nltk=3.2.5
-  - gensim>=3.4.0
-  - python-levenshtein>=0.12.0
+  - gensim=3.4.0
+  - python-levenshtein=0.12.0
   - boto3
 
   - pip:
