@@ -121,7 +121,7 @@ def split_text_blocks(text):
       ' \t  \r\n'],
      ['Next block\n', '\n'],
      ['was short.']]
-    >>> split_text_blocks(os.path.join(DATA_PATH, 'book'))
+    >> split_text_blocks(os.path.join(DATA_PATH, 'book'))
     """
     blocks = []
     block = []
