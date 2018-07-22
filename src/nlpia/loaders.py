@@ -7,38 +7,72 @@
 137549    5322551                         Agoura
 134468    4641562                         Midway
 """
+# -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
 standard_library.install_aliases()  # noqa
-from builtins import *  # noqa
+from past.builtins import basestring
 
 import os
 import re
 import json
 import requests
-from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH
-
-from tqdm import tqdm
-from pugnlp.futil import path_status, find_files
-
+from zipfile import ZipFile
 
 import pandas as pd
 import tarfile
-
+from tqdm import tqdm
 from gensim.models import KeyedVectors
+from gensim.scripts.glove2word2vec import glove2word2vec
+
+from pugnlp.futil import path_status, find_files
+from pugnlp.util import clean_columns
+from nlpia.constants import logging
+from nlpia.constants import DATA_PATH, BIGDATA_PATH
+from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE
+
+from pugnlp.futil import mkdir_p
+
 
 INT_MAX = INT64_MAX = 2 ** 63 - 1
 INT_MIN = INT64_MIN = - 2 ** 63
+INT_NAN = INT64_NAN = INT64_MIN
+INT_MIN = INT64_MIN = INT64_MIN + 1
 
 np = pd.np
 logger = logging.getLogger(__name__)
 
 # SMALLDATA_URL = 'http://totalgood.org/static/data'
-W2V_FILE = 'GoogleNews-vectors-negative300.bin.gz'
+W2V_FILES = [
+    'GoogleNews-vectors-negative300.bin.gz',
+    'glove.6B.zip', 'glove.twitter.27B.zip', 'glove.42B.300d.zip', 'glove.840B.300d.zip',
+    ]
 BIG_URLS = {
     'w2v': (
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
         1647046227,
+    ),
+    'glove-twitter': (
+        'https://nlp.stanford.edu/data/glove.twitter.27B.zip',
+        1000000000,
+    ),
+    'glove': (
+        'https://nlp.stanford.edu/data/glove.6B.zip',
+        862182613,
+    ),
+    'glove-small': (
+        'https://nlp.stanford.edu/data/glove.6B.zip',
+        862182613,
+    ),
+    'glove-large': (
+        'https://nlp.stanford.edu/data/glove.840B.300d.zip',
+        1000000000,
+    ),
+    'glove-medium': (
+        'https://nlp.stanford.edu/data/glove.42B.300d.zip',
+        1000000000,
     ),
     'slang': (
         'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
@@ -72,6 +106,18 @@ BIG_URLS = {
     ),
 }
 BIG_URLS['word2vec'] = BIG_URLS['w2v']
+try:
+    BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
+except IOError:
+    BIGDATA_INFO = pd.DataFrame(columns='name url file_size'.split())
+    logger.warn('Unable to find BIGDATA index in {}'.format(BIGDATA_INFO_FILE))
+BIG_URLS.update(dict(zip(BIGDATA_INFO.name, zip(BIGDATA_INFO.url, BIGDATA_INFO.file_size))))
+BIGDATA_INFO = pd.DataFrame(list(
+    zip(BIG_URLS.keys(), list(zip(*BIG_URLS.values()))[0], list(zip(*BIG_URLS.values()))[1])),
+    columns='name url file_size'.split())
+BIGDATA_INFO.to_csv(BIGDATA_INFO_FILE)
+
+# FIXME: consolidate with DATA_INFO or BIG_URLS
 DATA_NAMES = {
     'pointcloud': os.path.join(DATA_PATH, 'pointcloud.csv.gz'),
     'hutto_tweets0': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/tweets_GroundTruth.csv.gz'),
@@ -81,15 +127,16 @@ DATA_NAMES = {
     'hutto_products': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/amazonReviewSnippets_GroundTruth.csv.gz'),
 }
 
+# FIXME: put these in BIG_URLS
 DDL_DS_QUESTIONS_URL = 'http://minimum-entropy.districtdatalabs.com/api/questions/?format=json'
 DDL_DS_ANSWERSS_URL = 'http://minimum-entropy.districtdatalabs.com/api/answers/?format=json'
 
 
-W2V_PATH = os.path.join(BIGDATA_PATH, W2V_FILE)
+W2V_PATHS = [os.path.join(BIGDATA_PATH, filename) for filename in W2V_FILES]
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
 
-DATA_INFO = pd.read_csv(os.path.join(DATA_PATH, 'data_info.csv'))
+DATA_INFO = pd.read_csv(DATA_INFO_FILE, header=0)
 
 
 def untar(fname):
@@ -97,7 +144,7 @@ def untar(fname):
         with tarfile.open(fname) as tf:
             tf.extractall()
     else:
-        print("Not a tar.gz file: {}".format(fname))
+        logger.warn("Not a tar.gz file: {}".format(fname))
 
 
 for filename in TEXTS:
@@ -118,9 +165,11 @@ def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
         return True
     if (series == np.arange(len(series))).all():
         return True
-    if ((series.index == np.arange(len(series))).all() and
+    if (
+        (series.index == np.arange(len(series))).all() and
         str(series.dtype).startswith('int') and
-        (series.count() == len(series))):
+        (series.count() == len(series))
+    ):
         return True
     return False
 
@@ -178,7 +227,8 @@ def read_txt(fin, nrows=None, verbose=True):
 
 
 for filename in CSVS:
-    locals()['df_' + filename.split('.')[0].replace('-', '_')] = read_csv(os.path.join(DATA_PATH, filename))
+    locals()['df_' + filename.split('.')[0].replace('-', '_')] = read_csv(
+        os.path.join(DATA_PATH, filename))
 
 
 harry_docs = ["The faster Harry got to the store, the faster and faster Harry would get home.",
@@ -198,15 +248,33 @@ def dropbox_basename(url):
     return filename
 
 
-def download(names=None, verbose=True):
-    """ Download files or HTML tables listed in `names` and save them to DATA_PATH/`names`.csv
+def normalize_glove(filepath):
+    """ https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
 
-    Uses table in data_info.csv to determin URL or file path from name.
+
+def unzip(filepath):
+    z = ZipFile(filepath)
+    unzip_dir = os.path.join(BIGDATA_PATH, filepath[:-4])
+    if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist()):
+        z.extractall(path=unzip_dir)
+    w2v_paths = [os.path.join(BIGDATA_PATH, filename[:-4] + '.w2v.txt') for filename in os.listdir(unzip_dir)]
+    for (filename, word2vec_output_file) in zip(os.listdir(unzip_dir), w2v_paths):
+        if filename.lower().endswith('.txt'):
+            glove_input_file = os.path.join(unzip_dir, filename)
+            glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
+    return w2v_paths
+
+
+def download(names=None, verbose=True):
+    """ Download CSV or HTML tables listed in `names` and save them to DATA_PATH/`names`.csv
+
+    Uses table in data_info.csv (internal DATA_INFO) to determine URL or file path from dataset name.
+    Also looks
 
     TODO: if name is a valid URL then download it and create a name
           and store the name: url in data_info.csv before downloading
     """
-    names = [names] if isinstance(names, (str, bytes)) else names
+    names = [names] if isinstance(names, basestring) else names
     # names = names or list(BIG_URLS.keys())  # download them all, if none specified!
     file_paths = {}
     for name in names:
@@ -217,9 +285,11 @@ def download(names=None, verbose=True):
                                              size=BIG_URLS[name][1],
                                              verbose=verbose)
             if file_paths[name].endswith('.tar.gz'):
-                print('Extracting {}'.format(file_paths[name]))
+                logger.info('Extracting {}'.format(file_paths[name]))
                 untar(file_paths[name])
                 file_paths[name] = file_paths[name][:-7]  # FIXME: rename tar.gz file so that it mimics contents
+            if file_paths[name].endswith('.zip'):
+                file_paths[name] = unzip(file_paths[name])
         else:
             df = pd.read_html(DATA_INFO['url'][name], **DATA_INFO['downloader_kwargs'][name])[-1]
             df.columns = clean_columns(df.columns)
@@ -232,37 +302,43 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     if filename is None:
         filename = dropbox_basename(url)
-    file_path = os.path.join(data_path, filename)
-    if url.endswith('?dl=0'):
-        url = url[:-1] + '1'  # noninteractive download
+    filepath = os.path.join(data_path, filename)
+    if url.endswith('dl=0'):
+        url = url[:-1] + '1'  # noninteractive Dropbox download
     if verbose:
         tqdm_prog = tqdm
-        print('requesting URL: {}'.format(url))
+        logger.info('requesting URL: {}'.format(url))
     else:
         tqdm_prog = no_tqdm
     r = requests.get(url, stream=True, allow_redirects=True)
     size = r.headers.get('Content-Length', None) if size is None else size
-    print('remote size: {}'.format(size))
+    logger.info('remote size: {}'.format(size))
 
-    stat = path_status(file_path)
-    print('local size: {}'.format(stat.get('size', None)))
+    stat = path_status(filepath)
+    logger.info('local size: {}'.format(stat.get('size', None)))
     if stat['type'] == 'file' and stat['size'] >= size:  # TODO: check md5 or get the right size of remote file
         r.close()
-        return file_path
+        logger.info('retained: {}'.format(filepath))
+        return filepath
 
-    print('Downloading to {}'.format(file_path))
-
-    with open(file_path, 'wb') as f:
+    filedir = os.path.dirname(filepath)
+    created_dir = mkdir_p(filedir)
+    if verbose:
+        logger.info('data path created: {}'.format(created_dir))
+    assert os.path.isdir(filedir)
+    assert created_dir.endswith(filedir)
+    logger.info('downloaded: {}'.format(filepath))
+    with open(filepath, 'wb') as f:
         for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size)):
             if chunk:  # filter out keep-alive chunks
                 f.write(chunk)
 
     r.close()
-    return file_path
+    return filepath
 
 
 def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
-    """ Convert a dataset in a local file (usually a CSV) into a Pandas DataFrame 
+    """ Convert a dataset in a local file (usually a CSV) into a Pandas DataFrame
 
     TODO: should be called read_named_dataset
 
@@ -299,17 +375,19 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
     except IOError:
         pass
 
+    # FIXME: mapping from short name to uncompressed filename
     # BIGDATA files are usually not loadable into dataframes
-    try:
-        return read_txt(os.path.join(BIGDATA_PATH, name + '.txt'), verbose=verbose)
-    except IOError:
-        pass
     try:
         return KeyedVectors.load_word2vec_format(os.path.join(BIGDATA_PATH, name + '.bin.gz'), binary=True)
     except IOError:
         pass
     except ValueError:
         pass
+    try:
+        return read_txt(os.path.join(BIGDATA_PATH, name + '.txt'), verbose=verbose)
+    except IOError:
+        pass
+
 
 
 def get_data(name='sms-spam', nrows=None):
@@ -328,8 +406,19 @@ def get_data(name='sms-spam', nrows=None):
     ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
     """
     if name in BIG_URLS:
-        print('Downloading {}'.format(name))
+        logger.info('Downloading {}'.format(name))
         filepaths = download(name)
+        filepath = filepaths[name][0] if isinstance(filepaths[name], list) else filepaths[name]
+        if filepath.lower().endswith('.w2v.txt'):
+            try:
+                return KeyedVectors.load_word2vec_format(filepath, binary=False)
+            except (TypeError, UnicodeError):
+                pass
+        if filepath.lower().endswith('.w2v.bin'):
+            try:
+                return KeyedVectors.load_word2vec_format(filepath, binary=True)
+            except (TypeError, UnicodeError):
+                pass
         return filepaths[name]
     elif name in DATASET_NAME2FILENAME:
         return read_named_csv(name, data_path=DATA_PATH, nrows=nrows)
@@ -340,7 +429,8 @@ def get_data(name='sms-spam', nrows=None):
     elif os.path.isfile(os.path.join(DATA_PATH, name)):
         return read_named_csv(os.path.join(DATA_PATH, name), nrows=nrows)
 
-    msg = 'Unable to find dataset named {} in DATA_PATH with file extension .csv.gz, .csv, .json, or .txt\n'.format(name)
+    msg = 'Unable to find dataset "{}"" in {} or {} (*.csv.gz, *.csv, *.json, *.zip, or *.txt)\n'.format(
+        name, DATA_PATH, BIGDATA_PATH)
     msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
     logger.error(msg)
     raise IOError(msg)
@@ -356,8 +446,8 @@ def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1,
     return df
 
 
-def read_json(file_path):
-    return json.load(open(file_path, 'rt'))
+def read_json(filepath):
+    return json.load(open(filepath, 'rt'))
 
 
 def get_wikidata_qnum(wikiarticle, wikisite):
@@ -420,20 +510,24 @@ def load_geonames(path='http://download.geonames.org/export/dump/cities1000.zip'
     7  feature code      : see http://www.geonames.org/export/codes.html, varchar(10)
     8  country code      : ISO-3166 2-letter country code, 2 characters
     9  cc2               : alternate country codes, comma separated, ISO-3166 2-letter country code, 200 characters
-    10 admin1 code       : fipscode (subject to change to iso code), see exceptions below, see file admin1Codes.txt
-                           for display names of this code; varchar(20)
-    11 admin2 code       : code for the second administrative division, a county in the US, see file admin2Codes.txt; varchar(80)
+    10 admin1 code       : fipscode (subject to change to iso code), see exceptions below,
+                           see file admin1Codes.txt for display names of this code; varchar(20)
+    11 admin2 code       : code for the second administrative division, a county in the US,
+                           see file admin2Codes.txt; varchar(80)
     12 admin3 code       : code for third level administrative division, varchar(20)
     13 admin4 code       : code for fourth level administrative division, varchar(20)
     14 population        : bigint (8 byte int)
     15 elevation         : in meters, integer
-    16 dem               : digital elevation model, srtm3 or gtopo30, average elevation of 3''x3'' (ca 90mx90m) or 30''x30''
-                           (ca 900mx900m) area in meters, integer. srtm processed by cgiar/ciat.
+    16 dem               : digital elevation model, srtm3 or gtopo30, average elevation of
+                           (3''x3''ca 90mx90m) or 30''x30''(ca 900mx900m) area in meters, integer.
+                           srtm processed by cgiar/ciat.
     17 timezone          : the iana timezone id (see file timeZone.txt) varchar(40)
     18 modification date : date of last modification in yyyy-MM-dd format
     """
-    columns = ['geonameid', 'name', 'asciiname', 'alternatenames', 'latitude', 'longitude', 'feature class', 'feature code', 'country code']
-    columns += ['cc2', 'admin1_code', 'admin2_code', 'admin3_code', 'admin4_code', 'population', 'elevation', 'dem', 'timezone', 'modification date']
+    columns = ['geonameid', 'name', 'asciiname', 'alternatenames', 'latitude', 'longitude', 'feature class',
+               'feature code', 'country code']
+    columns += ['cc2', 'admin1_code', 'admin2_code', 'admin3_code', 'admin4_code', 'population', 'elevation',
+                'dem', 'timezone', 'modification date']
     columns = normalize_column_names(columns)
     df = pd.read_csv(path, sep='\t', index_col=None, low_memory=False, header=None)
     df.columns = columns
@@ -447,7 +541,7 @@ def normalize_column_names(df):
 
 
 def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz'):
-    """There are still quite a few errors in this table, even after all this cleaning, so it's not a good source of city names"""
+    """ WARN: Not a good source of city names. This table has many errors, even after cleaning"""
     df = pd.read_csv(filename, header=0, index_col=0, low_memory=False)
     df.columns = [c.replace(' ', '_').lower() for c in df.columns]
     canonical = pd.DataFrame([list(row) for row in df.canonical_name.str.split(',').values])

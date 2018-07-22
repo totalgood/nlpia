@@ -18,11 +18,9 @@ if [[ "$DISTRIB" == "conda" ]]; then
     # Use the anaconda3 installer
     DOWNLOAD_DIR=${DOWNLOAD_DIR:-$HOME/.tmp/anaconda3}
     mkdir -p $DOWNLOAD_DIR
-    wget http://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh \
-        -O $DOWNLOAD_DIR/anaconda3.sh
-    chmod +x $DOWNLOAD_DIR/anaconda3.sh && \
-        bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3 && \
-        # rm -r -d -f $DOWNLOAD_DIR
+    wget http://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh -O $DOWNLOAD_DIR/anaconda3.sh
+    chmod +x $DOWNLOAD_DIR/anaconda3.sh && bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3
+    # rm -r -d -f $DOWNLOAD_DIR
     export PATH=$HOME/anaconda3/bin:$PATH
     conda update -y conda
     conda install -y pip

@@ -28,27 +28,31 @@ docs = [' '.join(w for w in words if w not in STOPWORDS) for words in docs]
 
 
 tfidfer = TfidfVectorizer(min_df=2, max_df=.6)
-df = pd.DataFrame(tfidfer.fit_transform(docs).todense())
+tfidf_dense = pd.DataFrame(tfidfer.fit_transform(docs).todense())
 id_words = [(i, w) for (w, i) in tfidfer.vocabulary_.items()]
-df.columns = list(zip(*sorted(id_words)))[1]
+tfidf_dense.columns = list(zip(*sorted(id_words)))[1]
 
-pd.set_option('display.width', 150)
-df_docs = df.copy()
-df_docs['text'] = corpus
-df_docs[['dog', 'cat', 'bear', 'pet', 'hat', 'bike', 'chase', 'bark', 'meow', 'text']].head(10).round(1)
-#    dog  cat  bear  pet  hat  bike  chase  bark  meow                                         text
-# 0  0.0  0.4   0.0  0.0  0.9   0.0    0.0   0.0   0.0                           The Cat in the Hat
-# 1  0.0  0.5   0.0  0.0  0.0   0.0    0.0   0.0   0.0                           The cat ate a rat.
-# 2  0.0  0.6   0.0  0.0  0.0   0.0    0.8   0.0   0.0             The cat chased my laser pointer.
-# 3  0.3  0.0   0.0  0.0  0.0   0.6    0.4   0.6   0.0      A dog chased my bike and barked loudly.
-# 4  0.4  0.0   0.0  0.0  0.0   0.0    0.0   0.6   0.0                  I ran from the barking dog.
-# 5  0.4  0.0   0.0  0.0  0.0   0.0    0.5   0.6   0.0               A dog chased the car, barking.
-# 6  0.0  0.5   0.0  0.0  0.0   0.0    0.0   0.0   0.9                               The Cat's Meow
-# 7  0.0  0.3   0.0  0.4  0.0   0.0    0.0   0.0   0.5  The cat meowed so I pet it until it purred.
-# 8  0.0  0.5   0.0  0.0  0.0   0.0    0.0   0.0   0.9             A cat meowed on the hot tin roof
-# 9  0.5  0.4   0.0  0.0  0.0   0.0    0.0   0.0   0.0              Cats and dogs playing together.
+pd.options.display.width = 150
+pd.options.display.max_columns = 16
+tfidf_pretty = tfidf_dense.copy()
+tfidf_pretty = tfidf_pretty[['dog', 'cat', 'bear', 'pet', 'hat', 'bike', 'chase', 'bark', 'meow']].head(10).round(1)
+tfidf_pretty[tfidf_pretty == 0] = ''
+tfidf_pretty['...'] = ''
+tfidf_pretty['text'] = corpus[:10]
+tfidf_pretty
+#    dog  cat bear  pet  hat bike chase bark meow ...                                         text
+# 0       0.4            0.9                                                    The Cat in the Hat
+# 1       0.5                                                                   The cat ate a rat.
+# 2       0.6                       0.8                           The cat chased my laser pointer.
+# 3  0.3                      0.6   0.4  0.6               A dog chased my bike and barked loudly.
+# 4  0.4                                 0.6                           I ran from the barking dog.
+# 5  0.4                            0.5  0.6                        A dog chased the car, barking.
+# 6       0.5                                 0.9                                   The Cat's Meow
+# 7       0.3       0.4                       0.5      The cat meowed so I pet it until it purred.
+# 8       0.5                                 0.9                 A cat meowed on the hot tin roof
+# 9  0.5  0.4                                                      Cats and dogs playing together.
 
-df.T.sum()
+tfidf_dense.T.sum()
 # 0     1.334096
 # ...
 # 20    0.000000
@@ -63,6 +67,7 @@ df.T.sum()
 # 47    1.000000
 # 48    0.000000
 # ...
+
 [corpus[i] for i in [20, 22, 30, 34, 46, 48]]
 ['Sit Ubu, sit.',
  'I flew a kite.',

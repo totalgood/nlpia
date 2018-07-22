@@ -1,20 +1,31 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+# -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
+from past.builtins import basestring
 standard_library.install_aliases()  # noqa
-# from builtins import *  # noqa
+
 import tempfile
 import os
 import re
+import itertools
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 import requests
+from requests.adapters import HTTPAdapter
 import pandas as pd
-from nlpia.constants import logging
 
+from pugnlp.futil import find_files
 from annoy import AnnoyIndex
 
-from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII, DATA_PATH, BIGDATA_PATH
+from nlpia.constants import logging
+from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
+from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH
 from nlpia.data.loaders import read_csv
-
 
 np = pd.np
 logger = logging.getLogger(__name__)
@@ -43,48 +54,105 @@ NAME_ACCENT = {
     'ACCUTE ACCENT': "'",
     'GRAVE ACCENT ABOVE': '`',
     'ACCUTE ACCENT ABOVE': "'",
-    }
+}
 
 NAME_ASCII = {
     'ETH': 'D',
     'AE': 'E',
     'SHARP S': 'B',
     'DOTLESS I': 'I',
-    }
+}
 
 
-def iter_lines(url):
-    """ Return an iterator over the lines of a file or URI response. """
-    if url is None:
-        url = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
-    elif isinstance(url, str):
-        if os.path.isfile(os.path.join(DATA_PATH, url)):
-            fin = open(os.path.join(DATA_PATH, url))
-    fin = requests.get(url, stream=True)
-    utf = pd.read_html(resp.text)
+def is_valid_url(url):
+    """ Check URL to see if it is a valid web page, return the redirected location if it is
+
+    Returns:
+      None if ConnectionError
+      False if url is invalid (any HTTP error code)
+      cleaned up URL (following redirects and possibly adding HTTP schema "http://")
+
+    >> is_valid_url("totalgood.org")
+    'https://totalgood.org'
+
+    >>> url = is_valid_url("totalgood.org")
+    >>> url.startswith('http')
+    True
+    >>> url.endswith('totalgood.org')
+    True
+    """
+    if not isinstance(url, basestring):
+        return False
+    session = requests.Session()
+    session.mount(url, HTTPAdapter(max_retries=1))
+    try:
+        resp = session.get(url, allow_redirects=False)
+    except requests.exceptions.MissingSchema:
+        try:
+            url = 'https://' + url
+            resp = session.get(url, allow_redirects=False)
+        except requests.exceptions.MissingSchema:
+            url = 'http://' + url
+            resp = session.get(url, allow_redirects=False)
+    except requests.exceptions.ConnectionError:
+        return None
+    if resp.status_code == 200:
+        return url
+    elif resp.status_code == 302:
+        return resp.headers['location']
+    else:
+        return False
+
+
+def iter_lines(url_or_text, ext=None, mode='rt'):
+    r""" Return an iterator over the lines of a file or URI response.
+
+    >>> len(list(iter_lines('cats_and_dogs.txt')))
+    263
+    >>> len(list(iter_lines(list('abcdefgh'))))
+    8
+    >>> len(list(iter_lines('abc\n def\n gh\n')))
+    3
+    >>> len(list(iter_lines('abc\n def\n gh')))
+    3
+    >>> len(list(iter_lines(os.path.join(DATA_PATH, 'book'))))
+    3
+    """
+    if url_or_text is None or not url_or_text:
+        return []
+        # url_or_text = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
+    elif isinstance(url_or_text, basestring):
+        if os.path.isfile(os.path.join(DATA_PATH, url_or_text)):
+            return open(os.path.join(DATA_PATH, url_or_text), mode=mode)
+        elif os.path.isfile(url_or_text):
+            return open(os.path.join(url_or_text), mode=mode)
+        elif os.path.isdir(url_or_text):
+            filepaths = [filemeta['path'] for filemeta in find_files(url_or_text, ext=ext)]
+            return itertools.chain.from_iterable(map(open, filepaths))
+        url = is_valid_url(url_or_text)
+        if url:
+            return requests.get(url, stream=True, allow_redirects=True)
+        else:
+            return StringIO(url_or_text)
+    elif isinstance(url_or_text, (list, tuple)):
+        return itertools.chain.from_iterable(map(iter_lines, filepaths, ext=ext))
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
-    """ Parse HTML table UTF8 char descriptions returning DataFrame with `ascii` and `mutliascii`
-    
-    >>> 
-    """
-
-
-
-
+    """ Parse HTML table UTF8 char descriptions returning DataFrame with `ascii` and `mutliascii` """
+    utf = pd.read_html(url)
     utf = [df for df in utf if len(df) > 1023 and len(df.columns) > 2][0]
     utf = utf.iloc[:1024] if len(utf) == 1025 else utf
     utf.columns = 'char name hex'.split()
     utf.name = utf.name.str.replace('<control>', 'CONTTROL CHARACTER')
     multiascii = [' '] * len(utf)
-    ascii = [' '] * len(utf)
+    asc = [' '] * len(utf)
     rows = []
     for i, name in enumerate(utf.name):
         if i < 128 and str.isprintable(chr(i)):
-            ascii[i] = chr(i)
+            asc[i] = chr(i)
         else:
-            ascii[i] = ' '
+            asc[i] = ' '
         big = re.findall(r'CAPITAL\ LETTER\ ([a-z0-9A-Z ]+$)', name)
         small = re.findall(r'SMALL\ LETTER\ ([a-z0-9A-Z ]+$)', name)
         pattern = r'(?P<description>' \
@@ -100,13 +168,15 @@ def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
         gd['suffix'] = None
         gd['wordwith'] = None
 
-        withprefix = re.match(r'(?P<prefix>DOTLESS|TURNED|SMALL)(?P<name>.*)(?P<wordwith>WITH|SUPERSCRIPT|SUBSCRIPT|DIGRAPH)\s+(?P<suffix>[-_><a-z0-9A-Z\s ]+)',
-            gd['name'])
+        withprefix = re.match(r'(?P<prefix>DOTLESS|TURNED|SMALL)(?P<name>.*)' +
+                              r'(?P<wordwith>WITH|SUPERSCRIPT|SUBSCRIPT|DIGRAPH)\s+(?P<suffix>[-_><a-z0-9A-Z\s ]+)',
+                              gd['name'])
         if withprefix:
             gd.update(withprefix.groupdict())
 
-        withsuffix = re.match(r'(?P<name>.*)(?P<wordwith>WITH|SUPERSCRIPT|SUBSCRIPT|DIGRAPH)\s+(?P<suffix>[-_><a-z0-9A-Z\s ]+)',
-            gd['name'])
+        withsuffix = re.match(r'(?P<name>.*)(?P<wordwith>WITH|SUPERSCRIPT|SUBSCRIPT|DIGRAPH)\s+' +
+                              r'(?P<suffix>[-_><a-z0-9A-Z\s ]+)',
+                              gd['name'])
         if withsuffix:
             gd.update(withsuffix.groupdict())
 
@@ -122,15 +192,15 @@ def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
                     m = big[0]
                     multiascii[i] = m
                     if len(m) == 1:
-                        ascii[i] = m
+                        asc[i] = m
                 elif small:
                     multiascii[i] = small[0].lower()
                     if len(multiascii[i]) == 1:
-                        ascii[i] = small[0].lower()
+                        asc[i] = small[0].lower()
         rows.append(gd)
     df = pd.DataFrame(rows)
     df.multiascii = df.multiascii.str.strip()
-    df.ascii = df.ascii.str.strip()
+    df['ascii'] = df['ascii'].str.strip()
     df.name = df.name.str.strip()
     return df
 
@@ -194,7 +264,7 @@ def representative_sample(X, num_samples, save=False):
     idx.build(int(np.log2(N)) + 1)
 
     if save:
-        if isinstance(save, (bytes, str)):
+        if isinstance(save, basestring):
             idxfilename = save
         else:
             idxfile = tempfile.NamedTemporaryFile(delete=False)
@@ -212,12 +282,9 @@ def representative_sample(X, num_samples, save=False):
         if i in samples:
             continue
         nns = idx.get_nns_by_item(i, num_nns)
-        # FIXME: pick vector furthest from past K (K > 1) points or outside of a hypercube 
+        # FIXME: pick vector furthest from past K (K > 1) points or outside of a hypercube
         #        (sized to uniformly fill the space) around the last sample
-        try:
-            samples[j + 1] = np.setdiff1d(nns, samples)[-1]
-        except:
-            samples[j + 1]
+        samples[j + 1] = np.setdiff1d(nns, samples)[-1]
         if len(num_nns) < num_samples / 3.:
             num_nns = min(N, 1.3 * num_nns)
         j += 1
@@ -225,8 +292,13 @@ def representative_sample(X, num_samples, save=False):
 
 
 def find_data_path(path):
-    for fullpath in [path, os.path.join(DATA_PATH, path), os.path.join(BIGDATA_PATH, path),
-                     os.path.abspath(os.path.join('.', path)), os.path.expanduser(os.path.join('~', path))]:
+    for fullpath in [path,
+                     os.path.join(DATA_PATH, path),
+                     os.path.join(BIGDATA_PATH, path),
+                     os.path.join(BASE_DIR, path),
+                     os.path.expanduser(os.path.join('~', path)),
+                     os.path.abspath(os.path.join('.', path))
+                     ]:
         if os.path.exists(fullpath):
             return fullpath
     return None

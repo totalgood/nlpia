@@ -42,9 +42,6 @@ def embed_wordvecs(w2v=None, df=None, vocab='name', embedder=TSNE, **kwargs):
     return pd.DataFrame(tsne.embedding_, columns=['x', 'y'])
 
 
-
-
-
 """
 Trial and error to produce the steps encoded in embed_vectors() above
 

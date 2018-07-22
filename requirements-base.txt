@@ -4,7 +4,7 @@
 AIML-Bot>=0.0.3,<0.1.0
 cufflinks>=0.12.1
 future>=0.16.0
-gensim>=3.4.0,<3.5.0
+gensim>=3.4.0,<3.7.0
 h5py>=2.7.1,<2.8.0
 jupyter>=1.0.0,<2.0.0
 matplotlib==2.2.2
@@ -12,17 +12,20 @@ MechanicalSoup>=0.10.0,<1.0.0
 nltk>=3.2.2,<3.3.0
 pandas-datareader>=0.5.0
 pandas>=0.19.2
+pathlib>=1.0.1,<2.0.0
 pip>=8.1.2
 plotly>=2.3.0,<2.4.0
 plyfile>=0.5.0,<1.0.0
-pugnlp>=0.0.12,<0.1.0
+pugnlp>=0.1.6,<0.2.0
 pypandoc>=1.4.0
+pytest>=3.2.1
+pytest-cov>=2.5.1
 # python-igraph>=0.7.1.post6
 python-Levenshtein>=0.12.0
+regex==2017.4.5
 scikit-learn>=0.18.1
 scipy>=0.19.0
 seaborn>=0.8
-simpleaudio>=1.0.2,<2.0.0
 tqdm>=4.11.2
 wheel>=0.30.0a0
 

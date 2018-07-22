@@ -15,7 +15,11 @@ also be used as template for Python modules.
 
 Note: This skeleton file can be safely removed if not needed!
 """
-from __future__ import division, print_function, absolute_import
+from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from future import standard_library
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 
 import argparse
 import sys
@@ -41,8 +45,8 @@ def fib(n):
     """
     assert n > 0
     a, b = 1, 1
-    for i in range(n-1):
-        a, b = b, a+b
+    for i in range(n - 1):
+        a, b = b, a + b
     return a
 
 

@@ -75,3 +75,5 @@ record.txt
 *.master.*
 *.develop.*
 
+# extracted bigdata
+src/nlpia/data/aiml-en-us-foundation-alice/

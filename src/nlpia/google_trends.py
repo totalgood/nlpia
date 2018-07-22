@@ -1,8 +1,10 @@
 """ Deprecated Google Trends API """
+# -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
-# from builtins import int, round, str
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
-standard_library.install_aliases()  # NOQA
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 
 import io
 

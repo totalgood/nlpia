@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """Load sentiment analysis word value labels from academic studies
 
 senti # large dataframe for sentiment and stats on about 14k word lemmas
@@ -19,11 +21,11 @@ senti_classic  # original sentiment data used for VADER and other "classic" algo
 3  abandonment        2.63      1.74         19        4.95
 4        abbey        5.85      1.69         20        2.20
 """
-
 from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
-standard_library.install_aliases()  # noqa
-from builtins import *  # noqa
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 
 import os
 from itertools import product

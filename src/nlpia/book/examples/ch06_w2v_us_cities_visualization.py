@@ -1,15 +1,25 @@
-import os
-from nlpia.data.loaders import BIGDATA_PATH
+# Manually load w2v
+# import os
+# from nlpia.data.loaders import BIGDATA_PATH
+# from gensim.models import KeyedVectors
+# path = os.path.join(BIGDATA_PATH, 'GoogleNews-vectors-negative300.bin.gz')
+# wv = KeyedVectors.load_word2vec_format(path, binary=True)
+
+# nlpia can now automatically download and load w2v
+
+from nlpia.data.loaders import get_data
 from gensim.models import KeyedVectors
-path = os.path.join(BIGDATA_PATH, 'GoogleNews-vectors-negative300.bin.gz')
+path = get_data('word2vec')
 wv = KeyedVectors.load_word2vec_format(path, binary=True)
 len(wv.vocab)
 # 3000000
+wv.vectors.shape
+# (3000000, 300)
 
 
 import pandas as pd
 vocab = pd.Series(wv.vocab)
-vocab.iloc[1000000:100006]
+vocab.iloc[100000:100006]  # different words for new KeyedVector format
 # Illington_Fund             Vocab(count:447860, index:2552140)
 # Illingworth                 Vocab(count:2905166, index:94834)
 # Illingworth_Halifax       Vocab(count:1984281, index:1015719)
@@ -21,10 +31,11 @@ vocab.iloc[1000000:100006]
 import numpy as np
 np.linalg.norm(wv['Illinois'] - wv['Illini'])  # <1>
 # 3.3653798
-np.dot(wv['Illinois'], wv['Illini']) / (
+similarity = np.dot(wv['Illinois'], wv['Illini']) / (
     np.linalg.norm(wv['Illinois']) * np.linalg.norm(wv['Illini']))   # <2>
+similarity
 # 0.5501352
-1 - _  # <3>
+1 - similarity  # <3>
 # 0.4498648
 # ----
 # <1> Euclidean distance
@@ -78,6 +89,7 @@ us[us.columns[-3:]].head()
 # 4046430           Natalia  TX    Texas
 
 
+import numpy as np
 vocab = pd.np.concatenate([us.city, us.st, us.state])
 vocab = np.array([word for word in vocab if word in wv.wv])
 vocab[:10]
@@ -88,6 +100,7 @@ vocab[:10]
 # >>> us_300D = pd.DataFrame([[i] + list(wv[c] + (wv[state] if state in vocab else wv[s]) + wv[s]) for i, c, state, s
 # ...                         in zip(us.index, us.city, us.state, us.st) if c in vocab])
 city_plus_state = []
+us = us.sort_values('population', ascending=False)
 for c, state, st in zip(us.city, us.state, us.st):
     if c not in vocab:
         continue
@@ -97,13 +110,57 @@ for c, state, st in zip(us.city, us.state, us.st):
     else:
         row.extend(wv[c] + wv[st])
     city_plus_state.append(row)
-us_300D = pd.DataFrame(city_plus_state)
+us_300D_sorted = pd.DataFrame(city_plus_state)
+del city_plus_state
+del wv
 
 
+# Simplified plot of 10 largest cities
+from sklearn.decomposition import PCA
+pca = PCA(n_components=2) 
+us_300D = get_data('cities_us_wordvectors')
+us_2D = pca.fit_transform(us_300D.iloc[:10, :300])
+
+# Original confusing/complicated/detailed plot
 from sklearn.decomposition import PCA
 pca = PCA(n_components=2)  # <1>
 us_300D = get_data('cities_us_wordvectors')
-us_2D = pca.fit_transform(us_300D.iloc[:, :300])  # <2>
+us_2D = pca.fit_transform(us_300D.iloc[:num_cities, :300])  # <2>
 # ----
 # <1> PCA here is for visualization of high dimensional vectors only, not for calculating Word2vec vectors
 # <2> The last column (# 301) of this DataFrame contains the name, which is also stored in the DataFrame index.
+
+# this example is completely independent of the examples above
+from nlpia.data.loaders import get_data
+from nlpia.plots import offline_plotly_scatter_bubble
+df = get_data('cities_us_wordvectors_pca2_meta')
+df = df.sort_values('population', ascending=False)[:10].copy()
+df[['x', 'y']] = - df[['x', 'y']]  # <1> flip East/West & North/South axes to match geography better
+html = offline_plotly_scatter_bubble(
+    df, x='x', y='y',
+    size_col=None, text_col='name', category_col=None,
+    xscale=None, yscale=None,  # 'log' or None
+    layout={}, marker={'sizeref': 3000})
+with open('wordmap.html', 'w') as fout:
+    fout.write(html)
+# !firefox ./wordmap.html
+""" Simplified Plot
+
+from nlpia.data.loaders import get_data
+from nlpia.plots import offline_plotly_scatter_bubble
+df = get_data('cities_us_wordvectors_pca2_meta')
+df = df.sort_values('population', ascending=False)[:10].copy()
+df[['x', 'y']] = - df[['x', 'y']]  # <1>
+html = offline_plotly_scatter_bubble(
+    df, x='x', y='y',
+    size_col=None, text_col='name', category_col=None,
+    xscale=None, yscale=None,  # 'log' or None
+    layout={}, marker={'sizeref': 3000})
+with open('wordmap.html', 'w') as fout:
+    fout.write(html)
+# !firefox ./wordmap.html
+
+<1> flips the East/West North/South axes around to match geography better
+
+
+"""

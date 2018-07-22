@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
-standard_library.install_aliases()  # noqa
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 
 from pandas import np
 
@@ -73,7 +76,7 @@ class OneNeuronRegressor(object):
     ...     nn = nn.fit(x, y)
     ...     # print(nn.W, error[i])
     >>> nn.W.round(1)  # intercept, slope
-    array([[-2.7,  3.1]])  
+    array([[-2.7,  3.1]])
 
     X = pca_topic_vectors[['topic4']].values[:5, :]
     y = scores['compound'].reshape(len(scores), 1).values[:5, :]

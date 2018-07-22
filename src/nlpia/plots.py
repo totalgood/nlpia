@@ -4,8 +4,8 @@
 import os
 
 import matplotlib
-matplotlib.use('TkAgg')
-import seaborn
+matplotlib.use('TkAgg')  # noqa
+import seaborn  # noqa
 from matplotlib import pyplot as plt
 
 from mpl_toolkits.mplot3d import Axes3D  # noqa
@@ -52,7 +52,7 @@ DEFAULT_PLOTLY_CONFIG = {
     'displaylogo': False,  # add the plotly logo on the end of the modebar
     'plot3dPixelRatio': 2,  # increase the pixel ratio for 3D plot images
     'setBackground': 'opaque'  # fn to add the background color to a different container or 'opaque' to ensure there's white behind it
-    }
+}
 
 
 def plotly_timeseries(df):
@@ -60,7 +60,7 @@ def plotly_timeseries(df):
         'x': df.index,
         'y': df[col],
         'name': col
-        } for col in df.columns], filename='cufflinks/simple-line')
+    } for col in df.columns], filename='cufflinks/simple-line')
     return fig
 
 
@@ -78,7 +78,7 @@ def scatter_3d(df, labels=None, depthshade=True):
 
     try:
         df = df.values
-    except:
+    except AttributeError:
         pass
 
     fig = plt.figure()
@@ -223,7 +223,8 @@ def offline_plotly_data(data, filename=None, config=None, validate=True,
 def normalize_etpinard_df(df='https://plot.ly/~etpinard/191.csv', columns='x y size text'.split(),
                           category_col='category', possible_categories=['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']):
     """Reformat a dataframe in etpinard's format for use in plot functions and sklearn models"""
-    possible_categories = ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania'] if possible_categories is None else possible_categories
+    possible_categories = ['Africa', 'Americas', 'Asia', 'Europe',
+                           'Oceania'] if possible_categories is None else possible_categories
     df.columns = clean_columns(df.columns)
     df = pd.read_csv(df) if isinstance(df, str) else df
     columns = clean_columns(list(columns))
@@ -242,6 +243,7 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
                                   xscale=None, yscale='log',
                                   layout={'hovermode': 'closest', 'showlegend': False, 'autosize': True},
                                   marker={'sizemode': 'area'},
+                                  min_size=10,
                                   ):
     r"""Interactive scatterplot of a DataFrame with the size and color of circles linke to two columns
 
@@ -273,15 +275,15 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
     """
     config_default = dict(DEFAULT_PLOTLY_CONFIG)
     marker_default = {
-        'size': size_col,
+        'size': size_col or min_size,
         'sizemode': 'area',
-        'sizeref': int(df[size_col].min() * .8)}
+        'sizeref': int(df[size_col].min() * .8) if size_col else min_size}
     marker_default.update(marker)
     size_col = marker_default.pop('size')
     layout_default = {
         'xaxis': graph_objs.XAxis(title=x, type=xscale),
         'yaxis': graph_objs.YAxis(title=y, type=yscale),
-        }
+    }
     layout_default.update(**layout)
     if config is not None:
         config_default.update(config)
@@ -293,7 +295,7 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
             category_labels = np.array(category_col)
         possible_categories = list(set(category_labels))
     possible_categories = [None] if possible_categories is None else possible_categories
-    if category_col in df:
+    if category_col and category_col in df:
         masks = [np.array(df[category_col] == label) for label in possible_categories]
     else:
         masks = [np.array([True] * len(df))] * len(possible_categories)

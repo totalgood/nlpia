@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
 standard_library.install_aliases()  # noqa: Counter, OrderedDict,
-# from builtins import *  # noqa
 
 import logging
 import logging.config
@@ -11,6 +13,7 @@ import configparser
 from pandas import read_csv
 
 from pugnlp.util import dict2obj
+from pugnlp.futil import touch_p
 import platform
 
 
@@ -69,7 +72,7 @@ if system_name == 'Windows':
         'level': 'DEBUG',
         'class': 'logging.handlers.NTEventLogHandler',
         'formatter': 'django'
-        }
+    }
 elif SYSLOG_PATH:
     LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.SysLogHandler']
     LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler'] = {
@@ -86,8 +89,13 @@ logger = logging.getLogger(__name__)
 
 USER_HOME = os.path.expanduser("~")
 PROJECT_PATH = os.path.dirname(os.path.dirname(__file__))
+
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
+DATA_INFO_FILE = os.path.join(DATA_PATH, 'data_info.csv')
+
 BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
+BIGDATA_INFO_FILE = os.path.join(DATA_PATH, 'bigdata_info.csv')
+touch_p(BIGDATA_INFO_FILE, times=False)
 
 UTF8_TABLE = read_csv(os.path.join(DATA_PATH, 'utf8.csv'))
 UTF8_TO_MULTIASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.multiascii))
