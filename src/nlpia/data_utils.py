@@ -17,6 +17,7 @@ except ImportError:
 
 import requests
 from requests.adapters import HTTPAdapter
+from requests.exceptions import MissingSchema, ConnectionError
 import pandas as pd
 
 from pugnlp.futil import find_files
@@ -83,18 +84,26 @@ def is_valid_url(url):
     """
     if not isinstance(url, basestring):
         return False
+    normalized_url = url.lower().strip()
+    if not normalized_url[:7] in ('http://', 'https:/'):
+        url = 'http://' + url.lstrip('/')
     session = requests.Session()
-    session.mount(url, HTTPAdapter(max_retries=1))
+    session.mount(url, HTTPAdapter(max_retries=3))
     try:
         resp = session.get(url, allow_redirects=False)
-    except requests.exceptions.MissingSchema:
+    except MissingSchema:
         try:
             url = 'https://' + url
             resp = session.get(url, allow_redirects=False)
-        except requests.exceptions.MissingSchema:
-            url = 'http://' + url
-            resp = session.get(url, allow_redirects=False)
-    except requests.exceptions.ConnectionError:
+        except ConnectionError:
+            try:
+                url = 'http://' + url
+                resp = session.get(url, allow_redirects=False)
+            except ConnectionError:
+                return False
+    except ConnectionError:
+        return False
+    except:
         return None
     if resp.status_code == 200:
         return url
@@ -121,7 +130,7 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
     if url_or_text is None or not url_or_text:
         return []
         # url_or_text = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
-    elif isinstance(url_or_text, basestring):
+    elif isinstance(url_or_text, (str, bytes, basestring)):
         if os.path.isfile(os.path.join(DATA_PATH, url_or_text)):
             return open(os.path.join(DATA_PATH, url_or_text), mode=mode)
         elif os.path.isfile(url_or_text):
@@ -135,7 +144,11 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
         else:
             return StringIO(url_or_text)
     elif isinstance(url_or_text, (list, tuple)):
-        return itertools.chain.from_iterable(map(iter_lines, url_or_text, ext, mode))
+        # FIXME: make this lazy with chain and map so it doesn't gobble up RAM
+        text = ''
+        for s in url_or_text:
+            text += '\n'.join(list(iter_lines(s, ext=ext, mode=mode))) + '\n'
+        return StringIO(text)
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
