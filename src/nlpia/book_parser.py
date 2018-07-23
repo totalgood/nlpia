@@ -41,12 +41,11 @@ def tag_lines(lines):
     Returns:
         list of tuples  [(tag, line), ...]
 
-    >>> VALID_TAGS  # doctest: +NORMALIZE_WHITESPACE
-    {'anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start',
-     'comment', 'comment_end', 'comment_start',
-     'heading1', 'heading2', 'heading3', 'heading4', 'heading5',
-     'image_link', 'natural', 'natural_end', 'natural_start', 'source_header'}
-
+    >>> VALID_TAGS == {'anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start',
+    ... 'comment', 'comment_end', 'comment_start',
+    ... 'heading1', 'heading2', 'heading3', 'heading4', 'heading5',
+    ... 'image_link', 'natural', 'natural_end', 'natural_start', 'source_header'}
+    True
     >>> tag_lines('|= Title| :chapter: 0|Hello|cruel world|==Heading Level 2| \t| [source,bash]|====|$ grep this|====|'.split('|'))
     [('blank_line', ''),
      ('heading1', '= Title'),

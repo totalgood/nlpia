@@ -135,7 +135,7 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
         else:
             return StringIO(url_or_text)
     elif isinstance(url_or_text, (list, tuple)):
-        return itertools.chain.from_iterable(map(iter_lines, url_or_text, ext=ext))
+        return itertools.chain.from_iterable(map(iter_lines, url_or_text, ext, mode))
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
