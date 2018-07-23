@@ -109,32 +109,6 @@ def clean_markdown(text):
     return clean_asciidoc(text)
 
 
-def split_text_blocks(text):
-    r""" Splits asciidoc and markdown files into a list of lists (blocks text in a list of lines of text)
-
-    >>> split_text_blocks("# Title \nHello world! \nI'm here today to\nstrip\nyour text.\n \t  \r\nNext block\n\nwas short.")
-    [['# Title \n',
-      'Hello world! \n',
-      "I'm here today to\n",
-      'strip\n',
-      'your text.\n',
-      ' \t  \r\n'],
-     ['Next block\n', '\n'],
-     ['was short.']]
-    >> split_text_blocks(os.path.join(DATA_PATH, 'book'))
-    """
-    blocks = []
-    block = []
-    for line in iter_lines(text):
-        block.append(line)
-        if not line.strip():
-            blocks.append(block)
-            block = []
-    if block:
-        blocks.append(block)
-    return blocks
-
-
 def split_sentences_nltk(text, language_model='tokenizers/punkt/english.pickle'):
     try:
         sentence_detector = nltk.data.load(language_model)
@@ -216,15 +190,15 @@ def segment_sentences(path=os.path.join(DATA_PATH, 'book'), splitter=split_sente
     """ Return a list of all sentences and empty lines.
 
     TODO:
-        1. process each line with an agressive sentence segmenter, like DetectorMorse
+        1. process each line with an aggressive sentence segmenter, like DetectorMorse
         2. process our manuscript to create a complete-sentence and heading training set normalized/simplified
            syntax net tree is the input feature set common words and N-grams inserted with their label as additional feature
-        3. process a training set with a grammar checker and sentax next to bootstrap a "complete sentence" labeler.
+        3. process a training set with a grammar checker and syntax to bootstrap a "complete sentence" labeler.
         4. process each 1-3 line window (breaking on empty lines) with syntax net to label them
         5. label each 1-3-line window of lines as "complete sentence, partial sentence/phrase, or multi-sentence"
 
     >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'book')))
-    17319
+    4
     >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'psychology-scripts.txt'), splitter=split_sentences_nltk))
     23
     """
