@@ -3,8 +3,8 @@ import sys
 import glob
 
 
-VALID_TAGS = tuple('natural caption blank_line attribute source_header block_header code anchor image_link'.split() +
-                   'block_start block_end code_start code_end natural_start natural_end'.split() +
+VALID_TAGS = tuple('natural caption comment blank_line attribute source_header block_header code anchor image_link'.split() +
+                   'code_start code_end natural_start natural_end'.split() +
                    ['heading{}'.format(i) for i in range(1, 7)])
 INCLUDE_TAGS = ('natural', 'caption', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5')
 
@@ -78,45 +78,43 @@ def tag_lines(lines):
      ('blank_line', '')]
     """
     current_block_type = None
-    open_block = False
     block_terminator = None
     block_start = 0
-    tup_lines = []
+    tagged_lines = []
     for idx, line in enumerate(lines):
         normalized_line = line.lower().strip().replace(" ", "")
 
-        if not normalized_line:
-            tag = 'blank_line'
-        elif normalized_line[0] in r'/:':
-            tag = 'attribute'
-        elif normalized_line.startswith('[source'):
+        if normalized_line.startswith('[source'):
             current_block_type = 'code'
             block_start = idx
-            open_block = True
             tag = 'source_header'
         elif normalized_line[:4] in ('[tip', '[not', '[imp', '[quo'):
             current_block_type = 'natural'
             block_start = idx
-            open_block = True
             tag = 'block_header'
-        elif open_block and idx == block_start + 1:
-            if not normalized_line.startswith('--') and not normalized_line.startswith('=='):
-                block_terminator = '\n'
-                tag = current_block_type
-            else:
+        elif current_block_type and idx == block_start + 1:
+            if normalized_line.startswith('--') or normalized_line.startswith('=='):
                 block_terminator = normalized_line[:2]
-                tag = (current_block_type or 'block') + '_start'
-        elif open_block and normalized_line[:2] == block_terminator:
+                tag = current_block_type + '_start'
+            else:
+                block_terminator = ''
+                tag = current_block_type
+        elif current_block_type and line.lstrip()[:2] == block_terminator:
+            tag = current_block_type + '_end'
             current_block_type = None
-            open_block = False
             block_terminator = None
             block_start = 0
-            tag = (current_block_type or 'block') + '_end'
-        elif open_block and current_block_type == 'code':
-            tag = 'code'
+        elif current_block_type:
+            tag = current_block_type
+        if not normalized_line:
+            tag = 'blank_line'
+        elif normalized_line.startswith(r'//'):
+            tag = 'comment'
+        elif normalized_line.startswith(r':'):
+            tag = 'attribute'
         elif normalized_line.startswith('='):
             tag = 'heading'
-            tag += str(len([c for c in normalized_line if c == '=']))
+            tag += str(len([c for c in normalized_line[:6].split()[0] if c == '=']))
         elif normalized_line.startswith('.'):
             tag = 'caption'
         elif normalized_line.startswith('image:'):
@@ -127,20 +125,21 @@ def tag_lines(lines):
             tag = 'natural'
             current_block_type = None
 
-        tup_lines.append((tag, line.strip()))
+        tagged_lines.append((tag, line.strip()))
 
-    return tup_lines
+    return tagged_lines
 
 
-def main(book_dir='.',
-         include_tags=INCLUDE_TAGS,
-         verbose=True):
+def main(book_dir='.', include_tags=INCLUDE_TAGS, verbosity=1):
     sections = [tag_lines(section) for section in get_lines(book_dir)]
-    if verbose:
+    if verbosity > 0:
         for section in sections:
-            for line in section:
-                if line[0] in include_tags:
-                    print(line[1])
+            for tag_line in section:
+                if tag_line[0] in include_tags:
+                    if verbosity == 1:
+                        print(tag_line[1])
+                    if verbosity > 1:
+                        print(tag_line)
     return sections
 
 
@@ -149,9 +148,9 @@ if __name__ == '__main__':
     book_dir = os.path.curdir
     if args:
         book_dir = args[0]
-    include_tags = ['natural']
+    include_tags = INCLUDE_TAGS
     if len(args) > 1:
         include_tags = list(args[1:])
     # print('Parsing Chapters and Appendices in: ' + book_dir)
     # print('***PRINTING LINES WITH TAGS***: ' + str(include_tags))
-    main(book_dir=book_dir, include_tags=include_tags, verbose=True)
+    main(book_dir=book_dir, include_tags=include_tags, verbosity=1)
