@@ -3,10 +3,11 @@ import sys
 import glob
 
 
-VALID_TAGS = tuple('natural caption comment blank_line attribute source_header block_header code anchor image_link'.split() +
-                   'code_start code_end natural_start natural_end'.split() +
-                   ['heading{}'.format(i) for i in range(1, 7)])
-INCLUDE_TAGS = ('natural', 'caption', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5')
+VALID_TAGS = {'anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start',
+              'comment', 'comment_end', 'comment_start',
+              'heading1', 'heading2', 'heading3', 'heading4', 'heading5',
+              'image_link', 'natural', 'natural_end', 'natural_start', 'source_header'}
+INCLUDE_TAGS = {'natural', 'caption', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5'}
 
 
 def get_lines(file_path):
@@ -40,28 +41,11 @@ def tag_lines(lines):
     Returns:
         list of tuples  [(tag, line), ...]
 
-    >>> VALID_TAGS
-    ('natural',
-     'caption',
-     'blank_line',
-     'attribute',
-     'source_header',
-     'block_header',
-     'code',
-     'anchor',
-     'image_link',
-     'block_start',
-     'block_end',
-     'code_start',
-     'code_end',
-     'natural_start',
-     'natural_end',
-     'heading1',
-     'heading2',
-     'heading3',
-     'heading4',
-     'heading5',
-     'heading6')
+    >>> VALID_TAGS  # doctest: +NORMALIZE_WHITESPACE
+    {'anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start',
+     'comment', 'comment_end', 'comment_start',
+     'heading1', 'heading2', 'heading3', 'heading4', 'heading5',
+     'image_link', 'natural', 'natural_end', 'natural_start', 'source_header'}
 
     >>> tag_lines('|= Title| :chapter: 0|Hello|cruel world|==Heading Level 2| \t| [source,bash]|====|$ grep this|====|'.split('|'))
     [('blank_line', ''),
