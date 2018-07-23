@@ -88,25 +88,35 @@ def tag_lines(lines):
             current_block_type = 'code'
             block_start = idx
             tag = 'source_header'
-        elif normalized_line[:4] in ('[tip', '[not', '[imp', '[quo'):
+        elif normalized_line in ('[tip]', '[note]', '[important]', '[quote]'):
             current_block_type = 'natural'
             block_start = idx
             tag = 'block_header'
         elif current_block_type and idx == block_start + 1:
-            if normalized_line.startswith('--') or normalized_line.startswith('=='):
-                block_terminator = normalized_line[:2]
+            if line.strip()[:2] in ('--', '=='):
+                block_terminator = line.strip()
                 tag = current_block_type + '_start'
             else:
                 block_terminator = ''
                 tag = current_block_type
-        elif current_block_type and line.lstrip()[:2] == block_terminator:
+        elif line.rstrip() in ('----', '====', '____') and idx and tagged_lines[idx - 1][0] == 'blank_line':
+            current_block_type = 'natural'
+            block_start = idx
+            tag = current_block_type + '_start'
+            block_terminator = line.rstrip()
+        elif (line.rstrip() == '////'):
+            current_block_type = 'comment'
+            block_start = idx
+            tag = current_block_type + '_start'
+            block_terminator = line.rstrip()
+        elif current_block_type and line.rstrip() == block_terminator:
             tag = current_block_type + '_end'
             current_block_type = None
             block_terminator = None
             block_start = 0
         elif current_block_type:
             tag = current_block_type
-        if not normalized_line:
+        elif not normalized_line:
             tag = 'blank_line'
         elif normalized_line.startswith(r'//'):
             tag = 'comment'
@@ -130,12 +140,12 @@ def tag_lines(lines):
     return tagged_lines
 
 
-def main(book_dir='.', include_tags=INCLUDE_TAGS, verbosity=1):
+def main(book_dir='.', include_tags=None, verbosity=1):
     sections = [tag_lines(section) for section in get_lines(book_dir)]
     if verbosity > 0:
         for section in sections:
             for tag_line in section:
-                if tag_line[0] in include_tags:
+                if include_tags is None or tag_line[0] in include_tags:
                     if verbosity == 1:
                         print(tag_line[1])
                     if verbosity > 1:
