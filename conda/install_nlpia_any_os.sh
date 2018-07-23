@@ -21,10 +21,10 @@ fi
 mkdir -p ~/code
 cd ~/code
 git clone https://github.com/totalgood/nlpia
-cd nlpia
+cd ~/code/nlpia
 conda install -y pip  # <1>
 pip install --upgrade pip  # <2>
 conda env create -n nlpiaenv -f conda/environment.yml  # <3>
-source activate nlpia  # <4>
+source activate nlpiaenv  # <4>
 pip install --upgrade pip  # <5>
 pip install -e .  # <6>
