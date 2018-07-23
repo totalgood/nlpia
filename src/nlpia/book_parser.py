@@ -27,71 +27,88 @@ def get_lines(file_path):
 
 
 def tag_lines(lines):
-    '''
-    Mostly naively tags lines from manuscript with:
+    r""" Naively tags lines from manuscript with: code, natural, heading, etc.
+
+    Possible Tags:
+        blank_line
+        attribute
+        source_header
+        block_header
+        block_start
+        block_end
+        code
         natural
-        header
+        heading1 ... heading6
         image_link
         caption
         code
 
-    retuns:
+    Returns:
         list of tuples  [(tag, line), ...]
-    '''
+
+    >>> tag_lines('|= Title| :chapter: 0|Hello|cruel world|==Heading Level 2| \t| [source,bash]|====|$ grep this|====|'.split('|'))
+    [('blank_line', ''),
+     ('heading1', '= Title'),
+     ('attribute', ':chapter: 0'),
+     ('natural', 'Hello'),
+     ('natural', 'cruel world'),
+     ('heading2', '==Heading Level 2'),
+     ('blank_line', ''),
+     ('source_header', '[source,bash]'),
+     ('block_start', '===='),
+     ('code', '$ grep this'),
+     ('block_end', '===='),
+     ('blank_line', '')]
+    """
     current_block_type = None
     open_block = False
     block_terminator = None
     block_start = 0
     tup_lines = []
     for idx, line in enumerate(lines):
+        normalized_line = line.lower().strip().replace(" ", "")
+        print(normalized_line)
 
-        if line.startswith('/') or line.startswith(':'):
-            continue
-
-        if line.startswith('[source'):
+        if not normalized_line:
+            tag = 'blank_line'
+        elif normalized_line[0] in r'/:':
+            tag = 'attribute'
+        elif normalized_line.startswith('[source'):
             current_block_type = 'code'
             block_start = idx
             open_block = True
-            continue
-        if line.startswith('[TIP') or line.startswith('[NOTE'):
+            tag = 'source_header'
+        elif normalized_line[:4] in ('[tip', '[not', '[imp'):
             current_block_type = 'text'
             block_start = idx
             open_block = True
-            continue
-
-        if open_block and idx == block_start + 1:
-            if not line.startswith('--') and not line.startswith('=='):
+            tag = 'block_header'
+        elif open_block and idx == block_start + 1:
+            print('code---block---')
+            if not normalized_line.startswith('--') and not normalized_line.startswith('=='):
                 block_terminator = '\n'
             else:
-                block_terminator = line[:2]
-                continue
-        if open_block and line[:2] == block_terminator:
+                block_terminator = normalized_line[:2]
+            tag = (current_block_type or 'block') + '_start'
+        elif open_block and normalized_line[:2] == block_terminator:
             current_block_type = None
             open_block = False
             block_terminator = None
             block_start = 0
-            continue
-        if open_block and current_block_type == 'code':
+            tag = 'block_end'
+        elif open_block and current_block_type == 'code':
             tag = 'code'
-            tup_lines.append((tag, line.strip()))
-            continue
-        if line.startswith('='):
-            tag = 'header'
-            tup_lines.append((tag, line.strip()))
-            continue
-        if line.startswith('.'):
+        elif normalized_line.startswith('='):
+            tag = 'heading'
+            tag += str(len([c for c in normalized_line if c == '=']))
+        elif normalized_line.startswith('.'):
             tag = 'caption'
-            tup_lines.append((tag, line.strip()))
-            continue
-        if line.startswith('image:'):
+        elif normalized_line.startswith('image:'):
             tag = 'image_link'
-            tup_lines.append((tag, line.strip()))
-            continue
+        else:
+            tag = 'natural'
+            current_block_type = None
 
-        if not line.strip():
-            continue
-        tag = 'natural'
         tup_lines.append((tag, line.strip()))
-        current_block_type = None
 
     return tup_lines
