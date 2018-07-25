@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/totalgood/nlpia.svg?branch=master)](https://travis-ci.org/totalgood/nlpia) 
+[![Coverage](https://codecov.io/gh/totalgood/nlpia/branch/master/graph/badge.svg)](https://codecov.io/gh/totalgood/nlpia) 
+
 # NLPIA
 
 The community-driven code for [**N**atural **L**anguage **P**rocessing **i**n **A**ction](https://bit.ly/nlpiabook).

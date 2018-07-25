@@ -20,5 +20,4 @@ dependencies:
 
   - pip:
     - -r ../requirements-base.txt
-    - -r ../requirements-deep.txt
 
