@@ -7,7 +7,8 @@ len(wv.vocab)
 # 3000000
 
 
-index = annoy.AnnoyIndex(f=len(wv[wv.index2word[0]]))
+from annoy import AnnoyIndex
+index = AnnoyIndex(f=len(wv[wv.index2word[0]]))
 for i, word in enumerate(wv.index2word):
     if not i % 100000:
         print('{}: {}'.format(i, word))
@@ -21,7 +22,8 @@ for i, word in enumerate(wv.index2word):
 # 2900000: BOARDED_UP
 
 
+import numpy as np
 num_vectors = len(wv.vocab)
 num_trees = int(np.log(num_vectors).round(0))
->>> index.build(num_trees)  # <1>
->>> index.save('Word2vec_index.ann')  # <2>
+index.build(num_trees)  # <1>
+index.save('Word2vec_index.ann')  # <2>

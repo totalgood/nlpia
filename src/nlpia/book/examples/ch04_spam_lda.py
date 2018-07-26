@@ -5,6 +5,7 @@ pd.options.display.width = 120  # <1>
 sms = get_data('sms-spam')
 index = ['sms{}{}'.format(i, '!'*j) for (i,j) in zip(range(len(sms)), sms.spam)]  # <2>
 sms = pd.DataFrame(sms.values, columns=sms.columns, index=index)
+mask = sms.spam.astype(bool)
 sms['spam'] = sms.spam.astype(int)
 
 """
@@ -112,7 +113,7 @@ fig = dict(data=[ham_trace, spam_trace], layout={'title': 'LDA Spamminess Model'
 py.offline.plot(fig, filename='lda_spam_3d_scatter.html')
 
 
-
+"""
 >>> sms['spam lda_predict lda'.split()].round(2)
       spam  lda_predict   lda
 0        0            0  0.23
@@ -311,3 +312,4 @@ Length: 4837, dtype: int64
 Length: 638, dtype: int64
 >>> (sms.lda_predict - sms.spam)[sms.spam.astype(bool)].abs().sum() / sms.spam.sum()
 0.07053291536050156
+"""
