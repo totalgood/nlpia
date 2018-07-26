@@ -14,7 +14,7 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
 
 build_script:
-  - "pip install --upgrade pip"
+  - "c:\\python36-x64\\python.exe -m pip install --upgrade pip"
   - "pip install -r requirements-test.txt"
   - "pip install -r requirements.txt"
   - "python setup.py build"
