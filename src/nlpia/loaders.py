@@ -513,7 +513,6 @@ def clean_column_values(df, inplace=True):
     if not inplace:
         df = df.copy()
     for c in df.columns:
-        print(c, df[c].dtype)
         values = None
         if df[c].dtype.char in '<U S O'.split():
             try:
@@ -523,7 +522,7 @@ def clean_column_values(df, inplace=True):
                 if values.str.len().sum() > .45 * df[c].str.len().sum():
                     values = values.astype(float)
             except ValueError:
-                pass
+                values = None
             except:
                 print('Error on column {} with dtype {}'.format(c, df[c].dtype))
                 raise
@@ -531,7 +530,6 @@ def clean_column_values(df, inplace=True):
         if values is not None:
             if values.isnull().sum() < .75 * len(values):
                 df[c] = values
-                print(c, df[c].dtype)
     return df
 
 
