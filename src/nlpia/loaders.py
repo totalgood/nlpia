@@ -15,6 +15,7 @@ from future import standard_library
 standard_library.install_aliases()  # noqa
 from past.builtins import basestring
 
+# from traceback import format_exc
 import os
 import re
 import json
@@ -48,7 +49,7 @@ logger = logging.getLogger(__name__)
 W2V_FILES = [
     'GoogleNews-vectors-negative300.bin.gz',
     'glove.6B.zip', 'glove.twitter.27B.zip', 'glove.42B.300d.zip', 'glove.840B.300d.zip',
-    ]
+]
 BIG_URLS = {
     'w2v': (
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
@@ -389,7 +390,6 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
         pass
 
 
-
 def get_data(name='sms-spam', nrows=None):
     """ Load data from a json, csv, or txt file if it exists in the data dir.
 
@@ -488,6 +488,50 @@ def clean_toxoplasmosis(url='http://www.rightdiagnosis.com/t/toxoplasmosis/stats
     df['extrapolated_prevalence'] = df['extrapolated_prevalence'].apply(str2int)
     df['population_estimated_used'] = df['population_estimated_used'].apply(str2int)
     df['frequency'] = df.extrapolated_prevalence.astype(float) / df.population_estimated_used
+    return df
+
+
+def clean_column_values(df, inplace=True):
+    r""" Convert dollar value strings, numbers with commas, and percents into floating point values
+
+    >>> df = get_data('us_gov_deficits_raw')
+    >>> df2 = clean_column_values(df, inplace=False)
+    >>> df2.iloc[0]
+    Fiscal year                                  10/2017-3/2018
+    President's party                                         R
+    Senate majority party                                     R
+    House majority party                                      R
+    Top-bracket marginal income tax rate                   38.3
+    National debt millions                          2.10896e+07
+    National debt millions of 1983 dollars          8.47004e+06
+    Deficit\n(millions of 1983 dollars)                  431443
+    Surplus string in 1983 dollars                          nan
+    Deficit string in 1983 dollars ($ = $10B)                  
+    Net surplus in 1983 dollars ($B)                       -430
+    Name: 0, dtype: object
+    """
+    if not inplace:
+        df = df.copy()
+    for c in df.columns:
+        print(c, df[c].dtype)
+        values = None
+        if df[c].dtype.char in '<U S O'.split():
+            try:
+                values = df[c].copy()
+                values = values.astype(str).str.replace(re.compile(r'[%$,;\s]*'), '')
+                values[values == ''] == np.nan
+                if values.str.len().sum() > .45 * df[c].str.len().sum():
+                    values = values.astype(float)
+            except ValueError:
+                pass
+            except:
+                print('Error on column {} with dtype {}'.format(c, df[c].dtype))
+                raise
+
+        if values is not None:
+            if values.isnull().sum() < .75 * len(values):
+                df[c] = values
+                print(c, df[c].dtype)
     return df
 
 

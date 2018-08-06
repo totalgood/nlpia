@@ -20,19 +20,25 @@ def get_lines(file_path):
     Returns:
         list of lists of str, one list for each Chapter or Appendix
     """
-    path = os.path.join(file_path, 'Chapter*')
-    files = glob.glob(path)
+    if os.path.isdir(file_path):
+        file_path = os.path.join(file_path, '*.asc')
+        files = glob.glob(file_path)
+    elif os.path.isfile(file_path):
+        files = [file_path]
+    elif '*' in file_path:
+        if os.path.sep not in file_path:
+            file_path = os.path.join(os.path.abspath(os.path.curdir), file_path)
+        files = glob.glob(file_path)
     lines = []
     for file in files:
         with open(file, 'r') as f:
             lines.append(f.readlines())
+    return zip(files, lines)
 
-    path = os.path.join(file_path, 'Appendix*')
-    files = glob.glob(path)
-    for file in files:
-        with open(file, 'r') as f:
-            lines.append(f.readlines())
-    return lines
+
+BLOCK_DELIMITERS = dict([('----', 'natural'), ('====', 'natural'), ('____', 'natural'), ('****', 'natural'),
+                         ('++++', 'latex'), ('////', 'comment')])
+BLOCK_HEADERS = dict([('[tip]', 'natural'), ('[note]', 'natural'), ('[important]', 'natural'), ('[quote]', 'natural')])
 
 
 def tag_lines(lines):
@@ -57,33 +63,44 @@ def tag_lines(lines):
     block_start = 0
     tagged_lines = []
     for idx, line in enumerate(lines):
+        # print(current_block_type)
+        # print(line)
         normalized_line = line.lower().strip().replace(" ", "")
 
+        # [source,...] with or without any following "----" block delimiter
         if normalized_line.startswith('[source'):
             current_block_type = 'code'
             block_start = idx
             tag = 'source_header'
-        elif normalized_line in ('[tip]', '[note]', '[important]', '[quote]'):
+        # [latex] with or without any following "++++" block delimiter
+        elif normalized_line.startswith('[latex'):
+            current_block_type = 'latex'
+            block_start = idx
+            tag = 'latex_header'
+        # [note] etc with or without any following "====" block delimiter
+        elif normalized_line in BLOCK_HEADERS:
             current_block_type = 'natural'
             block_start = idx
-            tag = 'block_header'
+            tag = 'block_header'  # BLOCK_HEADERS[normalized_line]
+        # "==", "--", '__', '++' block delimiters below block type ([note], [source], or blank line)
         elif current_block_type and idx == block_start + 1:
-            if line.strip()[:2] in ('--', '=='):
+            if line.strip()[:2] in ('--', '==', '__', '**'):
                 block_terminator = line.strip()
                 tag = current_block_type + '_start'
+            elif line.strip()[:2] == '++':
+                block_terminator = line.strip()
+                tag = current_block_type + '_start'
+            # this should only happen when there's a "bare" untyped block that has started
             else:
-                block_terminator = ''
+                block_terminator = line.strip()
                 tag = current_block_type
-        elif line.rstrip() in ('----', '====', '____') and idx and tagged_lines[idx - 1][0] == 'blank_line':
-            current_block_type = 'natural'
-            block_start = idx
+        # bare block delimiters without a block type already defined?
+        elif (normalized_line in BLOCK_DELIMITERS and
+                (not idx or tagged_lines[idx - 1][0] in ('blank_line', 'block_header'))):
+            current_block_type = (current_block_type or BLOCK_DELIMITERS[line.rstrip()])
+            block_start = idx 
             tag = current_block_type + '_start'
-            block_terminator = line.rstrip()
-        elif (line.rstrip() == '////'):
-            current_block_type = 'comment'
-            block_start = idx
-            tag = current_block_type + '_start'
-            block_terminator = line.rstrip()
+            block_terminator = normalized_line
         elif current_block_type and line.rstrip() == block_terminator:
             tag = current_block_type + '_end'
             current_block_type = None
@@ -116,15 +133,26 @@ def tag_lines(lines):
 
 
 def main(book_dir='.', include_tags=None, verbosity=1):
-    sections = [tag_lines(section) for section in get_lines(book_dir)]
+    print('book_dir: {}'.format(book_dir))
+    print('include_tags: {}'.format(include_tags))
+    print('verbosity: {}'.format(verbosity))
+
+    sections = [(filepath, tag_lines(lines)) for filepath, lines in get_lines(book_dir)]
     if verbosity > 0:
-        for section in sections:
-            for tag_line in section:
+        for filepath, tagged_lines in sections:
+            if verbosity > 1:
+                print('_' * 79)
+                print(filepath)
+                print('-' * 79)
+            for tag_line in tagged_lines:
                 if include_tags is None or tag_line[0] in include_tags:
                     if verbosity == 1:
                         print(tag_line[1])
                     if verbosity > 1:
                         print(tag_line)
+            if verbosity > 1:
+                print('=' * 79)
+                print()
     return sections
 
 
@@ -133,9 +161,16 @@ if __name__ == '__main__':
     book_dir = os.path.curdir
     if args:
         book_dir = args[0]
+        args = args[1:]
     include_tags = INCLUDE_TAGS
-    if len(args) > 1:
-        include_tags = list(args[1:])
+    if args:
+        try:
+            verbosity = int(args[0])
+            include_tags = args[1:] or include_tags
+        except ValueError:
+            verbosity = 1
+            include_tags = args
+
     # print('Parsing Chapters and Appendices in: ' + book_dir)
     # print('***PRINTING LINES WITH TAGS***: ' + str(include_tags))
-    main(book_dir=book_dir, include_tags=include_tags, verbosity=1)
+    main(book_dir=book_dir, include_tags=include_tags, verbosity=verbosity)
