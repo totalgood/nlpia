@@ -497,19 +497,20 @@ def clean_column_values(df, inplace=True):
     >>> df = get_data('us_gov_deficits_raw')
     >>> df2 = clean_column_values(df, inplace=False)
     >>> df2.iloc[0]
-    Fiscal year                                  10/2017-3/2018
-    President's party                                         R
-    Senate majority party                                     R
-    House majority party                                      R
-    Top-bracket marginal income tax rate                   38.3
-    National debt millions                          2.10896e+07
-    National debt millions of 1983 dollars          8.47004e+06
-    Deficit\n(millions of 1983 dollars)                  431443
-    Surplus string in 1983 dollars                          nan
-    Deficit string in 1983 dollars ($ = $10B)                  
-    Net surplus in 1983 dollars ($B)                       -430
+    Fiscal year                                                               10/2017-3/2018
+    President's party                                                                      R
+    Senate majority party                                                                  R
+    House majority party                                                                   R
+    Top-bracket marginal income tax rate                                                38.3
+    National debt millions                                                       2.10896e+07
+    National debt millions of 1983 dollars                                       8.47004e+06
+    Deficit\n(millions of 1983 dollars)                                               431443
+    Surplus string in 1983 dollars                                                       NaN
+    Deficit string in 1983 dollars ($ = $10B)    $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+    Net surplus in 1983 dollars ($B)                                                    -430
     Name: 0, dtype: object
     """
+    dollars_percents = re.compile(r'[%$,;\s]+')
     if not inplace:
         df = df.copy()
     for c in df.columns:
@@ -517,9 +518,12 @@ def clean_column_values(df, inplace=True):
         if df[c].dtype.char in '<U S O'.split():
             try:
                 values = df[c].copy()
-                values = values.astype(str).str.replace(re.compile(r'[%$,;\s]*'), '')
-                values[values == ''] == np.nan
-                if values.str.len().sum() > .45 * df[c].str.len().sum():
+                values = values.fillna('')
+                values = values.astype(str).str.replace(dollars_percents, '')
+                # values = values.str.strip().str.replace(dollars_percents, '').str.strip()
+                if values.str.len().sum() > .2 * df[c].astype(str).str.len().sum():
+                    values[values.isnull()] = np.nan
+                    values[values == ''] = np.nan
                     values = values.astype(float)
             except ValueError:
                 values = None
@@ -528,7 +532,7 @@ def clean_column_values(df, inplace=True):
                 raise
 
         if values is not None:
-            if values.isnull().sum() < .75 * len(values):
+            if values.isnull().sum() < .6 * len(values) and values.any():
                 df[c] = values
     return df
 
