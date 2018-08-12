@@ -105,9 +105,15 @@ BIG_URLS = {
         'https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/' \
         'aiml-en-us-foundation-alice/aiml-en-us-foundation-alice.v1-9.zip',
         8249482,
-
+    ),
+    # BRFSS annual mental health survey
+    'cdc': (
+        'https://www.cdc.gov/brfss/annual_data/2016/files/LLCP2016ASC.zip',
+        10000,
     ),
 }
+for yr in range(2011, 2016):
+    BIG_URLS['cdc' + str(yr)[-2:]] = ('https://www.cdc.gov/brfss/annual_data/{yr}/files/LLCP{yr}ASC.zip'.format(yr=yr), 10000)
 BIG_URLS['word2vec'] = BIG_URLS['w2v']
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
