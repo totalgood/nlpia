@@ -14,12 +14,14 @@ from builtins import (bytes, dict, int, list, object, range, str,  # noqa
 from future import standard_library
 standard_library.install_aliases()  # noqa
 from past.builtins import basestring
+from itertools import zip_longest
 
 # from traceback import format_exc
 import os
 import re
 import json
 import requests
+import logging
 from zipfile import ZipFile
 from math import ceil
 
@@ -31,9 +33,9 @@ from gensim.scripts.glove2word2vec import glove2word2vec
 
 from pugnlp.futil import path_status, find_files
 from pugnlp.util import clean_columns
-from nlpia.constants import logging
+from nlpia.constants import DEFAULT_LOG_LEVEL  # , LOGGING_CONFIG
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
-from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE
+from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
 
 from pugnlp.futil import mkdir_p
 
@@ -45,12 +47,16 @@ INT_MIN = INT64_MIN = INT64_MIN + 1
 
 np = pd.np
 logger = logging.getLogger(__name__)
+# logging.config.dictConfig(LOGGING_CONFIG)
+# doesn't display line number, etc
+logging.basicConfig(level=DEFAULT_LOG_LEVEL)
 
 # SMALLDATA_URL = 'http://totalgood.org/static/data'
 W2V_FILES = [
     'GoogleNews-vectors-negative300.bin.gz',
     'glove.6B.zip', 'glove.twitter.27B.zip', 'glove.42B.300d.zip', 'glove.840B.300d.zip',
 ]
+# You probably want to rm nlpia/src/nlpia/data/bigdata_info.csv if you modify any of these so they don't overwrite what you do here
 BIG_URLS = {
     'w2v': (
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
@@ -109,22 +115,26 @@ BIG_URLS = {
     # BRFSS annual mental health survey
     'cdc': (
         'https://www.cdc.gov/brfss/annual_data/2016/files/LLCP2016ASC.zip',
-        10000,
+        52284490,
     ),
 }
-for yr in range(2011, 2016):
-    BIG_URLS['cdc' + str(yr)[-2:]] = ('https://www.cdc.gov/brfss/annual_data/{yr}/files/LLCP{yr}ASC.zip'.format(yr=yr), 10000)
+for yr in range(2011, 2017):
+    BIG_URLS['cdc' + str(yr)[-2:]] = ('https://www.cdc.gov/brfss/annual_data/{yr}/files/LLCP{yr}ASC.zip'.format(yr=yr), None)
 BIG_URLS['word2vec'] = BIG_URLS['w2v']
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
-except IOError:
+    logger.warn('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
+        default=BIGDATA_INFO_FILE))
+except (IOError, pd.errors.EmptyDataError):
     BIGDATA_INFO = pd.DataFrame(columns='name url file_size'.split())
-    logger.warn('Unable to find BIGDATA index in {}'.format(BIGDATA_INFO_FILE))
+    logger.warn('No BIGDATA index found in {default} so copy {latest} to {default} if you want to "freeze" it.'.format(
+        default=BIGDATA_INFO_FILE, latest=BIGDATA_INFO_LATEST))
 BIG_URLS.update(dict(zip(BIGDATA_INFO.name, zip(BIGDATA_INFO.url, BIGDATA_INFO.file_size))))
 BIGDATA_INFO = pd.DataFrame(list(
     zip(BIG_URLS.keys(), list(zip(*BIG_URLS.values()))[0], list(zip(*BIG_URLS.values()))[1])),
     columns='name url file_size'.split())
-BIGDATA_INFO.to_csv(BIGDATA_INFO_FILE)
+BIGDATA_INFO.to_csv(BIGDATA_INFO_LATEST)
+
 
 # FIXME: consolidate with DATA_INFO or BIG_URLS
 DATA_NAMES = {
@@ -261,10 +271,12 @@ def dropbox_basename(url):
 def expand_filepath(filepath):
     """ Make sure filepath doesn't include unexpanded shortcuts like ~ and . 
 
+    See also: pugnlp.futil.expand_path
+
     >>> len(expand_filepath('~')) > 3
     True 
     """
-    os.path.abspath(os.path.expanduser(filepath))
+    return os.path.abspath(os.path.expandvars(os.path.expanduser(filepath)))
 
 
 def normalize_glove(filepath):
@@ -277,9 +289,11 @@ def normalize_glove(filepath):
 def unzip(filepath):
     """ Unzip GloVE models and convert to word2vec binary models (gensim.KeyedVectors) """
     filepath = expand_filepath(filepath)
+    filename = os.path.basename(filepath)
     z = ZipFile(filepath)
-    unzip_dir = os.path.join(BIGDATA_PATH, filepath[:-4])
-    if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist()):
+    unzip_dir = filename.split('.')[0] if filename.split('.')[0] else os.path.splitext(filename)[0]
+    unzip_dir = os.path.join(BIGDATA_PATH, unzip_dir)
+    if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist):
         z.extractall(path=unzip_dir)
     w2v_paths = [os.path.join(BIGDATA_PATH, filename[:-4] + '.w2v.txt') for filename in os.listdir(unzip_dir)]
     for (filename, word2vec_output_file) in zip(os.listdir(unzip_dir), w2v_paths):
@@ -347,8 +361,11 @@ def rename_file(source, dest):
     >>> os.path.isfile(os.path.join(tmpdir, 'Fake_Data.bin.gz'))
     True
     """
+    print('{} >>>>> {}'.format(source, dest))
     if not isinstance(source, str):
-        return [rename_file(s, d) for (s, d) in zip(source, dest)]
+        dest = [dest] if isinstance(dest, str) else dest
+        return [rename_file(s, d) for (s, d) in zip_longest(source, dest, fillvalue=[source, dest][int(len(source) > len(dest))])]
+    print(source + ' >>>>> ' + dest)
     os.rename(source, dest)
     return dest
 
@@ -363,7 +380,7 @@ def download_unzip(names=None, verbose=True):
     TODO: if name is a valid URL then download it and create a name
           and store the name: url in data_info.csv before downloading
     """
-    names = [names] if isinstance(names, basestring) else names
+    names = [names] if isinstance(names, (str, basestring)) else names
     # names = names or list(BIG_URLS.keys())  # download them all, if none specified!
     file_paths = {}
     for name in names:
@@ -378,13 +395,17 @@ def download_unzip(names=None, verbose=True):
                 file_paths[name] = untar(file_paths[name])
             if file_paths[name].lower().endswith('.zip'):
                 file_paths[name] = unzip(file_paths[name])
+                print(file_paths)
         else:
             df = pd.read_html(DATA_INFO['url'][name], **DATA_INFO['downloader_kwargs'][name])[-1]
             df.columns = clean_columns(df.columns)
             file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
             df.to_csv(file_paths[name])
-        new_filepaths = normalize_ext(file_paths[name])
-        new_filepaths = rename_file(file_paths[name], new_filepaths)
+        print(file_paths)
+        new_file_paths = normalize_ext(file_paths[name])
+        print(new_file_paths)
+        file_paths = rename_file(file_paths[name], new_file_paths)
+        print(file_paths)
     return file_paths
 
 
@@ -395,6 +416,10 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     if filename is None:
         filename = dropbox_basename(url)
+    if not isinstance(url, (basestring, str)):
+        return [
+            download_file(s, data_path=data_path, filename=filename, size=size, chunk_size=chunk_size, verbose=verbose)
+            for s in url]
     filepath = expand_filepath(os.path.join(data_path, filename))
     if url.endswith('dl=0'):
         url = url[:-1] + '1'  # noninteractive Dropbox download
@@ -404,7 +429,12 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     else:
         tqdm_prog = no_tqdm
     r = requests.get(url, stream=True, allow_redirects=True)
-    size = r.headers.get('Content-Length', None) if size is None else size
+    size = r.headers.get('Content-Length', -1) if size is None else size
+    try:
+        size = int(size)
+    except ValueError:
+        size = -1
+
     logger.info('remote size: {}'.format(size))
 
     stat = path_status(filepath)
@@ -427,6 +457,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
                 f.write(chunk)
 
     r.close()
+    print(filepath)
     return filepath
 
 
@@ -500,8 +531,10 @@ def get_data(name='sms-spam', nrows=None):
     """
     if name in BIG_URLS:
         logger.info('Downloading {}'.format(name))
-        filepaths = download(name)
-        filepath = filepaths[name][0] if isinstance(filepaths[name], list) else filepaths[name]
+        filepaths = download_unzip(name)
+        print(filepaths)
+        filepath = filepaths[name][0] if isinstance(filepaths[name], (list, tuple)) else filepaths[name]
+        print(filepath)
         filepathlow = filepath.lower()
         if filepathlow.endswith('.w2v.txt'):
             try:

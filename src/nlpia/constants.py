@@ -17,6 +17,7 @@ from pugnlp.futil import touch_p
 import platform
 
 
+DEFAULT_LOG_LEVEL = logging.WARN
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 system_name = platform.system()
@@ -48,7 +49,7 @@ LOGGING_CONFIG = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'level': 'DEBUG',
+            'level': DEFAULT_LOG_LEVEL,
             'formatter': 'basic',
             'stream': 'ext://sys.stdout',
         },
@@ -95,7 +96,10 @@ DATA_INFO_FILE = os.path.join(DATA_PATH, 'data_info.csv')
 
 BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')
 BIGDATA_INFO_FILE = os.path.join(DATA_PATH, 'bigdata_info.csv')
+BIGDATA_INFO_LATEST = BIGDATA_INFO_FILE[:-4] + '.latest.csv'
 touch_p(BIGDATA_INFO_FILE, times=False)
+touch_p(BIGDATA_INFO_LATEST, times=False)
+
 
 UTF8_TABLE = read_csv(os.path.join(DATA_PATH, 'utf8.csv'))
 UTF8_TO_MULTIASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.multiascii))
