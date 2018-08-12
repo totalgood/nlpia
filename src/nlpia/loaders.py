@@ -319,8 +319,9 @@ def rename_file(source, dest):
 
     >>> from tempfile import mkdtemp
     >>> tmpdir = mkdtemp(suffix='doctest_rename_file', prefix='tmp')
-    >>> with open(os.path.join(tmpdir, 'fake_data.bin.gz'), 'w') as fout:
-    ...     fout.write('testing rename_file() in nlpia.loaders')
+    >>> fout = open(os.path.join(tmpdir, 'fake.bin.gz'), 'w')
+    >>> fout.write('fake nlpia.loaders.rename_file')
+    >>> fout.close()
     >>> dest = rename_file(os.path.join(tmpdir, 'fake_data.bin.gz'), os.path.join(tmpdir, 'Fake_Data.bin.gz'))
     >>> os.path.isfile(os.path.join(tmpdir, 'Fake_Data.bin.gz'))
     True
