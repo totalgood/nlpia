@@ -1,13 +1,22 @@
 import os
 import sys
 import glob
+import re
 
 
-VALID_TAGS = {'anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start',
-              'comment', 'comment_end', 'comment_start',
-              'heading1', 'heading2', 'heading3', 'heading4', 'heading5',
-              'image_link', 'natural', 'natural_end', 'natural_start', 'source_header'}
-INCLUDE_TAGS = {'natural', 'caption', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5'}
+BLOCK_DELIMITERS = dict([('--', 'natural'), ('==', 'natural'), ('__', 'natural'), ('**', 'natural'),
+                         ('++', 'latex'), ('//', 'comment')])
+BLOCK_DELIMITER_CHRS = ''.join([k[0] for k in BLOCK_DELIMITERS.keys()])
+BLOCK_HEADERS = dict([('[tip]', 'natural'), ('[note]', 'natural'), ('[important]', 'natural'), ('[quote]', 'natural')])
+CRE_BLOCK_DELIMITER = re.compile(r'^[' + BLOCK_DELIMITER_CHRS + r']{2,240}$')
+HEADER_TYPES = [('source', 'code'), ('latex', 'latex')]
+VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start', ] + 
+                 [b for b in BLOCK_DELIMITERS.values()] + 
+                 [b + '_start' for b in BLOCK_DELIMITERS.values()] + 
+                 [b + '_end' for b in BLOCK_DELIMITERS.values()] + 
+                 ['natural_heading{}'.format(i) for i in range(1, 6)] + 
+                 ['image_link', 'natural', 'natural_end', 'natural_start', 'code_header'])
+INCLUDE_TAGS = set(['natural', 'caption'] + ['natural_heading{}'.format(i) for i in range(1, 6)])
 
 
 def get_lines(file_path):
@@ -36,20 +45,15 @@ def get_lines(file_path):
     return zip(files, lines)
 
 
-BLOCK_DELIMITERS = dict([('----', 'natural'), ('====', 'natural'), ('____', 'natural'), ('****', 'natural'),
-                         ('++++', 'latex'), ('////', 'comment')])
-BLOCK_HEADERS = dict([('[tip]', 'natural'), ('[note]', 'natural'), ('[important]', 'natural'), ('[quote]', 'natural')])
-
-
 def tag_lines(lines):
     r""" Naively tags lines from manuscript with: code, natural, heading, etc.
 
     Returns:
         list of tuples  [(tag, line), ...]
 
-    >>> VALID_TAGS == {'anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start',
+    >> VALID_TAGS == {'anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start',
     ... 'comment', 'comment_end', 'comment_start',
-    ... 'heading1', 'heading2', 'heading3', 'heading4', 'heading5',
+    ... 'natural_heading1', 'natural_heading2', 'natural_heading3', 'natural_heading4', 'natural_heading5',
     ... 'image_link', 'natural', 'natural_end', 'natural_start', 'source_header'}
     True
     >>> tag_lines('|= Title| :chapter: 0|Hello|cruel world|==Heading Level 2| \t| [source,bash]|====|$ grep this|====|'.split('|'))
@@ -60,7 +64,7 @@ def tag_lines(lines):
     """
     current_block_type = None
     block_terminator = None
-    block_start = 0
+    block_start = None
     tagged_lines = []
     for idx, line in enumerate(lines):
         # print(current_block_type)
@@ -68,44 +72,55 @@ def tag_lines(lines):
         normalized_line = line.lower().strip().replace(" ", "")
 
         # [source,...] with or without any following "----" block delimiter
-        if normalized_line.startswith('[source'):
-            current_block_type = 'code'
+        if normalized_line.startswith('[' + HEADER_TYPES[0][0]):
+            current_block_type = HEADER_TYPES[0][1]
             block_start = idx
-            tag = 'source_header'
+            tag = current_block_type + '_header'
+            block_terminator = None
         # [latex] with or without any following "++++" block delimiter
-        elif normalized_line.startswith('[latex'):
-            current_block_type = 'latex'
+        elif normalized_line.startswith('[' + HEADER_TYPES[1][0]):
+            current_block_type = HEADER_TYPES[1][1]
             block_start = idx
-            tag = 'latex_header'
-        # [note] etc with or without any following "====" block delimiter
+            tag = current_block_type + '_header'
+            block_terminator = None
+        # [note],[quote],[important],... etc with or without any following "====" block delimiter
         elif normalized_line in BLOCK_HEADERS:
             current_block_type = 'natural'
             block_start = idx
             tag = 'block_header'  # BLOCK_HEADERS[normalized_line]
-        # "==", "--", '__', '++' block delimiters below block type ([note], [source], or blank line)
-        elif current_block_type and idx == block_start + 1:
-            if line.strip()[:2] in ('--', '==', '__', '**'):
-                block_terminator = line.strip()
-                tag = current_block_type + '_start'
-            elif line.strip()[:2] == '++':
-                block_terminator = line.strip()
-                tag = current_block_type + '_start'
-            # this should only happen when there's a "bare" untyped block that has started
-            else:
-                block_terminator = line.strip()
-                tag = current_block_type
+            block_terminator = None
+        # # "==", "--", '__', '++' block delimiters below block type ([note], [source], or blank line)
+        # elif current_block_type
+        #     if idx == block_start + 1:
+        #         if line.strip()[:2] in ('--', '==', '__', '**'):
+        #             block_terminator = line.strip()
+        #             tag = current_block_type + '_start'
+        #         elif line.strip()[:2] == '++':
+        #             block_terminator = line.strip()
+        #             tag = current_block_type + '_start'
+        #         # # this should only happen when there's a "bare" untyped block that has started
+        #         # else:
+        #         #     block_terminator = line.strip()
+        #         #     tag = current_block_type
+        #     elif:
         # bare block delimiters without a block type already defined?
-        elif (normalized_line in BLOCK_DELIMITERS and
-                (not idx or tagged_lines[idx - 1][0] in ('blank_line', 'block_header'))):
-            current_block_type = (current_block_type or BLOCK_DELIMITERS[line.rstrip()])
-            block_start = idx 
-            tag = current_block_type + '_start'
-            block_terminator = normalized_line
-        elif current_block_type and line.rstrip() == block_terminator:
+        elif CRE_BLOCK_DELIMITER.match(normalized_line) and normalized_line[:2] in BLOCK_DELIMITERS:
+            if not idx or not block_start or not current_block_type or not block_terminator:
+                current_block_type = (current_block_type or BLOCK_DELIMITERS[normalized_line[:2]])
+                block_start = idx 
+                tag = current_block_type + '_start'
+                block_terminator = normalized_line
+            else:
+                tag = current_block_type + '_end'
+                current_block_type = None
+                block_terminator = None
+                block_start = 0
+        elif current_block_type and (line.rstrip() == block_terminator or 
+                                     (not block_terminator and not normalized_line)):
             tag = current_block_type + '_end'
             current_block_type = None
             block_terminator = None
-            block_start = 0
+            block_start = None  # block header not allowed on line 0
         elif current_block_type:
             tag = current_block_type
         elif not normalized_line:
@@ -115,7 +130,7 @@ def tag_lines(lines):
         elif normalized_line.startswith(r':'):
             tag = 'attribute'
         elif normalized_line.startswith('='):
-            tag = 'heading'
+            tag = 'natural_heading'
             tag += str(len([c for c in normalized_line[:6].split()[0] if c == '=']))
         elif normalized_line.startswith('.'):
             tag = 'caption'
@@ -170,6 +185,9 @@ if __name__ == '__main__':
         except ValueError:
             verbosity = 1
             include_tags = args
+
+    if include_tags and include_tags[0].strip().lower()[:3] == 'all':
+        include_tags = None
 
     # print('Parsing Chapters and Appendices in: ' + book_dir)
     # print('***PRINTING LINES WITH TAGS***: ' + str(include_tags))
