@@ -105,6 +105,7 @@ BIG_URLS = {
         'https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/' \
         'aiml-en-us-foundation-alice/aiml-en-us-foundation-alice.v1-9.zip',
         8249482,
+
     ),
 }
 BIG_URLS['word2vec'] = BIG_URLS['w2v']
@@ -251,12 +252,25 @@ def dropbox_basename(url):
     return filename
 
 
+def expand_filepath(filepath):
+    """ Make sure filepath doesn't include unexpanded shortcuts like ~ and . 
+
+    >>> len(expand_filepath('~')) > 3
+    True 
+    """
+    os.path.abspath(os.path.expanduser(filepath))
+
+
 def normalize_glove(filepath):
     """ https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
+    # FIXME
+    filepath = expand_filepath(filepath)
+    raise NotImplementedError()
 
 
 def unzip(filepath):
     """ Unzip GloVE models and convert to word2vec binary models (gensim.KeyedVectors) """
+    filepath = expand_filepath(filepath)
     z = ZipFile(filepath)
     unzip_dir = os.path.join(BIGDATA_PATH, filepath[:-4])
     if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist()):
@@ -306,6 +320,7 @@ def normalize_ext(filepath):
     )))
     if not isinstance(filepath, str):
         return [normalize_ext(fp) for fp in filepath]
+    filepath = expand_filepath(filepath)
     fplow = filepath.lower()
     for ext, newext in mapping:
         ext = ext.lower()
@@ -374,7 +389,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     if filename is None:
         filename = dropbox_basename(url)
-    filepath = os.path.join(data_path, filename)
+    filepath = expand_filepath(os.path.join(data_path, filename))
     if url.endswith('dl=0'):
         url = url[:-1] + '1'  # noninteractive Dropbox download
     if verbose:
@@ -430,6 +445,7 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
             return read_txt(name, nrows=nrows)
         except (IOError, UnicodeDecodeError):
             pass
+    data_path = expand_filepath(data_path)
     try:
         return read_csv(os.path.join(data_path, name + '.csv.gz'), nrows=nrows)
     except IOError:
@@ -519,6 +535,7 @@ def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1,
 
 
 def read_json(filepath):
+    filepath = expand_filepath(filepath)
     return json.load(open(filepath, 'rt'))
 
 
@@ -561,6 +578,17 @@ def clean_toxoplasmosis(url='http://www.rightdiagnosis.com/t/toxoplasmosis/stats
     df['population_estimated_used'] = df['population_estimated_used'].apply(str2int)
     df['frequency'] = df.extrapolated_prevalence.astype(float) / df.population_estimated_used
     return df
+
+
+def normalize_column_names(df):
+    """ Clean up whitespace in column names. See better version at `pugnlp.clean_columns`
+
+    >>> normalize_column_name(pd.DataFrame([[1, 2], [3, 4]], columns=['Hello World', 'not here'])
+    ['hello_world', 'not_here']
+    """
+    columns = df.columns if hasattr(df, 'columns') else df
+    columns = [c.lower().replace(' ', '_') for c in columns]
+    return columns
 
 
 def clean_column_values(df, inplace=True):
@@ -650,12 +678,6 @@ def load_geonames(path='http://download.geonames.org/export/dump/cities1000.zip'
     df = pd.read_csv(path, sep='\t', index_col=None, low_memory=False, header=None)
     df.columns = columns
     return df
-
-
-def normalize_column_names(df):
-    columns = df.columns if hasattr(df, 'columns') else df
-    columns = [c.lower().replace(' ', '_') for c in columns]
-    return columns
 
 
 def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz'):

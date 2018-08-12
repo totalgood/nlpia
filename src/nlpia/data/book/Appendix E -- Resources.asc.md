@@ -1,6 +1,6 @@
 In writing this book we pulled from numerous resources. Here are some of our favorites.
 
-In an ideal world, you could find these resources yourself simply by entering the heading text into a semantic search engine like [Duck Duck Go](http://duckduckgo.com), [Gigablast](http://gigablast.com/search?c=main&q=open+source+search+engine) or [Qwant](https://www.qwant.com/web). But until Jimmy Wales takes another shot at [Wikia Search](https://en.wikipedia.org/wiki/Wikia_Search) or Google shares their NLP technology, we have to rely on 90’s-style lists of links like this. Check out [section\_title](#search_engines_section) resources below if your contribution to saving the world includes open helping source projects that index the web.
+In an ideal world, you could find these resources yourself simply by entering the heading text into a semantic search engine like [Duck Duck Go](http://duckduckgo.com), [Gigablast](http://gigablast.com/search?c=main&q=open+source+search+engine) or [Qwant](https://www.qwant.com/web). But until Jimmy Wales takes another shot at [Wikia Search](https://en.wikipedia.org/wiki/Wikia_Search) or Google shares their NLP technology, we have to rely on 90’s-style lists of links like this. Check out [section\_title](#search_engines_section) resources below if your contribution to saving the world includes helping open source projects that index the web.
 
 Applications and Project Ideas
 ==============================
