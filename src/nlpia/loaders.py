@@ -270,7 +270,7 @@ def unzip(filepath):
 
 
 def normalize_ext(filepath):
-    """ Convert file extension to normalized form, e.g. '.tgz' -> '.tar.gz'
+    """ Convert file extension(s) to normalized form, e.g. '.tgz' -> '.tar.gz'
 
     Normalized extensions are ordered in reverse order of how they should be processed.
     Also extensions are ordered in order of decreasing specificity/detail.
@@ -287,7 +287,6 @@ def normalize_ext(filepath):
 
     TODO: use regexes to be more general (deal with .300D and .42B extensions)
 
-    >>> examples = [, 'glove.twitter.27B.zip', , ]
     >>> normalize_ext('glove.6B.zip')
     'glove.6b.glove.txt.zip'
     >>> normalize_ext('glove.twitter.27B.zip')
@@ -305,12 +304,31 @@ def normalize_ext(filepath):
         ('.42B.300d.zip', '.42b.300d.glove.txt.zip'),
         ('.840B.300d.zip', '.840b.300d.glove.txt.zip'),
     )))
+    if not isinstance(filepath, str):
+        return [normalize_ext(fp) for fp in filepath]
     fplow = filepath.lower()
     for ext, newext in mapping:
+        ext = ext.lower()
         if fplow.endswith(ext):
             fplow = fplow[:-len(ext)] + newext
     return fplow
 
+
+def rename_file(source, dest):
+    """ Rename (mv) file(s) from source to dest 
+
+    >>> from tempfile import mkdtemp
+    >>> tmpdir = mkdtemp(suffix='doctest_rename_file', prefix='tmp')
+    >>> with open(os.path.join(tmpdir, 'fake_data.bin.gz'), 'w') as fout:
+    ...     fout.write('testing rename_file() in nlpia.loaders')
+    >>> dest = rename_file(os.path.join(tmpdir, 'fake_data.bin.gz'), os.path.join(tmpdir, 'Fake_Data.bin.gz'))
+    >>> os.path.isfile(os.path.join(tmpdir, 'Fake_Data.bin.gz'))
+    True
+    """
+    if not isinstance(source, str):
+        return [rename_file(s, d) for (s, d) in zip(source, dest)]
+    os.rename(source, dest)
+    return dest
 
 
 def download_unzip(names=None, verbose=True):
@@ -338,12 +356,13 @@ def download_unzip(names=None, verbose=True):
                 file_paths[name] = untar(file_paths[name])
             if file_paths[name].lower().endswith('.zip'):
                 file_paths[name] = unzip(file_paths[name])
-            file_paths[name] = normalize_ext(file_paths[name])
         else:
             df = pd.read_html(DATA_INFO['url'][name], **DATA_INFO['downloader_kwargs'][name])[-1]
             df.columns = clean_columns(df.columns)
             file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
             df.to_csv(file_paths[name])
+        new_filepaths = normalize_ext(file_paths[name])
+        new_filepaths = rename_file(file_paths[name], new_filepaths)
     return file_paths
 
 
