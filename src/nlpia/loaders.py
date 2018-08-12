@@ -142,11 +142,12 @@ DATA_INFO = pd.read_csv(DATA_INFO_FILE, header=0)
 
 
 def untar(fname):
-    if fname.endswith("tar.gz"):
+    if fname.lower().endswith(".tar.gz"):
         with tarfile.open(fname) as tf:
             tf.extractall()
     else:
         logger.warn("Not a tar.gz file: {}".format(fname))
+    return fname[:-7]  # strip .tar.gz extension
 
 
 for filename in TEXTS:
@@ -255,6 +256,7 @@ def normalize_glove(filepath):
 
 
 def unzip(filepath):
+    """ Unzip GloVE models and convert to word2vec binary models (gensim.KeyedVectors) """
     z = ZipFile(filepath)
     unzip_dir = os.path.join(BIGDATA_PATH, filepath[:-4])
     if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist()):
@@ -267,9 +269,54 @@ def unzip(filepath):
     return w2v_paths
 
 
-def download(names=None, verbose=True):
-    """ Download CSV or HTML tables listed in `names` and save them to DATA_PATH/`names`.csv
+def normalize_ext(filepath):
+    """ Convert file extension to normalized form, e.g. '.tgz' -> '.tar.gz'
 
+    Normalized extensions are ordered in reverse order of how they should be processed.
+    Also extensions are ordered in order of decreasing specificity/detail.
+    e.g. zip last, then txt/bin, then model type, then model dimensionality
+
+    .TGZ => .tar.gz
+    .ZIP => .zip
+    .tgz => .tar.gz
+    .bin.gz => .w2v.bin.gz
+    .6B.zip => .6B.glove.txt.zip
+    .27B.zip => .27B.glove.txt.zip
+    .42B.300d.zip => .42B.300d.glove.txt.zip
+    .840B.300d.zip => .840B.300d.glove.txt.zip
+
+    TODO: use regexes to be more general (deal with .300D and .42B extensions)
+
+    >>> examples = [, 'glove.twitter.27B.zip', , ]
+    >>> normalize_ext('glove.6B.zip')
+    'glove.6b.glove.txt.zip'
+    >>> normalize_ext('glove.twitter.27B.zip')
+    'glove.42B.300d.glove.txt.zip'
+    >>> normalize_ext('glove.42B.300d.zip')
+    'glove.42B.300d.glove.txt.zip'
+    >>> normalize_ext('glove.840B.300d.zip')
+    'glove.840B.300d.glove.txt.zip'
+    """
+    mapping = tuple(reversed((
+        ('.tgz', '.tar.gz'),
+        ('.bin.gz', '.w2v.bin.gz'),
+        ('.6B.zip', '.6b.glove.txt.zip'),
+        ('.27B.zip', '.27b.glove.txt.zip'),
+        ('.42B.300d.zip', '.42b.300d.glove.txt.zip'),
+        ('.840B.300d.zip', '.840b.300d.glove.txt.zip'),
+    )))
+    fplow = filepath.lower()
+    for ext, newext in mapping:
+        if fplow.endswith(ext):
+            fplow = fplow[:-len(ext)] + newext
+    return fplow
+
+
+
+def download_unzip(names=None, verbose=True):
+    """ Download CSV or HTML tables listed in `names`, unzip and to DATA_PATH/`names`.csv .txt etc
+
+    Also normalizes file name extensions (.bin.gz -> .w2v.bin.gz).
     Uses table in data_info.csv (internal DATA_INFO) to determine URL or file path from dataset name.
     Also looks
 
@@ -286,18 +333,21 @@ def download(names=None, verbose=True):
                                              data_path=BIGDATA_PATH,
                                              size=BIG_URLS[name][1],
                                              verbose=verbose)
-            if file_paths[name].endswith('.tar.gz'):
+            if file_paths[name].lower().endswith('.tar.gz'):
                 logger.info('Extracting {}'.format(file_paths[name]))
-                untar(file_paths[name])
-                file_paths[name] = file_paths[name][:-7]  # FIXME: rename tar.gz file so that it mimics contents
-            if file_paths[name].endswith('.zip'):
+                file_paths[name] = untar(file_paths[name])
+            if file_paths[name].lower().endswith('.zip'):
                 file_paths[name] = unzip(file_paths[name])
+            file_paths[name] = normalize_ext(file_paths[name])
         else:
             df = pd.read_html(DATA_INFO['url'][name], **DATA_INFO['downloader_kwargs'][name])[-1]
             df.columns = clean_columns(df.columns)
             file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
             df.to_csv(file_paths[name])
     return file_paths
+
+
+download = download_unzip
 
 
 def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_size=4096, verbose=True):
@@ -410,12 +460,13 @@ def get_data(name='sms-spam', nrows=None):
         logger.info('Downloading {}'.format(name))
         filepaths = download(name)
         filepath = filepaths[name][0] if isinstance(filepaths[name], list) else filepaths[name]
-        if filepath.lower().endswith('.w2v.txt'):
+        filepathlow = filepath.lower()
+        if filepathlow.endswith('.w2v.txt'):
             try:
                 return KeyedVectors.load_word2vec_format(filepath, binary=False)
             except (TypeError, UnicodeError):
                 pass
-        if filepath.lower().endswith('.w2v.bin'):
+        if filepathlow.endswith('.w2v.bin') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
             try:
                 return KeyedVectors.load_word2vec_format(filepath, binary=True)
             except (TypeError, UnicodeError):
