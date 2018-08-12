@@ -21,6 +21,7 @@ import re
 import json
 import requests
 from zipfile import ZipFile
+from math import ceil
 
 import pandas as pd
 import tarfile
@@ -330,7 +331,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     assert created_dir.endswith(filedir)
     logger.info('downloaded: {}'.format(filepath))
     with open(filepath, 'wb') as f:
-        for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size)):
+        for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size), total=ceil(size / float(chunk_size))):
             if chunk:  # filter out keep-alive chunks
                 f.write(chunk)
 
