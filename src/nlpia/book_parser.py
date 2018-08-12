@@ -57,10 +57,10 @@ def tag_lines(lines):
     ... 'image_link', 'natural', 'natural_end', 'natural_start', 'source_header'}
     True
     >>> tag_lines('|= Title| :chapter: 0|Hello|cruel world|==Heading Level 2| \t| [source,bash]|====|$ grep this|====|'.split('|'))
-    [('blank_line', ''), ('heading1', '= Title'), ('attribute', ':chapter: 0'), ('natural', 'Hello'),
-    ('natural', 'cruel world'), ('heading2', '==Heading Level 2'), ('blank_line', ''),
-    ('source_header', '[source,bash]'),
-    ('code_start', '===='), ('code', '$ grep this'), ('code_end', '===='), ('blank_line', '')]
+    [('blank_line', ''), ('natural_heading1', '= Title'), ('attribute', ':chapter: 0'), ('natural', 'Hello'),
+     ('natural', 'cruel world'), ('natural_heading2', '==Heading Level 2'), ('blank_line', ''),
+     ('code_header', '[source,bash]'), ('code_start', '===='), ('code', '$ grep this'), ('code_end', '===='),
+     ('blank_line', '')]
     """
     current_block_type = None
     block_terminator = None

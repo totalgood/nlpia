@@ -290,11 +290,11 @@ def normalize_ext(filepath):
     >>> normalize_ext('glove.6B.zip')
     'glove.6b.glove.txt.zip'
     >>> normalize_ext('glove.twitter.27B.zip')
-    'glove.42B.300d.glove.txt.zip'
+    'glove.twitter.27b.glove.txt.zip'
     >>> normalize_ext('glove.42B.300d.zip')
-    'glove.42B.300d.glove.txt.zip'
+    'glove.42b.300d.glove.txt.zip'
     >>> normalize_ext('glove.840B.300d.zip')
-    'glove.840B.300d.glove.txt.zip'
+    'glove.840b.300d.glove.txt.zip'
     """
     mapping = tuple(reversed((
         ('.tgz', '.tar.gz'),
