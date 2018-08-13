@@ -22,6 +22,7 @@ import re
 import json
 import requests
 import logging
+import shutil
 from zipfile import ZipFile
 from math import ceil
 
@@ -33,7 +34,7 @@ from gensim.scripts.glove2word2vec import glove2word2vec
 
 from pugnlp.futil import path_status, find_files
 from pugnlp.util import clean_columns
-from nlpia.constants import DEFAULT_LOG_LEVEL  # , LOGGING_CONFIG
+# from nlpia.constants import DEFAULT_LOG_LEVEL  # , LOGGING_CONFIG
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
 
@@ -49,7 +50,7 @@ np = pd.np
 logger = logging.getLogger(__name__)
 # logging.config.dictConfig(LOGGING_CONFIG)
 # doesn't display line number, etc
-logging.basicConfig(level=DEFAULT_LOG_LEVEL)
+# logging.basicConfig(level=DEFAULT_LOG_LEVEL)
 
 # SMALLDATA_URL = 'http://totalgood.org/static/data'
 W2V_FILES = [
@@ -225,6 +226,28 @@ def read_csv(*args, **kwargs):
     return df
 
 
+def wc(f):
+    """ Count lines in a text file 
+
+    References:
+        https://stackoverflow.com/q/845058/623735
+
+    >>> with open(os.path.join(DATA_PATH, 'dictionary_fda_drug_names.txt')) as fin:
+    ...     print(wc(fin) == wc(fin) == 7037 == wc(fin.name))
+    True
+    >>> wc(fin.name)
+    7037
+    """
+    if not hasattr(f, 'readlines'):
+        with open(f, 'r') as fin:
+            return wc(fin)
+    else:
+        for i, line in enumerate(f):
+            pass
+        f.seek(0)
+        return i + 1
+
+
 def read_txt(fin, nrows=None, verbose=True):
     lines = []
     if isinstance(fin, str):
@@ -234,10 +257,11 @@ def read_txt(fin, nrows=None, verbose=True):
     else:
         tqdm_prog = no_tqdm
     with fin:
-        for line in tqdm_prog(fin):
+        for line in tqdm_prog(fin, total=wc(fin)):
             lines += [line.rstrip('\n').rstrip('\r')]
             if nrows is not None and len(lines) >= nrows:
                 break
+        lines = np.array(lines)
         if all('\t' in line for line in lines):
             num_tabs = [sum([1 for c in line if c == '\t']) for line in lines]
             if all(i == num_tabs[0] for i in num_tabs):
@@ -256,7 +280,7 @@ harry_docs = ["The faster Harry got to the store, the faster and faster Harry wo
               "Jill is not as hairy as Harry."]
 
 
-def no_tqdm(it, total=1):
+def no_tqdm(it, total=1, **kwargs):
     return it
 
 
@@ -287,7 +311,10 @@ def normalize_glove(filepath):
 
 
 def unzip(filepath):
-    """ Unzip GloVE models and convert to word2vec binary models (gensim.KeyedVectors) """
+    """ Unzip GloVE models and convert to word2vec binary models (gensim.KeyedVectors) 
+
+    The only kinds of files that are returned are "*.asc" and "*.txt" and only after renaming.
+    """
     filepath = expand_filepath(filepath)
     filename = os.path.basename(filepath)
     z = ZipFile(filepath)
@@ -295,12 +322,31 @@ def unzip(filepath):
     unzip_dir = os.path.join(BIGDATA_PATH, unzip_dir)
     if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist):
         z.extractall(path=unzip_dir)
-    w2v_paths = [os.path.join(BIGDATA_PATH, filename[:-4] + '.w2v.txt') for filename in os.listdir(unzip_dir)]
-    for (filename, word2vec_output_file) in zip(os.listdir(unzip_dir), w2v_paths):
-        if filename.lower().endswith('.txt'):
-            glove_input_file = os.path.join(unzip_dir, filename)
+    for f in os.listdir(unzip_dir):
+        if f[-1] in ' \t\r\n\f':
+            bad_path = os.path.join(unzip_dir, f)
+            rename_file(source=bad_path, dest=bad_path.rstrip())
+    txt_paths = [os.path.join(BIGDATA_PATH, f.lower()[:-4] + '.txt') for f in os.listdir(unzip_dir) if f.lower().endswith('.asc')]
+    for f, txt_file in zip(os.listdir(unzip_dir), txt_paths):
+        if f.lower().endswith('.asc'):
+            input_file = os.path.join(unzip_dir, f)
+            # # '*.ASC\ ' files from the CDC BFSS seem to be purposefully hard to read
+            # # These take it as individual lines of text:
+            # df = pd.read_txt(input_file, sep=r'\s+', parse_dates=False, infer_datetime_format=False, warn_bad_lines=True)
+            # df.to_csv(csv_file, header=None)
+            # # These take it as individual lines of text:
+            # lines = read_txt(input_file)
+            # # This is the closest to actually working, but garbles most of the columns
+            # with open(input_file) as fin:
+            #     df = pd.read_fwf(fin, header=None)
+            shutil.move(input_file, txt_file)
+    w2v_paths = [os.path.join(BIGDATA_PATH, f[:-4] + '.w2v.txt') for f in os.listdir(unzip_dir) if f.endswith('.txt')]
+    for f, word2vec_output_file in zip(os.listdir(unzip_dir), w2v_paths):
+        if f.lower().endswith('.txt'):
+            glove_input_file = os.path.join(unzip_dir, f)
             glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
-    return w2v_paths
+
+    return txt_paths + w2v_paths
 
 
 def normalize_ext(filepath):
@@ -361,11 +407,11 @@ def rename_file(source, dest):
     >>> os.path.isfile(os.path.join(tmpdir, 'Fake_Data.bin.gz'))
     True
     """
-    print('{} >>>>> {}'.format(source, dest))
+    logger.debug('nlpia.loaders.rename_file(source={}, dest={})'.format(source, dest))
     if not isinstance(source, str):
         dest = [dest] if isinstance(dest, str) else dest
         return [rename_file(s, d) for (s, d) in zip_longest(source, dest, fillvalue=[source, dest][int(len(source) > len(dest))])]
-    print(source + ' >>>>> ' + dest)
+    logger.debug('nlpia.loaders.os.rename(source={}, dest={})'.format(source, dest))
     os.rename(source, dest)
     return dest
 
@@ -395,17 +441,17 @@ def download_unzip(names=None, verbose=True):
                 file_paths[name] = untar(file_paths[name])
             if file_paths[name].lower().endswith('.zip'):
                 file_paths[name] = unzip(file_paths[name])
-                print(file_paths)
+                logger.debug('download_unzip.filepaths=' + str(file_paths))
         else:
             df = pd.read_html(DATA_INFO['url'][name], **DATA_INFO['downloader_kwargs'][name])[-1]
             df.columns = clean_columns(df.columns)
             file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
             df.to_csv(file_paths[name])
-        print(file_paths)
+        logger.debug('download_unzip.filepaths=' + str(file_paths))
         new_file_paths = normalize_ext(file_paths[name])
-        print(new_file_paths)
-        file_paths = rename_file(file_paths[name], new_file_paths)
-        print(file_paths)
+        logger.debug('download_unzip.new_filepaths=' + str(new_file_paths))
+        file_paths[name] = rename_file(file_paths[name], new_file_paths)
+        logger.debug('download_unzip.filepaths=' + str(file_paths))
     return file_paths
 
 
@@ -457,7 +503,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
                 f.write(chunk)
 
     r.close()
-    print(filepath)
+    logger.debug('nlpia.loaders.download_file: return filepath=' + str(filepath))
     return filepath
 
 
@@ -532,18 +578,23 @@ def get_data(name='sms-spam', nrows=None):
     if name in BIG_URLS:
         logger.info('Downloading {}'.format(name))
         filepaths = download_unzip(name)
-        print(filepaths)
+        logger.debug('nlpia.loaders.get_data.filepaths=' + str(filepaths))
         filepath = filepaths[name][0] if isinstance(filepaths[name], (list, tuple)) else filepaths[name]
-        print(filepath)
+        logger.debug('nlpia.loaders.get_data.filepath=' + str(filepath))
         filepathlow = filepath.lower()
         if filepathlow.endswith('.w2v.txt'):
             try:
                 return KeyedVectors.load_word2vec_format(filepath, binary=False)
             except (TypeError, UnicodeError):
                 pass
-        if filepathlow.endswith('.w2v.bin') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
+        elif filepathlow.endswith('.w2v.bin') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
             try:
                 return KeyedVectors.load_word2vec_format(filepath, binary=True)
+            except (TypeError, UnicodeError):
+                pass
+        elif filepathlow.endswith('.txt') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
+            try:
+                return read_txt(filepath)
             except (TypeError, UnicodeError):
                 pass
         return filepaths[name]
@@ -667,7 +718,7 @@ def clean_column_values(df, inplace=True):
             except ValueError:
                 values = None
             except:
-                print('Error on column {} with dtype {}'.format(c, df[c].dtype))
+                logger.error('Error on column {} with dtype {}'.format(c, df[c].dtype))
                 raise
 
         if values is not None:
