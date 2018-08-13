@@ -226,7 +226,7 @@ def read_csv(*args, **kwargs):
     return df
 
 
-def wc(f):
+def wc(f, verbose=False):
     """ Count lines in a text file 
 
     References:
@@ -242,7 +242,8 @@ def wc(f):
         with open(f, 'r') as fin:
             return wc(fin)
     else:
-        for i, line in enumerate(f):
+        tqdm_prog = tqdm if verbose else no_tqdm
+        for i, line in tqdm_prog(enumerate(f)):
             pass
         f.seek(0)
         return i + 1
@@ -252,10 +253,7 @@ def read_txt(fin, nrows=None, verbose=True):
     lines = []
     if isinstance(fin, str):
         fin = open(fin)
-    if verbose:
-        tqdm_prog = tqdm
-    else:
-        tqdm_prog = no_tqdm
+    tqdm_prog = tqdm if verbose else no_tqdm
     with fin:
         for line in tqdm_prog(fin, total=wc(fin)):
             lines += [line.rstrip('\n').rstrip('\r')]
@@ -469,11 +467,8 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     filepath = expand_filepath(os.path.join(data_path, filename))
     if url.endswith('dl=0'):
         url = url[:-1] + '1'  # noninteractive Dropbox download
-    if verbose:
-        tqdm_prog = tqdm
-        logger.info('requesting URL: {}'.format(url))
-    else:
-        tqdm_prog = no_tqdm
+    tqdm_prog = tqdm if verbose else no_tqdm
+    logger.info('requesting URL: {}'.format(url))
     r = requests.get(url, stream=True, allow_redirects=True)
     size = r.headers.get('Content-Length', -1) if size is None else size
     try:
