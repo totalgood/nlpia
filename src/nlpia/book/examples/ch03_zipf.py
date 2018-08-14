@@ -9,7 +9,7 @@
 >>> plt.show()
 """
 import pandas as pd
-import seaborn
+import seaborn  # noqa
 from matplotlib import pyplot as plt
 
 df = pd.read_html('https://en.wikipedia.org/wiki/List_of_United_States_cities_by_population', header=0)[3]
