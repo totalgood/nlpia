@@ -124,8 +124,8 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
     3
     >>> len(list(iter_lines('abc\n def\n gh')))
     3
-    >>> len(list(iter_lines(os.path.join(DATA_PATH, 'book'))))
-    20
+    >>> 20000 > len(list(iter_lines(os.path.join(DATA_PATH, 'book')))) > 200
+    True
     """
     if url_or_text is None or not url_or_text:
         return []

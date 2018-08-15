@@ -18,23 +18,23 @@ if [[ "$DISTRIB" == "conda" ]]; then
     # Use the anaconda3 installer
     DOWNLOAD_DIR=${DOWNLOAD_DIR:-$HOME/.tmp/anaconda3}
     mkdir -p $DOWNLOAD_DIR
-    wget http://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh -O $DOWNLOAD_DIR/anaconda3.sh
+    wget -q http://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh -O $DOWNLOAD_DIR/anaconda3.sh
     chmod +x $DOWNLOAD_DIR/anaconda3.sh && bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3
     # rm -r -d -f $DOWNLOAD_DIR
     export PATH=$HOME/anaconda3/bin:$PATH
-    conda update -y conda
-    conda install -y pip
-    conda install -y swig
+    conda update -q -y conda
+    conda install -q -y pip
+    conda install -q -y swig
 
     # Configure the conda environment and put it in the path using the provided versions
     if [[ -f "$ENVIRONMENT_YML" ]]; then
-        conda env create -n testenv -f "$ENVIRONMENT_YML"
+        conda env create -q -n testenv -f "$ENVIRONMENT_YML"
     else
         echo "WARNING: Unable to find an environment.yml file !!!!!!"
-        conda create -n testenv --yes python=$PYTHON_VERSION pip
+        conda create -q -n testenv --yes python=$PYTHON_VERSION pip
     fi
     source activate testenv
-    conda install -y pip
+    conda install -q -y pip
 
     # download spacy English language model
     pip install --upgrade spacy
