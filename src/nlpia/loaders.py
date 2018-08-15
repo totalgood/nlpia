@@ -365,14 +365,14 @@ def normalize_ext(filepath):
 
     TODO: use regexes to be more general (deal with .300D and .42B extensions)
 
-    >>> normalize_ext('glove.6B.zip')
-    'glove.6b.glove.txt.zip'
-    >>> normalize_ext('glove.twitter.27B.zip')
-    'glove.twitter.27b.glove.txt.zip'
-    >>> normalize_ext('glove.42B.300d.zip')
-    'glove.42b.300d.glove.txt.zip'
-    >>> normalize_ext('glove.840B.300d.zip')
-    'glove.840b.300d.glove.txt.zip'
+    >>> normalize_ext('glove.6B.zip').endswith('glove.6b.glove.txt.zip')
+    True
+    >>> normalize_ext('glove.twitter.27B.zip').endswith('glove.twitter.27b.glove.txt.zip')
+    True
+    >>> normalize_ext('glove.42B.300d.zip').endswith('glove.42b.300d.glove.txt.zip')
+    True
+    >>> normalize_ext('glove.840B.300d.zip').endswith('glove.840b.300d.glove.txt.zip')
+    True
     """
     mapping = tuple(reversed((
         ('.tgz', '.tar.gz'),
@@ -400,6 +400,7 @@ def rename_file(source, dest):
     >>> tmpdir = mkdtemp(suffix='doctest_rename_file', prefix='tmp')
     >>> fout = open(os.path.join(tmpdir, 'fake.bin.gz'), 'w')
     >>> fout.write('fake nlpia.loaders.rename_file')
+    30
     >>> fout.close()
     >>> dest = rename_file(os.path.join(tmpdir, 'fake_data.bin.gz'), os.path.join(tmpdir, 'Fake_Data.bin.gz'))
     >>> os.path.isfile(os.path.join(tmpdir, 'Fake_Data.bin.gz'))
@@ -567,7 +568,7 @@ def get_data(name='sms-spam', nrows=None):
     >>> words = get_data('words_ubuntu_us')
     >>> len(words)
     99171
-    >>> words[:8]
+    >>> list(words[:8])
     ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
     """
     if name in BIG_URLS:
@@ -666,9 +667,10 @@ def clean_toxoplasmosis(url='http://www.rightdiagnosis.com/t/toxoplasmosis/stats
 
 
 def normalize_column_names(df):
-    """ Clean up whitespace in column names. See better version at `pugnlp.clean_columns`
+    r""" Clean up whitespace in column names. See better version at `pugnlp.clean_columns`
 
-    >>> normalize_column_name(pd.DataFrame([[1, 2], [3, 4]], columns=['Hello World', 'not here'])
+    >>> df = pd.DataFrame([[1, 2], [3, 4]], columns=['Hello World', 'not here']
+    >>> normalize_column_names(df)
     ['hello_world', 'not_here']
     """
     columns = df.columns if hasattr(df, 'columns') else df
