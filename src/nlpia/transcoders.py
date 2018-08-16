@@ -199,7 +199,7 @@ def segment_sentences(path=os.path.join(DATA_PATH, 'book'), splitter=split_sente
 
     >>> 10000 > len(segment_sentences(path=os.path.join(DATA_PATH, 'book'))) >= 4
     ...
-    4
+    True
     >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'psychology-scripts.txt'), splitter=split_sentences_nltk))
     ...
     23
