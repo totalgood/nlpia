@@ -78,3 +78,71 @@ plt.show(block=False)
 # plt.title('People Counts in Cities Like Word Counts in Documents')
 # plt.tight_layout()
 # plt.show(block=False)
+
+
+# a better way to load Brown corpus (separate BOW for each sentence tagged with docid)
+# would be even better if we tagged with paragraph id, fileid, and sentid in a tripple compound key
+"""
+>>> sents = tuple(((fid, tuple(brown.tagged_sents(fid))) for fid in brown.fileids()))
+>>> flattened = []
+... for fid, senttups in sents:
+...     for i, sent in enumerate(senttups):
+...         flattened.append((fid, i, Counter(tuple(zip(*sent))[0]),  Counter(tuple(zip(*sent))[1]), Counter(sent)))
+>>> flattened[0]
+('ca01',
+ 0,
+ Counter({'The': 1,
+...
+          '.': 1}),
+ Counter({'AT': 3,
+...
+          '.': 1}),
+ Counter({('The', 'AT'): 1,
+...
+          ('.', '.'): 1}))
+>>> sentbows = pd.DataFrame(flattened, columns='fileid sentid bow bag_word_tags bag_tagged_words'.split())
+>>> sentbows.head()
+  fileid                        ...                                                           bag_tagged_words
+0   ca01                        ...                          {('The', 'AT'): 1, ('Fulton', 'NP-TL'): 1, ('C...
+1   ca01                        ...                          {('The', 'AT'): 1, ('jury', 'NN'): 1, ('furthe...
+2   ca01                        ...                          {('The', 'AT'): 1, ('September-October', 'NP')...
+3   ca01                        ...                          {('``', '``'): 2, ('Only', 'RB'): 1, ('a', 'AT...
+4   ca01                        ...                          {('The', 'AT'): 1, ('jury', 'NN'): 1, ('said',...
+"""
+from tqdm import tqdm  # noqa
+
+taggedparas = tuple(((fid, tuple(brown.tagged_paras(fid))) for fid in tqdm(brown.fileids())))
+flattened = []
+for filenum, (fid, doc) in enumerate(tqdm(taggedparas)):
+    # print(fid)
+    # print(doc)
+    for paranum, para in enumerate(doc):
+        # print(paranum)
+        # print(para)
+        for sentnum, sent in enumerate(para):
+            # print(sentnum)
+            # print(sent)
+            flattened.append((fid, filenum, paranum, sentnum, sent,
+                              Counter(list(zip(*sent))[0]),
+                              Counter(list(zip(*sent))[1]),
+                              Counter(sent)))
+flattened[0]
+# ('ca01',
+#  0,
+#  Counter({'The': 1,
+# ...
+#           '.': 1}),
+#  Counter({'AT': 3,
+# ...
+#           '.': 1}),
+#  Counter({('The', 'AT'): 1,
+# ...
+#           ('.', '.'): 1}))
+sentbows = pd.DataFrame(flattened, columns='fileid filenum paranum sentnum tagged_sent bow bag_word_tags bag_tagged_words'.split())
+sentbows.head()
+#   fileid                        ...                                                           bag_tagged_words
+# 0   ca01                        ...                          {('The', 'AT'): 1, ('Fulton', 'NP-TL'): 1, ('C...
+# 1   ca01                        ...                          {('The', 'AT'): 1, ('jury', 'NN'): 1, ('furthe...
+# 2   ca01                        ...                          {('The', 'AT'): 1, ('September-October', 'NP')...
+# 3   ca01                        ...                          {('``', '``'): 2, ('Only', 'RB'): 1, ('a', 'AT...
+# 4   ca01                        ...                          {('The', 'AT'): 1, ('jury', 'NN'): 1, ('said',...

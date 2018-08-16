@@ -197,7 +197,7 @@ def segment_sentences(path=os.path.join(DATA_PATH, 'book'), splitter=split_sente
         4. process each 1-3 line window (breaking on empty lines) with syntax net to label them
         5. label each 1-3-line window of lines as "complete sentence, partial sentence/phrase, or multi-sentence"
 
-    >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'book')))
+    >>> 10000 > len(segment_sentences(path=os.path.join(DATA_PATH, 'book'))) >= 4
     ...
     4
     >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'psychology-scripts.txt'), splitter=split_sentences_nltk))
