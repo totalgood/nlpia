@@ -669,7 +669,7 @@ def clean_toxoplasmosis(url='http://www.rightdiagnosis.com/t/toxoplasmosis/stats
 def normalize_column_names(df):
     r""" Clean up whitespace in column names. See better version at `pugnlp.clean_columns`
 
-    >>> df = pd.DataFrame([[1, 2], [3, 4]], columns=['Hello World', 'not here']
+    >>> df = pd.DataFrame([[1, 2], [3, 4]], columns=['Hello World', 'not here'])
     >>> normalize_column_names(df)
     ['hello_world', 'not_here']
     """
