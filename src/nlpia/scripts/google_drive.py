@@ -5,9 +5,14 @@ Thank you @turdus-merula and Andrew Hundt! https://stackoverflow.com/a/39225039/
 """
 import sys
 import requests
+from tqdm import tqdm
 
 
 def download_file_from_google_drive(id, destination):
+    if 'id=' in id:
+        # https://drive.google.com/uc?export=download&id=0BwmD_VLjROrfM1BxdkxVaTY2bWs  # dailymail_stories.tgz
+        id = id.split('=')[-1]
+
     def get_confirm_token(response):
         for key, value in response.cookies.items():
             if key.startswith('download_warning'):
@@ -19,7 +24,7 @@ def download_file_from_google_drive(id, destination):
         CHUNK_SIZE = 32768
 
         with open(destination, "wb") as f:
-            for chunk in response.iter_content(CHUNK_SIZE):
+            for chunk in tqdm(response.iter_content(CHUNK_SIZE)):
                 if chunk:  # filter out keep-alive new chunks
                     f.write(chunk)
 
