@@ -17,6 +17,7 @@ entry_points = """
 [console_scripts]
 renderbook = nlpia.scripts.countpages:main
 cleandialog = nlpia.scripts.cleandialog:main
+downloadgdrive = nlpia.scripts.google_drive:main
 """
 
 
