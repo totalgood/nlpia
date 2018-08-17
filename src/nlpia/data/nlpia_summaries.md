@@ -1,3 +1,11 @@
+# NLPIA Summary Sentences from TextSum
+
+## Sentences are tagged to indicate the sentence is:
+
+    `-` reflux
+    `+` ill-formed: not reflux, but not well-formed
+    `*` novel *and* well-formed
+
 ### Part 1 Summary (30 lines)
 
     - in chapter 1 , you 'll quickly begin to think of ways you can use machines that process words in your own life . 
@@ -6,7 +14,7 @@
 
 ### Chapter 1 Summary (30 lines)
 
-    + nlp is the first of many you 'll use to learn all the tricks needed to assemble an english language dialog engine . 
+    - nlp is the first of many you 'll use to learn all the tricks needed to assemble an english language dialog engine . 
     - a computer program written with a programming language tells a machine exactly what to do . 
     - but there are no compilers or interpreters for natural languages such as english and french .
 
@@ -18,25 +26,26 @@
 
 ### Chapter 3 Summary (30 lines)
 
-    punctuation marks , and numbers , but the techniques we use are easily extended to any other units of meaning contained in a sequence of characters , like ascii emoticons , mathematical symbols , and so on . 
-    retrieving tokens from a document will require some string manipulation beyond just the ` str.split -lrb- -rrb- ` method employed in chapter 1 '
+    - punctuation marks , and numbers , but the techniques we use are easily extended to any other units of meaning contained in a sequence of characters , like ascii emoticons , mathematical symbols , and so on . 
+    - retrieving tokens from a document will require some string manipulation beyond just the ` str.split -lrb- -rrb- ` method employed in chapter 1 '
 
 ### Chapter 4 Summary (30 lines)
 
-    google search had seemed more like an index , a tool that required a little skill in order to find what you were looking . 
-    but it soon got smarter and would accept more and more natural language searches . 
-    then smartphone autocomplete began dominating our lives .
+    - google search had seemed more like an index , a tool that required a little skill in order to find what you were looking . 
+    - but it soon got smarter and would accept more and more natural language searches . 
+    * then smartphone autocomplete began dominating our lives .
 
 ### Part 2 Summary (30 lines)
 
-    the neural networks of part 2 accomplish most of the tedious feature extraction work for you . 
-    the use of multilayered neural networks for machine learning is called _ deep learning _ . 
-    in part 2 , we begin to look at the patterns not just between words but between the characters within words .
+    - the neural networks of part 2 accomplish most of the tedious feature extraction work for you . 
+    - the use of multilayered neural networks for machine learning is called _ deep learning _ . 
+    * in part 2 , we begin to look at the patterns not just between words but between the characters within words .
 
-### Book? Summary (30 lines)
+### Chapter 10 Summary (30 lines)
 
-    over the course of the book , we have introduced common natural language processing tools which are key to understanding texts , or to classifying their sentiments or their content with a machine . 
-    but would n't it be nice to train a neural network to respond to a human 's questions ? or a response and the pairing of a statement in one language with its equivalent translated into another language are very closely related .
+    - over the course of the book , we have introduced common natural language processing tools which are key to understanding texts , or to classifying their sentiments or their content with a machine . 
+    - but would n't it be nice to train a neural network to respond to a human 's questions ? 
+    - or a response and the pairing of a statement in one language with its equivalent translated into another language are very closely related .
 
 ### Chapter 5 Summary (30 lines)
 
