@@ -1,6 +1,24 @@
 [![Build Status](https://travis-ci.org/totalgood/nlpia.svg?branch=master)](https://travis-ci.org/totalgood/nlpia) 
 [![Coverage](https://codecov.io/gh/totalgood/nlpia/branch/master/graph/badge.svg)](https://codecov.io/gh/totalgood/nlpia) 
 [![PyPI](https://img.shields.io/pypi/v/nlpia.svg?style=flat)](https://pypi.python.org/totalgood/nlpia) 
+
+<!---
+Some more badges from grakn.ai
+
+[![GitHub release](https://img.shields.io/github/release/graknlabs/grakn.svg)](https://github.com/graknlabs/grakn/releases/latest)
+[![Build Status](https://travis-ci.org/graknlabs/grakn.svg?branch=internal)](https://travis-ci.org/graknlabs/grakn)
+[![Slack Status](http://totalgood.herokuapp.com/badge.svg)](https://totalgood.com/slack)
+[![Stack Overflow][stackoverflow-shield]][stackoverflow-link]
+[![Download count](https://img.shields.io/github/downloads/graknlabs/grakn/total.svg)](https://grakn.ai/download)
+---
+[![Static Bugs](https://sonarcloud.io/api/project_badges/measure?project=ai.grakn%3Agrakn&metric=bugs)](https://sonarcloud.io/dashboard?id=ai.grakn%3Agrakn)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=ai.grakn%3Agrakn&metric=code_smells)](https://sonarcloud.io/dashboard?id=ai.grakn%3Agrakn)
+[![Duplicated Code](https://sonarcloud.io/api/project_badges/measure?project=ai.grakn%3Agrakn&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=ai.grakn%3Agrakn)
+
+[stackoverflow-shield]: https://img.shields.io/badge/stackoverflow-grakn-blue.svg
+[stackoverflow-link]: https://stackoverflow.com/questions/tagged/grakn
+--->
+
 # NLPIA
 
 The community-driven code for [**N**atural **L**anguage **P**rocessing **i**n **A**ction](https://bit.ly/nlpiabook).
