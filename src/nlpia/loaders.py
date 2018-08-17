@@ -25,6 +25,7 @@ import logging
 import shutil
 from zipfile import ZipFile
 from math import ceil
+from itertools import product
 
 import pandas as pd
 import tarfile
@@ -53,33 +54,108 @@ logger = logging.getLogger(__name__)
 # logging.basicConfig(level=DEFAULT_LOG_LEVEL)
 
 # SMALLDATA_URL = 'http://totalgood.org/static/data'
+
 W2V_FILES = [
     'GoogleNews-vectors-negative300.bin.gz',
     'glove.6B.zip', 'glove.twitter.27B.zip', 'glove.42B.300d.zip', 'glove.840B.300d.zip',
 ]
 # You probably want to rm nlpia/src/nlpia/data/bigdata_info.csv if you modify any of these so they don't overwrite what you do here
+ZIP_FILES = {
+    'GoogleNews-vectors-negative300.bin.gz': None,
+    'glove.6B.zip': ['glove.6B.50d.w2v.txt', 'glove.6B.100d.w2v.txt', 'glove.6B.200d.w2v.txt', 'glove.6B.300d.w2v.txt'],
+    'glove.twitter.27B.zip': None,
+    'glove.42B.300d.zip': None,
+    'glove.840B.300d.zip': None,
+}
+ZIP_PATHS = [[os.path.join(BIGDATA_PATH, fn) for fn in ZIP_FILES[k]] if ZIP_FILES[k] else k for k in ZIP_FILES.keys()]
+
+
+def imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(('train', 'test'), ('pos', 'neg', 'unsup'))):
+    """ Walk directory tree starting at `path` to compile a DataFrame of movie review text labeled with their 1-10 star ratings
+
+    Returns:
+      DataFrame: columns=['url', 'rating', 'text'], index=MultiIndex(['train_test', 'pos_neg_unsup', 'id'])
+
+    TODO:
+      Make this more robust/general by allowing the subdirectories to be None and find all the subdirs containing txt files
+
+    >> imdb_df().head()
+                                                          url  rating                                               text
+    index0 index1 index2
+    train  pos    0       http://www.imdb.com/title/tt0453418       9  Bromwell High is a cartoon comedy. It ran at t...
+                  1       http://www.imdb.com/title/tt0210075       7  If you like adult comedy cartoons, like South ...
+                  2       http://www.imdb.com/title/tt0085688       9  Bromwell High is nothing short of brilliant. E...
+                  3       http://www.imdb.com/title/tt0033022      10  "All the world's a stage and its people actors...
+                  4       http://www.imdb.com/title/tt0043137       8  FUTZ is the only show preserved from the exper...
+    """
+    dfs = {}
+    for subdirs in tqdm(list(product(*subdirectories))):
+        urlspath = os.path.join(dirpath, subdirs[0], 'urls_{}.txt'.format(subdirs[1]))
+        if not os.path.isfile(urlspath):
+            if subdirs != ('test', 'unsup'):  # test/ dir doesn't usually have an unsup subdirectory
+                logger.warn('Unable to find expected IMDB review list of URLs: {}'.format(urlspath))
+            continue
+        df = pd.read_csv(urlspath, header=None, names=['url'])
+        # df.index.name = 'id'
+        df['url'] = series_strip(df.url, endswith='/usercomments')
+
+        textsdir = os.path.join(dirpath, subdirs[0], subdirs[1])
+        if not os.path.isdir(textsdir):
+            logger.warn('Unable to find expected IMDB review text subdirectory: {}'.format(textsdir))
+            continue
+        filenames = [fn for fn in os.listdir(textsdir) if fn.lower().endswith('.txt')]
+        df['index0'] = subdirs[0]  # TODO: column names more generic so will work on other datasets
+        df['index1'] = subdirs[1]
+        df['index2'] = np.array([int(fn[:-4].split('_')[0]) for fn in filenames])
+        df['rating'] = np.array([int(fn[:-4].split('_')[1]) for fn in filenames])
+        texts = []
+        for fn in filenames:
+            with open(os.path.join(textsdir, fn)) as fin:
+                texts.append(fin.read())
+        df['text'] = np.array(texts)
+        del texts
+        df.set_index('index0 index1 index2'.split(), inplace=True)
+        df.sort_index(inplace=True)
+        dfs[subdirs] = df
+    return pd.concat(dfs.values())
+
+
+def glove_df(filepath):
+    """ https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
+    pass
+
+
+def load_glove_format(filepath):
+    """ https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
+    # glove_input_file = os.path.join(BIGDATA_PATH, filepath)
+    word2vec_output_file = os.path.join(BIGDATA_PATH, filepath.split(os.path.sep)[-1][:-4] + '.w2v.txt')
+    if not os.path.isfile(word2vec_output_file):  # TODO: also check file size
+        glove2word2vec(glove_input_file=filepath, word2vec_output_file=word2vec_output_file)
+    return KeyedVectors.load_word2vec_format(word2vec_output_file)
+
+
 BIG_URLS = {
     'w2v': (
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
         1647046227,
+        'GoogleNews-vectors-negative300.bin.gz',
+        KeyedVectors.load_word2vec_format
     ),
-    'glove-twitter': (
+    'glove_twitter': (
         'https://nlp.stanford.edu/data/glove.twitter.27B.zip',
-        1000000000,
+        1000000000,  # FIXME: make sure size check is `>=`
     ),
     'glove': (
         'https://nlp.stanford.edu/data/glove.6B.zip',
         862182613,
+        os.path.join('glove.6B', 'glove.6B.50d.txt'),
+        load_glove_format,
     ),
-    'glove-small': (
-        'https://nlp.stanford.edu/data/glove.6B.zip',
-        862182613,
-    ),
-    'glove-large': (
+    'glove_large': (
         'https://nlp.stanford.edu/data/glove.840B.300d.zip',
         1000000000,
     ),
-    'glove-medium': (
+    'glove_medium': (
         'https://nlp.stanford.edu/data/glove.42B.300d.zip',
         1000000000,
     ),
@@ -105,7 +181,9 @@ BIG_URLS = {
     ),
     'imdb': (
         'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
-        3112841563,  # 3112841312,
+        84125825,
+        'aclImdb',  # directory for extractall
+        imdb_df,  # postprocessor to combine text files into a single DataFrame
     ),
     'alice': (
         # 'https://www.dropbox.com/s/py952zad3mntyvp/aiml-en-us-foundation-alice.v1-9.zip?dl=1',
@@ -122,6 +200,8 @@ BIG_URLS = {
 for yr in range(2011, 2017):
     BIG_URLS['cdc' + str(yr)[-2:]] = ('https://www.cdc.gov/brfss/annual_data/{yr}/files/LLCP{yr}ASC.zip'.format(yr=yr), None)
 BIG_URLS['word2vec'] = BIG_URLS['w2v']
+BIG_URLS['glove_small'] = BIG_URLS['glove']
+
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
     logger.warn('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
@@ -147,12 +227,11 @@ DATA_NAMES = {
     'hutto_products': os.path.join(DATA_PATH, 'hutto_ICWSM_2014/amazonReviewSnippets_GroundTruth.csv.gz'),
 }
 
-# FIXME: put these in BIG_URLS
+# FIXME: put these in BIG_URLS, and test/use them with get_data()
 DDL_DS_QUESTIONS_URL = 'http://minimum-entropy.districtdatalabs.com/api/questions/?format=json'
-DDL_DS_ANSWERSS_URL = 'http://minimum-entropy.districtdatalabs.com/api/answers/?format=json'
+DDL_DS_ANSWERS_URL = 'http://minimum-entropy.districtdatalabs.com/api/answers/?format=json'
 
 
-W2V_PATHS = [os.path.join(BIGDATA_PATH, filename) for filename in W2V_FILES]
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
 
@@ -166,6 +245,76 @@ def untar(fname):
     else:
         logger.warn("Not a tar.gz file: {}".format(fname))
     return fname[:-7]  # strip .tar.gz extension
+
+
+def series_rstrip(series, endswith='/usercomments', ignorecase=True):
+    """ Strip a suffix str (`endswith` str) from a `df` columns or pd.Series of type str """
+    return series_strip(series, startswith=None, endswith=endswith, startsorendswith=None, ignorecase=ignorecase)
+
+
+def series_lstrip(series, startswith='http://', ignorecase=True):
+    """ Strip a suffix str (`endswith` str) from a `df` columns or pd.Series of type str """
+    return series_strip(series, startswith=startswith, endswith=None, startsorendswith=None, ignorecase=ignorecase)
+
+
+def series_strip(series, startswith=None, endswith=None, startsorendswith=None, ignorecase=True):
+    """ Strip a suffix/prefix str (`endswith`/`startswith` str) from a `df` columns or pd.Series of type str """
+    if ignorecase:
+        mask = series.str.lower()
+        endswith = endswith.lower()
+    else:
+        mask = series
+    if not (startsorendswith or endswith or startswith):
+        logger.warn('In series_strip(): You must specify endswith, startswith, or startsorendswith string arguments.')
+        return series
+    if startsorendswith:
+        startswith = endswith = startsorendswith
+    if endswith:
+        mask = mask.str.endswith(endswith)
+        series[mask] = series[mask].str[:-len(endswith)]
+    if startswith:
+        mask = mask.str.endswith(startswith)
+        series[mask] = series[mask].str[len(startswith):]
+    return series
+
+
+def endswith_strip(s, endswith='.txt', ignorecase=True):
+    """ Strip a suffix from the end of a string
+
+    >>> startswith_strip('http://TotalGood.com', '.COM')
+    'http://TotalGood'
+    >>> startswith_strip('http://TotalGood.com', endswith='.COM', ignorecase=False)
+    'http://TotalGood.com'
+    """
+    if ignorecase:
+        if s.lower().endswith(endswith.lower()):
+            return s[:-len(endswith)]
+    else:
+        if s.endswith(endswith):
+            return s[:-len(endswith)]
+    return s
+
+
+def startswith_strip(s, startswith='http://', ignorecase=True):
+    """ Strip a prefix from the beginning of a string
+
+    >>> startswith_strip('HTtp://TotalGood.com', 'HTTP://')
+    'TotalGood.com'
+    >>> startswith_strip('HTtp://TotalGood.com', startswith='HTTP://', ignorecase=False)
+    'HTtp://TotalGood.com'
+    """
+    if ignorecase:
+        if s.lower().startswith(startswith.lower()):
+            return s[len(startswith):]
+    else:
+        if s.endswith(startswith):
+            return s[len(startswith):]
+    return s
+
+
+def combine_dfs(dfs, index_col='index0 index1 index2'.split()):
+    if isinstance(dfs, 'dict'):
+        dfs = list(dfs.values())
 
 
 for filename in TEXTS:
@@ -316,6 +465,7 @@ def unzip(filepath):
     filepath = expand_filepath(filepath)
     filename = os.path.basename(filepath)
     z = ZipFile(filepath)
+
     unzip_dir = filename.split('.')[0] if filename.split('.')[0] else os.path.splitext(filename)[0]
     unzip_dir = os.path.join(BIGDATA_PATH, unzip_dir)
     if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist):
@@ -431,9 +581,10 @@ def download_unzip(names=None, verbose=True):
     for name in names:
         name = name.lower().strip()
         if name in BIG_URLS:
-            file_paths[name] = download_file(BIG_URLS[name][0],
+            meta = BIG_URLS[name]
+            file_paths[name] = download_file(meta[0],
                                              data_path=BIGDATA_PATH,
-                                             size=BIG_URLS[name][1],
+                                             size=meta[1],
                                              verbose=verbose)
             if file_paths[name].lower().endswith('.tar.gz'):
                 logger.info('Extracting {}'.format(file_paths[name]))
@@ -724,7 +875,7 @@ def clean_column_values(df, inplace=True):
     return df
 
 
-def load_geonames(path='http://download.geonames.org/export/dump/cities1000.zip'):
+def load_geonames(filepath='http://download.geonames.org/export/dump/cities1000.zip'):
     """Clean the table of city metadata from download.geoname.org/export/dump/{filename}
 
     Reference:
@@ -762,7 +913,7 @@ def load_geonames(path='http://download.geonames.org/export/dump/cities1000.zip'
     columns += ['cc2', 'admin1_code', 'admin2_code', 'admin3_code', 'admin4_code', 'population', 'elevation',
                 'dem', 'timezone', 'modification date']
     columns = normalize_column_names(columns)
-    df = pd.read_csv(path, sep='\t', index_col=None, low_memory=False, header=None)
+    df = pd.read_csv(filepath, sep='\t', index_col=None, low_memory=False, header=None)
     df.columns = columns
     return df
 
