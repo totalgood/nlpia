@@ -49,47 +49,47 @@
 
 ### Chapter 5 Summary (30 lines)
 
-    the network weights will be adjusted in the individual neurons based on the error through backpropagation . 
-    the effects of the next example 's learning stage are largely independent of the order of input data . 
-    convolutional neural nets make an attempt to capture that ordering relationship by capturing localized relationships .
+    * the network weights will be adjusted in the individual neurons based on the error through backpropagation . 
+    - the effects of the next example 's learning stage are largely independent of the order of input data . 
+    * convolutional neural nets make an attempt to capture that ordering relationship by capturing localized relationships .
 
 ### Chapter 6 Summary (30 lines)
 
-    this is the most exciting recent advancements in nlp was the `` discovery '' of word vectors . 
-    this process will help focus your word vector training on the relevant words . 
-    in the previous chapters , we ignored the nearby context of a word .
+    + this is the most exciting recent advancements in nlp was the `` discovery '' of word vectors . 
+    - this process will help focus your word vector training on the relevant words . 
+    - in the previous chapters , we ignored the nearby context of a word .
 
 ### Chapter 7 Summary (30 lines)
 
-    the first node will have on the third node -lrb- the 2nd time step thereafter -rrb- . 
-    this is , of course , important to the basic structure of the net , but it precludes the common case in human language that the tokens may be deeply interrelated but be separated greatly in the sentence .
+    + the first node will have on the third node -lrb- the 2nd time step thereafter -rrb- . 
+    - this is , of course , important to the basic structure of the net , but it precludes the common case in human language that the tokens may be deeply interrelated but be separated greatly in the sentence .
 
 ### Chapter 8 Summary (30 lines)
 
-    the sentiment of novel text in a way that suits neural networks . 
-    language 's true power is not necessarily in the words , but in the intent and emotion that formed that particular combination of words . 
-    even the phrase `` machine-generated text '' inspires dread of a hollow , tinned voice .
+    + the sentiment of novel text in a way that suits neural networks . 
+    * language 's true power is not necessarily in the words , but in the intent and emotion that formed that particular combination of words . 
+    * even the phrase `` machine-generated text '' inspires dread of a hollow , tinned voice .
 
 ### Part 3 Summary (30 lines)
 
-    three chapters we 'll also tackle the trickier problems of nlp . 
+    + three chapters we 'll also tackle the trickier problems of nlp . 
     in these last three chapters we 'll also tackle the trickier problems . 
-    and you 'll learn how to combine these techniques together to create complex behavior .
+    - and you 'll learn how to combine these techniques together to create complex behavior .
 
 ### Chapter 12 Summary (30 lines)
 
     + a hybrid chatbot architecture that combines the best ideas into one . 
-    for the first time in history we can speak to a machine in our own language , and we ca n't always tell that it is n't human . 
-    this means that machines can `` fake '' being human .
+    - for the first time in history we can speak to a machine in our own language , and we ca n't always tell that it is n't human . 
+    - this means that machines can `` fake '' being human .
 
 ### Chapter 13 Summary (30 lines)
 
-    the `` humanness '' , or iq , of our dialog system seems to be limited by the data we train it with . 
-    besides ram , there 's another bottleneck in our natural language processing pipelines , the processor . 
-    as you had unlimited ram , larger corpora would take days to process with some of the more complex algorithms .
+    - the `` humanness '' , or iq , of our dialog system seems to be limited by the data we train it with . 
+    - besides ram , there 's another bottleneck in our natural language processing pipelines , the processor . 
+    + as you had unlimited ram , larger corpora would take days to process with some of the more complex algorithms .
 
 ### Acknowledgements Summary (30 lines)
 
-    contributors came from a vibrant portland community sustained by organizations like pdx python . 
-    developers like zachary kent masterminded the architecture of ` openchat ` and extended it over two years as the book and our skills progressed . 
-    riley rustad helped create the data model used by the ` openchat ` twitter bot to promote pycon openspaces events '
+    + contributors came from a vibrant portland community sustained by organizations like pdx python . 
+    - developers like zachary kent masterminded the architecture of ` openchat ` and extended it over two years as the book and our skills progressed . 
+    - riley rustad helped create the data model used by the ` openchat ` twitter bot to promote pycon openspaces events '
