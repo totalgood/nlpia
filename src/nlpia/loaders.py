@@ -638,22 +638,25 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         url = url[:-1] + '1'  # noninteractive Dropbox download
     tqdm_prog = tqdm if verbose else no_tqdm
     logger.info('requesting URL: {}'.format(url))
+
+    logger.info('remote_size: {}'.format(remote_size))
+    stat = path_status(filepath)
+    local_size = stat.get('size', None)
+    logger.info('local_size: {}'.format(local_size))
+
     r = None
-    if not remote_size:
+    if not remote_size or not (stat['type'] == 'file' and local_size >= remote_size and stat['size'] > MIN_DATA_FILE_SIZE):
         try:
             r = requests.get(url, stream=True, allow_redirects=True)
             remote_size = r.headers.get('Content-Length', -1)
-        except (requests.exceptions.ConnectionError):
+        except requests.exceptions.ConnectionError:
+            logger.error('ConnectionError for url: {} => request {}'.format(url, r))
             remote_size = -1 if remote_size is None else remote_size
     try:
         remote_size = int(remote_size)
     except ValueError:
         remote_size = -1
 
-    logger.info('remote_size: {}'.format(remote_size))
-    stat = path_status(filepath)
-    local_size = stat.get('size', None)
-    logger.info('local_size: {}'.format(local_size))
     # TODO: check md5 or get the right size of remote file
     if stat['type'] == 'file' and local_size >= remote_size and stat['size'] > MIN_DATA_FILE_SIZE:
         r = r.close() if r else r
@@ -665,9 +668,9 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     logger.info('data path created: {}'.format(created_dir))
     assert os.path.isdir(filedir)
     assert created_dir.endswith(filedir)
+    bytes_downloaded = 0
     if r:
         logger.info('downloading to: {}'.format(filepath))
-        bytes_downloaded = 0
         with open(filepath, 'wb') as f:
             for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size), total=ceil(remote_size / float(chunk_size))):
                 bytes_downloaded += len(chunk)
@@ -675,11 +678,13 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
                     f.write(chunk)      
         r.close()
     else:
-        logger.error('Unable to request URL: {}'.format(url))
+        logger.error('Unable to request URL: {} using request object {}'.format(url, r))
 
     logger.debug('nlpia.loaders.download_file: bytes={}'.format(bytes_downloaded))
     stat = path_status(filepath)
-    logger.debug("wrote {} bytes to {} (expected {}, remote {})".format(stat['size'], filepath, size, remote_size))
+    logger.info("local file stat {}".format(stat))
+    logger.debug("filepath={}: remote {}, downloaded {}".format(
+        filepath, size, remote_size, bytes_downloaded))
     return filepath
 
 
