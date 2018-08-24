@@ -69,23 +69,23 @@ LOGGING_CONFIG = {
 }
 
 
-# # Set up syslogger for loggly service if the /dev socket exists or use NTEventLogHandler on Windows (no syslog /dev).
-# if system_name == 'Windows':
-#     LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.NTEventLogHandler']
-#     LOGGING_CONFIG['handlers']['logging.handlers.NTEventLogHandler'] = {
-#         'level': 'DEBUG',
-#         'class': 'logging.handlers.NTEventLogHandler',
-#         'formatter': 'django'
-#     }
-# elif SYSLOG_PATH:
-#     LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.SysLogHandler']
-#     LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler'] = {
-#         'level': 'DEBUG',
-#         'class': 'logging.handlers.SysLogHandler',
-#         'facility': 'local7',
-#         'formatter': 'django',
-#         'address': SYSLOG_PATH,
-#     }
+# Set up syslogger for loggly service if the /dev socket exists or use NTEventLogHandler on Windows (no syslog /dev).
+if system_name == 'Windows':
+    LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.NTEventLogHandler']
+    LOGGING_CONFIG['handlers']['logging.handlers.NTEventLogHandler'] = {
+        'level': 'DEBUG',
+        'class': 'logging.handlers.NTEventLogHandler',
+        'formatter': 'django'
+    }
+elif SYSLOG_PATH:
+    LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.SysLogHandler']
+    LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler'] = {
+        'level': 'DEBUG',
+        'class': 'logging.handlers.SysLogHandler',
+        'facility': 'local7',
+        'formatter': 'django',
+        'address': SYSLOG_PATH,
+    }
 
 
 logging.config.dictConfig(LOGGING_CONFIG)
