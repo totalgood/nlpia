@@ -11,7 +11,7 @@
 9,lsa_tweets_pickle,https://www.dropbox.com/s/7k0nvl2dx3hsbqp/lsa_tweets_5589798_2003588x200.pkl.projection.u.npy?dl=1,2990000000.0
 10,ubuntu_dialog_1500k,https://www.dropbox.com/s/krvi79fbsryytc2/ubuntu_dialog_1500k.csv.gz?dl=1,296098788.0
 11,ubuntu_dialog_test,https://www.dropbox.com/s/47mqbx0vgynvnnj/ubuntu_dialog_test.csv.gz?dl=1,31273.0
-12,imdb,https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1,3112841563.0
+12,imdb,https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1,84125825.0
 13,alice,https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/aiml-en-us-foundation-alice/aiml-en-us-foundation-alice.v1-9.zip,8249482.0
 14,cdc,https://www.cdc.gov/brfss/annual_data/2016/files/LLCP2016ASC.zip,52284490.0
 15,cdc11,https://www.cdc.gov/brfss/annual_data/2011/files/LLCP2011ASC.zip,
