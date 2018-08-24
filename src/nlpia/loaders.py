@@ -291,9 +291,9 @@ def series_strip(series, startswith=None, endswith=None, startsorendswith=None, 
 def endswith_strip(s, endswith='.txt', ignorecase=True):
     """ Strip a suffix from the end of a string
 
-    >>> startswith_strip('http://TotalGood.com', '.COM')
+    >>> endswith_strip('http://TotalGood.com', '.COM')
     'http://TotalGood'
-    >>> startswith_strip('http://TotalGood.com', endswith='.COM', ignorecase=False)
+    >>> endswith_strip('http://TotalGood.com', endswith='.COM', ignorecase=False)
     'http://TotalGood.com'
     """
     if ignorecase:
