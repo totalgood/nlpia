@@ -252,6 +252,10 @@ DATA_INFO = pd.read_csv(DATA_INFO_FILE, header=0)
 def untar(fname, verbose=True):
     if fname.lower().endswith(".tar.gz"):
         with tarfile.open(fname) as tf:
+            # tf.extractall(
+            #     path=BIGDATA_PATH,  # path=os.path.join(BIGDATA_PATH, fname.lower().split('.')[0]), name)
+            #     members=(tqdm if verbose else no_tqdm)(tf))
+            # path = '.' but what does that really mean
             tf.extractall()
     else:
         logger.warn("Not a tar.gz file: {}".format(fname))
@@ -578,8 +582,20 @@ def rename_file(source, dest):
         dest = [dest] if isinstance(dest, str) else dest
         return [rename_file(s, d) for (s, d) in zip_longest(source, dest, fillvalue=[source, dest][int(len(source) > len(dest))])]
     logger.debug('nlpia.loaders.os.rename(source={}, dest={})'.format(source, dest))
+    if source == dest:
+        return dest
     os.rename(source, dest)
     return dest
+
+
+def normalize_ext_rename(filepath):
+    logger.debug('download_unzip.filepath=' + str(filepath))
+    new_file_path = normalize_ext(filepath)
+    logger.debug('download_unzip.new_filepaths=' + str(new_file_path))
+    # FIXME: fails when name is a url filename
+    filepath = rename_file(filepath, new_file_path)
+    logger.debug('download_unzip.filepath=' + str(filepath))
+    return filepath
 
 
 def download_unzip(names=None, verbose=True):
@@ -603,19 +619,21 @@ def download_unzip(names=None, verbose=True):
                 remote_size = r.headers.get('Content-Length', -1)
                 name = os.path.basename(parsed_url.path).split('.')
                 name = (name[0] if name[0] not in ('', '.') else name[1]).replace(' ', '-')
-                BIG_URLS[name] = (parsed_url.geturl(), remote_size)
+                BIG_URLS[name] = (parsed_url.geturl(), int(remote_size or -1))
             except requests.ConnectionError:
                 pass
         name = name.lower().strip()
+
         if name in BIG_URLS:
             meta = BIG_URLS[name]
             file_paths[name] = download_file(meta[0],
                                              data_path=BIGDATA_PATH,
-                                             size=meta[1],
+                                             size=int(meta[1] or -1),
                                              verbose=verbose)
+            file_paths[name] = normalize_ext_rename(file_paths[name])
             logger.debug('downloaded name={} to filepath={}'.format(name, file_paths[name]))
             fplower = file_paths[name].lower()
-            if fplower.endswith('.tar.gz') or fplower.endswith('.tgz'):
+            if fplower.endswith('.tar.gz'):
                 logger.info('Extracting {}'.format(file_paths[name]))
                 file_paths[name] = untar(file_paths[name], verbose=verbose)
                 logger.debug('download_untar.filepaths=' + str(file_paths))
@@ -627,12 +645,8 @@ def download_unzip(names=None, verbose=True):
             df.columns = clean_columns(df.columns)
             file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
             df.to_csv(file_paths[name])
-        logger.debug('download_unzip.filepaths=' + str(file_paths))
-        new_file_paths = normalize_ext(file_paths[name])
-        logger.debug('download_unzip.new_filepaths=' + str(new_file_paths))
-        # FIXME: fails when name is a url filename
-        file_paths[name] = rename_file(file_paths[name], new_file_paths)
-        logger.debug('download_unzip.filepaths=' + str(file_paths))
+
+        file_paths[name] = normalize_ext_rename(file_paths[name])
     return file_paths
 
 
