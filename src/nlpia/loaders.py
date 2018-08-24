@@ -589,6 +589,12 @@ def rename_file(source, dest):
 
 
 def normalize_ext_rename(filepath):
+    """ normalize file ext like '.tgz' -> '.tar.gz' and '300d.txt' -> '300d.glove.txt' and rename the file
+
+    >>> pth = os.path.join(DATA_PATH, 'sms_slang_dict.txt')
+    >>> pth == normalize_ext_rename(pth)
+    True
+    """
     logger.debug('download_unzip.filepath=' + str(filepath))
     new_file_path = normalize_ext(filepath)
     logger.debug('download_unzip.new_filepaths=' + str(new_file_path))
