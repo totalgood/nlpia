@@ -19,5 +19,5 @@ dependencies:
   - boto3
 
   - pip:
-    - -r ../requirements-base.txt
+    - -r ../requirements/requirements-base.txt
 
