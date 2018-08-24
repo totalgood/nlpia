@@ -17,7 +17,7 @@ from pugnlp.futil import touch_p
 import platform
 
 
-LOG_LEVEL = logging.WARN if not os.environ.get('DEBUG').strip().upper() else 'DEBUG'
+LOG_LEVEL = 'WARN' if not os.environ.get('DEBUG') else 'DEBUG'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 system_name = platform.system()
