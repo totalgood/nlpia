@@ -643,7 +643,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         try:
             r = requests.get(url, stream=True, allow_redirects=True)
             remote_size = r.headers.get('Content-Length', -1)
-        except (Exception, requests.exceptions.ConnectionError):
+        except (requests.exceptions.ConnectionError):
             remote_size = -1 if remote_size is None else remote_size
     try:
         remote_size = int(remote_size)
@@ -655,7 +655,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     local_size = stat.get('size', None)
     logger.info('local_size: {}'.format(local_size))
     # TODO: check md5 or get the right size of remote file
-    if stat['type'] == 'file' and local_size >= size and stat['size'] > MIN_DATA_FILE_SIZE:
+    if stat['type'] == 'file' and local_size >= remote_size and stat['size'] > MIN_DATA_FILE_SIZE:
         r = r.close() if r else r
         logger.info('retained: {}'.format(filepath))
         return filepath
@@ -665,18 +665,21 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     logger.info('data path created: {}'.format(created_dir))
     assert os.path.isdir(filedir)
     assert created_dir.endswith(filedir)
-    logger.info('downloaded: {}'.format(filepath))
-    bytes_downloaded = 0
-    with open(filepath, 'wb') as f:
-        for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size), total=ceil(remote_size / float(chunk_size))):
-            bytes_downloaded += len(chunk)
-            if chunk:  # filter out keep-alive chunks
-                f.write(chunk)
+    if r:
+        logger.info('downloading to: {}'.format(filepath))
+        bytes_downloaded = 0
+        with open(filepath, 'wb') as f:
+            for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size), total=ceil(remote_size / float(chunk_size))):
+                bytes_downloaded += len(chunk)
+                if chunk:  # filter out keep-alive chunks
+                    f.write(chunk)      
+        r.close()
+    else:
+        logger.error('Unable to request URL: {}'.format(url))
 
-    r.close()
     logger.debug('nlpia.loaders.download_file: bytes={}'.format(bytes_downloaded))
     stat = path_status(filepath)
-    logger.debug("wrote {} bytes to {}".format(stat['size'], filepath))
+    logger.debug("wrote {} bytes to {} (expected {}, remote {})".format(stat['size'], filepath, size, remote_size))
     return filepath
 
 
