@@ -15,6 +15,7 @@ from future import standard_library
 standard_library.install_aliases()  # noqa
 from past.builtins import basestring
 from itertools import zip_longest
+from traceback import print_exc
 
 # from traceback import format_exc
 import os
@@ -39,18 +40,22 @@ from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
 
 from pugnlp.futil import mkdir_p
+import gzip
 
 
 INT_MAX = INT64_MAX = 2 ** 63 - 1
 INT_MIN = INT64_MIN = - 2 ** 63
 INT_NAN = INT64_NAN = INT64_MIN
 INT_MIN = INT64_MIN = INT64_MIN + 1
+MIN_DATA_FILE_SIZE = 100  # get_data will fail on files < 100 bytes
 
 np = pd.np
 logger = logging.getLogger(__name__)
 # logging.config.dictConfig(LOGGING_CONFIG)
-# doesn't display line number, etc
-# logging.basicConfig(level=DEFAULT_LOG_LEVEL)
+# # doesn't display line number, etc
+# if os.environ.get('DEBUG'):
+#     logging.basicConfig(level=logging.DEBUG)
+
 
 # SMALLDATA_URL = 'http://totalgood.org/static/data'
 W2V_FILES = [
@@ -99,9 +104,13 @@ BIG_URLS = {
         'https://www.dropbox.com/s/7k0nvl2dx3hsbqp/lsa_tweets_5589798_2003588x200.pkl.projection.u.npy?dl=1',
         2990000000,
     ),
-    'ubuntu_dialog': (
-        'https://www.dropbox.com/s/krvi79fbsryytc2/ubuntu_dialog.csv.gz?dl=1',
+    'ubuntu_dialog_1500k': (
+        'https://www.dropbox.com/s/krvi79fbsryytc2/ubuntu_dialog_1500k.csv.gz?dl=1',
         296098788,
+    ),
+    'ubuntu_dialog_test': (
+        'https://www.dropbox.com/s/47mqbx0vgynvnnj/ubuntu_dialog_test.csv.gz?dl=1',
+        31273,
     ),
     'imdb': (
         'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
@@ -122,13 +131,14 @@ BIG_URLS = {
 for yr in range(2011, 2017):
     BIG_URLS['cdc' + str(yr)[-2:]] = ('https://www.cdc.gov/brfss/annual_data/{yr}/files/LLCP{yr}ASC.zip'.format(yr=yr), None)
 BIG_URLS['word2vec'] = BIG_URLS['w2v']
+BIG_URLS['ubuntu'] = BIG_URLS['ubuntu_dialog'] = BIG_URLS['ubuntu_dialog_1500k']
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
     logger.warn('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
         default=BIGDATA_INFO_FILE))
 except (IOError, pd.errors.EmptyDataError):
     BIGDATA_INFO = pd.DataFrame(columns='name url file_size'.split())
-    logger.warn('No BIGDATA index found in {default} so copy {latest} to {default} if you want to "freeze" it.'.format(
+    logger.info('No BIGDATA index found in {default} so copy {latest} to {default} if you want to "freeze" it.'.format(
         default=BIGDATA_INFO_FILE, latest=BIGDATA_INFO_LATEST))
 BIG_URLS.update(dict(zip(BIGDATA_INFO.name, zip(BIGDATA_INFO.url, BIGDATA_INFO.file_size))))
 BIGDATA_INFO = pd.DataFrame(list(
@@ -470,19 +480,25 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         url = url[:-1] + '1'  # noninteractive Dropbox download
     tqdm_prog = tqdm if verbose else no_tqdm
     logger.info('requesting URL: {}'.format(url))
-    r = requests.get(url, stream=True, allow_redirects=True)
-    size = r.headers.get('Content-Length', -1) if size is None else size
+    r = None
     try:
-        size = int(size)
+        r = requests.get(url, stream=True, allow_redirects=True)
+        remote_size = r.headers.get('Content-Length', -1) if size is None else size
+    except (Exception, requests.exceptions.ConnectionError):
+        remote_size = -1 if size is None else size
+    except: 
+        print_exc()
+    try:
+        remote_size = int(remote_size)
     except ValueError:
-        size = -1
+        remote_size = -1
 
-    logger.info('remote size: {}'.format(size))
-
+    logger.info('remote size: {}'.format(remote_size))
     stat = path_status(filepath)
     logger.info('local size: {}'.format(stat.get('size', None)))
-    if stat['type'] == 'file' and stat['size'] >= size:  # TODO: check md5 or get the right size of remote file
-        r.close()
+    # TODO: check md5 or get the right size of remote file
+    if stat['type'] == 'file' and stat['size'] >= size and stat['size'] > MIN_DATA_FILE_SIZE:
+        r = r.close() if r else r
         logger.info('retained: {}'.format(filepath))
         return filepath
 
@@ -570,6 +586,10 @@ def get_data(name='sms-spam', nrows=None):
     99171
     >>> list(words[:8])
     ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
+    >>> get_data('ubuntu_dialog_test').iloc[0]
+    Context      i think we could import the old comments via r...
+    Utterance    basically each xfree86 upload will NOT force u...
+    Name: 0, dtype: object
     """
     if name in BIG_URLS:
         logger.info('Downloading {}'.format(name))
@@ -583,12 +603,27 @@ def get_data(name='sms-spam', nrows=None):
                 return KeyedVectors.load_word2vec_format(filepath, binary=False)
             except (TypeError, UnicodeError):
                 pass
-        elif filepathlow.endswith('.w2v.bin') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
+        if filepathlow.endswith('.w2v.bin') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
             try:
                 return KeyedVectors.load_word2vec_format(filepath, binary=True)
             except (TypeError, UnicodeError):
                 pass
-        elif filepathlow.endswith('.txt') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
+        if filepathlow.endswith('.gz'):
+            try:
+                filepath = gzip.open(filepath)
+            except:
+                pass
+        if filepathlow.endswith('.tsv.gz') or filepathlow.endswith('.tsv'):
+            try:
+                return pd.read_table(filepath)
+            except:
+                pass
+        if filepathlow.endswith('.csv.gz') or filepathlow.endswith('.csv'):
+            try:
+                return read_csv(filepath)
+            except:
+                pass
+        if filepathlow.endswith('.txt') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
             try:
                 return read_txt(filepath)
             except (TypeError, UnicodeError):

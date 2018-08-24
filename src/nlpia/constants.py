@@ -17,7 +17,7 @@ from pugnlp.futil import touch_p
 import platform
 
 
-DEFAULT_LOG_LEVEL = logging.WARN
+LOG_LEVEL = logging.WARN if not os.environ.get('DEBUG').strip().upper() else 'DEBUG'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 system_name = platform.system()
@@ -47,42 +47,45 @@ LOGGING_CONFIG = {
         },
     },
     'handlers': {
-        'console': {
+        'default': {
             'class': 'logging.StreamHandler',
-            'level': DEFAULT_LOG_LEVEL,
+            'level': LOG_LEVEL,
             'formatter': 'basic',
             'stream': 'ext://sys.stdout',
         },
     },
-
     'loggers': {
-        'loggly': {
-            'handlers': ['console'],
+        '': {
+            'handlers': ['default'],
+            'level': LOG_LEVEL,
             'propagate': True,
-            'format': 'django: %(message)s',
+        },
+        'loggly': {
+            'handlers': ['default'],
             'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }
 
 
-# Set up syslogger for loggly service if the /dev socket exists or use NTEventLogHandler on Windows (no syslog /dev).
-if system_name == 'Windows':
-    LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.NTEventLogHandler']
-    LOGGING_CONFIG['handlers']['logging.handlers.NTEventLogHandler'] = {
-        'level': 'DEBUG',
-        'class': 'logging.handlers.NTEventLogHandler',
-        'formatter': 'django'
-    }
-elif SYSLOG_PATH:
-    LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.SysLogHandler']
-    LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler'] = {
-        'level': 'DEBUG',
-        'class': 'logging.handlers.SysLogHandler',
-        'facility': 'local7',
-        'formatter': 'django',
-        'address': SYSLOG_PATH,
-    }
+# # Set up syslogger for loggly service if the /dev socket exists or use NTEventLogHandler on Windows (no syslog /dev).
+# if system_name == 'Windows':
+#     LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.NTEventLogHandler']
+#     LOGGING_CONFIG['handlers']['logging.handlers.NTEventLogHandler'] = {
+#         'level': 'DEBUG',
+#         'class': 'logging.handlers.NTEventLogHandler',
+#         'formatter': 'django'
+#     }
+# elif SYSLOG_PATH:
+#     LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.SysLogHandler']
+#     LOGGING_CONFIG['handlers']['logging.handlers.SysLogHandler'] = {
+#         'level': 'DEBUG',
+#         'class': 'logging.handlers.SysLogHandler',
+#         'facility': 'local7',
+#         'formatter': 'django',
+#         'address': SYSLOG_PATH,
+#     }
 
 
 logging.config.dictConfig(LOGGING_CONFIG)
