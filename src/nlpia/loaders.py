@@ -15,6 +15,7 @@ from future import standard_library
 standard_library.install_aliases()  # noqa
 from past.builtins import basestring
 from itertools import zip_longest
+from urllib.parse import urlparse
 # from traceback import print_exc
 
 # from traceback import format_exc
@@ -588,13 +589,23 @@ def download_unzip(names=None, verbose=True):
     Uses table in data_info.csv (internal DATA_INFO) to determine URL or file path from dataset name.
     Also looks
 
-    TODO: if name is a valid URL then download it and create a name
-          and store the name: url in data_info.csv before downloading
+    If names or [names] is a valid URL then download it and create a name
+        from the url in BIGDATA_URLS (not yet pushed to data_info.csv)
     """
     names = [names] if isinstance(names, (str, basestring)) else names
     # names = names or list(BIG_URLS.keys())  # download them all, if none specified!
     file_paths = {}
     for name in names:
+        parsed_url = urlparse(name)
+        if parsed_url.scheme:
+            try:
+                r = requests.get(parsed_url.geturl(), stream=True, allow_redirects=True)
+                remote_size = r.headers.get('Content-Length', -1)
+                name = os.path.basename(parsed_url.path).split('.')
+                name = (name[0] if name[0] not in ('', '.') else name[1]).replace(' ', '-')
+                BIG_URLS[name] = (parsed_url.geturl(), remote_size)
+            except requests.ConnectionError:
+                pass
         name = name.lower().strip()
         if name in BIG_URLS:
             meta = BIG_URLS[name]
@@ -602,10 +613,13 @@ def download_unzip(names=None, verbose=True):
                                              data_path=BIGDATA_PATH,
                                              size=meta[1],
                                              verbose=verbose)
-            if file_paths[name].lower().endswith('.tar.gz'):
+            logger.debug('downloaded name={} to filepath={}'.format(name, file_paths[name]))
+            fplower = file_paths[name].lower()
+            if fplower.endswith('.tar.gz') or fplower.endswith('.tgz'):
                 logger.info('Extracting {}'.format(file_paths[name]))
                 file_paths[name] = untar(file_paths[name], verbose=verbose)
-            if file_paths[name].lower().endswith('.zip'):
+                logger.debug('download_untar.filepaths=' + str(file_paths))
+            elif file_paths[name].lower().endswith('.zip'):
                 file_paths[name] = unzip(file_paths[name], verbose=verbose)
                 logger.debug('download_unzip.filepaths=' + str(file_paths))
         else:
@@ -616,6 +630,7 @@ def download_unzip(names=None, verbose=True):
         logger.debug('download_unzip.filepaths=' + str(file_paths))
         new_file_paths = normalize_ext(file_paths[name])
         logger.debug('download_unzip.new_filepaths=' + str(new_file_paths))
+        # FIXME: fails when name is a url filename
         file_paths[name] = rename_file(file_paths[name], new_file_paths)
         logger.debug('download_unzip.filepaths=' + str(file_paths))
     return file_paths
