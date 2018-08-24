@@ -17,7 +17,7 @@ from pugnlp.futil import touch_p
 import platform
 
 
-DEFAULT_LOG_LEVEL = logging.WARN
+LOG_LEVEL = 'WARN' if not os.environ.get('DEBUG') else 'DEBUG'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 system_name = platform.system()
@@ -47,20 +47,23 @@ LOGGING_CONFIG = {
         },
     },
     'handlers': {
-        'console': {
+        'default': {
             'class': 'logging.StreamHandler',
-            'level': DEFAULT_LOG_LEVEL,
+            'level': LOG_LEVEL,
             'formatter': 'basic',
             'stream': 'ext://sys.stdout',
         },
     },
-
     'loggers': {
-        'loggly': {
-            'handlers': ['console'],
+        '': {
+            'handlers': ['default'],
+            'level': LOG_LEVEL,
             'propagate': True,
-            'format': 'django: %(message)s',
+        },
+        'loggly': {
+            'handlers': ['default'],
             'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }
