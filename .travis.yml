@@ -35,12 +35,11 @@ install:
   - pip install -r requirements/requirements-test.txt
   - pip install --upgrade pip
   - pip install -e .
-  # - pip install -r requirements-voice.txt
 before_script:
   - git config --global user.email "travis.nlpia@totalgood.com"
   - git config --global user.name "nlpia Travis tests"
 script:
-  - python setup.py test
+  - python setup.py test  # does this do a build? do we need pip install above?
 after_success:
   - codecov
 
