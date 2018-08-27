@@ -16,6 +16,7 @@ standard_library.install_aliases()  # noqa
 from past.builtins import basestring
 from itertools import zip_longest
 from urllib.parse import urlparse
+from copy import deepcopy
 # from traceback import print_exc
 
 # from traceback import format_exc
@@ -292,6 +293,36 @@ def normalize_ext(filepath):
         if filepath.lower().endswith(ext):
             filepath = filepath[:-len(ext)] + newext
     return filepath
+
+
+def migrate_big_urls(big_urls=BIG_URLS, inplace=True):
+    """ Migrate the big_urls table schema/structure from a dict of lists to a dict of dicts
+
+    >>> big_urls = {'x': (1, 2, 3, "4x"), 'y': ("yme", "cause")}
+    >>> inplace = migrate_big_urls(big_urls=big_urls)
+    >>> inplace
+    {'x': {0: 1, 1: 2, 2: 3, 3: '4x'}, 'y': {0: 'yme', 1: 'cause'}}
+    >>> inplace is big_urls
+    True
+    >>> big_urls = {'x': [1, 2, 3, "4x"], 'y': ["yme", "cause"]}
+    >>> copied = migrate_big_urls(big_urls=big_urls, inplace=False)
+    >>> copied
+    {'x': {0: 1, 1: 2, 2: 3, 3: '4x'}, 'y': {0: 'yme', 1: 'cause'}}
+    >>> copied is big_urls
+    False
+    >>> copied['x'] is big_urls['x']
+    False
+    >>> 1 is copied['x'][0] is big_urls['x'][0]
+    True
+    """
+    if not inplace:
+        big_urls = deepcopy(big_urls)
+    for name, meta in big_urls.items():
+        big_urls[name] = dict(zip(range(len(meta)), meta))
+    return big_urls
+
+
+BIG_URLS = migrate_big_urls(BIG_URLS)
 
 
 def rename_file(source, dest):

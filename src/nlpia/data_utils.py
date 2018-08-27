@@ -148,7 +148,7 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
         text = ''
         for s in url_or_text:
             text += '\n'.join(list(iter_lines(s, ext=ext, mode=mode))) + '\n'
-        return StringIO(text)
+        return iter_lines(text)
 
 
 def parse_utf_html(url=os.path.join(DATA_PATH, 'utf8_table.html')):
