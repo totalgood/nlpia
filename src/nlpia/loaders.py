@@ -249,6 +249,91 @@ CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
 DATA_INFO = pd.read_csv(DATA_INFO_FILE, header=0)
 
 
+def normalize_ext(filepath):
+    """ Convert file extension(s) to normalized form, e.g. '.tgz' -> '.tar.gz'
+
+    Normalized extensions are ordered in reverse order of how they should be processed.
+    Also extensions are ordered in order of decreasing specificity/detail.
+    e.g. zip last, then txt/bin, then model type, then model dimensionality
+
+    .TGZ => .tar.gz
+    .ZIP => .zip
+    .tgz => .tar.gz
+    .bin.gz => .w2v.bin.gz
+    .6B.zip => .6B.glove.txt.zip
+    .27B.zip => .27B.glove.txt.zip
+    .42B.300d.zip => .42B.300d.glove.txt.zip
+    .840B.300d.zip => .840B.300d.glove.txt.zip
+
+    TODO: use regexes to be more general (deal with .300D and .42B extensions)
+
+    >>> normalize_ext('glove.6B.zip').endswith('glove.6b.glove.txt.zip')
+    True
+    >>> normalize_ext('glove.twitter.27B.zip').endswith('glove.twitter.27b.glove.txt.zip')
+    True
+    >>> normalize_ext('glove.42B.300d.zip').endswith('glove.42b.300d.glove.txt.zip')
+    True
+    >>> normalize_ext('glove.840B.300d.zip').endswith('glove.840b.300d.glove.txt.zip')
+    True
+    """
+    mapping = tuple(reversed((
+        ('.tgz', '.tar.gz'),
+        ('.bin.gz', '.w2v.bin.gz'),
+        ('.6B.zip', '.6b.glove.txt.zip'),
+        ('.27B.zip', '.27b.glove.txt.zip'),
+        ('.42B.300d.zip', '.42b.300d.glove.txt.zip'),
+        ('.840B.300d.zip', '.840b.300d.glove.txt.zip'),
+    )))
+    if not isinstance(filepath, str):
+        return [normalize_ext(fp) for fp in filepath]
+    filepath = expand_filepath(filepath)
+    for ext, newext in mapping:
+        ext = ext.lower()
+        if filepath.lower().endswith(ext):
+            filepath = filepath[:-len(ext)] + newext
+    return filepath
+
+
+def rename_file(source, dest):
+    """ Rename (mv) file(s) from source to dest 
+
+    >>> from tempfile import mkdtemp
+    >>> tmpdir = mkdtemp(suffix='doctest_rename_file', prefix='tmp')
+    >>> fout = open(os.path.join(tmpdir, 'fake_data.bin.gz'), 'w')
+    >>> fout.write('fake nlpia.loaders.rename_file')
+    30
+    >>> fout.close()
+    >>> dest = rename_file(os.path.join(tmpdir, 'fake_data.bin.gz'), os.path.join(tmpdir, 'Fake_Data.bin.gz'))
+    >>> os.path.isfile(os.path.join(tmpdir, 'Fake_Data.bin.gz'))
+    True
+    """
+    logger.debug('nlpia.loaders.rename_file(source={}, dest={})'.format(source, dest))
+    if not isinstance(source, str):
+        dest = [dest] if isinstance(dest, str) else dest
+        return [rename_file(s, d) for (s, d) in zip_longest(source, dest, fillvalue=[source, dest][int(len(source) > len(dest))])]
+    logger.debug('nlpia.loaders.os.rename(source={}, dest={})'.format(source, dest))
+    if source == dest:
+        return dest
+    os.rename(source, dest)
+    return dest
+
+
+def normalize_ext_rename(filepath):
+    """ normalize file ext like '.tgz' -> '.tar.gz' and '300d.txt' -> '300d.glove.txt' and rename the file
+
+    >>> pth = os.path.join(DATA_PATH, 'sms_slang_dict.txt')
+    >>> pth == normalize_ext_rename(pth)
+    True
+    """
+    logger.debug('download_unzip.filepath=' + str(filepath))
+    new_file_path = normalize_ext(filepath)
+    logger.debug('download_unzip.new_filepaths=' + str(new_file_path))
+    # FIXME: fails when name is a url filename
+    filepath = rename_file(filepath, new_file_path)
+    logger.debug('download_unzip.filepath=' + str(filepath))
+    return filepath
+
+
 def untar(fname, verbose=True):
     if fname.lower().endswith(".tar.gz"):
         with tarfile.open(fname) as tf:
@@ -516,92 +601,6 @@ def unzip(filepath, verbose=True):
             shutil.move(input_file, txt_file)
 
     return txt_paths + w2v_paths
-
-
-def normalize_ext(filepath):
-    """ Convert file extension(s) to normalized form, e.g. '.tgz' -> '.tar.gz'
-
-    Normalized extensions are ordered in reverse order of how they should be processed.
-    Also extensions are ordered in order of decreasing specificity/detail.
-    e.g. zip last, then txt/bin, then model type, then model dimensionality
-
-    .TGZ => .tar.gz
-    .ZIP => .zip
-    .tgz => .tar.gz
-    .bin.gz => .w2v.bin.gz
-    .6B.zip => .6B.glove.txt.zip
-    .27B.zip => .27B.glove.txt.zip
-    .42B.300d.zip => .42B.300d.glove.txt.zip
-    .840B.300d.zip => .840B.300d.glove.txt.zip
-
-    TODO: use regexes to be more general (deal with .300D and .42B extensions)
-
-    >>> normalize_ext('glove.6B.zip').endswith('glove.6b.glove.txt.zip')
-    True
-    >>> normalize_ext('glove.twitter.27B.zip').endswith('glove.twitter.27b.glove.txt.zip')
-    True
-    >>> normalize_ext('glove.42B.300d.zip').endswith('glove.42b.300d.glove.txt.zip')
-    True
-    >>> normalize_ext('glove.840B.300d.zip').endswith('glove.840b.300d.glove.txt.zip')
-    True
-    """
-    mapping = tuple(reversed((
-        ('.tgz', '.tar.gz'),
-        ('.bin.gz', '.w2v.bin.gz'),
-        ('.6B.zip', '.6b.glove.txt.zip'),
-        ('.27B.zip', '.27b.glove.txt.zip'),
-        ('.42B.300d.zip', '.42b.300d.glove.txt.zip'),
-        ('.840B.300d.zip', '.840b.300d.glove.txt.zip'),
-    )))
-    if not isinstance(filepath, str):
-        return [normalize_ext(fp) for fp in filepath]
-    filepath = expand_filepath(filepath)
-    fplow = filepath.lower()
-    for ext, newext in mapping:
-        ext = ext.lower()
-        if fplow.endswith(ext):
-            fplow = fplow[:-len(ext)] + newext
-    return fplow
-
-
-def rename_file(source, dest):
-    """ Rename (mv) file(s) from source to dest 
-
-    >>> from tempfile import mkdtemp
-    >>> tmpdir = mkdtemp(suffix='doctest_rename_file', prefix='tmp')
-    >>> fout = open(os.path.join(tmpdir, 'fake_data.bin.gz'), 'w')
-    >>> fout.write('fake nlpia.loaders.rename_file')
-    30
-    >>> fout.close()
-    >>> dest = rename_file(os.path.join(tmpdir, 'fake_data.bin.gz'), os.path.join(tmpdir, 'Fake_Data.bin.gz'))
-    >>> os.path.isfile(os.path.join(tmpdir, 'Fake_Data.bin.gz'))
-    True
-    """
-    logger.debug('nlpia.loaders.rename_file(source={}, dest={})'.format(source, dest))
-    if not isinstance(source, str):
-        dest = [dest] if isinstance(dest, str) else dest
-        return [rename_file(s, d) for (s, d) in zip_longest(source, dest, fillvalue=[source, dest][int(len(source) > len(dest))])]
-    logger.debug('nlpia.loaders.os.rename(source={}, dest={})'.format(source, dest))
-    if source == dest:
-        return dest
-    os.rename(source, dest)
-    return dest
-
-
-def normalize_ext_rename(filepath):
-    """ normalize file ext like '.tgz' -> '.tar.gz' and '300d.txt' -> '300d.glove.txt' and rename the file
-
-    >>> pth = os.path.join(DATA_PATH, 'sms_slang_dict.txt')
-    >>> pth == normalize_ext_rename(pth)
-    True
-    """
-    logger.debug('download_unzip.filepath=' + str(filepath))
-    new_file_path = normalize_ext(filepath)
-    logger.debug('download_unzip.new_filepaths=' + str(new_file_path))
-    # FIXME: fails when name is a url filename
-    filepath = rename_file(filepath, new_file_path)
-    logger.debug('download_unzip.filepath=' + str(filepath))
-    return filepath
 
 
 def download_unzip(names=None, verbose=True):
