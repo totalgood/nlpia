@@ -58,6 +58,8 @@ nlpia/data/*.gz
 nlpia/data/*.bz2
 nlpia/data/*.xz
 nlpia/data/*.zip
+nlpia/bigdata/*.gz
+nlpia/bigdata/*.tgz
 
 # OSX
 .DS_STore
