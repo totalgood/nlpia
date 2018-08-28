@@ -250,81 +250,6 @@ CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
 DATA_INFO = pd.read_csv(DATA_INFO_FILE, header=0)
 
 
-def normalize_ext(filepath):
-    """ Convert file extension(s) to normalized form, e.g. '.tgz' -> '.tar.gz'
-
-    Normalized extensions are ordered in reverse order of how they should be processed.
-    Also extensions are ordered in order of decreasing specificity/detail.
-    e.g. zip last, then txt/bin, then model type, then model dimensionality
-
-    .TGZ => .tar.gz
-    .ZIP => .zip
-    .tgz => .tar.gz
-    .bin.gz => .w2v.bin.gz
-    .6B.zip => .6B.glove.txt.zip
-    .27B.zip => .27B.glove.txt.zip
-    .42B.300d.zip => .42B.300d.glove.txt.zip
-    .840B.300d.zip => .840B.300d.glove.txt.zip
-
-    TODO: use regexes to be more general (deal with .300D and .42B extensions)
-
-    >>> normalize_ext('glove.6B.zip').endswith('glove.6b.glove.txt.zip')
-    True
-    >>> normalize_ext('glove.twitter.27B.zip').endswith('glove.twitter.27b.glove.txt.zip')
-    True
-    >>> normalize_ext('glove.42B.300d.zip').endswith('glove.42b.300d.glove.txt.zip')
-    True
-    >>> normalize_ext('glove.840B.300d.zip').endswith('glove.840b.300d.glove.txt.zip')
-    True
-    """
-    mapping = tuple(reversed((
-        ('.tgz', '.tar.gz'),
-        ('.bin.gz', '.w2v.bin.gz'),
-        ('.6B.zip', '.6b.glove.txt.zip'),
-        ('.27B.zip', '.27b.glove.txt.zip'),
-        ('.42B.300d.zip', '.42b.300d.glove.txt.zip'),
-        ('.840B.300d.zip', '.840b.300d.glove.txt.zip'),
-    )))
-    if not isinstance(filepath, str):
-        return [normalize_ext(fp) for fp in filepath]
-    filepath = expand_filepath(filepath)
-    for ext, newext in mapping:
-        ext = ext.lower()
-        if filepath.lower().endswith(ext):
-            filepath = filepath[:-len(ext)] + newext
-    return filepath
-
-
-def migrate_big_urls(big_urls=BIG_URLS, inplace=True):
-    """ Migrate the big_urls table schema/structure from a dict of lists to a dict of dicts
-
-    >>> big_urls = {'x': (1, 2, 3, "4x"), 'y': ("yme", "cause")}
-    >>> inplace = migrate_big_urls(big_urls=big_urls)
-    >>> inplace
-    {'x': {0: 1, 1: 2, 2: 3, 3: '4x'}, 'y': {0: 'yme', 1: 'cause'}}
-    >>> inplace is big_urls
-    True
-    >>> big_urls = {'x': [1, 2, 3, "4x"], 'y': ["yme", "cause"]}
-    >>> copied = migrate_big_urls(big_urls=big_urls, inplace=False)
-    >>> copied
-    {'x': {0: 1, 1: 2, 2: 3, 3: '4x'}, 'y': {0: 'yme', 1: 'cause'}}
-    >>> copied is big_urls
-    False
-    >>> copied['x'] is big_urls['x']
-    False
-    >>> 1 is copied['x'][0] is big_urls['x'][0]
-    True
-    """
-    if not inplace:
-        big_urls = deepcopy(big_urls)
-    for name, meta in big_urls.items():
-        big_urls[name] = dict(zip(range(len(meta)), meta))
-    return big_urls
-
-
-BIG_URLS = migrate_big_urls(BIG_URLS)
-
-
 def rename_file(source, dest):
     """ Rename (mv) file(s) from source to dest 
 
@@ -356,7 +281,7 @@ def normalize_ext_rename(filepath):
     >>> pth == normalize_ext_rename(pth)
     True
     """
-    logger.debug('download_unzip.filepath=' + str(filepath))
+    logger.debug('normalize_ext.filepath=' + str(filepath))
     new_file_path = normalize_ext(filepath)
     logger.debug('download_unzip.new_filepaths=' + str(new_file_path))
     # FIXME: fails when name is a url filename
@@ -581,15 +506,118 @@ def expand_filepath(filepath):
     return os.path.abspath(os.path.expandvars(os.path.expanduser(filepath)))
 
 
+def normalize_ext(filepath):
+    """ Convert file extension(s) to normalized form, e.g. '.tgz' -> '.tar.gz'
+
+    Normalized extensions are ordered in reverse order of how they should be processed.
+    Also extensions are ordered in order of decreasing specificity/detail.
+    e.g. zip last, then txt/bin, then model type, then model dimensionality
+
+    .TGZ => .tar.gz
+    .ZIP => .zip
+    .tgz => .tar.gz
+    .bin.gz => .w2v.bin.gz
+    .6B.zip => .6B.glove.txt.zip
+    .27B.zip => .27B.glove.txt.zip
+    .42B.300d.zip => .42B.300d.glove.txt.zip
+    .840B.300d.zip => .840B.300d.glove.txt.zip
+
+    TODO: use regexes to be more general (deal with .300D and .42B extensions)
+
+    >>> normalize_ext('glove.6B.zip').endswith('glove.6b.glove.txt.zip')
+    True
+    >>> normalize_ext('glove.twitter.27B.zip').endswith('glove.twitter.27b.glove.txt.zip')
+    True
+    >>> normalize_ext('glove.42B.300d.zip').endswith('glove.42b.300d.glove.txt.zip')
+    True
+    >>> normalize_ext('glove.840B.300d.zip').endswith('glove.840b.300d.glove.txt.zip')
+    True
+    """
+    mapping = tuple(reversed((
+        ('.tgz', '.tar.gz'),
+        ('.bin.gz', '.w2v.bin.gz'),
+        ('.6B.zip', '.6b.glove.txt.zip'),
+        ('.27B.zip', '.27b.glove.txt.zip'),
+        ('.42B.300d.zip', '.42b.300d.glove.txt.zip'),
+        ('.840B.300d.zip', '.840b.300d.glove.txt.zip'),
+    )))
+    if not isinstance(filepath, str):
+        return [normalize_ext(fp) for fp in filepath]
+    if '~' in filepath or os.path.sep in filepath:
+        filepath = expand_filepath(filepath)
+    fplower = filepath.lower()
+    for ext, newext in mapping:
+        ext = ext.lower()
+        if fplower.endswith(ext) and not fplower.endswith(newext):
+            filepath = filepath[:-len(ext)] + newext
+    return filepath
+
+
+def normalize_filepath(filepath):
+    r""" Lowercase the filename and ext, expanding extensions like .tgz to .tar.gz. 
+
+    >>> normalize_filepath('/Hello_World.txt\n')
+    'hello_world.txt'
+    >>> normalize_filepath('NLPIA/src/nlpia/bigdata/Goog New 300Dneg\f.bIn\n.GZ')
+    'NLPIA/src/nlpia/bigdata/goog new 300dneg.w2v.bin.gz'
+    """
+    filename = os.path.basename(filepath)
+    dirpath = filepath[:-len(filename)]
+    cre_controlspace = re.compile(r'[\t\r\n\f]+')
+    new_filename = cre_controlspace.sub('', filename)
+    if not new_filename == filename:
+        logger.warn('Stripping whitespace from filename: {} => {}'.format(
+            repr(filename), repr(new_filename)))
+        filename = new_filename
+    filename = filename.lower()
+    filename = normalize_ext(filename)
+    if dirpath:
+        dirpath = dirpath[:-1]  # get rid of the trailing os.path.sep
+        return os.path.join(dirpath, filename)
+    return filename
+
+
+def migrate_big_urls(big_urls=BIG_URLS, inplace=True):
+    r""" Migrate the big_urls table schema/structure from a dict of lists to a dict of dicts
+
+    >>> big_urls = {'x': (1, 2, 3, "4x"), 'y': ("yme", "cause")}
+    >>> inplace = migrate_big_urls(big_urls=big_urls)
+    >>> inplace
+    {'x': {0: 1, 1: 2, 2: 3, 3: '4x'}, 'y': {0: 'yme', 1: 'cause'}}
+    >>> inplace is big_urls
+    True
+    >>> big_urls = {'x': [1, 2, 3, "4x"], 'y': ["yme", "cause"]}
+    >>> copied = migrate_big_urls(big_urls=big_urls, inplace=False)
+    >>> copied
+    {'x': {0: 1, 1: 2, 2: 3, 3: '4x'}, 'y': {0: 'yme', 1: 'cause'}}
+    >>> copied is big_urls
+    False
+    >>> copied['x'] is big_urls['x']
+    False
+    >>> 1 is copied['x'][0] is big_urls['x'][0]
+    True
+    """
+    if not inplace:
+        big_urls = deepcopy(big_urls)
+    for name, meta in big_urls.items():
+        big_urls[name] = dict(zip(range(len(meta)), meta))
+        big_urls[name] = dict(zip(range(len(meta)), meta))
+        # big_urls[name]['filenames'] = [normalize_ext(big_urls)]
+    return big_urls
+
+
+BIG_URLS = migrate_big_urls(BIG_URLS)
+
+
 def normalize_glove(filepath):
-    """ https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
+    r""" https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
     # FIXME
     filepath = expand_filepath(filepath)
     raise NotImplementedError()
 
 
 def unzip(filepath, verbose=True):
-    """ Unzip GloVE models and convert to word2vec binary models (gensim.KeyedVectors) 
+    r""" Unzip GloVE models and convert to word2vec binary models (gensim.KeyedVectors) 
 
     The only kinds of files that are returned are "*.asc" and "*.txt" and only after renaming.
     """
@@ -635,7 +663,7 @@ def unzip(filepath, verbose=True):
 
 
 def download_unzip(names=None, verbose=True):
-    """ Download CSV or HTML tables listed in `names`, unzip and to DATA_PATH/`names`.csv .txt etc
+    r""" Download CSV or HTML tables listed in `names`, unzip and to DATA_PATH/`names`.csv .txt etc
 
     Also normalizes file name extensions (.bin.gz -> .w2v.bin.gz).
     Uses table in data_info.csv (internal DATA_INFO) to determine URL or file path from dataset name.
@@ -690,17 +718,24 @@ download = download_unzip
 
 
 def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_size=4096, verbose=True):
-    """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
-    remote_size = size
-    if filename is None:
-        filename = dropbox_basename(url)
+    """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https
+
+    >>> download_file(url=BIGDATA_PATH['ubuntu_dialog_test'], verbose=False)
+    """
     if isinstance(url, (list, tuple)):
         return [
-            download_file(s, data_path=data_path, filename=filename, size=remote_size, chunk_size=chunk_size, verbose=verbose)
+            download_file(s, data_path=data_path, filename=filename, size=size, chunk_size=chunk_size, verbose=verbose)
             for s in url]
-    filepath = expand_filepath(os.path.join(data_path, filename))
     if url.endswith('dl=0'):
         url = url[:-1] + '1'  # noninteractive Dropbox download
+    remote_size = size
+
+    # figure out what filename to expect after download and how big it should be
+    if filename is None:
+        filename = dropbox_basename(url)
+    filename = normalize_ext(filename)
+    filepath = expand_filepath(os.path.join(data_path, filename))
+    logger.info('expanded+normalized file path: {}'.format(filepath))
     tqdm_prog = tqdm if verbose else no_tqdm
     logger.info('requesting URL: {}'.format(url))
 
@@ -710,7 +745,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     logger.info('local_size: {}'.format(local_size))
 
     r = None
-    if not remote_size or not (stat['type'] == 'file' and local_size >= remote_size and stat['size'] > MIN_DATA_FILE_SIZE):
+    if not remote_size or not stat['type'] == 'file' or not local_size >= remote_size or not stat['size'] > MIN_DATA_FILE_SIZE:
         try:
             r = requests.get(url, stream=True, allow_redirects=True)
             remote_size = r.headers.get('Content-Length', -1)
@@ -722,6 +757,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     except ValueError:
         remote_size = -1
 
+    # remote_size has changed so need to check it again
     # TODO: check md5 or get the right size of remote file
     if stat['type'] == 'file' and local_size >= remote_size and stat['size'] > MIN_DATA_FILE_SIZE:
         r = r.close() if r else r
