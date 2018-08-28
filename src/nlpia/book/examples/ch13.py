@@ -73,4 +73,52 @@ index.save('Word2vec_index.ann')  # <3>
 
 
 """
-
+>>> wv.vocab['Harry_Potter'].index  # <1>
+9494
+>>> wv.vocab['Harry_Potter'].count  # <2>
+2990506
+>>> w2id = dict(zip(
+...     wv.vocab, range(len(wv.vocab))))  # <3>
+>>> w2id['Harry_Potter']
+9494
+>>> ids = index.get_nns_by_item(
+...     w2id['Harry_Potter'], 11)  # <4>
+>>> ids
+[9494, 32643, 39034, 114813, ..., 113008, 116741, 113955, 350346]
+>>> [wv.vocab[i] for i in ids]
+>>> [wv.index2word[i] for i in ids]
+['Harry_Potter',
+ 'Narnia',
+ 'Sherlock_Holmes',
+ 'Lemony_Snicket',
+ 'Spiderwick_Chronicles',
+ 'Unfortunate_Events',
+ 'Prince_Caspian',
+ 'Eragon',
+ 'Sorcerer_Apprentice',
+ 'RL_Stine']
+"""
+wv.vocab['Harry_Potter'].index  # <1>
+# 9494
+wv.vocab['Harry_Potter'].count  # <2>
+# 2990506
+w2id = dict(zip(
+    wv.vocab, range(len(wv.vocab))))  # <3>
+w2id['Harry_Potter']
+# 9494
+ids = index.get_nns_by_item(
+    w2id['Harry_Potter'], 11)  # <4>
+ids
+[9494, 32643, 39034, 114813, ..., 113008, 116741, 113955, 350346]
+[wv.vocab[i] for i in ids]
+[wv.index2word[i] for i in ids]
+['Harry_Potter',
+ 'Narnia',
+ 'Sherlock_Holmes',
+ 'Lemony_Snicket',
+ 'Spiderwick_Chronicles',
+ 'Unfortunate_Events',
+ 'Prince_Caspian',
+ 'Eragon',
+ 'Sorcerer_Apprentice',
+ 'RL_Stine']
