@@ -689,11 +689,7 @@ def download_unzip(names=None, verbose=True):
         name = name.lower().strip()
 
         if name in BIG_URLS:
-            meta = BIG_URLS[name]
-            file_paths[name] = download_file(meta[0],
-                                             data_path=BIGDATA_PATH,
-                                             size=int(meta[1] or -1),
-                                             verbose=verbose)
+            file_paths[name] = download_name(name, verbose=verbose)
             file_paths[name] = normalize_ext_rename(file_paths[name])
             logger.debug('downloaded name={} to filepath={}'.format(name, file_paths[name]))
             fplower = file_paths[name].lower()
@@ -720,11 +716,26 @@ download = download_unzip
 def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_size=4096, verbose=True):
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https
 
-    >>> download_file(url=BIGDATA_PATH['ubuntu_dialog_test'], verbose=False)
-    """
+    Downloading this small file takes 1.5 sec. All subsequent "downloads" takes .6 sec to verify path and size.
+    >>> import time
+    >>> meta = BIG_URLS['ubuntu_dialog_test']
+    >>> download_file(url=meta[0], verbose=False)
+    '/Users/hobsonlane/code/nlpia/nlpia/src/nlpia/bigdata/ubuntu_dialog_test.csv.gz'
+    >>> t0 = time.time()
+    >>> download_file(url=BIG_URLS['ubuntu_dialog_test'][0], verbose=False)
+    '/Users/hobsonlane/code/nlpia/nlpia/src/nlpia/bigdata/ubuntu_dialog_test.csv.gz'
+    >>> time.time() - t0 < 1.0
+    True
+    >>> t0 = time.time()
+    >>> download_file(url=meta[0], size=meta[1], verbose=False)
+    '/Users/hobsonlane/code/nlpia/nlpia/src/nlpia/bigdata/ubuntu_dialog_test.csv.gz'
+    >>> time.time() - t0 < 0.02
+    True
+    """ 
     if isinstance(url, (list, tuple)):
         return [
-            download_file(s, data_path=data_path, filename=filename, size=size, chunk_size=chunk_size, verbose=verbose)
+            download_file(
+                s, data_path=data_path, filename=filename, size=size, chunk_size=chunk_size, verbose=verbose)
             for s in url]
     if url.endswith('dl=0'):
         url = url[:-1] + '1'  # noninteractive Dropbox download
@@ -733,8 +744,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     # figure out what filename to expect after download and how big it should be
     if filename is None:
         filename = dropbox_basename(url)
-    filename = normalize_ext(filename)
-    filepath = expand_filepath(os.path.join(data_path, filename))
+    filepath = normalize_filepath(os.path.join(data_path, filename))
     logger.info('expanded+normalized file path: {}'.format(filepath))
     tqdm_prog = tqdm if verbose else no_tqdm
     logger.info('requesting URL: {}'.format(url))
@@ -787,6 +797,14 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     logger.debug("filepath={}: remote {}, downloaded {}".format(
         filepath, size, remote_size, bytes_downloaded))
     return filepath
+
+
+def download_name(name, verbose=True, **kwargs):
+    meta = BIG_URLS[name]
+    size = meta[1] or -1
+    url = meta[0]
+    return download_file(url=url, size=size, verbose=verbose, **kwargs)
+    # for filename in meta['filenames']
 
 
 def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
