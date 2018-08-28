@@ -719,16 +719,17 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     Downloading this small file takes 1.5 sec. All subsequent "downloads" takes .6 sec to verify path and size.
     >>> import time
     >>> meta = BIG_URLS['ubuntu_dialog_test']
-    >>> download_file(url=meta[0], verbose=False)
-    '/Users/hobsonlane/code/nlpia/nlpia/src/nlpia/bigdata/ubuntu_dialog_test.csv.gz'
+    >>> pathend = os.path.join(*('nlpia/src/nlpia/bigdata/ubuntu_dialog_test.csv.gz'.split('/')))
+    >>> download_file(url=meta[0], verbose=False).endswith(pathend)
+    True
     >>> t0 = time.time()
-    >>> download_file(url=BIG_URLS['ubuntu_dialog_test'][0], verbose=False)
-    '/Users/hobsonlane/code/nlpia/nlpia/src/nlpia/bigdata/ubuntu_dialog_test.csv.gz'
+    >>> download_file(url=BIG_URLS['ubuntu_dialog_test'][0], verbose=False).endswith(pathend)
+    True
     >>> time.time() - t0 < 1.0
     True
     >>> t0 = time.time()
-    >>> download_file(url=meta[0], size=meta[1], verbose=False)
-    '/Users/hobsonlane/code/nlpia/nlpia/src/nlpia/bigdata/ubuntu_dialog_test.csv.gz'
+    >>> download_file(url=meta[0], size=meta[1], verbose=False).endswith(pathend)
+    True
     >>> time.time() - t0 < 0.02
     True
     """ 
@@ -891,7 +892,7 @@ def get_data(name='sms-spam', nrows=None):
                 return KeyedVectors.load_word2vec_format(filepath, binary=False)
             except (TypeError, UnicodeError):
                 pass
-        if filepathlow.endswith('.w2v.bin') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
+        if filepathlow.endswith('.w2v.bin') or filepathlow.endswith('.bin.gz'):
             try:
                 return KeyedVectors.load_word2vec_format(filepath, binary=True)
             except (TypeError, UnicodeError):
