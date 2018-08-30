@@ -24,25 +24,24 @@ wv.vectors.shape
 
 
 """
-.Add each word vector to the `AnnoyIndex`
-[source,python]
-----
->>> from tqdm import tqdm  # <1>
->>> for i, word in enumerate(tqdm(wv.index2word)):  # <2>
-...     index.add_item(i, wv[word])
-22%|#######▏                   | 649297/3000000 [00:26<01:35, 24587.52it/s]
-----
-<1> `tqdm()` takes an iterable and returns an iterable (like `enumerate()`) and inserts code in your loop to display a progress bar
-<2> `.index2word` is an unsorted list of all 3M tokens in your vocabulary, equivalent to a map of the integer indexes (0-2999999) to tokens ('</s>' to 'snowcapped_Caucasus').
+>>> from annoy import AnnoyIndex
+>>> num_words, num_dimensions = wv.vectors.shape  # <1>
+>>> index = AnnoyIndex(num_dimensions)
 """
 from annoy import AnnoyIndex
 num_words, num_dimensions = wv.vectors.shape  # <1>
 index = AnnoyIndex(num_dimensions)
+index.set_seed(1983)
 
 """
->>> from tqdm import tqdm
->>> for i, word in enumerate(tqdm(wv.index2word)):
+>>> from tqdm import tqdm  # <1>
+>>> for i, word in enumerate(tqdm(wv.index2word)):  # <2>
 ...     index.add_item(i, wv[word])
+22%|#######▏                   | 649297/3000000 [00:26<01:35, 24587.52it/s]
+
+<1> `tqdm()` takes an iterable and returns an iterable (like `enumerate()`) and inserts code in your loop to display a progress bar
+<2> `.index2word` is an unsorted list of all 3M tokens in your vocabulary, equivalent to a map of the integer indexes (0-2999999) to tokens ('</s>' to 'snowcapped_Caucasus').
+
 """
 from tqdm import tqdm
 for i, word in enumerate(tqdm(wv.index2word)):
@@ -110,7 +109,6 @@ ids = index.get_nns_by_item(
     w2id['Harry_Potter'], 11)  # <4>
 ids
 [9494, 32643, 39034, 114813, ..., 113008, 116741, 113955, 350346]
-[wv.vocab[i] for i in ids]
 [wv.index2word[i] for i in ids]
 ['Harry_Potter',
  'Narnia',
@@ -122,3 +120,35 @@ ids
  'Eragon',
  'Sorcerer_Apprentice',
  'RL_Stine']
+
+
+ """
+ >>> [word for word, similarity in wv.most_similar('Harry_Potter', topn=10)]
+['JK_Rowling_Harry_Potter',
+ 'JK_Rowling',
+ 'boy_wizard',
+ 'Deathly_Hallows',
+ 'Half_Blood_Prince',
+ 'Rowling',
+ 'Actor_Rupert_Grint',
+ 'HARRY_Potter',
+ 'wizard_Harry_Potter',
+ 'HARRY_POTTER']
+ """
+[word for word, similarity in wv.most_similar('Harry_Potter', topn=10)]
+# ['JK_Rowling_Harry_Potter',
+#  'JK_Rowling',
+#  'boy_wizard',
+#  'Deathly_Hallows',
+#  'Half_Blood_Prince',
+#  'Rowling',
+#  'Actor_Rupert_Grint',
+#  'HARRY_Potter',
+#  'wizard_Harry_Potter',
+#  'HARRY_POTTER']
+
+
+"""
+>>> index_cos.build(30)
+>>> index_cos.save('Word2vec_cos_index_30.ann')
+"""
