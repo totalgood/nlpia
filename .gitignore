@@ -79,3 +79,6 @@ record.txt
 
 # extracted bigdata
 src/nlpia/data/aiml-en-us-foundation-alice/
+
+# models
+*.ann
