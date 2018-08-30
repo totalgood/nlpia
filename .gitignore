@@ -48,6 +48,7 @@ secret*
 !secrets.cfg.EXAMPLE_TEMPLATE
 
 # big data
+src/nlpia/data/bigdata_info.csv
 src/nlpia/bigdata/*
 src/nlpia/data/*.gz
 src/nlpia/data/*.bz2
