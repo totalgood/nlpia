@@ -806,8 +806,9 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     # figure out what filename to expect after download and how big it should be
     if filename is None:
         filename = dropbox_basename(url)
+    filepath = os.path.join(data_path, filename)
     if normalize_filename:
-        filepath = normalize_filepath(os.path.join(data_path, filename))
+        filepath = normalize_filepath(filepath)
     logger.info('expanded+normalized file path: {}'.format(filepath))
     tqdm_prog = tqdm if verbose else no_tqdm
     logger.info('requesting URL: {}'.format(url))
@@ -1180,7 +1181,7 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
 def isglove(filepath):
     """ Get the first word vector in a GloVE file and return its dimensionality or False if not a vector
 
-    >>> isglove(os.path.join(DATA_PATH, 'src/nlpia/data/cats_and_dogs.txt'))
+    >>> isglove(os.path.join(DATA_PATH, 'cats_and_dogs.txt'))
     False
     """
 
