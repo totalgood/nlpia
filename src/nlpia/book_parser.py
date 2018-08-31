@@ -3,13 +3,16 @@ import sys
 import glob
 import re
 
+from nlpia.regexes import CRE_ACRONYM
+from nlpia.data_utils import iter_lines
+
 
 BLOCK_DELIMITERS = dict([('--', 'natural'), ('==', 'natural'), ('__', 'natural'), ('**', 'natural'),
                          ('++', 'latex'), ('////', 'comment')])
-BLOCK_DELIM_CHRS = ''.join([(k[0], v) for k, v in BLOCK_DELIMITERS.items()])
+BLOCK_DELIM_CHRS = dict([(k[0], v) for k, v in BLOCK_DELIMITERS.items()])
 BLOCK_DELIM_REGEXES = dict([(r'^[' + s[0] + r']{' + str(len(s)) + r',160}$', tag) for (s, tag) in BLOCK_DELIMITERS.items()])
 BLOCK_HEADERS = dict([('[tip]', 'natural'), ('[note]', 'natural'), ('[important]', 'natural'), ('[quote]', 'natural')])
-CRE_BLOCK_DELIMITER = '|'.join([re.compile(s) for s in BLOCK_DELIM_REGEXES])
+CRE_BLOCK_DELIMITER = re.compile('|'.join([s for s, tag in BLOCK_DELIM_REGEXES.items()]))
 HEADER_TYPES = [('source', 'code'), ('latex', 'latex')]
 VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start', ] + 
                  [b for b in BLOCK_DELIMITERS.values()] + 
@@ -20,30 +23,66 @@ VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption'
 INCLUDE_TAGS = set(['natural', 'caption'] + ['natural_heading{}'.format(i) for i in range(1, 6)])
 
 
-def get_lines(file_path):
+def get_lines(manuscript=os.path.expanduser('~/code/nlpia/lane/manuscript')):
     r""" Retrieve text lines from the manuscript Chapter*.asc and Appendix*.asc files
 
     Args:
-        file_path (str): Path to directory containing manuscript asciidoc files
+        manuscript (str): Path to directory containing manuscript asciidoc files
         i.e.: /Users/cole-home/repos/nlpinaction/manuscript/
 
     Returns:
         list of lists of str, one list for each Chapter or Appendix
     """
-    if os.path.isdir(file_path):
-        file_path = os.path.join(file_path, '*.asc')
-        files = glob.glob(file_path)
-    elif os.path.isfile(file_path):
-        files = [file_path]
-    elif '*' in file_path:
-        if os.path.sep not in file_path:
-            file_path = os.path.join(os.path.abspath(os.path.curdir), file_path)
-        files = glob.glob(file_path)
+    if os.path.isdir(manuscript):
+        manuscript = os.path.join(manuscript, '*.asc')
+        files = glob.glob(manuscript)
+    elif os.path.isfile(manuscript):
+        files = [manuscript]
+    elif '\n' in manuscript or (len(manuscript) > 128 and not os.path.isfile(manuscript)):
+        files = [iter_lines(manuscript)]
+    elif '*' in manuscript:
+        if os.path.sep not in manuscript:
+            manuscript = os.path.join(os.path.abspath(os.path.curdir), manuscript)
+        files = glob.glob(manuscript)
+
     lines = []
     for file in files:
         with open(file, 'r') as f:
             lines.append(f.readlines())
     return zip(files, lines)
+
+
+def get_acronyms(manuscript=os.path.expanduser('~/code/nlpia/lane/manuscript')):
+    """ Find all the 2 and 3-letter acronyms in the manuscript and return as a sorted list of tuples """
+    acronyms = []
+    for f, lines in get_lines(manuscript):
+        for line in lines:
+            matches = CRE_ACRONYM.finditer(line)
+            if matches:
+                for m in matches:
+                    if m.group('a2'):
+                        acronyms.append((m.group('a2'), m.group('s2')))
+                    elif m.group('a3'):
+                        acronyms.append((m.group('a3'), m.group('s3')))
+                    elif m.group('a4'):
+                        acronyms.append((m.group('a4'), m.group('s4')))
+                    elif m.group('a5'):
+                        acronyms.append((m.group('a5'), m.group('s5')))
+
+    return sorted(dict(acronyms).items())
+
+
+def write_glossary(manuscript=os.path.expanduser('~/code/nlpia/lane/manuscript'), linesep=None):
+    """ Compose an asciidoc string with acronyms culled from the manuscript
+
+    >>> 
+    """
+    linesep = linesep or os.linesep
+    lines = ['[acronyms]', '== Acronyms', '', '[acronyms,template="glossary",id="terms"]']
+    acronyms = get_acronyms(manuscript)
+    for a in acronyms:
+        lines.append('*{}*:: {} -- '.format(a[0], a[1][0].upper() + a[1][1:]))
+    return linesep.join(lines)
 
 
 def tag_lines(lines):
