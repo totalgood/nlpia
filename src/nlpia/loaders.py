@@ -133,6 +133,12 @@ def load_glove(filepath, batch_size=1000, limit=None, verbose=True):
 
     First line of GloVE text file should look like:
         the .11 .25 .12 .42 ...
+
+    >>> wv = load_glove(os.path.join(BIGDATA_PATH, 'glove_test.txt'))
+    >>> wv.most_similar('two')[:3]
+    [('three', 0.9885902404785156),
+     ('with', 0.8966675996780396),
+     ('one', 0.87330561876297)]
     """
     num_dim = isglove(filepath)
     tqdm_prog = tqdm if verbose else no_tqdm
@@ -167,6 +173,21 @@ def load_glove(filepath, batch_size=1000, limit=None, verbose=True):
         if words:
             wv[words] = np.array(batch)
     return wv
+
+
+def load_glove_df(filepath, **kwargs):
+    """ Load a GloVE-format text file into a dataframe
+
+    >>> df = load_glove_df(os.path.join(BIGDATA_PATH, 'glove_test.txt'))
+    >>> df.index[:3]
+    Index(['the', ',', '.'], dtype='object', name=0)
+    >>> df.iloc[0][:3]
+    1    0.41800
+    2    0.24968
+    3   -0.41242
+    Name: the, dtype: float64
+    """
+    return pd.read_table(filepath, index_col=0, header=None, sep=' ')
 
 
 # def load_glove_format(filepath):
