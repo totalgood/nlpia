@@ -34,6 +34,7 @@ import pandas as pd
 import tarfile
 from tqdm import tqdm
 from gensim.models import KeyedVectors
+from gensim.models.keyedvectors import REAL, Vocab
 from gensim.scripts.glove2word2vec import glove2word2vec
 
 from pugnlp.futil import path_status, find_files
@@ -127,18 +128,60 @@ def imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(('tra
     return pd.concat(dfs.values())
 
 
-def glove_df(filepath):
-    """ https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
-    pass
+def load_glove(filepath, batch_size=1000, limit=None, verbose=True):
+    """ Load a pretrained GloVE word vector model
+
+    First line of GloVE text file should look like:
+        the .11 .25 .12 .42 ...
+    """
+    num_dim = isglove(filepath)
+    tqdm_prog = tqdm if verbose else no_tqdm
+    wv = KeyedVectors(num_dim)
+
+    if limit:
+        vocab_size = int(limit)
+    else:
+        with open(filepath) as fin:
+            for i, line in enumerate(fin):
+                pass
+        vocab_size = i + 1
+
+    wv.vectors = np.zeros((vocab_size, num_dim), REAL)
+
+    with open(filepath) as fin:
+        batch, words = [], []
+        for i, line in enumerate(tqdm_prog(fin, total=vocab_size)):
+            line = line.split()
+            word = line[0]
+            vector = np.array(line[1:]).astype(float)
+            # words.append(word)
+            # batch.append(vector)
+            wv.index2word.append(word)
+            wv.vocab[word] = Vocab(index=i, count=vocab_size - i)
+            wv.vectors[i] = vector
+            if len(words) >= batch_size:
+                # wv[words] = np.array(batch)
+                batch, words = [], []
+            if i >= vocab_size - 1:
+                break
+        if words:
+            wv[words] = np.array(batch)
+    return wv
 
 
-def load_glove_format(filepath):
-    """ https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
-    # glove_input_file = os.path.join(BIGDATA_PATH, filepath)
-    word2vec_output_file = os.path.join(BIGDATA_PATH, filepath.split(os.path.sep)[-1][:-4] + '.w2v.txt')
-    if not os.path.isfile(word2vec_output_file):  # TODO: also check file size
-        glove2word2vec(glove_input_file=filepath, word2vec_output_file=word2vec_output_file)
-    return KeyedVectors.load_word2vec_format(word2vec_output_file)
+# def load_glove_format(filepath):
+#     """ https://stackoverflow.com/questions/37793118/load-pretrained-glove-vectors-in-python#45894001 """
+#     # glove_input_file = os.path.join(BIGDATA_PATH, filepath)
+#     word2vec_output_file = os.path.join(BIGDATA_PATH, filepath.split(os.path.sep)[-1][:-4] + '.w2v.txt')
+#     if not os.path.isfile(word2vec_output_file):  # TODO: also check file size
+#         glove2word2vec(glove_input_file=filepath, word2vec_output_file=word2vec_output_file)
+#     return KeyedVectors.load_word2vec_format(word2vec_output_file)
+
+
+def get_en2fr(url='http://www.manythings.org/anki/fra-eng.zip'):
+    """ Download and parse English->French translation dataset used in Keras seq2seq example """
+    download_unzip(url)
+    return pd.read_table(url, compression='zip', header=None, skip_blank_lines=True, sep='\t', skiprows=0, names='en fr'.split())
 
 
 BIG_URLS = {
@@ -156,7 +199,7 @@ BIG_URLS = {
         'https://nlp.stanford.edu/data/glove.6B.zip',
         862182613,
         os.path.join('glove.6B', 'glove.6B.50d.txt'),
-        load_glove_format,
+        load_glove,
     ),
     'glove_large': (
         'https://nlp.stanford.edu/data/glove.840B.300d.zip',
@@ -534,12 +577,12 @@ def normalize_ext(filepath):
     True
     """
     mapping = tuple(reversed((
-        ('.tgz', '.tar.gz'),
-        ('.bin.gz', '.w2v.bin.gz'),
-        ('.6B.zip', '.6b.glove.txt.zip'),
-        ('.27B.zip', '.27b.glove.txt.zip'),
-        ('.42B.300d.zip', '.42b.300d.glove.txt.zip'),
-        ('.840B.300d.zip', '.840b.300d.glove.txt.zip'),
+        (r'^.+\.tgz$', '.tar.gz'),
+        (r'^.+\.bin.gz$', '.w2v.bin.gz'),
+        (r'^.+\.6B.zip$', '.6b.glove.txt.zip'),
+        (r'^.+\.27B.zip$', '.27b.glove.txt.zip'),
+        (r'^.+\.42B.300d.zip$', '.42b.300d.glove.txt.zip'),
+        (r'^.+\.840B.300d.zip$', '.840b.300d.glove.txt.zip'),
     )))
     if not isinstance(filepath, str):
         return [normalize_ext(fp) for fp in filepath]
@@ -566,7 +609,7 @@ def normalize_filepath(filepath):
     cre_controlspace = re.compile(r'[\t\r\n\f]+')
     new_filename = cre_controlspace.sub('', filename)
     if not new_filename == filename:
-        logger.warn('Stripping whitespace from filename: {} => {}'.format(
+        logger.warn('Stripped whitespace from filename: {} => {}'.format(
             repr(filename), repr(new_filename)))
         filename = new_filename
     filename = filename.lower()
@@ -643,7 +686,7 @@ def unzip(filepath, verbose=True):
     for f, word2vec_output_file in zip(os.listdir(unzip_dir), w2v_paths):
         if f.lower().endswith('.txt'):
             glove_input_file = os.path.join(unzip_dir, f)
-            logger.info('Attempting to converting GloVE format to Word2vec: {} -> {}'.format(
+            logger.info('Attempting to convert GloVE format to Word2vec: {} -> {}'.format(
                 repr(glove_input_file), repr(word2vec_output_file)))
             try:
                 glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
@@ -662,7 +705,7 @@ def unzip(filepath, verbose=True):
     return txt_paths + w2v_paths
 
 
-def download_unzip(names=None, verbose=True):
+def download_unzip(names=None, normalize_filenames=False, verbose=True):
     r""" Download CSV or HTML tables listed in `names`, unzip and to DATA_PATH/`names`.csv .txt etc
 
     Also normalizes file name extensions (.bin.gz -> .w2v.bin.gz).
@@ -690,7 +733,8 @@ def download_unzip(names=None, verbose=True):
 
         if name in BIG_URLS:
             file_paths[name] = download_name(name, verbose=verbose)
-            file_paths[name] = normalize_ext_rename(file_paths[name])
+            if normalize_filenames:
+                file_paths[name] = normalize_ext_rename(file_paths[name])
             logger.debug('downloaded name={} to filepath={}'.format(name, file_paths[name]))
             fplower = file_paths[name].lower()
             if fplower.endswith('.tar.gz'):
@@ -713,7 +757,7 @@ def download_unzip(names=None, verbose=True):
 download = download_unzip
 
 
-def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_size=4096, verbose=True):
+def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_size=4096, normalize_filename=False, verbose=True):
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https
 
     Downloading this small file takes 1.5 sec. All subsequent "downloads" takes .6 sec to verify path and size.
@@ -745,7 +789,8 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     # figure out what filename to expect after download and how big it should be
     if filename is None:
         filename = dropbox_basename(url)
-    filepath = normalize_filepath(os.path.join(data_path, filename))
+    if normalize_filename:
+        filepath = normalize_filepath(os.path.join(data_path, filename))
     logger.info('expanded+normalized file path: {}'.format(filepath))
     tqdm_prog = tqdm if verbose else no_tqdm
     logger.info('requesting URL: {}'.format(url))
@@ -804,7 +849,7 @@ def download_name(name, verbose=True, **kwargs):
     meta = BIG_URLS[name]
     size = meta[1] or -1
     url = meta[0]
-    return download_file(url=url, size=size, verbose=verbose, **kwargs)
+    return download_file(url=url, size=size, verbose=verbose, normalize_filename=True, **kwargs)
     # for filename in meta['filenames']
 
 
@@ -882,7 +927,7 @@ def get_data(name='sms-spam', nrows=None):
     """
     if name in BIG_URLS:
         logger.info('Downloading {}'.format(name))
-        filepaths = download_unzip(name)
+        filepaths = download_unzip(name, normalize_filenames=True)
         logger.debug('nlpia.loaders.get_data.filepaths=' + str(filepaths))
         filepath = filepaths[name][0] if isinstance(filepaths[name], (list, tuple)) else filepaths[name]
         logger.debug('nlpia.loaders.get_data.filepath=' + str(filepath))
@@ -1113,6 +1158,30 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
     df['region'] = cleancanon.region
     df['country'] = cleancanon.country
     return df
+
+
+def isglove(filepath):
+    """ Get the first word vector in a GloVE file and return its dimensionality or False if not a vector
+
+    >>> isglove(os.path.join(DATA_PATH, 'src/nlpia/data/cats_and_dogs.txt'))
+    False
+    """
+
+    with open(filepath, 'r') as fin:
+        line = fin.readline()
+    line = line.split()
+    if len(line) < 11:
+        return False
+    vector = line[1:]
+    if len(vector) % 10:
+        return False    
+    try:
+        vector = np.array([float(x) for x in vector])
+    except ValueError:
+        return False
+    if np.all(np.abs(vector) < 6.):
+        return len(vector)
+    return False
 
 
 def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),

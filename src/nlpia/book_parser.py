@@ -5,10 +5,11 @@ import re
 
 
 BLOCK_DELIMITERS = dict([('--', 'natural'), ('==', 'natural'), ('__', 'natural'), ('**', 'natural'),
-                         ('++', 'latex'), ('//', 'comment')])
-BLOCK_DELIMITER_CHRS = ''.join([k[0] for k in BLOCK_DELIMITERS.keys()])
+                         ('++', 'latex'), ('////', 'comment')])
+BLOCK_DELIM_CHRS = ''.join([(k[0], v) for k, v in BLOCK_DELIMITERS.items()])
+BLOCK_DELIM_REGEXES = dict([(r'^[' + s[0] + r']{' + str(len(s)) + r',160}$', tag) for (s, tag) in BLOCK_DELIMITERS.items()])
 BLOCK_HEADERS = dict([('[tip]', 'natural'), ('[note]', 'natural'), ('[important]', 'natural'), ('[quote]', 'natural')])
-CRE_BLOCK_DELIMITER = re.compile(r'^[' + BLOCK_DELIMITER_CHRS + r']{2,240}$')
+CRE_BLOCK_DELIMITER = '|'.join([re.compile(s) for s in BLOCK_DELIM_REGEXES])
 HEADER_TYPES = [('source', 'code'), ('latex', 'latex')]
 VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start', ] + 
                  [b for b in BLOCK_DELIMITERS.values()] + 
@@ -104,7 +105,7 @@ def tag_lines(lines):
         #         #     tag = current_block_type
         #     elif:
         # bare block delimiters without a block type already defined?
-        elif CRE_BLOCK_DELIMITER.match(normalized_line) and normalized_line[:2] in BLOCK_DELIMITERS:
+        elif CRE_BLOCK_DELIMITER.match(normalized_line) and normalized_line[:2]:
             if not idx or not block_start or not current_block_type or not block_terminator:
                 current_block_type = (current_block_type or BLOCK_DELIMITERS[normalized_line[:2]])
                 block_start = idx 
