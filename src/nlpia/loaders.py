@@ -586,24 +586,19 @@ def normalize_ext(filepath):
     .42B.300d.zip => .42B.300d.glove.txt.zip
     .840B.300d.zip => .840B.300d.glove.txt.zip
 
+    FIXME: Don't do this! Stick with the original file names and let the text loader figure out what it is!
     TODO: use regexes to be more general (deal with .300D and .42B extensions)
 
-    >>> normalize_ext('glove.6B.zip').endswith('glove.6b.glove.txt.zip')
-    True
-    >>> normalize_ext('glove.twitter.27B.zip').endswith('glove.twitter.27b.glove.txt.zip')
-    True
-    >>> normalize_ext('glove.42B.300d.zip').endswith('glove.42b.300d.glove.txt.zip')
-    True
-    >>> normalize_ext('glove.840B.300d.zip').endswith('glove.840b.300d.glove.txt.zip')
-    True
+    >>> normalize_ext('glove.42B.300d.zip')
+    'glove.42B.300d.glove.txt.zip'
     """
     mapping = tuple(reversed((
-        (r'^.+\.tgz$', '.tar.gz'),
-        (r'^.+\.bin.gz$', '.w2v.bin.gz'),
-        (r'^.+\.6B.zip$', '.6b.glove.txt.zip'),
-        (r'^.+\.27B.zip$', '.27b.glove.txt.zip'),
-        (r'^.+\.42B.300d.zip$', '.42b.300d.glove.txt.zip'),
-        (r'^.+\.840B.300d.zip$', '.840b.300d.glove.txt.zip'),
+        ('.tgz', '.tar.gz'),
+        ('.bin.gz', '.w2v.bin.gz'),
+        ('.6B.zip', '.6b.glove.txt.zip'),
+        ('.42B.zip', '.42b.glove.txt.zip'),
+        ('.27B.zip', '.27b.glove.txt.zip'),
+        ('.300d.zip', '.300d.glove.txt.zip'),
     )))
     if not isinstance(filepath, str):
         return [normalize_ext(fp) for fp in filepath]
@@ -611,8 +606,9 @@ def normalize_ext(filepath):
         filepath = expand_filepath(filepath)
     fplower = filepath.lower()
     for ext, newext in mapping:
-        ext = ext.lower()
-        if fplower.endswith(ext) and not fplower.endswith(newext):
+        r = ext.lower().replace('.', r'\.') + r'$'
+        r = r'^[.]?([^.]*)\.([^.]{1,10})*' + r
+        if re.match(r, fplower) and not fplower.endswith(newext):
             filepath = filepath[:-len(ext)] + newext
     return filepath
 
