@@ -21,12 +21,13 @@ from requests.exceptions import MissingSchema, ConnectionError
 import pandas as pd
 
 from pugnlp.futil import find_files
+from pugnlp.regexes import cre_url
 from annoy import AnnoyIndex
 
 from nlpia.constants import logging
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
 from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH
-from nlpia.data.loaders import read_csv
+from nlpia.loaders import read_csv, expand_filepath
 
 np = pd.np
 logger = logging.getLogger(__name__)
@@ -65,6 +66,27 @@ NAME_ASCII = {
 }
 
 
+def looks_like_url(url):
+    """ Check URL to see if it is a valid web page, return the redirected location if it is
+
+    Returns:
+      None if ConnectionError
+      False if url is invalid (any HTTP error code)
+      cleaned up URL (following redirects and possibly adding HTTP schema "http://")
+
+    >> is_valid_url("totalgood.org")
+    'https://totalgood.org'
+
+    >>> url = looks_like_url("totalgood.org")
+    True
+    """
+    if not isinstance(url, basestring):
+        return False
+    if not isinstance(url, basestring) or len(url) >= 1024 or not cre_url.match(url):
+        return False
+    return True
+
+
 def is_valid_url(url):
     """ Check URL to see if it is a valid web page, return the redirected location if it is
 
@@ -82,7 +104,7 @@ def is_valid_url(url):
     >>> url.endswith('totalgood.org')
     True
     """
-    if not isinstance(url, basestring):
+    if not looks_like_url(url):
         return False
     normalized_url = url.lower().strip()
     if not normalized_url[:7] in ('http://', 'https:/'):
@@ -131,11 +153,22 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
         return []
         # url_or_text = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
     elif isinstance(url_or_text, (str, bytes, basestring)):
-        if os.path.isfile(os.path.join(DATA_PATH, url_or_text)):
-            return open(os.path.join(DATA_PATH, url_or_text), mode=mode)
-        elif os.path.isfile(url_or_text):
+        expanded = None
+        if len(url_or_text) <= 513:
+            if os.path.isfile(url_or_text):
+                return open(url_or_text, mode=mode)
+            if os.path.sep in url_or_text or url_or_text[0] == '~' or '$' in url_or_text:
+                expanded = expand_filepath(url_or_text)
+                if os.path.isfile(expanded):
+                    return open(expanded, mode=mode)
+                expanded = os.path.join(DATA_PATH, expanded)
+                if os.path.isfile(expanded):
+                    return open(expanded, mode=mode)
+        if expanded and os.path.isfile(expanded):
+            return open(expanded, mode=mode)
+        if os.path.isfile(url_or_text):
             return open(os.path.join(url_or_text), mode=mode)
-        elif os.path.isdir(url_or_text):
+        if os.path.isdir(url_or_text):
             filepaths = [filemeta['path'] for filemeta in find_files(url_or_text, ext=ext)]
             return itertools.chain.from_iterable(map(open, filepaths))
         url = is_valid_url(url_or_text)
