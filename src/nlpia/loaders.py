@@ -725,7 +725,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     >>> t0 = time.time()
     >>> download_file(url=BIG_URLS['ubuntu_dialog_test'][0], verbose=False).endswith(pathend)
     True
-    >>> time.time() - t0 < 1.0
+    >>> 0.01 < (time.time() - t0) < 3.0
     True
     >>> t0 = time.time()
     >>> download_file(url=meta[0], size=meta[1], verbose=False).endswith(pathend)
