@@ -1,15 +1,22 @@
 from nlpia.loaders import get_data
 from tqdm import tqdm
+lang = 'deu'
 
 
-df = get_data('deu')
+df = get_data(lang)
 input_texts, target_texts = [], []  # <1>
 input_vocabulary = set()  # <3>
 output_vocabulary = set()
 start_token, stop_token = '\t\n'  # <2>
-n = len(df)
+n = int(len(df) * .1)
+encoder_input_path = 'encoder_input_data-{}-{}.np'.format(lang, n)
+decoder_input_path = 'decoder_input_data-{}-{}.np'.format(lang, n)
+decoder_target_path = 'decoder_target_data-eng-{}.np'.format(n)
 
-for input_text, target_text in tqdm(zip(df.eng, df.deu), total=n):
+
+for k, (input_text, target_text) in enumerate(tqdm(zip(df.eng, df.deu), total=n)):
+    if k == n:
+        break
     target_text = start_token + target_text \
         + stop_token  # <7>
     input_texts.append(input_text)
@@ -60,9 +67,9 @@ for i, (input_text, target_text) in enumerate(tqdm(
             decoder_target_data[i, t - 1, target_token_index[char]] = 1
 
 
-np.save('encoder_input_data.np', encoder_input_data, allow_pickle=False)
-np.save('decoder_input_data.np', decoder_input_data, allow_pickle=False)
-np.save('decoder_target_data.np', decoder_target_data, allow_pickle=False)
+np.save(encoder_input_path, encoder_input_data, allow_pickle=False)
+np.save(decoder_input_path, decoder_input_data, allow_pickle=False)
+np.save(decoder_target_path, decoder_target_data, allow_pickle=False)
 
 
 from keras.models import Model  # noqa
