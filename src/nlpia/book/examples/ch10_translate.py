@@ -6,11 +6,10 @@ df = get_data('deu')
 input_texts, target_texts = [], []  # <1>
 input_vocabulary = set()  # <3>
 output_vocabulary = set()
-start_token = '\t'  # <4>
-stop_token = '\n'
-max_training_samples = min(25000, len(df) - 1)  # <6>
+start_token, stop_token = '\t\n'  # <2>
+n = len(df)
 
-for input_text, target_text in tqdm(zip(df.eng, df.deu), total=len(df)):
+for input_text, target_text in tqdm(zip(df.eng, df.deu), total=n):
     target_text = start_token + target_text \
         + stop_token  # <7>
     input_texts.append(input_text)
@@ -43,15 +42,11 @@ reverse_target_char_index = dict((i, char) for char, i in
 
 import numpy as np  # <1>  # noqa
 
-
-encoder_input_data = np.zeros((len(input_texts),
-                               max_encoder_seq_length, input_vocab_size),
+encoder_input_data = np.zeros((n, max_encoder_seq_length, input_vocab_size),
                               dtype='float32')  # <2>
-decoder_input_data = np.zeros((len(input_texts),
-                               max_decoder_seq_length, output_vocab_size),
+decoder_input_data = np.zeros((n, max_decoder_seq_length, output_vocab_size),
                               dtype='float32')
-decoder_target_data = np.zeros((len(input_texts),   
-                                max_decoder_seq_length, output_vocab_size),
+decoder_target_data = np.zeros((n, max_decoder_seq_length, output_vocab_size),
                                dtype='float32')
 for i, (input_text, target_text) in enumerate(tqdm(
         zip(input_texts, target_texts), total=len(target_texts))):  # <3>
@@ -63,6 +58,10 @@ for i, (input_text, target_text) in enumerate(tqdm(
             i, t, target_token_index[char]] = 1.
         if t > 0:
             decoder_target_data[i, t - 1, target_token_index[char]] = 1
+
+
+import pandas as pd  # noqa
+encoder_input_data = pd.DataFrame(encoder_input_data)
 
 
 from keras.models import Model  # noqa
@@ -89,6 +88,18 @@ model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
               metrics=['acc'])
+
+
+import os  # noqa
+from keras.callbacks import ModelCheckpoint  # noqa
+from nlpia.constants import BIGDATA_PATH  # noqa
+checkpoint_path = os.path.join(BIGDATA_PATH, 'checkpoints')
+checkpoint_path = os.path.join(checkpoint_path, 'nlpia-seq2seq-translation-weights.{epoch:02d}-{val_loss:.2f}.hdf5')
+
+
+checkpoint_callback = ModelCheckpoint(checkpoint_path,
+                                      monitor='val_loss', verbose=0, save_best_only=False, mode='auto')
 model.fit([encoder_input_data, decoder_input_data],
-          decoder_target_data, batch_size=batch_size, epochs=epochs,
-          validation_split=0.1)  # <4>
+          decoder_target_data,
+          callbacks=[checkpoint_callback],
+          batch_size=batch_size, epochs=epochs, validation_split=0.1)  # <4>
