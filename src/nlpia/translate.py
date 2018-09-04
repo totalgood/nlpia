@@ -9,26 +9,11 @@ from keras.layers import Input, LSTM, Dense
 
 from nlpia.constants import BIGDATA_PATH
 from nlpia.loaders import get_data
+from pugnlp.futil import mkdir_p
 
 
-lang = 'deu'  # see nlpia.loaders.ANKI_LANGUAGES for more options besides German
-
-checkpoint_dir = os.path.join(BIGDATA_PATH, 'checkpoints')
-encoder_input_path = os.path.join(
-    checkpoint_dir,
-    'nlpia-ch10-translate-input-{}.npy'.format(lang))
-decoder_input_path = os.path.join(
-    checkpoint_dir,
-    'nlpia-ch10-translate-decoder-input-{}.npy'.format(lang))
-decoder_target_path = os.path.join(
-    checkpoint_dir,
-    'nlpia-ch10-translate-target-{}.npy'.format('eng'))
-data_paths = tuple(((v + '_path', v + '_data') for v in 
-                    'encoder_input decoder_input decoder_target'.split()))
-
-
-def generate_training_data(lang='deu', n=600):
-    df = get_data('deu')
+def generate_training_data(lang='deu', n=700, data_paths=()):
+    df = get_data(lang)
     n = int(len(df) * n) if n <= 1 else n 
     df = df.iloc[:n]
     input_texts, target_texts = [], []  # <1>
@@ -37,7 +22,7 @@ def generate_training_data(lang='deu', n=600):
     start_token, stop_token = '\t\n'  # <2>
     n = len(df)
 
-    for input_text, target_text in tqdm(zip(df.eng, df.deu), total=n):
+    for input_text, target_text in tqdm(zip(df.eng, df[lang]), total=n):
         target_text = start_token + target_text \
             + stop_token  # <7>
         input_texts.append(input_text)
@@ -81,20 +66,23 @@ def generate_training_data(lang='deu', n=600):
             if t > 0:
                 decoder_target_data[i, t - 1, target_token_index[char]] = 1
 
-    for (p, v) in data_paths:
-        np.save(globals()[p], locals()[v], allow_pickle=False)
+    trainset = (encoder_input_data, decoder_input_data, decoder_target_data)
+    for i, p in enumerate(data_paths):
+        np.save(p, trainset[i], allow_pickle=False)
 
     return encoder_input_data, decoder_input_data, decoder_target_data
 
 
 def fit(
-        encoder_input_data=None,
-        decoder_input_data=None,
-        decoder_target_data=None,
+        data_paths=(),
         epochs=100,
         batch_size=64,
         num_neurons=256,
         ):
+
+    encoder_input_data = np.load(data_paths[0])
+    decoder_input_data = np.load(data_paths[1])
+    decoder_target_data = np.load(data_paths[2])
 
     input_vocab_size = encoder_input_data.shape[2]
     output_vocab_size = decoder_target_data.shape[2]
@@ -130,20 +118,42 @@ def fit(
 
 
 def main(
-        lang='deu', n=600, epochs=50, batch_size=64, num_neurons=256,
+        lang='deu', n=900, epochs=50, batch_size=64, num_neurons=256,
         encoder_input_data=None,
         decoder_input_data=None,
         decoder_target_data=None,
-        trainset_size=1000
+        checkpoint_dir=os.path.join(BIGDATA_PATH, 'checkpoints'),
         ):
-    if all([os.path.isfile(globals()[p]) for (p, data) in data_paths]):
+    """ Train an LSTM encoder-decoder squence-to-sequence model on Anki flashcards for international translation
+
+    >>> model = main('spa', n=400, epochs=3, batch_size=128, num_neurons=32)
+    >>> len(model.get_weights())
+    8
+    >>> model.get_weights()[-1].shape
+    (62,)
+    >>> model.get_weights()[-2].shape
+    (32, 62)
+    """
+    mkdir_p(checkpoint_dir)
+    encoder_input_path = os.path.join(
+        checkpoint_dir,
+        'nlpia-ch10-translate-input-{}.npy'.format(lang))
+    decoder_input_path = os.path.join(
+        checkpoint_dir,
+        'nlpia-ch10-translate-decoder-input-{}.npy'.format(lang))
+    decoder_target_path = os.path.join(
+        checkpoint_dir,
+        'nlpia-ch10-translate-target-{}.npy'.format('eng'))
+    data_paths = (encoder_input_path, decoder_input_path, decoder_target_path)
+
+    if all([os.path.isfile(p) for p in data_paths]):
         encoder_input_data = np.load(encoder_input_path)
         decoder_input_data = np.load(decoder_input_path)
         decoder_target_data = np.load(decoder_target_path)
     else:
-        encoder_input_data, decoder_input_data, decoder_target_data = generate_training_data(lang=lang, n=n)
-    kwargs = dict([(v, globals()[v]) for (p, v) in data_paths])
-    fit(epochs=epochs, batch_size=batch_size, num_neurons=num_neurons, **kwargs)
+        encoder_input_data, decoder_input_data, decoder_target_data = generate_training_data(lang=lang, n=n, data_paths=data_paths)
+    model = fit(data_paths=data_paths, epochs=epochs, batch_size=batch_size, num_neurons=num_neurons)
+    return model
 
 
 if __name__ == '__main__':
