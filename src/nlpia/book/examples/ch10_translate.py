@@ -1,4 +1,5 @@
 from nlpia.loaders import get_data
+from tqdm import tqdm
 
 
 df = get_data('deu')
@@ -9,7 +10,7 @@ start_token = '\t'  # <4>
 stop_token = '\n'
 max_training_samples = min(25000, len(df) - 1)  # <6>
 
-for input_text, target_text in zip(df.eng, df.deu):
+for input_text, target_text in tqdm(zip(df.eng, df.deu), total=len(df)):
     target_text = start_token + target_text \
         + stop_token  # <7>
     input_texts.append(input_text)
@@ -49,11 +50,11 @@ encoder_input_data = np.zeros((len(input_texts),
 decoder_input_data = np.zeros((len(input_texts),
                                max_decoder_seq_length, output_vocab_size),
                               dtype='float32')
-decoder_target_data = np.zeros((len(input_texts),
+decoder_target_data = np.zeros((len(input_texts),   
                                 max_decoder_seq_length, output_vocab_size),
                                dtype='float32')
-for i, (input_text, target_text) in enumerate(
-        zip(input_texts, target_texts)):  # <3>
+for i, (input_text, target_text) in enumerate(tqdm(
+        zip(input_texts, target_texts), total=len(target_texts))):  # <3>
     for t, char in enumerate(input_text):  # <4>
         encoder_input_data[
             i, t, input_token_index[char]] = 1.  # <5>
