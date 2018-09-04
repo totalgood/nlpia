@@ -60,8 +60,9 @@ for i, (input_text, target_text) in enumerate(tqdm(
             decoder_target_data[i, t - 1, target_token_index[char]] = 1
 
 
-import pandas as pd  # noqa
-encoder_input_data = pd.DataFrame(encoder_input_data)
+np.save('encoder_input_data.np', encoder_input_data, allow_pickle=False)
+np.save('decoder_input_data.np', decoder_input_data, allow_pickle=False)
+np.save('decoder_target_data.np', decoder_target_data, allow_pickle=False)
 
 
 from keras.models import Model  # noqa
