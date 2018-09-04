@@ -192,9 +192,15 @@ BIG_URLS = {
     ),
     'imdb': (
         'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
-        84125825,  # 3112841563,  # 3112841312,
+        84125825,
         'aclImdb',  # directory for extractall
         imdb_df,  # postprocessor to combine text files into a single DataFrame
+    ),
+    'imdb_test': (
+        'https://www.dropbox.com/s/cpgrf3udzkbmvuu/aclImdb_test.tar.gz?dl=1',
+        10858,
+        'aclImdb_test',  # directory for extractall
+        imdb_df,
     ),
     'alice': (
         # 'https://www.dropbox.com/s/py952zad3mntyvp/aiml-en-us-foundation-alice.v1-9.zip?dl=1',
@@ -291,16 +297,20 @@ def normalize_ext_rename(filepath):
 
 
 def untar(fname, verbose=True):
+    """ Uunzip and untar a tar.gz file into a subdir of the BIGDATA_PATH directory """
     if fname.lower().endswith(".tar.gz"):
+        dirpath = os.path.join(BIGDATA_PATH, os.path.basename(fname)[:-7])
+        if os.path.isdir(dirpath):
+            return dirpath
         with tarfile.open(fname) as tf:
-            # tf.extractall(
-            #     path=BIGDATA_PATH,  # path=os.path.join(BIGDATA_PATH, fname.lower().split('.')[0]), name)
-            #     members=(tqdm if verbose else no_tqdm)(tf))
-            # path = '.' but what does that really mean
-            tf.extractall()
+            members = tf.getmembers()
+            for member in tqdm(members, total=len(members)):
+                tf.extract(member, path=BIGDATA_PATH)
+        dirpath = os.path.join(BIGDATA_PATH, members[0].name)
+        if os.path.isdir(dirpath):
+            return dirpath
     else:
         logger.warn("Not a tar.gz file: {}".format(fname))
-    return fname[:-7]  # strip .tar.gz extension
 
 
 def series_rstrip(series, endswith='/usercomments', ignorecase=True):
@@ -705,7 +715,6 @@ def download_unzip(names=None, verbose=True):
             df.columns = clean_columns(df.columns)
             file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
             df.to_csv(file_paths[name])
-
         file_paths[name] = normalize_ext_rename(file_paths[name])
     return file_paths
 
@@ -873,6 +882,15 @@ def get_data(name='sms-spam', nrows=None):
     >>> words = get_data('words_ubuntu_us')
     >>> len(words)
     99171
+    >>> get_data('imdb_test').info()
+    <class 'pandas.core.frame.DataFrame'>
+    MultiIndex: 20 entries, (train, pos, 0) to (train, neg, 9)
+    Data columns (total 3 columns):
+    url       20 non-null object
+    rating    20 non-null int64
+    text      20 non-null object
+    dtypes: int64(1), object(2)
+    memory usage: 809.0+ bytes
     >>> list(words[:8])
     ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
     >>> get_data('ubuntu_dialog_test').iloc[0]
@@ -887,6 +905,9 @@ def get_data(name='sms-spam', nrows=None):
         filepath = filepaths[name][0] if isinstance(filepaths[name], (list, tuple)) else filepaths[name]
         logger.debug('nlpia.loaders.get_data.filepath=' + str(filepath))
         filepathlow = filepath.lower()
+
+        if len(BIG_URLS[name]) >= 4:
+            return BIG_URLS[name][3](filepath)
         if filepathlow.endswith('.w2v.txt'):
             try:
                 return KeyedVectors.load_word2vec_format(filepath, binary=False)
