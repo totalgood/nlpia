@@ -77,7 +77,7 @@ ZIP_FILES = {
 ZIP_PATHS = [[os.path.join(BIGDATA_PATH, fn) for fn in ZIP_FILES[k]] if ZIP_FILES[k] else k for k in ZIP_FILES.keys()]
 
 
-def imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(('train', 'test'), ('pos', 'neg', 'unsup'))):
+def load_imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(('train', 'test'), ('pos', 'neg', 'unsup'))):
     """ Walk directory tree starting at `path` to compile a DataFrame of movie review text labeled with their 1-10 star ratings
 
     Returns:
@@ -141,6 +141,28 @@ def load_glove_format(filepath):
     return KeyedVectors.load_word2vec_format(word2vec_output_file)
 
 
+def load_anki_df(language='deu'):
+    """ Load into a DataFrame statements in one language along with their translation into English
+
+    >>> get_data('zsm').head()
+                    zsm                                eng
+    0      Are you new?                         Awak baru?
+    1      I'm at home.       Saya sedang berada di rumah.
+    2   I have no clue.     Saya tiada pembayang langsung.
+    3   I'm not pretty.                   Saya tak cantik.
+    4  I had to resign.  Saya terpaksa meletakkan jawatan.
+    """
+    if os.path.isfile(language):
+        filepath = language
+        lang = re.search('[a-z]{3}-eng/', filepath).group()[:3].lower()
+    else:
+        lang = (language or 'deu').lower()[:3]
+        filepath = os.path.join(BIGDATA_PATH, '{}-eng'.format(lang), '{}.txt'.format(lang))
+    df = pd.read_table(filepath, skiprows=1, header=None)
+    df.columns = [lang, 'eng']
+    return df
+
+
 BIG_URLS = {
     'w2v': (
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
@@ -194,13 +216,13 @@ BIG_URLS = {
         'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
         84125825,
         'aclImdb',  # directory for extractall
-        imdb_df,  # postprocessor to combine text files into a single DataFrame
+        load_imdb_df,  # postprocessor to combine text files into a single DataFrame
     ),
     'imdb_test': (
         'https://www.dropbox.com/s/cpgrf3udzkbmvuu/aclImdb_test.tar.gz?dl=1',
         10858,
         'aclImdb_test',  # directory for extractall
-        imdb_df,
+        load_imdb_df,
     ),
     'alice': (
         # 'https://www.dropbox.com/s/py952zad3mntyvp/aiml-en-us-foundation-alice.v1-9.zip?dl=1',
@@ -219,6 +241,12 @@ for yr in range(2011, 2017):
 BIG_URLS['word2vec'] = BIG_URLS['w2v']
 BIG_URLS['glove_small'] = BIG_URLS['glove']
 BIG_URLS['ubuntu'] = BIG_URLS['ubuntu_dialog'] = BIG_URLS['ubuntu_dialog_1500k']
+
+ANKI_LANGUAGES = 'afr arq ara aze eus bel ben ber bul yue cat cbk cmn chv hrv ces dan nld est fin fra glg kat ' \
+                 'deu ell heb hin hun isl ind ita jpn kha khm kor lvs lit nds mkd zsm mal mri mar max nob pes ' \
+                 'pol por ron rus srp slk slv spa swe tgl tam tat tha tur ukr urd uig vie'.split()
+for lang in ANKI_LANGUAGES:
+    BIG_URLS[lang] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-eng'.format(lang), load_anki_df)
 
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
@@ -641,6 +669,10 @@ def unzip(filepath, verbose=True):
     if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist):
         z.extractall(path=unzip_dir)
 
+    logger.info('unzip_dir contains: {}'.format(os.listdir(unzip_dir)))
+    # for f in os.listdir(unzip_dir):
+    #     if f.lower().endswith('about.txt'):
+    #         os.remove(os.path.join(unzip_dir, f))
     for f in tqdm_prog(os.listdir(unzip_dir)):
         if f[-1] in ' \t\r\n\f':
             bad_path = os.path.join(unzip_dir, f)
@@ -648,18 +680,21 @@ def unzip(filepath, verbose=True):
                 repr(bad_path), repr(bad_path.rstrip())))
             shutil.move(bad_path, bad_path.rstrip())
             # rename_file(source=bad_path, dest=bad_path.rstrip())
+    anki_paths = [os.path.join(unzip_dir, f) for f in os.listdir(unzip_dir)
+                  if f.lower()[:3] in ANKI_LANGUAGES and f.lower()[3:] == '.txt']
+    logger.info('anki_paths: {}'.format(anki_paths))
 
-    w2v_paths = [os.path.join(BIGDATA_PATH, f[:-4] + '.w2v.txt') for f in os.listdir(unzip_dir) if f.lower().endswith('.txt')]
+    w2v_paths = [os.path.join(BIGDATA_PATH, f[:-4] + '.w2v.txt') for f in os.listdir(unzip_dir)
+                 if f.lower().endswith('.txt') and 'glove' in f.lower()]
     for f, word2vec_output_file in zip(os.listdir(unzip_dir), w2v_paths):
-        if f.lower().endswith('.txt'):
-            glove_input_file = os.path.join(unzip_dir, f)
-            logger.info('Attempting to converting GloVE format to Word2vec: {} -> {}'.format(
+        glove_input_file = os.path.join(unzip_dir, f)
+        logger.info('Attempting to converting GloVE format to Word2vec: {} -> {}'.format(
+            repr(glove_input_file), repr(word2vec_output_file)))
+        try:
+            glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
+        except:
+            logger.info('Failed to convert GloVE format to Word2vec: {} -> {}'.format(
                 repr(glove_input_file), repr(word2vec_output_file)))
-            try:
-                glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
-            except:
-                logger.info('Failed to convert GloVE format to Word2vec: {} -> {}'.format(
-                    repr(glove_input_file), repr(word2vec_output_file)))
 
     txt_paths = [os.path.join(BIGDATA_PATH, f.lower()[:-4] + '.txt') for f in os.listdir(unzip_dir) if f.lower().endswith('.asc')]
     for f, txt_file in zip(os.listdir(unzip_dir), txt_paths):
@@ -669,7 +704,7 @@ def unzip(filepath, verbose=True):
                 repr(input_file), repr(txt_file)))
             shutil.move(input_file, txt_file)
 
-    return txt_paths + w2v_paths
+    return anki_paths + txt_paths + w2v_paths
 
 
 def download_unzip(names=None, verbose=True):
