@@ -54,10 +54,6 @@ def generate_training_data(lang):
                               enumerate(input_vocabulary)])  # <4>
     target_token_index = dict(
         [(char, i) for i, char in enumerate(output_vocabulary)])
-    reverse_input_char_index = dict((i, c) for (c, i) in
-                                    input_token_index.items())  # <5>
-    reverse_target_char_index = dict((i, c) for (c, i) in
-                                     target_token_index.items())
 
     import numpy as np  # <1>  # noqa
 
