@@ -1,9 +1,13 @@
 [![Build Status](https://travis-ci.org/totalgood/nlpia.svg?branch=master)](https://travis-ci.org/totalgood/nlpia) 
 [![Coverage](https://codecov.io/gh/totalgood/nlpia/branch/master/graph/badge.svg)](https://codecov.io/gh/totalgood/nlpia) 
-[![PyPI](https://img.shields.io/pypi/v/nlpia.svg?style=flat)](https://pypi.python.org/totalgood/nlpia) 
+[![GitHub release](https://img.shields.io/github/release/totalgood/nlpia.svg)](https://github.com/totalgood/nlpia/releases/latest)
 
 <!---
-Some more badges from grakn.ai
+Some more badges from grakn.ai and search of github markdown files
+
+### downloads are no longer provided by pypi: https://mail.python.org/pipermail/distutils-sig/2016-May/028986.html
+[![PyPI Package monthly downloads](https://img.shields.io/pypi/dm/nlpia.svg?style=flat)](https://pypi.python.org/pypi/nlpia
+
 
 [![GitHub release](https://img.shields.io/github/release/graknlabs/grakn.svg)](https://github.com/graknlabs/grakn/releases/latest)
 [![Build Status](https://travis-ci.org/graknlabs/grakn.svg?branch=internal)](https://travis-ci.org/graknlabs/grakn)
