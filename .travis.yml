@@ -42,7 +42,6 @@ script:
   - python setup.py test  # does this do a build? do we need pip install above?
 after_success:
   - codecov
-
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
 cache:
   - apt
