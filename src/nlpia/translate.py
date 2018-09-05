@@ -68,7 +68,7 @@ def generate_training_data(lang='deu', n=700, data_paths=()):
 
     trainset = (encoder_input_data, decoder_input_data, decoder_target_data)
     for i, p in enumerate(data_paths):
-        np.save(p, trainset[i], allow_pickle=False)
+        np.save(p, trainset[i][:n], allow_pickle=False)
 
     return encoder_input_data, decoder_input_data, decoder_target_data
 
@@ -127,12 +127,15 @@ def main(
     """ Train an LSTM encoder-decoder squence-to-sequence model on Anki flashcards for international translation
 
     >>> model = main('spa', n=400, epochs=3, batch_size=128, num_neurons=32)
+    Train on 360 samples, validate on 40 samples
+    Epoch 1/3
+    ...
     >>> len(model.get_weights())
     8
     >>> model.get_weights()[-1].shape
-    (62,)
+    (56,)
     >>> model.get_weights()[-2].shape
-    (32, 62)
+    (32, 56)
     """
     mkdir_p(checkpoint_dir)
     encoder_input_path = os.path.join(
@@ -146,12 +149,16 @@ def main(
         'nlpia-ch10-translate-target-{}.npy'.format('eng'))
     data_paths = (encoder_input_path, decoder_input_path, decoder_target_path)
 
+    encoder_input_data = []
     if all([os.path.isfile(p) for p in data_paths]):
         encoder_input_data = np.load(encoder_input_path)
         decoder_input_data = np.load(decoder_input_path)
         decoder_target_data = np.load(decoder_target_path)
-    else:
+    if len(encoder_input_data) < n:
         encoder_input_data, decoder_input_data, decoder_target_data = generate_training_data(lang=lang, n=n, data_paths=data_paths)
+    encoder_input_data = encoder_input_data[:n]
+    decoder_input_data = decoder_input_data[:n] 
+    decoder_target_data = decoder_target_data[:n]
     model = fit(data_paths=data_paths, epochs=epochs, batch_size=batch_size, num_neurons=num_neurons)
     return model
 
