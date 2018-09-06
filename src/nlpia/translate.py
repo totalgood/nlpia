@@ -7,12 +7,16 @@ from keras.callbacks import ModelCheckpoint
 from keras.models import Model
 from keras.layers import Input, LSTM, Dense
 from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
 
 from nlpia.constants import BIGDATA_PATH
 from nlpia.loaders import get_data
 from pugnlp.futil import mkdir_p
 
 MAX_NUM_WORDS = 1000000
+EMBEDDING_DIM = 300
+MAX_INPUT_SEQUENCE_LENGTH = 256
+MAX_TARGET_SEQUENCE_LENGTH = 256
 
 
 def onehot_char_training_data(lang='deu', n=700, data_paths=()):
@@ -79,31 +83,38 @@ def onehot_char_training_data(lang='deu', n=700, data_paths=()):
 def wordvector_training_data(lang='deu', n=700, data_paths=()):
     df = get_data(lang)
     n = int(len(df) * n) if n <= 1 else n 
+    n = min(len(df), n)
     df = df.iloc[:n]
     input_texts, target_texts = [], []  # <1>
     input_vocabulary = set()  # <3>
     output_vocabulary = set()
     start_token, stop_token = '<START>', '<STOP>'
-    n = len(df)
-    tokenizer = Tokenizer()
+    input_tokenizer, output_tokenizer = Tokenizer(), Tokenizer()
+    wv = get_data('word2vec')
+    EMBEDDING_DIM = len(wv['the'])
 
     for input_text, target_text in tqdm(zip(df.eng, df[lang]), total=n):
         target_text = start_token + target_text + stop_token
         input_texts.append(input_text)
         target_texts.append(target_text)
 
-    texts = input_texts + target_texts
-    assert(len(texts) == n * 2)
-    input_texts = texts[:n]
-    target_texts = texts[n:]
+    # texts = input_texts + target_texts
+    # assert(len(texts) == n * 2)
+    # input_texts = texts[:n]
+    # target_texts = texts[n:]
 
-    tokenizer.fit_on_texts(texts)
-        for char in input_text:  # <8>
-            if char not in input_vocabulary:
-                input_vocabulary.add(char)
-        for char in target_text:
-            if char not in output_vocabulary:
-                output_vocabulary.add(char)
+    input_tokenizer.fit_on_texts(input_texts)
+    output_tokenizer.fit_on_texts(target_texts)
+    input_sequences = input_tokenizer.texts_to_sequences(input_texts)
+    target_sequences = output_tokenizer.texts_to_sequences(target_texts)
+    input_sequences = pad_sequences(input_sequences, maxlen=MAX_INPUT_SEQUENCE_LENGTH)
+    target_sequences = pad_sequences(target_sequences, maxlen=MAX_TARGET_SEQUENCE_LENGTH)
+
+    embedding_matrix = np.zeros((MAX_NUM_WORDS, EMBEDDING_DIM))
+    for w, i in input_tokenizer.word_index.items():
+        if w in wv.vocab:
+            embedding_matrix[i] = wv.word_vec(w)
+    print('Null word embeddings: %d' % np.sum(np.sum(embedding_matrix != 0, axis=1) == 0))
 
     input_vocabulary = sorted(input_vocabulary)  # <1>
     output_vocabulary = sorted(output_vocabulary)

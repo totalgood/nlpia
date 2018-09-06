@@ -159,7 +159,7 @@ def load_anki_df(language='deu'):
         lang = (language or 'deu').lower()[:3]
         filepath = os.path.join(BIGDATA_PATH, '{}-eng'.format(lang), '{}.txt'.format(lang))
     df = pd.read_table(filepath, skiprows=1, header=None)
-    df.columns = [lang, 'eng']
+    df.columns = ['eng', lang]
     return df
 
 
@@ -168,7 +168,8 @@ BIG_URLS = {
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
         1647046227,
         'GoogleNews-vectors-negative300.bin.gz',
-        KeyedVectors.load_word2vec_format
+        KeyedVectors.load_word2vec_format,
+        {'binary': True},
     ),
     'glove_twitter': (
         'https://nlp.stanford.edu/data/glove.twitter.27B.zip',
@@ -942,7 +943,8 @@ def get_data(name='sms-spam', nrows=None):
         filepathlow = filepath.lower()
 
         if len(BIG_URLS[name]) >= 4:
-            return BIG_URLS[name][3](filepath)
+            kwargs = BIG_URLS[name][4] if len(BIG_URLS[name]) >= 5 else {}
+            return BIG_URLS[name][3](filepath, **kwargs)
         if filepathlow.endswith('.w2v.txt'):
             try:
                 return KeyedVectors.load_word2vec_format(filepath, binary=False)
