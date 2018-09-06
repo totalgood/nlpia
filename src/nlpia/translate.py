@@ -116,8 +116,8 @@ def wordvector_training_data(lang='deu', n=700, data_paths=()):
             embedding_matrix[i] = wv.word_vec(w)
     print('Null word embeddings: %d' % np.sum(np.sum(embedding_matrix != 0, axis=1) == 0))
 
-    input_vocabulary = sorted(input_vocabulary)  # <1>
-    output_vocabulary = sorted(output_vocabulary)
+#     input_vocabulary = sorted(input_vocabulary)  # <1>
+#     output_vocabulary = sorted(output_vocabulary)
 
     input_vocab_size = len(input_vocabulary)  # <2>
     output_vocab_size = len(output_vocabulary)
@@ -215,9 +215,9 @@ def main(
     >>> len(model.get_weights())
     8
     >>> model.get_weights()[-1].shape
-    (56,)
+    (64,)
     >>> model.get_weights()[-2].shape
-    (32, 56)
+    (32, 64)
     """
     mkdir_p(checkpoint_dir)
     encoder_input_path = os.path.join(

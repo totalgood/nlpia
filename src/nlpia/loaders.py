@@ -141,11 +141,15 @@ def load_glove_format(filepath):
     return KeyedVectors.load_word2vec_format(word2vec_output_file)
 
 
+def load_ngram_df(filepath):
+    return read_csv(filepath)
+
+
 def load_anki_df(language='deu'):
     """ Load into a DataFrame statements in one language along with their translation into English
 
     >>> get_data('zsm').head()
-                    zsm                                eng
+                    eng                                zsm
     0      Are you new?                         Awak baru?
     1      I'm at home.       Saya sedang berada di rumah.
     2   I have no clue.     Saya tiada pembayang langsung.
@@ -249,6 +253,12 @@ ANKI_LANGUAGES = 'afr arq ara aze eus bel ben ber bul yue cat cbk cmn chv hrv ce
 for lang in ANKI_LANGUAGES:
     BIG_URLS[lang] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-eng'.format(lang), load_anki_df)
 
+GOOGLE_NGRAM_URL = 'http://storage.googleapis.com/books/ngrams/books/'
+GOOGLE_NGRAM_NAMES = '0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o other p pos punctuation q r s t u v w x y z'.split()
+GOOGLE_NGRAM_FILE = 'googlebooks-eng-all-1gram-20120701-{}.gz'
+
+for name in GOOGLE_NGRAM_NAMES: 
+    BIG_URLS['1gram_{}'] = (GOOGLE_NGRAM_URL + GOOGLE_NGRAM_FILE.format(name), 1, GOOGLE_NGRAM_FILE.format(name), load_ngram_df)
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
     logger.warn('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
