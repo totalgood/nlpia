@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """ Loaders and downloaders for data files and models required for the examples in NLP in Action
 
 >>> df = get_data('cities_us')
@@ -6,8 +8,29 @@
 131484    4295856  Indian Hills Cherokee Section
 137549    5322551                         Agoura
 134468    4641562                         Midway
+
+Google N-Gram Viewer data (at least the 1-grams) is available with get_data as well.
+The smallest 1-gram table is for the "first letter" pos (part of speech tags all alone):
+>>> df = get_data('1gram_pos')
+>>> df
+  term_pos  year  term_freq  book_freq
+0    _ADP_  1505       3367          1
+1    _ADP_  1507       4619          1
+2    _ADP_  1515      37423          1
+3    _ADP_  1520       5868          1
+4    _ADP_  1524      30984          1
+
+The words that start with X is also a pretty small list:
+>>> df = get_data('1gram_x')
+>>> df
+        term_pos  year  term_freq  book_freq
+0         X'rays  1914          1          1
+1         X'rays  1917          1          1
+2         X'rays  1919          1          1
+3         X'rays  1921          1          1
+...
+[3929235 rows x 4 columns]
 """
-# -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
 from builtins import (bytes, dict, int, list, object, range, str,  # noqa
     ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
@@ -249,6 +272,11 @@ ANKI_LANGUAGES = 'afr arq ara aze eus bel ben ber bul yue cat cbk cmn chv hrv ce
 for lang in ANKI_LANGUAGES:
     BIG_URLS[lang] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-eng'.format(lang), load_anki_df)
 
+"""
+Google N-Gram Viewer meta data is from:
+* [GOOGLE_NGRAM files](https://storage.googleapis.com/books/ngrams/books/datasetsv2.html)
+* [GOOGLE_NGRAM data format](https://books.google.com/ngrams/info)
+"""
 GOOGLE_NGRAM_URL = 'http://storage.googleapis.com/books/ngrams/books/'
 GOOGLE_NGRAM_NAMES = '0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o other p pos punctuation q r s t u v w x y z'.split()
 GOOGLE_NGRAM_FILE = 'googlebooks-eng-all-1gram-20120701-{}.gz'
@@ -257,7 +285,7 @@ for name in GOOGLE_NGRAM_NAMES:
     BIG_URLS['1gram_{}'.format(name)] = (GOOGLE_NGRAM_URL + GOOGLE_NGRAM_FILE.format(name),
                                          1000, GOOGLE_NGRAM_FILE.format(name),
                                          pd.read_table,
-                                         {'sep': '\t', 'header': None, 'columns': 'term_pos year term_freq book_freq'.split()})
+                                         {'sep': '\t', 'header': None, 'names': 'term_pos year term_freq book_freq'.split()})
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
     logger.warn('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
