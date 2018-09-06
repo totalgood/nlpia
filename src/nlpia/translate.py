@@ -6,13 +6,16 @@ from tqdm import tqdm
 from keras.callbacks import ModelCheckpoint
 from keras.models import Model
 from keras.layers import Input, LSTM, Dense
+from keras.preprocessing.text import Tokenizer
 
 from nlpia.constants import BIGDATA_PATH
 from nlpia.loaders import get_data
 from pugnlp.futil import mkdir_p
 
+MAX_NUM_WORDS = 1000000
 
-def generate_training_data(lang='deu', n=700, data_paths=()):
+
+def onehot_char_training_data(lang='deu', n=700, data_paths=()):
     df = get_data(lang)
     n = int(len(df) * n) if n <= 1 else n 
     df = df.iloc[:n]
@@ -27,6 +30,74 @@ def generate_training_data(lang='deu', n=700, data_paths=()):
             + stop_token  # <7>
         input_texts.append(input_text)
         target_texts.append(target_text)
+        for char in input_text:  # <8>
+            if char not in input_vocabulary:
+                input_vocabulary.add(char)
+        for char in target_text:
+            if char not in output_vocabulary:
+                output_vocabulary.add(char)
+
+    input_vocabulary = sorted(input_vocabulary)  # <1>
+    output_vocabulary = sorted(output_vocabulary)
+
+    input_vocab_size = len(input_vocabulary)  # <2>
+    output_vocab_size = len(output_vocabulary)
+    max_encoder_seq_length = max(
+        [len(txt) for txt in input_texts])  # <3>
+    max_decoder_seq_length = max(
+        [len(txt) for txt in target_texts])
+
+    input_token_index = dict([(char, i) for i, char in
+                              enumerate(input_vocabulary)])  # <4>
+    target_token_index = dict(
+        [(char, i) for i, char in enumerate(output_vocabulary)])
+
+    encoder_input_data = np.zeros((n, max_encoder_seq_length, input_vocab_size),
+                                  dtype='float32')  # <2>
+    decoder_input_data = np.zeros((n, max_decoder_seq_length, output_vocab_size),
+                                  dtype='float32')
+    decoder_target_data = np.zeros((n, max_decoder_seq_length, output_vocab_size),
+                                   dtype='float32')
+    for i, (input_text, target_text) in enumerate(tqdm(
+            zip(input_texts, target_texts), total=len(target_texts))):  # <3>
+        for t, char in enumerate(input_text):  # <4>
+            encoder_input_data[
+                i, t, input_token_index[char]] = 1.  # <5>
+        for t, char in enumerate(target_text):  # <6>
+            decoder_input_data[
+                i, t, target_token_index[char]] = 1.
+            if t > 0:
+                decoder_target_data[i, t - 1, target_token_index[char]] = 1
+
+    trainset = (encoder_input_data, decoder_input_data, decoder_target_data)
+    for i, p in enumerate(data_paths):
+        np.save(p, trainset[i][:n], allow_pickle=False)
+
+    return encoder_input_data, decoder_input_data, decoder_target_data
+
+
+def wordvector_training_data(lang='deu', n=700, data_paths=()):
+    df = get_data(lang)
+    n = int(len(df) * n) if n <= 1 else n 
+    df = df.iloc[:n]
+    input_texts, target_texts = [], []  # <1>
+    input_vocabulary = set()  # <3>
+    output_vocabulary = set()
+    start_token, stop_token = '<START>', '<STOP>'
+    n = len(df)
+    tokenizer = Tokenizer()
+
+    for input_text, target_text in tqdm(zip(df.eng, df[lang]), total=n):
+        target_text = start_token + target_text + stop_token
+        input_texts.append(input_text)
+        target_texts.append(target_text)
+
+    texts = input_texts + target_texts
+    assert(len(texts) == n * 2)
+    input_texts = texts[:n]
+    target_texts = texts[n:]
+
+    tokenizer.fit_on_texts(texts)
         for char in input_text:  # <8>
             if char not in input_vocabulary:
                 input_vocabulary.add(char)
@@ -155,7 +226,8 @@ def main(
         decoder_input_data = np.load(decoder_input_path)
         decoder_target_data = np.load(decoder_target_path)
     if len(encoder_input_data) < n:
-        encoder_input_data, decoder_input_data, decoder_target_data = generate_training_data(lang=lang, n=n, data_paths=data_paths)
+        encoder_input_data, decoder_input_data, decoder_target_data = onehot_char_training_data(
+            lang=lang, n=n, data_paths=data_paths)
     encoder_input_data = encoder_input_data[:n]
     decoder_input_data = decoder_input_data[:n] 
     decoder_target_data = decoder_target_data[:n]

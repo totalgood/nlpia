@@ -11,7 +11,9 @@ dependencies:
   - pillow=4.3.0
   - pyqt=5.6.0
   - pandoc=2.1.2
-  - spacy=2.0.11
+  - keras=2.2.2
+  - tensorflow=1.10.0
+  - spacy=2.0.12
   - swig=3.0.12
   - nltk=3.2.5
   - gensim=3.4.0

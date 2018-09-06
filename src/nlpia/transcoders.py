@@ -148,6 +148,7 @@ def split_sentences_spacy(text, language_model='en'):
     >>> split_sentences_nltk("Hi Ms. Lovelace. I'm at I.B.M. --Watson 2.0")
     ['Hi Ms. Lovelace.', "I'm at I.B.M.", '--Watson 2.0']
     """
+    nlp = str.split
     try:
         nlp = spacy.load(language_model)
     except (OSError, IOError):
