@@ -141,10 +141,6 @@ def load_glove_format(filepath):
     return KeyedVectors.load_word2vec_format(word2vec_output_file)
 
 
-def load_ngram_df(filepath):
-    return read_csv(filepath)
-
-
 def load_anki_df(language='deu'):
     """ Load into a DataFrame statements in one language along with their translation into English
 
@@ -258,7 +254,10 @@ GOOGLE_NGRAM_NAMES = '0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o other p 
 GOOGLE_NGRAM_FILE = 'googlebooks-eng-all-1gram-20120701-{}.gz'
 
 for name in GOOGLE_NGRAM_NAMES: 
-    BIG_URLS['1gram_{}'] = (GOOGLE_NGRAM_URL + GOOGLE_NGRAM_FILE.format(name), 1, GOOGLE_NGRAM_FILE.format(name), load_ngram_df)
+    BIG_URLS['1gram_{}'.format(name)] = (GOOGLE_NGRAM_URL + GOOGLE_NGRAM_FILE.format(name),
+                                         1000, GOOGLE_NGRAM_FILE.format(name),
+                                         pd.read_table,
+                                         {'sep': '\t', 'header': None, 'columns': 'term_pos year term_freq book_freq'.split()})
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
     logger.warn('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
