@@ -51,6 +51,7 @@ import shutil
 from zipfile import ZipFile
 from math import ceil
 from itertools import product
+from urllib.error import URLError
 
 import pandas as pd
 import tarfile
@@ -1250,7 +1251,14 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
     tqdm_prog = no_tqdm if (not verbose or (hasattr(texts, '__len__') and len(texts) < 3)) else tqdm
     global _parse
     if not _parse:
-        _parse = spacy.load(lang)
+        try:
+            _parse = spacy.load(lang)
+        except (OSError, IOError):
+            try:
+                spacy.cli.download(lang)
+            except URLError:
+                logger.warn("Unable to download Spacy language model '{}' so nlp(text) just returns text.split()".format(lang))
+    parse = _parse or str.split
     # TODO: reverse this recursion (str first then sequence) to allow for sequences of sequences of texts
     if isinstance(texts, str):
         if linesep:
@@ -1259,14 +1267,14 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
             return nlp([texts])
     if hasattr(texts, '__len__'):
         if len(texts) == 1:
-            return _parse(texts[0])
+            return parse(texts[0])
         elif len(texts) > 1:
-            return [_parse(text) for text in tqdm_prog(texts)]
+            return [(parse or str.split)(text) for text in tqdm_prog(texts)]
         else:
             return None
     else: 
         # return generator if sequence of strings doesn't have __len__ which means its an iterable or generator itself
-        return (_parse(text) for text in tqdm_prog(texts))
+        return (parse(text) for text in tqdm_prog(texts))
     # TODO: return the same type as the input, e.g. `type(texts)(texts)`
 
 

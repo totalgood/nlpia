@@ -3,13 +3,12 @@ import os
 import requests
 import regex
 import json
-from urllib.error import URLError
 
 import nltk
-import spacy
 
 from pugnlp.futil import find_files
 from nlpia.data_utils import iter_lines
+from nlpia.loaders import nlp
 
 from .constants import secrets, DATA_PATH
 
@@ -148,19 +147,13 @@ def split_sentences_spacy(text, language_model='en'):
     >>> split_sentences_nltk("Hi Ms. Lovelace. I'm at I.B.M. --Watson 2.0")
     ['Hi Ms. Lovelace.', "I'm at I.B.M.", '--Watson 2.0']
     """
-    nlp = str.split
-    try:
-        nlp = spacy.load(language_model)
-    except (OSError, IOError):
-        try:
-            spacy.cli.download(language_model)
-        except URLError:
-            logger.warn("Unable to download Spacy language model '{}'. Using offline NLTK punkt sentence splitter instead.")
-            return split_sentences_nltk(text)
-    parsed_text = nlp(text)
+    doc = nlp(text)
     sentences = []
-    for w, span in enumerate(parsed_text.sents):
-        sent = ''.join(parsed_text[i].string for i in range(span.start, span.end)).strip()
+    if not hasattr(doc, 'sents'):
+        logger.warn("Using NLTK sentence tokenizer because SpaCy language model hasn't been loaded")
+        return split_sentences_nltk(text)
+    for w, span in enumerate(doc.sents):
+        sent = ''.join(doc[i].string for i in range(span.start, span.end)).strip()
         if len(sent):
             sentences.append(sent)
     return sentences

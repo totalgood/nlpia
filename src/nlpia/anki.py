@@ -37,7 +37,9 @@ def get_anki_phrases_english(limit=None):
     """
     texts = set()
     for lang in ANKI_LANGUAGES:
-        texts.union(set(get_data(lang).eng.str.strip()))
+        df = get_data(lang)
+        phrases = df.eng.str.strip().values
+        texts = texts.union(set(phrases))
         if limit and len(texts) >= limit:
             break
     return sorted(texts)
