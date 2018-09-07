@@ -17,8 +17,7 @@ The smallest 1-gram table is for the "first letter" pos (part of speech tags all
 0    _ADP_  1505       3367          1
 1    _ADP_  1507       4619          1
 2    _ADP_  1515      37423          1
-3    _ADP_  1520       5868          1
-4    _ADP_  1524      30984          1
+...
 
 The words that start with X is also a pretty small list:
 >>> df = get_data('1gram_x')
