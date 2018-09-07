@@ -2,10 +2,11 @@
 import os
 import logging
 
-import spacy
 from tqdm import tqdm
+import pandas as pd
+import numpy as np
 
-from nlpia.loaders import get_data, ANKI_LANGUAGES, LANG2ANKI, BIGDATA_PATH
+from nlpia.loaders import get_data, ANKI_LANGUAGES, LANG2ANKI, BIGDATA_PATH, nlp
 
 logger = logging.getLogger(__name__)
 
@@ -41,17 +42,14 @@ def get_anki_phrases_english(limit=None):
     return sorted(texts)
 
 
-def docs_from_texts(texts, lang='en'):
-    nlp = spacy.load(lang.strip()[:2].lower())
-    return [nlp(s) for s in texts]
-
-
 def get_vocab(docs):
+    """ Build a DataFrame containing all the words in the docs provided along with their POS tags etc """
     vocab = set()
     for doc in tqdm(docs):
         for tok in doc:
-            vocab.add((tok.text, tok.pos_, tok.tag_, tok.dep_, ent.type_, ent.iob, tok.sentiment))
-    return pd.DataFrame(sorted(vocab), columns='word pos tag dep ent ent_iob sentiment'.split())
+            vocab.add((tok.text, tok.pos_, tok.tag_, tok.dep_, tok.sentiment))
+    # TODO: add ent type info and other flags, e.g. like_url, like_email, etc
+    return pd.DataFrame(sorted(vocab), columns='word pos tag dep sentiment'.split())
 
 
 def get_word_vectors(vocab):
@@ -69,13 +67,13 @@ def get_word_vectors(vocab):
     return vectors
 
 
-def get_anki_vocab(langs=['eng'], filename='anki_en_vocabulary.csv'):
+def get_anki_vocab(lang=['eng'], limit=None, filename='anki_en_vocabulary.csv'):
     """ Get all the vocab words+tags+wordvectors for the tokens in the Anki translation corpus
 
     Returns a DataFrame of with columns = word, pos, tag, dep, ent, ent_iob, sentiment, vectors
     """
-    texts = get_texts(ankis=langs)
-    docs = get_docs(texts, lang=langs[0][:2] if len(langs) == 1 else 'en')
+    texts = get_anki_phrases(lang=lang, limit=limit)
+    docs = nlp(texts, lang=lang)
     vocab = get_vocab(docs)
     vocab['vector'] = get_word_vectors(vocab)  # TODO: turn this into a KeyedVectors object
     if filename:

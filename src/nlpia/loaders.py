@@ -1256,14 +1256,18 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
         if linesep:
             return nlp(texts.split(linesep))
         else: 
-            return [nlp(texts)]
+            return nlp([texts])
     if hasattr(texts, '__len__'):
-        if len(texts) > 1:
+        if len(texts) == 1:
+            return _parse(texts[0])
+        elif len(texts) > 1:
             return [_parse(text) for text in tqdm_prog(texts)]
         else:
-            return _parse(texts[0])
+            return None
     else: 
-        return [_parse(text) for text in tqdm_prog(texts)]
+        # return generator if sequence of strings doesn't have __len__ which means its an iterable or generator itself
+        return (_parse(text) for text in tqdm_prog(texts))
+    # TODO: return the same type as the input, e.g. `type(texts)(texts)`
 
 
 def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),
