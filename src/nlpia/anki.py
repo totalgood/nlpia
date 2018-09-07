@@ -5,6 +5,7 @@ import logging
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
+import spacy
 
 from nlpia.loaders import get_data, ANKI_LANGUAGES, LANG2ANKI, BIGDATA_PATH, nlp
 
@@ -43,13 +44,25 @@ def get_anki_phrases_english(limit=None):
 
 
 def get_vocab(docs):
-    """ Build a DataFrame containing all the words in the docs provided along with their POS tags etc """
+    """ Build a DataFrame containing all the words in the docs provided along with their POS tags etc
+
+    >>> doc = nlp("Hey Mr. Tangerine Man!")
+    >>> get_vocab([doc])
+            word    pos  tag       dep  sentiment
+    0          !  PUNCT    .     punct        0.0
+    1        Hey   INTJ   UH      intj        0.0
+    2        Man   NOUN   NN      ROOT        0.0
+    3        Mr.  PROPN  NNP  compound        0.0
+    4  Tangerine  PROPN  NNP  compound        0.0
+    """
+    if isinstance(docs, spacy.tokens.doc.Doc):
+        return get_vocab([docs])
     vocab = set()
     for doc in tqdm(docs):
         for tok in doc:
-            vocab.add((tok.text, tok.pos_, tok.tag_, tok.dep_, tok.sentiment))
+            vocab.add((tok.text, tok.pos_, tok.tag_, tok.dep_, tok.ent_type_, tok.ent_iob_, tok.sentiment))
     # TODO: add ent type info and other flags, e.g. like_url, like_email, etc
-    return pd.DataFrame(sorted(vocab), columns='word pos tag dep sentiment'.split())
+    return pd.DataFrame(sorted(vocab), columns='word pos tag dep ent_iob ent_type sentiment'.split())
 
 
 def get_word_vectors(vocab):
