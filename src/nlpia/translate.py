@@ -214,8 +214,8 @@ def main(
     ...
     >>> len(model.get_weights())
     8
-    >>> model.get_weights()[-1].shape
-    (64,)
+    >>> 56 <= model.get_weights()[-1].shape[0] <= 64
+    True
     >>> model.get_weights()[-2].shape
     (32, 64)
     """
