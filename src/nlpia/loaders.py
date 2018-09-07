@@ -268,6 +268,11 @@ BIG_URLS['ubuntu'] = BIG_URLS['ubuntu_dialog'] = BIG_URLS['ubuntu_dialog_1500k']
 ANKI_LANGUAGES = 'afr arq ara aze eus bel ben ber bul yue cat cbk cmn chv hrv ces dan nld est fin fra glg kat ' \
                  'deu ell heb hin hun isl ind ita jpn kha khm kor lvs lit nds mkd zsm mal mri mar max nob pes ' \
                  'pol por ron rus srp slk slv spa swe tgl tam tat tha tur ukr urd uig vie'.split()
+LANG2ANKI = dict((lang[:2], lang) for lang in ANKI_LANGUAGES)
+"""
+>>> len(ANKI_LANGUAGES) - len(LANG2ANKI)
+9
+"""
 for lang in ANKI_LANGUAGES:
     BIG_URLS[lang] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-eng'.format(lang), load_anki_df)
 
