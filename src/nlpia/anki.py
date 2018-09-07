@@ -48,12 +48,12 @@ def get_vocab(docs):
 
     >>> doc = nlp("Hey Mr. Tangerine Man!")
     >>> get_vocab([doc])
-            word    pos  tag       dep  sentiment
-    0          !  PUNCT    .     punct        0.0
-    1        Hey   INTJ   UH      intj        0.0
-    2        Man   NOUN   NN      ROOT        0.0
-    3        Mr.  PROPN  NNP  compound        0.0
-    4  Tangerine  PROPN  NNP  compound        0.0
+            word    pos  tag       dep ent_type ent_iob  sentiment
+    0          !  PUNCT    .     punct                O        0.0
+    1        Hey   INTJ   UH      intj                O        0.0
+    2        Man   NOUN   NN      ROOT   PERSON       I        0.0
+    3        Mr.  PROPN  NNP  compound                O        0.0
+    4  Tangerine  PROPN  NNP  compound   PERSON       B        0.0
     """
     if isinstance(docs, spacy.tokens.doc.Doc):
         return get_vocab([docs])
@@ -62,7 +62,7 @@ def get_vocab(docs):
         for tok in doc:
             vocab.add((tok.text, tok.pos_, tok.tag_, tok.dep_, tok.ent_type_, tok.ent_iob_, tok.sentiment))
     # TODO: add ent type info and other flags, e.g. like_url, like_email, etc
-    return pd.DataFrame(sorted(vocab), columns='word pos tag dep ent_iob ent_type sentiment'.split())
+    return pd.DataFrame(sorted(vocab), columns='word pos tag dep ent_type ent_iob sentiment'.split())
 
 
 def get_word_vectors(vocab):
