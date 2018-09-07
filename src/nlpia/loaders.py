@@ -54,6 +54,7 @@ from itertools import product
 
 import pandas as pd
 import tarfile
+import spacy
 from tqdm import tqdm
 from gensim.models import KeyedVectors
 from gensim.scripts.glove2word2vec import glove2word2vec
@@ -1212,6 +1213,23 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
     df['region'] = cleancanon.region
     df['country'] = cleancanon.country
     return df
+
+
+def parse(texts, lang='en', linesep='\n'):
+    """ Use the SpaCy parser to parse and tag natural language strings. 
+
+    Load the SpaCy parser language model lazily and share it among all nlpia modules.
+    Probably unnecessary, since SpaCy probably takes care of this with `spacy.load()`
+    """
+    if not parse.parser:
+        parse.parser = spacy.load(lang)
+    linesep = os.linesep if linesep is None else linesep
+    if isinstance(text, str):
+        return parse(texts.split(linesep))
+    return iter(parse.parser(text) for text in tqdm(texts))
+
+
+parse.parser = None
 
 
 def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),
