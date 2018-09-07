@@ -1,10 +1,11 @@
 """ Functions for accessing the Anki Falshcard app's database of international language flashcards """
-
+import os
 import logging
 
 import spacy
+from tqdm import tqdm
 
-from nlpia.loaders import *
+from nlpia.loaders import get_data, ANKI_LANGUAGES, LANG2ANKI, BIGDATA_PATH
 
 logger = logging.getLogger(__name__)
 
