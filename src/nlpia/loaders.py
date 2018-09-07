@@ -1218,7 +1218,7 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
 
 
 def nlp(texts, lang='en', linesep=None, verbose=True):
-    """ Use the SpaCy parser to parse and tag natural language strings. 
+    r""" Use the SpaCy parser to parse and tag natural language strings. 
 
     Load the SpaCy parser language model lazily and share it among all nlpia modules.
     Probably unnecessary, since SpaCy probably takes care of this with `spacy.load()`
