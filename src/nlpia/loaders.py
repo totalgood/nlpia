@@ -69,6 +69,8 @@ from pugnlp.futil import mkdir_p
 import gzip
 
 
+_parse = None  # placeholder for SpaCy parser + language model
+
 INT_MAX = INT64_MAX = 2 ** 63 - 1
 INT_MIN = INT64_MIN = - 2 ** 63
 INT_NAN = INT64_NAN = INT64_MIN
@@ -1215,21 +1217,53 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
     return df
 
 
-def parse(texts, lang='en', linesep='\n'):
+def nlp(texts, lang='en', linesep=None, verbose=True):
     """ Use the SpaCy parser to parse and tag natural language strings. 
 
     Load the SpaCy parser language model lazily and share it among all nlpia modules.
     Probably unnecessary, since SpaCy probably takes care of this with `spacy.load()`
+
+    >>> _parse is None
+    True
+    >>> doc = nlp("Domo arigatto Mr. Roboto.")
+    >>> doc.text
+    'Domo arigatto Mr. Roboto.'
+    >>> doc.ents
+    (Roboto,)
+    >>> docs = nlp("Hey Mr. Tangerine Man!\nPlay a song for me.\n", linesep='\n')
+    >>> doc = docs[0]
+    >>> [t for t in doc]
+    [Hey, Mr., Tangerine, Man, !]
+    >>> [tok.text for tok in doc]
+    ['Hey', 'Mr.', 'Tangerine', 'Man', '!']
+    >>> [(tok.text, tok.tag_) for tok in doc]
+    [('Hey', 'UH'),
+     ('Mr.', 'NNP'),
+     ('Tangerine', 'NNP'),
+     ('Man', 'NN'),
+     ('!', '.')]
+    >>> [(ent.text, ent.ent_id, ent.has_vector, ent.vector[:2]) for ent in doc.ents]
+    [('Tangerine Man', 0, True, array([0.7201348, 1.9132946], dtype=float32))]
     """
-    if not parse.parser:
-        parse.parser = spacy.load(lang)
-    linesep = os.linesep if linesep is None else linesep
-    if isinstance(text, str):
-        return parse(texts.split(linesep))
-    return iter(parse.parser(text) for text in tqdm(texts))
-
-
-parse.parser = None
+    # doesn't let you load a different model anywhere else in the module
+    linesep = os.linesep if linesep in ('default', True, 1, 'os') else linesep
+    tqdm_prog = no_tqdm if (not verbose or (hasattr(texts, '__len__') and len(texts) < 3)) else tqdm
+    global _parse
+    if not _parse:
+        _parse = spacy.load(lang)
+    # TODO: reverse this recursion (str first then sequence) to allow for sequences of sequences of texts
+    if isinstance(texts, str):
+        if linesep:
+            return nlp(texts.split(linesep))
+        else: 
+            return [nlp(texts)]
+    if hasattr(texts, '__len__'):
+        if len(texts) > 1:
+            return [_parse(text) for text in tqdm_prog(texts)]
+        else:
+            return _parse(texts[0])
+    else: 
+        return [_parse(text) for text in tqdm_prog(texts)]
 
 
 def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),
