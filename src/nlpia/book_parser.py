@@ -3,6 +3,8 @@ import sys
 import glob
 import re
 
+from nlpia.constants import BOOK_PATH
+
 
 BLOCK_DELIMITERS = dict([('--', 'natural'), ('==', 'natural'), ('__', 'natural'), ('**', 'natural'),
                          ('++', 'latex'), ('//', 'comment')])
@@ -19,15 +21,22 @@ VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption'
 INCLUDE_TAGS = set(['natural', 'caption'] + ['natural_heading{}'.format(i) for i in range(1, 6)])
 
 
-def get_lines(file_path):
+def get_lines(file_path=BOOK_PATH):
     r""" Retrieve text lines from the manuscript Chapter*.asc and Appendix*.asc files
 
     Args:
         file_path (str): Path to directory containing manuscript asciidoc files
-        i.e.: /Users/cole-home/repos/nlpinaction/manuscript/
+        i.e.: /Users/cole-home/repos/nlpinaction/manuscript/ or nlpia.constants.BOOK_PATH
 
     Returns:
         list of lists of str, one list for each Chapter or Appendix
+
+    >>> lines = get_lines(os.path.join(BOOK_PATH))
+    >>> next(lines)
+    ('/Users/hobsonlane/code/nlpia/nlpia/src/nlpia/data/book/Appendix F -- Glossary.asc',
+     ['= Glossary\n',
+      '\n',
+      "We've collected some ...
     """
     if os.path.isdir(file_path):
         file_path = os.path.join(file_path, '*.asc')
