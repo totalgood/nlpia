@@ -77,7 +77,7 @@ def is_valid_url(url):
     'https://totalgood.org'
 
     >>> url = is_valid_url("totalgood.org")
-    >>> url.startswith('http')
+    >>> url is None or url.startswith('http')
     True
     >>> url.endswith('totalgood.org')
     True
@@ -102,7 +102,7 @@ def is_valid_url(url):
             except ConnectionError:
                 return False
     except ConnectionError:
-        return False
+        return None
     except:
         return None
     if resp.status_code == 200:

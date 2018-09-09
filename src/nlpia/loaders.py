@@ -753,6 +753,24 @@ def unzip(filepath, verbose=True):
     return anki_paths + txt_paths + w2v_paths
 
 
+def create_big_url(name):
+    """ If name looks like a url, with an http, add an entry for it in BIG_URLS """
+    # BIG side effect
+    global BIG_URLS
+    parsed_url = urlparse(name)
+    if parsed_url.scheme:
+        try:
+            r = requests.get(parsed_url.geturl(), stream=True, allow_redirects=True)
+            remote_size = r.headers.get('Content-Length', -1)
+            name = os.path.basename(parsed_url.path).split('.')
+            name = (name[0] if name[0] not in ('', '.') else name[1]).replace(' ', '-')
+            name = name.lower().strip()
+            BIG_URLS[name] = (parsed_url.geturl(), int(remote_size or -1))
+            return name
+        except requests.ConnectionError:
+            pass
+
+
 def download_unzip(names=None, verbose=True):
     r""" Download CSV or HTML tables listed in `names`, unzip and to DATA_PATH/`names`.csv .txt etc
 
@@ -767,21 +785,14 @@ def download_unzip(names=None, verbose=True):
     # names = names or list(BIG_URLS.keys())  # download them all, if none specified!
     file_paths = {}
     for name in names:
-        parsed_url = urlparse(name)
-        if parsed_url.scheme:
-            try:
-                r = requests.get(parsed_url.geturl(), stream=True, allow_redirects=True)
-                remote_size = r.headers.get('Content-Length', -1)
-                name = os.path.basename(parsed_url.path).split('.')
-                name = (name[0] if name[0] not in ('', '.') else name[1]).replace(' ', '-')
-                BIG_URLS[name] = (parsed_url.geturl(), int(remote_size or -1))
-            except requests.ConnectionError:
-                pass
-        name = name.lower().strip()
+        created = create_big_url(name)
+        name = (created or name).lower().strip()
 
         if name in BIG_URLS:
-            file_paths[name] = download_name(name, verbose=verbose)
-            file_paths[name] = normalize_ext_rename(file_paths[name])
+            filepath = download_name(name, verbose=verbose)
+            if not filepath:
+                continue
+            file_paths[name] = normalize_ext_rename(filepath)
             logger.debug('downloaded name={} to filepath={}'.format(name, file_paths[name]))
             fplower = file_paths[name].lower()
             if fplower.endswith('.tar.gz'):
@@ -813,9 +824,9 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     >>> download_file(url=meta[0], verbose=False).endswith(pathend)
     True
     >>> t0 = time.time()
-    >>> download_file(url=BIG_URLS['ubuntu_dialog_test'][0], verbose=False).endswith(pathend)
-    True
-    >>> 0.01 < (time.time() - t0) < 3.0
+    >>> localpath = download_file(url=BIG_URLS['ubuntu_dialog_test'][0], verbose=False)
+    >>> t1 = time.time()
+    >>> localpath is None or ((0.015 < (t1 - t0) < 5.0) and localpath.endswith(pathend))
     True
     >>> t0 = time.time()
     >>> download_file(url=meta[0], size=meta[1], verbose=False).endswith(pathend)
@@ -881,6 +892,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         r.close()
     else:
         logger.error('Unable to request URL: {} using request object {}'.format(url, r))
+        return None
 
     logger.debug('nlpia.loaders.download_file: bytes={}'.format(bytes_downloaded))
     stat = path_status(filepath)

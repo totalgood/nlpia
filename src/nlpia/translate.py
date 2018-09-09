@@ -214,10 +214,12 @@ def main(
     ...
     >>> len(model.get_weights())
     8
-    >>> 56 <= model.get_weights()[-1].shape[0] <= 64
+
+    # 64 common characters in German, 56 in English
+    >>> model.get_weights()[-1].shape[0] >=50
     True
-    >>> model.get_weights()[-2].shape
-    (32, 64)
+    >>> model.get_weights()[-2].shape[0]
+    32
     """
     mkdir_p(checkpoint_dir)
     encoder_input_path = os.path.join(

@@ -1,7 +1,9 @@
 """ Translate documents in some way, like `sed`, only a bit more complex """
+# -*- coding: utf-8 -*-
 import os
 import requests
 import regex
+import re
 import json
 
 import nltk
@@ -86,7 +88,7 @@ class TokenNormalizer:
 
 
 def clean_asciidoc(text):
-    """ Transform asciidoc text into ASCII text that NL parsers can handle
+    r""" Transform asciidoc text into ASCII text that NL parsers can handle
 
     TODO:
       Tag lines and words with meta data like italics, underlined, bold, title, heading 1, etc
@@ -94,8 +96,8 @@ def clean_asciidoc(text):
     >>> clean_asciidoc('**Hello** _world_!')
     '"Hello" "world"!'
     """
-    text = regex.sub(r'(\b|^)[[_*]{1,2}([a-zA-Z0-9])', r'"\2', text)
-    text = regex.sub(r'([a-zA-Z0-9])[]_*]{1,2}', r'\1"', text)
+    text = re.sub(r'(\b|^)[\[_*]{1,2}([a-zA-Z0-9])', r'"\2', text)
+    text = re.sub(r'([a-zA-Z0-9])[\]_*]{1,2}', r'\1"', text)
     return text
 
 
