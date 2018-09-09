@@ -2,10 +2,12 @@ import os
 import sys
 import glob
 import re
+import logging
 
 from nlpia.constants import BOOK_PATH
 
 
+logger = logging.getLogger(__name__)
 BLOCK_DELIMITERS = dict([('--', 'natural'), ('==', 'natural'), ('__', 'natural'), ('**', 'natural'),
                          ('++', 'latex'), ('//', 'comment')])
 BLOCK_DELIMITER_CHRS = ''.join([k[0] for k in BLOCK_DELIMITERS.keys()])
@@ -156,11 +158,29 @@ def tag_lines(lines):
     return tagged_lines
 
 
-def main(book_dir='.', include_tags=None, verbosity=1):
-    print('book_dir: {}'.format(book_dir))
-    print('include_tags: {}'.format(include_tags))
-    print('verbosity: {}'.format(verbosity))
+def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
+    r""" Parse all the asciidoc files in book_dir, returning a list of 2-tuples of lists of 2-tuples (tagged lines) 
 
+    >>> main(BOOK_PATH, verbosity=0)
+    [('...src/nlpia/data/book/Appendix F -- Glossary.asc',
+      [('natural_heading1', '= Glossary'),
+       ('blank_line', ''),
+       ('natural',
+        "We've collected some definitions ...
+    >>> main(BOOK_PATH, include_tags='natural', verbosity=1)
+    = Glossary
+    We've collected some definitions of some common NLP and ML acronyms and terminology here.footnote:[Bill Wilson at the university of New South Wales in Australia has a more complete one here: https://www.cse.unsw.edu.au/~billw/nlpdict.html]
+    You can find some of the tools we used to generate this list in the `nlpia` python package at https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py:[github.com/totalgood/nlpia]].
+    [template="glossary",id="terms"]
+    Acronyms
+    ...
+    """
+    if verbosity:
+        logger.info('book_dir: {}'.format(book_dir))
+        logger.info('include_tags: {}'.format(include_tags))
+        logger.info('verbosity: {}'.format(verbosity))
+
+    include_tags = None if not include_tags else set([t.lower().strip() for t in include_tags])
     sections = [(filepath, tag_lines(lines)) for filepath, lines in get_lines(book_dir)]
     if verbosity > 0:
         for filepath, tagged_lines in sections:
@@ -169,7 +189,8 @@ def main(book_dir='.', include_tags=None, verbosity=1):
                 print(filepath)
                 print('-' * 79)
             for tag_line in tagged_lines:
-                if include_tags is None or tag_line[0] in include_tags:
+                if include_tags is None or tag_line[0] in include_tags or \
+                        any((tag_line[0].startswith(t) for t in include_tags)):
                     if verbosity == 1:
                         print(tag_line[1])
                     if verbosity > 1:
