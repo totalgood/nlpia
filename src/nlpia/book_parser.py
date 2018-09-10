@@ -35,7 +35,7 @@ def get_lines(file_path=BOOK_PATH):
 
     >>> lines = get_lines(os.path.join(BOOK_PATH))
     >>> next(lines)
-    ('/Users/hobsonlane/code/nlpia/nlpia/src/nlpia/data/book/Appendix F -- Glossary.asc',
+    ('.../src/nlpia/data/book/Appendix F -- Glossary.asc',
      ['= Glossary\n',
       '\n',
       "We've collected some ...
