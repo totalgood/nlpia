@@ -12,8 +12,10 @@ BLOCK_DELIMITERS = dict([('--', 'natural'), ('==', 'natural'), ('__', 'natural')
                          ('++', 'latex'), ('//', 'comment')])
 BLOCK_DELIMITER_CHRS = ''.join([k[0] for k in BLOCK_DELIMITERS.keys()])
 BLOCK_HEADERS = dict([('[tip]', 'natural'), ('[note]', 'natural'), ('[important]', 'natural'), ('[quote]', 'natural')])
+BLOCK_HEADERS4 = dict([(k[:4], v) for k, v in BLOCK_HEADERS.items()])
+
 CRE_BLOCK_DELIMITER = re.compile(r'^[' + BLOCK_DELIMITER_CHRS + r']{2,240}$')
-HEADER_TYPES = [('source', 'code'), ('latex', 'latex')]
+HEADER_TYPES = [('source', 'code'), ('latex', 'latex'), ('template="glossary"', 'glossary'), ("template='glossary'", 'glossary')]
 VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start', ] + 
                  [b for b in BLOCK_DELIMITERS.values()] + 
                  [b + '_start' for b in BLOCK_DELIMITERS.values()] + 
@@ -83,20 +85,18 @@ def tag_lines(lines):
         normalized_line = line.lower().strip().replace(" ", "")
 
         # [source,...] with or without any following "----" block delimiter
-        if normalized_line.startswith('[' + HEADER_TYPES[0][0]):
-            current_block_type = HEADER_TYPES[0][1]
-            block_start = idx
-            tag = current_block_type + '_header'
-            block_terminator = None
-        # [latex] with or without any following "++++" block delimiter
-        elif normalized_line.startswith('[' + HEADER_TYPES[1][0]):
-            current_block_type = HEADER_TYPES[1][1]
+        # TODO: make this a regex that classifies among the different types (source, glossary, tip, etc)
+        header_type = next((HEADER_TYPES[i] for i in range(len(HEADER_TYPES)) if
+                            normalized_line.startswith('[') and normalized_line[1:].startswith(HEADER_TYPES[i][0])),
+                           None)
+        if header_type:
+            current_block_type = header_type[1]
             block_start = idx
             tag = current_block_type + '_header'
             block_terminator = None
         # [note],[quote],[important],... etc with or without any following "====" block delimiter
-        elif normalized_line in BLOCK_HEADERS:
-            current_block_type = 'natural'
+        elif normalized_line[:4] in BLOCK_HEADERS4:
+            current_block_type = BLOCK_HEADERS4[normalized_line[:4]]
             block_start = idx
             tag = 'block_header'  # BLOCK_HEADERS[normalized_line]
             block_terminator = None
@@ -115,7 +115,7 @@ def tag_lines(lines):
         #         #     tag = current_block_type
         #     elif:
         # bare block delimiters without a block type already defined?
-        elif CRE_BLOCK_DELIMITER.match(normalized_line) and normalized_line[:2] in BLOCK_DELIMITERS:
+        elif CRE_BLOCK_DELIMITER.match(normalized_line) and normalized_line[: 2] in BLOCK_DELIMITERS:
             if not idx or not block_start or not current_block_type or not block_terminator:
                 current_block_type = (current_block_type or BLOCK_DELIMITERS[normalized_line[:2]])
                 block_start = idx 
@@ -169,32 +169,36 @@ def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
         "We've collected some definitions ...
     >>> main(BOOK_PATH, include_tags='natural', verbosity=1)
     = Glossary
-    We've collected some definitions of some common NLP and ML acronyms and terminology here.footnote:[Bill Wilson at the university of New South Wales in Australia has a more complete one here: https://www.cse.unsw.edu.au/~billw/nlpdict.html]
-    You can find some of the tools we used to generate this list in the `nlpia` python package at https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py:[github.com/totalgood/nlpia]].
-    [template="glossary",id="terms"]
-    Acronyms
+    We've collected some definitions of some common NLP and ML acronyms and terminology here.footnote:[Bill Wilson...
+    at the university of New South Wales in Australia has a more complete one here:...
+    https://www.cse.unsw.edu.au/~billw/nlpdict.html]...
+    You can find some of the tools we used to generate this list in the `nlpia` python package at...
     ...
+    >>> main(BOOK_PATH, include_tags=['natural', 'blank'], verbosity=0)
     """
     if verbosity:
         logger.info('book_dir: {}'.format(book_dir))
         logger.info('include_tags: {}'.format(include_tags))
         logger.info('verbosity: {}'.format(verbosity))
 
+    include_tags = [include_tags] if isinstance(include_tags, str) else include_tags
     include_tags = None if not include_tags else set([t.lower().strip() for t in include_tags])
     sections = [(filepath, tag_lines(lines)) for filepath, lines in get_lines(book_dir)]
     if verbosity > 0:
         for filepath, tagged_lines in sections:
             if verbosity > 1:
-                print('_' * 79)
+                print('=' * 75)
                 print(filepath)
-                print('-' * 79)
-            for tag_line in tagged_lines:
-                if include_tags is None or tag_line[0] in include_tags or \
-                        any((tag_line[0].startswith(t) for t in include_tags)):
+                print('-' * 75)
+            for tagged_line in tagged_lines:
+                if include_tags is None or tagged_line[0] in include_tags or \
+                        any((tagged_line[0].startswith(t) for t in include_tags)):
                     if verbosity == 1:
-                        print(tag_line[1])
+                        print(tagged_line[1])
                     if verbosity > 1:
-                        print(tag_line)
+                        print(tagged_line)
+                else:
+                    logger.debug('skipping tag {} because not in {}'.format(tagged_line[0], include_tags))
             if verbosity > 1:
                 print('=' * 79)
                 print()
@@ -216,7 +220,7 @@ if __name__ == '__main__':
             verbosity = 1
             include_tags = args
 
-    if include_tags and include_tags[0].strip().lower()[:3] == 'all':
+    if include_tags and include_tags[0].strip().lower()[: 3] == 'all':
         include_tags = None
 
     # print('Parsing Chapters and Appendices in: ' + book_dir)
