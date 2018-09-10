@@ -78,6 +78,7 @@ def tag_lines(lines):
     current_block_type = None
     block_terminator = None
     block_start = None
+    tag = ''
     tagged_lines = []
     for idx, line in enumerate(lines):
         # print(current_block_type)
@@ -114,9 +115,13 @@ def tag_lines(lines):
         #         #     block_terminator = line.strip()
         #         #     tag = current_block_type
         #     elif:
-        # bare block delimiters without a block type already defined?
-        elif CRE_BLOCK_DELIMITER.match(normalized_line) and normalized_line[: 2] in BLOCK_DELIMITERS:
-            if not idx or not block_start or not current_block_type or not block_terminator:
+
+        # block start and end delimiters: '----', '====', '____', '****', '--' etc
+        # block delimiters (like '----') can start a block with or without a block type already defined
+        elif (
+                CRE_BLOCK_DELIMITER.match(normalized_line) and
+                normalized_line[: 2] in BLOCK_DELIMITERS):  # or (tag in set('caption anchor'.split()))):
+            if (not idx or not block_start or not current_block_type or not block_terminator):
                 current_block_type = (current_block_type or BLOCK_DELIMITERS[normalized_line[:2]])
                 block_start = idx 
                 tag = current_block_type + '_start'
@@ -214,11 +219,15 @@ def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
 
 if __name__ == '__main__':
     args = sys.argv[1:]
+
     book_dir = os.path.curdir
+    verbosity = 1
+    include_tags = tuple(INCLUDE_TAGS)
+
     if args:
         book_dir = args[0]
         args = args[1:]
-    include_tags = INCLUDE_TAGS
+
     if args:
         try:
             verbosity = int(args[0])
@@ -227,7 +236,7 @@ if __name__ == '__main__':
             verbosity = 1
             include_tags = args
 
-    if include_tags and include_tags[0].strip().lower()[: 3] == 'all':
+    if include_tags and include_tags[0].strip().lower()[: 3] in ('all', 'none', 'true'):
         include_tags = None
 
     # print('Parsing Chapters and Appendices in: ' + book_dir)
