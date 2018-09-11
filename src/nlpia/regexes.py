@@ -33,12 +33,16 @@ CRE_URL_SIMPLE = re.compile(RE_URL_SIMPLE)
 CRE_SLUG_DELIMITTER = re.compile(r'[^a-zA-Z]+|(?<=[a-z])(?=[A-Z])')
 
 
-CRE_FILENAME_EXT = re.compile(r'([.][^a-zA-Z0-9]{1,8})$')
+CRE_FILENAME_EXT = re.compile(r'(?<=[.a-zA-Z0-9_])([.][a-zA-Z0-9]{1,8}){1,5}$')
 """
->>> CRE_FILENAME_EXT.match('long.asciidoc.ext.ps4.123').group()
+>>> CRE_FILENAME_EXT.search('.bashrc.asciidoc.ext.ps4.123').group()
 ''
 >>> CRE_FILENAME_EXT.sub('', 'this/path/has/a/file.html')
 'this/path/has/a/file'
+>>> CRE_FILENAME_EXT.search('.bashrc..asciidoc.ext.ps4.123').group()
+'.asciidoc.ext.ps4.123'
+>>> CRE_FILENAME_EXT.search('.bashrc..asciidoc..ext.ps4.123').group()
+'.ext.ps4.123'
 """
 
 # ? \(\): ()
