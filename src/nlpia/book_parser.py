@@ -197,6 +197,7 @@ def infer_url_title(url):
     'the what if tool code free probing of'
     """
     meta = get_url_filemeta(url)
+    filename, fileext = os.path.splitext('filename')
     title = meta.get('filename', meta['hostname'])
     return delimit_slug(title, ' ') 
 
