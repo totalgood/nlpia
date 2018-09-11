@@ -6,7 +6,7 @@ import logging
 
 from nlpia.constants import BOOK_PATH
 from nlpia.regexes import RE_URL_SIMPLE
-from nlpia.loaders import get_url_title
+from nlpia.loaders import get_url_title, get_url_filemeta
 
 
 logger = logging.getLogger(__name__)
@@ -28,6 +28,7 @@ VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption'
                  ['natural_heading{}'.format(i) for i in range(1, 6)] + 
                  ['image_link', 'natural', 'natural_end', 'natural_start', 'code_header'])
 INCLUDE_TAGS = set(['natural', 'caption'] + ['natural_heading{}'.format(i) for i in range(1, 6)])
+re_bad_footnotes = re.compile(r'footnote:\[' + RE_URL_SIMPLE + r'\]')
 
 
 def get_lines(file_path=BOOK_PATH):
@@ -82,14 +83,10 @@ def tag_lines(lines):
     """
     current_block_type = None
     block_terminator = None
-#    block_start = None
     tag = ''
     tagged_lines = []
     for idx, line in enumerate(lines):
-        # print(current_block_type)
-        # print(line)
         normalized_line = line.lower().strip().replace(" ", "")
-
         # [source,...] with or without any following "----" block delimiter
         # TODO: make this a regex that classifies among the different types (source, glossary, tip, etc)
         header_type = next((HEADER_TYPES[i] for i in range(len(HEADER_TYPES)) if
@@ -97,45 +94,23 @@ def tag_lines(lines):
                            None)
         if header_type:
             current_block_type = header_type[1]
-#            block_start = idx
             tag = current_block_type + '_header'
             block_terminator = None
-        # [note],[quote],[important],... etc with or without any following "====" block delimiter
         elif normalized_line[:4] in BLOCK_HEADERS4:
             current_block_type = BLOCK_HEADERS4[normalized_line[:4]]
-#            block_start = idx
             tag = current_block_type + '_header'  # BLOCK_HEADERS[normalized_line]
             block_terminator = None
-        # # "==", "--", '__', '++' block delimiters below block type ([note], [source], or blank line)
-        # elif current_block_type
-        #     if idx == block_start + 1:
-        #         if line.strip()[:2] in ('--', '==', '__', '**'):
-        #             block_terminator = line.strip()
-        #             tag = current_block_type + '_start'
-        #         elif line.strip()[:2] == '++':
-        #             block_terminator = line.strip()
-        #             tag = current_block_type + '_start'
-        #         # # this should only happen when there's a "bare" untyped block that has started
-        #         # else:
-        #         #     block_terminator = line.strip()
-        #         #     tag = current_block_type
-        #     elif:
-
-        # block start and end delimiters: '----', '====', '____', '****', '--' etc
-        # block delimiters (like '----') can start a block with or without a block type already defined
         elif (
                 CRE_BLOCK_DELIMITER.match(normalized_line) and
                 normalized_line[:2] in BLOCK_DELIMITERS):  # or (tag in set('caption anchor'.split()))):
             if (not idx or not current_block_type or not block_terminator):
                 current_block_type = (current_block_type or BLOCK_DELIMITERS[normalized_line[:2]])
-#                block_start = idx 
                 tag = current_block_type + '_start'
                 block_terminator = normalized_line
             elif block_terminator and line.rstrip() == block_terminator:
                 tag = current_block_type + '_end'
                 current_block_type = None
                 block_terminator = None
-#                block_start = None  # block header not allowed on line 0
             else:
                 tag = current_block_type
         elif current_block_type and (line.rstrip() == block_terminator or 
@@ -143,7 +118,6 @@ def tag_lines(lines):
             tag = current_block_type + '_end'
             current_block_type = None
             block_terminator = None
-#            block_start = None  # block header not allowed on line 0
         elif current_block_type:
             tag = current_block_type
         elif not normalized_line:
@@ -176,16 +150,13 @@ def get_tagged_sections(book_dir):
 
 def find_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']):
     """ Find lines in the manuscript that contain bad footnotes (only urls) """
-    re_bad_footnotes = re.compile(r'footnote:\[' + RE_URL_SIMPLE + r'\]')
     sections = get_tagged_sections(book_dir=book_dir)
     bad_url_lines = []
     for filepath, tagged_lines in sections:
         for tag, line in tagged_lines:
-            if include_tags is None or tag in include_tags or \
-                    any((tag.startswith(t) for t in include_tags)):
-                found_baddies = re_bad_footnotes.findall(line)
-                if found_baddies:
-                    bad_url_lines.append([line] + [baddie[0] for baddie in found_baddies])
+            line_baddies = get_line_bad_footnotes(line=tagged_lines[1], tag=tagged_lines[0])
+            if line_baddies:
+                bad_url_lines.append()
     return bad_url_lines
 
 
@@ -209,6 +180,41 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural'],
             url_line_titles.append(line_titles)
 
     return url_line_titles
+
+
+def get_line_bad_footnotes(line, tag=None, include_tags=['natural']):
+    """ Return [original_line, url_footnote1, url_footnote2, ... url_footnoteN] for N bad footnotes in the line """ 
+    if tag is None or include_tags is None or tag in include_tags or any((tag.startswith(t) for t in include_tags)):
+        found_baddies = re_bad_footnotes.findall(line)
+        return [line] + [baddie[0] for baddie in found_baddies]
+
+
+def infer_url_title(url):
+    """ Guess what the page title is going to be from the path and FQDN in the URL """
+    meta = get_url_filemeta(url)
+    title = meta.get('filename', )
+
+    return url.split('/')[-1]
+
+
+def translate_line_footnotes(line, tag=None, default_title='See the web page '):
+    """ Find all bare-url footnotes, like "footnote:[moz.org]" and add a title like "footnote:[Moz (moz.org)]" """
+    line_urls = get_line_bad_footnotes(line, tag=tag)
+    urls = line_urls[1:] if line_urls else []
+    for url in urls:
+        title = get_url_title(url)
+        brief_title = title.split('\n')[0].strip().split('|')[0].strip()
+        title = brief_title if len(brief_title) > 3 and len(title) > 32 else title
+        if not default_title or title: 
+            line = line.replace(
+                'footnote:[{url}]'.format(url=url),
+                'footnote:[{title} ({url})]'.format(title=(title or default_title), url=url))
+    return line
+
+
+def filter_lines(input_file, output_file, translate=lambda line: line):
+    filepath, lines = get_lines([input_file])[0]
+    return filepath, [(tag, translate(line=line, tag=tag)) for (tag, line) in lines]
 
 
 def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):

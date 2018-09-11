@@ -774,8 +774,20 @@ def create_big_url(name):
 def get_url_filemeta(url):
     """ Request HTML for the page at the URL indicated and return the url, filename, and remote size
 
-    >>> get_url_filemeta('mozilla.com')
-    {'url': 'http://mozilla.com', 'remote_size': -1, 'filename': ''}
+    >>> sorted(get_url_filemeta('mozilla.com').items())
+    [('filename', ''),
+     ('hostname', 'mozilla.com'),
+     ('path', ''),
+     ('remote_size', -1),
+     ('url', 'http://mozilla.com'),
+     ('username', None)]
+    >>> sorted(get_url_filemeta('https://duckduckgo.com/about?q=nlp').items())
+    [('filename', 'about'),
+     ('hostname', 'duckduckgo.com'),
+     ('path', '/about'),
+     ('remote_size', -1),
+     ('url', 'https://duckduckgo.com/about?q=nlp'),
+     ('username', None)]
     >>> 1000 <= int(get_url_filemeta('en.wikipedia.org')['remote_size']) <= 200000
     True
     """ 
@@ -788,7 +800,9 @@ def get_url_filemeta(url):
     try:
         r = requests.get(url, stream=True, allow_redirects=True)
         remote_size = r.headers.get('Content-Length', -1)
-        return dict(url=url, remote_size=remote_size, filename=os.path.basename(parsed_url.path))
+        return dict(url=url, hostname=parsed_url.hostname, path=parsed_url.path,
+                    username=parsed_url.username, remote_size=remote_size,
+                    filename=os.path.basename(parsed_url.path))
     except requests.ConnectionError:
         pass
 
