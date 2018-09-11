@@ -192,7 +192,7 @@ def find_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']):
 def correct_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural'], skip_untitled=True):
     """ Find bad footnotes (only urls), visit the page, add the title to the footnote 
 
-    >>> orrect_bad_footnote_urls(BOOK_PATH)
+    >>> correct_bad_footnote_urls(BOOK_PATH)
     [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
       ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
        'Linguistic Features Â· spaCy Usage Documentation')]]
