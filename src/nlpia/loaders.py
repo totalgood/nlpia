@@ -774,6 +774,9 @@ def create_big_url(name):
 def get_url_filemeta(url):
     """ Request HTML for the page at the URL indicated and return the url, filename, and remote size
 
+    TODO: just add remote_size and basename and filename attributes to the urlparse object 
+          instead of returning a dict
+
     >>> sorted(get_url_filemeta('mozilla.com').items())
     [('filename', ''),
      ('hostname', 'mozilla.com'),

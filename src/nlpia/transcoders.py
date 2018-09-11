@@ -11,6 +11,7 @@ import nltk
 from pugnlp.futil import find_files
 from nlpia.data_utils import iter_lines
 from nlpia.loaders import nlp
+from regexes import CRE_SLUG_DELIMITTER
 
 from .constants import secrets, DATA_PATH
 
@@ -56,6 +57,34 @@ def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified'
         with open(filemeta['path'] + (output_ext or ''), 'wt') as fout:
             fout.write(altered_text)
     return altered_text
+
+
+def delimit_slug(slug, sep=' '):
+    """ Return a str of separated tokens found within a slugLike_This => 'slug Like This'
+
+    >>> split_slug('slugLike_ThisW/aTLA') 
+    ['slug', 'Like', 'This', 'W', 'a', 'TLA']
+    """
+    hyphenated_slug = re.sub(CRE_SLUG_DELIMITTER, sep, slug)
+    return hyphenated_slug
+
+
+def hyphenate_slug(slug):
+    """ Return a str of hyphenated tokens found within a slugLike_This => slug-Like-This
+
+    >>> split_slug('slugLike_ThisW/aTLA') 
+    ['slug', 'Like', 'This', 'W', 'a', 'TLA']
+    """
+    return delimit_slug(slug, sep='-')
+
+
+def split_slug(slug):
+    """ Return a list of tokens from within a slugLike_This => ['slug', 'Like', 'This'] 
+
+    >>> split_slug('slugLike_ThisW/aTLA') 
+    ['slug', 'Like', 'This', 'W', 'a', 'TLA']
+    """
+    return delimit_slug(slug, sep=' ').split()
 
 
 class TokenNormalizer:

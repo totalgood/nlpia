@@ -24,6 +24,14 @@ CRE_ACRONYM = re.compile(RE_ACRONYM2 + '|' + RE_ACRONYM3, re.IGNORECASE)
 
 RE_URL_SIMPLE = r'(((http|ftp|https)://)?([^/:(\["\'`)\]\s]+' \
     r'[.])(com|org|edu|gov|net|mil|uk|ca|de|jp|fr|au|us|ru|ch|it|nl|se|no|es|io|me)([^"\'`)\]\s]*))'
+CRE_URL_SIMPLE = re.compile(RE_URL_SIMPLE)
+
+"""
+>>> CRE_SLUG_DELIMITTER.sub('-', 'thisSlug-should|beHypenatedInLots_OfPlaces')
+'this-Slug-should-be-Hypenated-In-Lots-Of-Places'
+"""
+CRE_SLUG_DELIMITTER = re.compile(r'[^a-zA-Z]+|(?<=[a-z])(?=[A-Z])')
+
 
 # ? \(\): ()
 # \': '"'"' 
