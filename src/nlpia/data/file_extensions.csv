@@ -1,0 +1,165 @@
+ext,description
+.a,UNIX static library file.
+.asm,Non-UNIX assembler source file.
+.asp,Active Server Page.
+.awk,An awk script file.
+.bat,MS-DOS batch file.
+.bmp,Bitmap image file.
+.btm,4NT batch file.
+.BTM,4NT batch file.
+.c,C language file.
+.class,Compiled java source code file.
+.cmd,Compiler command file.
+.CPP,C++ language file.
+.csv,Comma-separated value file.
+.cur,Cursor image file.
+.cxx,C++ language file.
+.CXX,C++ language file.
+.db,Module interface and type descriptions database file (type  library).
+.def,Win32 library definition file.
+.DES,
+.dlg,Win32 dialog resource file.
+.dll,Win32 dynamic linked library.
+.don,Contains successful message following the execution of bmp.
+.dpc,Source dependency file containing list of dependencies.
+.dpj,Java source dependency file containing list of dependencies.
+.dtd,Document type definition file.
+.dump,Library symbols file.
+.dxp,Exports definition file.
+.eng,
+.exe,Win32 executable file.
+.flt,Filter file.
+.fmt,Format file.
+.font,Font file.
+.fp,CDE Front Panel file.
+.ft,
+.gif,Graphics Interchange Format file.
+.h,C header file.
+.H,C header file.
+.hdb,"Obsolete, formerly used with hedabu  tool."
+.hdl,Generated C header or header declaration file.
+.hid,Help ID file.
+.hpp,Generated C++ header or header plus plus file.
+.hrc,An .src include header file.
+.HRC,An .src include header file.
+.html,Hypertext markup language file.
+.hxx,C++ header file.
+.Hxx,C++ header file.
+.HXX,C++ header file.
+.ico,Icon file.
+.idl,Component interface description (Interface Definition  Language).
+.IDL,Component interface description (Interface Definition  Language).
+.ih,
+.ilb,Intermediate StarOffice interface definition file.
+.inc,Include file.
+.inf,Installation file.
+.ini,Initialization file.
+.inl,Inline header file.
+.ins,Installation configuration file.
+.java,Java language file.
+.jar,Java classes archive file.
+.jnl,CVS journal file.
+.jpg,Bitmap graphics (Joint Photography Experts Group).
+.js,JavaScript code file.
+.jsp,Java Server Page file.
+.kdelnk,KDE1 configuration file.
+.l,Lex source code file.
+.lgt,
+.lib,"In UNIX systems, a list of objects. In Win32 systems, a collection of objects."
+.lin,Incremental linking file.
+.ll,Lex source code file.
+.LN3,
+.lng,File containing string and message definitions for the setup  program.
+.lnk,Linker response file.
+.lnx,Linux-specific makefile.
+.LOG,Log file.
+.lst,"Project files to be delivered to solver.  For example, as in d.lst."
+.lst,ASCII database file used in solenv.
+.mac,Macintosh-specific makefile. This is now obsolete.
+.MacOS,
+.map,Library map file.
+.mk,A dmake makefile.
+.MK,A dmake makefile.
+.mod,BASIC module file.
+.NT2,
+.o,UNIX object file.
+.obj,Win32 object file.
+.par,Script particles file.
+.pfa,Type 3 font file.
+.pfb,Type 1 font file.
+.pl,Perl script
+.PL,Perl script
+.plc,"Former build script file, now obsolete."
+.pld,"Former build script file, now obsolete."
+.PLD,"Former build script file, now obsolete."
+.plf,
+.pm,Perl module file.
+.pmk,Project makefiles.
+.pre,Preprocessor output from scpcomp.
+.PRJ,
+.prt,
+.PS,PostScript file.
+.ptr,Mouse pointer file.
+.r,Resource file for Macintosh.
+.rc,A dmake recursive makefile or a  Win32 resource script file.
+.rdb,Interface and type description database (type library).
+.res,Resource file.
+.s,Assembler source file (UNIX).
+.S,Assembler source file (UNIX).
+.sbl,BASIC file.
+.scp,Script source file.
+.scr,Windows screen saver executable file.
+.sda,Draw application document.
+.sdb,Base application document.
+.sdc,Calc application document.
+.sdd,Impress application document.
+.sdg,Storage file for Gallery.
+.sdm,Mail message.
+.sds,Chart application document.
+.sdv,Gallery storage file.
+.sdw,Writer application document.
+.sdi,Interface definition file.
+.seg,Function ordering instructions for Microsoft linker.
+.SEG,Function ordering instructions for Microsoft linker.
+.Set,
+.sgl,Writer master document file.
+.sh,Shell script.
+.sid,Slot id file.
+.smf,Math application formula document.
+.sms,Math application formula document template.
+.so,UNIX dynamic shared library
+.sob - .soh,These files contain information about color palettes and  various style elements.
+.sob,Bitmap styles.
+.soc,Color palettes.
+.sod,Line styles.
+.soe,Arrow styles.
+.sog,Gradients.
+.soh,Hatches.
+.src,Source resource string file.
+.srs,Screen resource string file.
+.SSLeay,
+.Static,
+.tab,
+.TFM,Tagged Font Metric file.
+.thm,Storage file for Gallery.
+.tpt,
+.tsc,
+.ttf,TrueType font file.
+.TTF,TrueType font file.
+.txt,Language text file.
+.TXT,Language text file.
+.unx,UNIX-specific makefile. This is now obsolete.
+.UNX,UNIX-specific makefile.  This is now obsolete.
+.urd,From an IDL-generated relational database (Uno Reflection  Data).
+.url,Uniform Resource Locator file.
+.VMS,
+.vor,Writer document template.
+.W32,Partly native Windows makefile.
+.wav,Waveform audio file.
+.wmf,Win32 metafile vector graphics file.
+.xml,Extensible Markup Language file.
+.xpm,X11 pixel map graphics file.
+.xrb,XML format file to generate Java properties in language  translation.
+.y,Yacc source code file.
+.yxx,Bison source code file.
+.zip,Zip file.
