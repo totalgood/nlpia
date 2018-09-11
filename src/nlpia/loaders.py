@@ -485,6 +485,47 @@ def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
     return False
 
 
+def get_longest_table(url='https://www.openoffice.org/dev_docs/source/file_extensions.html', header=0):
+    """ Retrieve the HTML tables from a URL and return the longest DataFrame found 
+
+    >>> get_longest_table('https://en.wikipedia.org/wiki/List_of_sovereign_states').columns
+    Index(['Common and formal names', 'Membership within the UN System[a]',
+       'Sovereignty dispute[b]',
+       'Further information on status and recognition of sovereignty[d]'],
+      dtype='object')
+    """
+    dfs = pd.read_html(url, header=header)
+    return longest_table(dfs)
+
+
+def longest_table(dfs):
+    """ Return this single longest DataFrame that among an array/list/tuple of DataFrames 
+
+    Useful for automagically finding the DataFrame you want when using pd.read_html() on a Wikipedia page.
+    """
+    sorted_indices = sorted((len(df if hasattr(df, '__len__') else []), i) for i, df in enumerate(dfs))
+    return dfs[sorted_indices[-1][1]]
+
+
+def get_filename_extensions(url='https://www.webopedia.com/quick_ref/fileextensionsfull.asp'):
+    """ Load a DataFrame of filename extensions from the indicated url
+
+    >>> df = get_filename_extensions('https://www.openoffice.org/dev_docs/source/file_extensions.html')
+    >>> df.head(2)
+        ext                      description
+    0    .a        UNIX static library file.
+    1  .asm  Non-UNIX assembler source file.
+    """
+    df = get_longest_table(url)
+    columns = list(df.columns)
+    columns[0] = 'ext'
+    columns[1] = 'description'
+    if len(columns) > 2:
+        columns[2] = 'details'
+    df.columns = columns
+    return df
+
+
 def read_csv(*args, **kwargs):
     """Like pandas.read_csv, only little smarter: check left column to see if it should be the index_col
 

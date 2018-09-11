@@ -17,7 +17,8 @@ except ImportError:
 
 import requests
 from requests.adapters import HTTPAdapter
-from requests.exceptions import MissingSchema, ConnectionError
+from requests.exceptions import ConnectionError  # MissingSchema
+from urllib.parse import urlparse
 import pandas as pd
 
 from pugnlp.futil import find_files
@@ -25,7 +26,7 @@ from annoy import AnnoyIndex
 
 from nlpia.constants import logging
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
-from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH
+from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
 from nlpia.data.loaders import read_csv
 
 np = pd.np
@@ -65,6 +66,18 @@ NAME_ASCII = {
 }
 
 
+def prepend_http(url):
+    """ Ensure there's a scheme specified at the beginning of a url, defaulting to http://
+
+    >>> prepend_http('duckduckgo.com')
+    'http://duckduckgo.com'
+    """
+    url = url.lstrip()
+    if not urlparse(url).scheme:
+        return 'http://' + url
+    return url
+
+
 def is_valid_url(url):
     """ Check URL to see if it is a valid web page, return the redirected location if it is
 
@@ -81,32 +94,24 @@ def is_valid_url(url):
     True
     >>> url.endswith('totalgood.org')
     True
+    >>> is_valid_url('abcd')
+    False
+    >>> is_valid_url('abcd.com')
+    False
     """
-    if not isinstance(url, basestring):
+    if not isinstance(url, basestring) or '.' not in url:
         return False
-    normalized_url = url.lower().strip()
-    if not normalized_url[:7] in ('http://', 'https:/'):
-        url = 'http://' + url.lstrip('/')
+    normalized_url = prepend_http(url)
     session = requests.Session()
-    session.mount(url, HTTPAdapter(max_retries=3))
+    session.mount(url, HTTPAdapter(max_retries=2))
     try:
-        resp = session.get(url, allow_redirects=False)
-    except MissingSchema:
-        try:
-            url = 'https://' + url
-            resp = session.get(url, allow_redirects=False)
-        except ConnectionError:
-            try:
-                url = 'http://' + url
-                resp = session.get(url, allow_redirects=False)
-            except ConnectionError:
-                return False
+        resp = session.get(normalized_url, allow_redirects=False)
     except ConnectionError:
         return None
     except:
         return None
     if resp.status_code == 200:
-        return url
+        return normalized_url
     elif resp.status_code == 302:
         return resp.headers['location']
     else:
@@ -124,14 +129,16 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
     3
     >>> len(list(iter_lines('abc\n def\n gh')))
     3
-    >>> 20000 > len(list(iter_lines(os.path.join(DATA_PATH, 'book')))) > 200
+    >>> 20000 > len(list(iter_lines(BOOK_PATH))) > 200
     True
     """
     if url_or_text is None or not url_or_text:
         return []
         # url_or_text = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
     elif isinstance(url_or_text, (str, bytes, basestring)):
-        if os.path.isfile(os.path.join(DATA_PATH, url_or_text)):
+        if '\n' in url_or_text or '\r' in url_or_text:
+            return StringIO(url_or_text)
+        elif os.path.isfile(os.path.join(DATA_PATH, url_or_text)):
             return open(os.path.join(DATA_PATH, url_or_text), mode=mode)
         elif os.path.isfile(url_or_text):
             return open(os.path.join(url_or_text), mode=mode)

@@ -7,6 +7,7 @@ import logging
 from nlpia.constants import BOOK_PATH
 from nlpia.regexes import RE_URL_SIMPLE
 from nlpia.loaders import get_url_title, get_url_filemeta
+from nlpia.transcoders import delimit_slug
 
 
 logger = logging.getLogger(__name__)
@@ -190,11 +191,14 @@ def get_line_bad_footnotes(line, tag=None, include_tags=['natural']):
 
 
 def infer_url_title(url):
-    """ Guess what the page title is going to be from the path and FQDN in the URL """
-    meta = get_url_filemeta(url)
-    title = meta.get('filename', )
+    """ Guess what the page title is going to be from the path and FQDN in the URL
 
-    return url.split('/')[-1]
+    >>> infer_url_title('https://ai.googleblog.com/2018/09/the-what-if-tool-code-free-probing-of.html')
+    'the what if tool code free probing of'
+    """
+    meta = get_url_filemeta(url)
+    title = meta.get('filename', meta['hostname'])
+    return delimit_slug(title, ' ') 
 
 
 def translate_line_footnotes(line, tag=None, default_title='See the web page '):

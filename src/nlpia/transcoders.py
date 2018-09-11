@@ -62,8 +62,8 @@ def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified'
 def delimit_slug(slug, sep=' '):
     """ Return a str of separated tokens found within a slugLike_This => 'slug Like This'
 
-    >>> split_slug('slugLike_ThisW/aTLA') 
-    ['slug', 'Like', 'This', 'W', 'a', 'TLA']
+    >>> delimit_slug('slugLike_ThisW/aTLA')
+    'slug-Like-This-W-a-TLA'
     """
     hyphenated_slug = re.sub(CRE_SLUG_DELIMITTER, sep, slug)
     return hyphenated_slug
