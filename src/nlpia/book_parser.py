@@ -20,7 +20,7 @@ BLOCK_HEADERS4 = dict([(k[:4], v) for k, v in BLOCK_HEADERS.items()])
 CRE_BLOCK_DELIMITER = re.compile(r'^[' + BLOCK_DELIMITER_CHRS + r']{2,50}$')
 CRE_ANNOTATION = re.compile(r'^<([0-9]{1,2})>.*')
 HEADER_TYPES = [('source', 'code'), ('latex', 'latex'), ('latexmath', 'latex'),
-                ('template="glossary"', 'glossary'), ("template='glossary'", 'glossary')]
+                ('template="glossary"', 'natural_glossary'), ("template='glossary'", 'natural_glossary')]
 VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start', ] + 
                  [b for b in BLOCK_DELIMITERS.values()] + 
                  [b + '_start' for b in BLOCK_DELIMITERS.values()] + 
@@ -190,7 +190,13 @@ def find_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']):
 
 
 def correct_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural'], skip_untitled=True):
-    """ Find bad footnotes (only urls), visit the page, add the title to the footnote"""
+    """ Find bad footnotes (only urls), visit the page, add the title to the footnote 
+
+    >>> orrect_bad_footnote_urls(BOOK_PATH)
+    [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
+      ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
+       'Linguistic Features Â· spaCy Usage Documentation')]]
+    """
     bad_url_lines = find_bad_footnote_urls(book_dir=book_dir)
     url_line_titles = []
     for line in bad_url_lines:
@@ -202,7 +208,7 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural'],
         if len(line_titles) > 1:
             url_line_titles.append(line_titles)
 
-    return bad_url_lines
+    return url_line_titles
 
 
 def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
