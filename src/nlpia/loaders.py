@@ -36,22 +36,23 @@ from builtins import (bytes, dict, int, list, object, range, str,  # noqa
 from future import standard_library
 standard_library.install_aliases()  # noqa
 from past.builtins import basestring
-from itertools import zip_longest
-from urllib.parse import urlparse
-from copy import deepcopy
-# from traceback import print_exc
+
 
 # from traceback import format_exc
 import os
 import re
 import json
-import requests
 import logging
 import shutil
 from zipfile import ZipFile
 from math import ceil
-from itertools import product
+from itertools import product, zip_longest
+import requests
+from urllib.parse import urlparse
 from urllib.error import URLError
+from lxml.html import fromstring as parse_html
+from copy import deepcopy
+# from traceback import print_exc
 
 import pandas as pd
 import tarfile
@@ -757,18 +758,59 @@ def create_big_url(name):
     """ If name looks like a url, with an http, add an entry for it in BIG_URLS """
     # BIG side effect
     global BIG_URLS
-    parsed_url = urlparse(name)
-    if parsed_url.scheme:
-        try:
-            r = requests.get(parsed_url.geturl(), stream=True, allow_redirects=True)
-            remote_size = r.headers.get('Content-Length', -1)
-            name = os.path.basename(parsed_url.path).split('.')
-            name = (name[0] if name[0] not in ('', '.') else name[1]).replace(' ', '-')
-            name = name.lower().strip()
-            BIG_URLS[name] = (parsed_url.geturl(), int(remote_size or -1))
-            return name
-        except requests.ConnectionError:
-            pass
+    filemeta = get_url_filemeta(name)
+    if not filemeta:
+        return None
+    filename = filemeta['filename']
+    remote_size = filemeta['remote_size']
+    url = filemeta['url']
+    name = filename.split('.')
+    name = (name[0] if name[0] not in ('', '.') else name[1]).replace(' ', '-')
+    name = name.lower().strip()
+    BIG_URLS[name] = (url, int(remote_size or -1), filename)
+    return name
+
+
+def get_url_filemeta(url):
+    """ Request HTML for the page at the URL indicated and return the url, filename, and remote size
+
+    >>> get_url_filemeta('mozilla.com')
+    {'url': 'http://mozilla.com', 'remote_size': -1, 'filename': ''}
+    >>> 1000 <= int(get_url_filemeta('en.wikipedia.org')['remote_size']) <= 200000
+    True
+    """ 
+    parsed_url = urlparse(url)
+    if not parsed_url.scheme:
+        parsed_url = urlparse('http://' + parsed_url.geturl())
+    if not parsed_url.scheme:
+        return None
+    url = parsed_url.geturl()
+    try:
+        r = requests.get(url, stream=True, allow_redirects=True)
+        remote_size = r.headers.get('Content-Length', -1)
+        return dict(url=url, remote_size=remote_size, filename=os.path.basename(parsed_url.path))
+    except requests.ConnectionError:
+        pass
+
+
+def get_url_title(url):
+    r""" Request HTML for the page at the URL indicated and return it's <title> property
+
+    >>> get_url_title('mozilla.com').strip()
+    'Internet for people, not profit\n    — Mozilla'
+    """
+    parsed_url = urlparse(url)
+    if not parsed_url.scheme:
+        parsed_url = urlparse('http://' + parsed_url.geturl())
+    if not parsed_url.scheme:
+        return None
+    try:
+        r = requests.get(parsed_url.geturl(), stream=True, allow_redirects=True)
+        tree = parse_html(r.content)
+        title = tree.findtext('.//title')
+        return title
+    except requests.ConnectionError:
+        return None
 
 
 def download_unzip(names=None, verbose=True):

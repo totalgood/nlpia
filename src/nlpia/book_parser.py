@@ -5,17 +5,22 @@ import re
 import logging
 
 from nlpia.constants import BOOK_PATH
+from nlpia.regexes import RE_URL_SIMPLE
+from nlpia.loaders import get_url_title
 
 
 logger = logging.getLogger(__name__)
-BLOCK_DELIMITERS = dict([('--', 'natural'), ('==', 'natural'), ('__', 'natural'), ('**', 'natural'),
-                         ('++', 'latex'), ('//', 'comment')])
+BLOCK_DELIMITERS = dict([('--', 'code'), ('==', 'natural_sidenote'), ('__', 'natural_quote'), ('**', 'natural_asside'),
+                         ('++', 'latexmath'), ('//', 'comment')])
 BLOCK_DELIMITER_CHRS = ''.join([k[0] for k in BLOCK_DELIMITERS.keys()])
-BLOCK_HEADERS = dict([('[tip]', 'natural'), ('[note]', 'natural'), ('[important]', 'natural'), ('[quote]', 'natural')])
+BLOCK_HEADERS = dict([('[tip]', 'natural_tip'), ('[note]', 'natural_note'), 
+                      ('[important]', 'natural_important'), ('[quote]', 'natural_quote')])
 BLOCK_HEADERS4 = dict([(k[:4], v) for k, v in BLOCK_HEADERS.items()])
 
-CRE_BLOCK_DELIMITER = re.compile(r'^[' + BLOCK_DELIMITER_CHRS + r']{2,240}$')
-HEADER_TYPES = [('source', 'code'), ('latex', 'latex'), ('template="glossary"', 'glossary'), ("template='glossary'", 'glossary')]
+CRE_BLOCK_DELIMITER = re.compile(r'^[' + BLOCK_DELIMITER_CHRS + r']{2,50}$')
+CRE_ANNOTATION = re.compile(r'^<([0-9]{1,2})>.*')
+HEADER_TYPES = [('source', 'code'), ('latex', 'latex'), ('latexmath', 'latex'),
+                ('template="glossary"', 'glossary'), ("template='glossary'", 'glossary')]
 VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start', ] + 
                  [b for b in BLOCK_DELIMITERS.values()] + 
                  [b + '_start' for b in BLOCK_DELIMITERS.values()] + 
@@ -77,7 +82,7 @@ def tag_lines(lines):
     """
     current_block_type = None
     block_terminator = None
-    block_start = None
+#    block_start = None
     tag = ''
     tagged_lines = []
     for idx, line in enumerate(lines):
@@ -92,14 +97,14 @@ def tag_lines(lines):
                            None)
         if header_type:
             current_block_type = header_type[1]
-            block_start = idx
+#            block_start = idx
             tag = current_block_type + '_header'
             block_terminator = None
         # [note],[quote],[important],... etc with or without any following "====" block delimiter
         elif normalized_line[:4] in BLOCK_HEADERS4:
             current_block_type = BLOCK_HEADERS4[normalized_line[:4]]
-            block_start = idx
-            tag = 'block_header'  # BLOCK_HEADERS[normalized_line]
+#            block_start = idx
+            tag = current_block_type + '_header'  # BLOCK_HEADERS[normalized_line]
             block_terminator = None
         # # "==", "--", '__', '++' block delimiters below block type ([note], [source], or blank line)
         # elif current_block_type
@@ -120,23 +125,25 @@ def tag_lines(lines):
         # block delimiters (like '----') can start a block with or without a block type already defined
         elif (
                 CRE_BLOCK_DELIMITER.match(normalized_line) and
-                normalized_line[: 2] in BLOCK_DELIMITERS):  # or (tag in set('caption anchor'.split()))):
-            if (not idx or not block_start or not current_block_type or not block_terminator):
+                normalized_line[:2] in BLOCK_DELIMITERS):  # or (tag in set('caption anchor'.split()))):
+            if (not idx or not current_block_type or not block_terminator):
                 current_block_type = (current_block_type or BLOCK_DELIMITERS[normalized_line[:2]])
-                block_start = idx 
+#                block_start = idx 
                 tag = current_block_type + '_start'
                 block_terminator = normalized_line
-            else:
+            elif block_terminator and line.rstrip() == block_terminator:
                 tag = current_block_type + '_end'
                 current_block_type = None
                 block_terminator = None
-                block_start = 0
+#                block_start = None  # block header not allowed on line 0
+            else:
+                tag = current_block_type
         elif current_block_type and (line.rstrip() == block_terminator or 
                                      (not block_terminator and not normalized_line)):
             tag = current_block_type + '_end'
             current_block_type = None
             block_terminator = None
-            block_start = None  # block header not allowed on line 0
+#            block_start = None  # block header not allowed on line 0
         elif current_block_type:
             tag = current_block_type
         elif not normalized_line:
@@ -163,6 +170,41 @@ def tag_lines(lines):
     return tagged_lines
 
 
+def get_tagged_sections(book_dir):
+    return [(filepath, tag_lines(lines)) for filepath, lines in get_lines(book_dir)]
+
+
+def find_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']):
+    """ Find lines in the manuscript that contain bad footnotes (only urls) """
+    re_bad_footnotes = re.compile(r'footnote:\[' + RE_URL_SIMPLE + r'\]')
+    sections = get_tagged_sections(book_dir=book_dir)
+    bad_url_lines = []
+    for filepath, tagged_lines in sections:
+        for tag, line in tagged_lines:
+            if include_tags is None or tag in include_tags or \
+                    any((tag.startswith(t) for t in include_tags)):
+                found_baddies = re_bad_footnotes.findall(line)
+                if found_baddies:
+                    bad_url_lines.append([line] + [baddie[0] for baddie in found_baddies])
+    return bad_url_lines
+
+
+def correct_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural'], skip_untitled=True):
+    """ Find bad footnotes (only urls), visit the page, add the title to the footnote"""
+    bad_url_lines = find_bad_footnote_urls(book_dir=book_dir)
+    url_line_titles = []
+    for line in bad_url_lines:
+        line_titles = [line[0]]
+        for url in line[1:]:
+            title = get_url_title(url)
+            if not skip_untitled or title: 
+                line_titles.append((url, title))
+        if len(line_titles) > 1:
+            url_line_titles.append(line_titles)
+
+    return bad_url_lines
+
+
 def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
     r""" Parse all the asciidoc files in book_dir, returning a list of 2-tuples of lists of 2-tuples (tagged lines) 
 
@@ -187,6 +229,9 @@ def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
     >>> tagged_lines = main(BOOK_PATH, include_tags='natural', verbosity=1)
     = Glossary
     We've collected some definitions of some common NLP and ML acronyms and terminology here.footnote:[...
+
+    TODO:
+       `def filter_tagged_lines(tagged_lines)` that returns an iterable. 
     """
     if verbosity:
         logger.info('book_dir: {}'.format(book_dir))
@@ -195,7 +240,7 @@ def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
 
     include_tags = [include_tags] if isinstance(include_tags, str) else include_tags
     include_tags = None if not include_tags else set([t.lower().strip() for t in include_tags])
-    sections = [(filepath, tag_lines(lines)) for filepath, lines in get_lines(book_dir)]
+    sections = get_tagged_sections(book_dir=book_dir)
     if verbosity > 0:
         for filepath, tagged_lines in sections:
             if verbosity > 1:
