@@ -11,7 +11,7 @@ import nltk
 from pugnlp.futil import find_files
 from nlpia.data_utils import iter_lines
 from nlpia.loaders import nlp
-from regexes import CRE_SLUG_DELIMITTER
+from nlpia.regexes import CRE_SLUG_DELIMITTER
 
 from .constants import secrets, DATA_PATH
 
