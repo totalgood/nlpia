@@ -157,15 +157,19 @@ def find_bad_footnote_urls(tagged_lines, include_tags=['natural']):
     >>> sections = get_tagged_sections(BOOK_PATH)
     >>> tagged_lines = sections[0][1]
     >>> find_bad_footnote_urls(tagged_lines)
-    [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes...
-      'https://spacy.io/usage/linguistic-features#rule-based-morphology']]
+    [[17, 'https://spacy.io/usage/linguistic-features#rule-based-morphology']]
     """
     section_baddies = []
-    logger.debug(tagged_lines[:3])
-    for tag, line in tagged_lines:
-        line_baddies = get_line_bad_footnotes(line=line, tag=tag)
+    logger.debug(tagged_lines)
+    for lineno, (tag, line) in enumerate(tagged_lines):
+        line_baddies = None
+        if tag is None or include_tags is None or tag in include_tags or any((tag.startswith(t) for t in include_tags)):
+            line_baddies = get_line_bad_footnotes(line=line, tag=tag)
         if line_baddies and len(line_baddies) > 1:
-            section_baddies.append(line_baddies)
+            section_baddies.append([lineno] + line_baddies[1:])
+        else:
+            pass
+            # section_baddies.append(line)
     return section_baddies
 
 
@@ -173,41 +177,11 @@ def find_all_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']
     """ Find lines in the manuscript that contain bad footnotes (only urls) """
     sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
     bad_url_lines = {}
-    for filepath, tagged_lines in sections:
+    for fileid, (filepath, tagged_lines) in enumerate(sections):
         section_baddies = find_bad_footnote_urls(tagged_lines, include_tags=include_tags)
         if section_baddies:
             bad_url_lines[filepath] = section_baddies
     return bad_url_lines
-
-
-def correct_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural'], skip_untitled=True):
-    """ Find bad footnotes (only urls), visit the page, add the title to the footnote 
-
-    # >>> correct_bad_footnote_urls(BOOK_PATH)
-    # [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
-    #   ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
-    #    'Linguistic Features Â· spaCy Usage Documentation')]]
-    """
-    bad_url_lines = find_bad_footnote_urls(book_dir=book_dir)
-    url_line_titles = []
-    for line in bad_url_lines:
-        line_titles = [line[0]]
-        for url in line[1:]:
-            title = get_url_title(url)
-            if not skip_untitled or title: 
-                line_titles.append((url, title))
-        if len(line_titles) > 1:
-            url_line_titles.append(line_titles)
-
-    return url_line_titles
-
-
-def get_line_bad_footnotes(line, tag=None, include_tags=['natural']):
-    """ Return [original_line, url_footnote1, url_footnote2, ... url_footnoteN] for N bad footnotes in the line """ 
-    if tag is None or include_tags is None or tag in include_tags or any((tag.startswith(t) for t in include_tags)):
-        found_baddies = re_bad_footnotes.findall(line)
-        return [line] + [baddie[0] for baddie in found_baddies]
-    return [line]
 
 
 def infer_url_title(url):
@@ -222,19 +196,65 @@ def infer_url_title(url):
     return delimit_slug(title, ' ') 
 
 
-def translate_line_footnotes(line, tag=None, default_title='See the web page '):
-    """ Find all bare-url footnotes, like "footnote:[moz.org]" and add a title like "footnote:[Moz (moz.org)]" """
+def get_line_bad_footnotes(line, tag=None, include_tags=['natural']):
+    """ Return [original_line, url_footnote1, url_footnote2, ... url_footnoteN] for N bad footnotes in the line """ 
+    if tag is None or include_tags is None or tag in include_tags or any((tag.startswith(t) for t in include_tags)):
+        found_baddies = re_bad_footnotes.findall(line)
+        return [line] + [baddie[0] for baddie in found_baddies]
+    return [line]
+
+
+def translate_line_footnotes(line, tag=None, default_title='<NOT_FOUND>'):
+    r""" Find all bare-url footnotes, like "footnote:[moz.org]" and add a title like "footnote:[Moz (moz.org)]" 
+
+    >>> translate_line_footnotes('*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves.'\
+    ...     'footnote:[https://spacy.io/usage/linguistic-features#rule-based-morphology]')
+    '*Morph...elves.footnote:[See the web page titled "Linguistic Features Â· spaCy Usage Documentation" (https://sp...
+    """
     line_urls = get_line_bad_footnotes(line, tag=tag)
     urls = line_urls[1:] if line_urls else []
     for url in urls:
         title = get_url_title(url)
         brief_title = title.split('\n')[0].strip().split('|')[0].strip()
-        title = brief_title if len(brief_title) > 3 and len(title) > 32 else title
+        title = brief_title if len(brief_title) > 3 and len(title) > 40 else title
+        if title:
+            'footnote:[See the web page titled "{title}" ({url}).]'.format(title=(title or default_title), url=url)
+        else:
+            'footnote:[See the web page ({url}).]'.format(url=url)
         if not default_title or title: 
             line = line.replace(
                 'footnote:[{url}]'.format(url=url),
-                'footnote:[{title} ({url})]'.format(title=(title or default_title), url=url))
+                'footnote:[See the web page titled "{title}" ({url}).]'.format(title=(title or default_title), url=url))
     return line
+
+
+def correct_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural'], skip_untitled=True):
+    """ DEPRECATED (see translate_line_footnotes)
+
+    Find bad footnotes (only urls), visit the page, add the title to the footnote 
+
+    # >>> correct_bad_footnote_urls(BOOK_PATH)
+    # [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
+    #   ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
+    #    'Linguistic Features Â· spaCy Usage Documentation')]]
+    """
+    bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
+    file_line_maps = []
+    for filepath, lines in bad_url_lines.items():
+        for line_urls in lines:
+            logger.debug('LINE: {}'.format(line_urls[0]))
+            logger.debug('URLS: {}'.format(line_urls[1:]))
+            line_maps = [filepath, line_urls[0]]
+            for url in line_urls[1:]:
+                logger.debug(url)
+                title = get_url_title(url)
+                logger.debug(title)
+                if not skip_untitled or title: 
+                    line_maps.append((url, title))
+            if len(line_maps) > 1:
+                file_line_maps.append(line_maps)
+
+    return file_line_maps
 
 
 def filter_lines(input_file, output_file, translate=lambda line: line):

@@ -44,10 +44,12 @@ import re
 import json
 import logging
 import shutil
+from traceback import format_exc
 from zipfile import ZipFile
 from math import ceil
 from itertools import product, zip_longest
 import requests
+from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, InvalidHeader, MissingSchema
 from urllib.parse import urlparse
 from urllib.error import URLError
 from lxml.html import fromstring as parse_html
@@ -847,8 +849,11 @@ def get_url_filemeta(url):
         return dict(url=url, hostname=parsed_url.hostname, path=parsed_url.path,
                     username=parsed_url.username, remote_size=remote_size,
                     filename=os.path.basename(parsed_url.path))
-    except requests.ConnectionError:
-        pass
+    except ConnectionError:
+        return None
+    except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema):
+        return None
+    return None
 
 
 def get_url_title(url):
@@ -859,16 +864,19 @@ def get_url_title(url):
     """
     parsed_url = urlparse(url)
     if not parsed_url.scheme:
-        parsed_url = urlparse('http://' + parsed_url.geturl())
-    if not parsed_url.scheme:
+        parsed_url = urlparse('http://' + parsed_url.geturl().lstrip('/'))
+    if not parsed_url.scheme or not parsed_url.hostname:
         return None
     try:
-        r = requests.get(parsed_url.geturl(), stream=True, allow_redirects=True)
+        r = requests.get(parsed_url.geturl(), stream=False, allow_redirects=True)
         tree = parse_html(r.content)
         title = tree.findtext('.//title')
         return title
-    except requests.ConnectionError:
+    except ConnectionError:
         return None
+    except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema):
+        return None
+    return None
 
 
 def download_unzip(names=None, verbose=True):
@@ -961,9 +969,12 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         try:
             r = requests.get(url, stream=True, allow_redirects=True)
             remote_size = r.headers.get('Content-Length', -1)
-        except requests.exceptions.ConnectionError:
+        except ConnectionError:
             logger.error('ConnectionError for url: {} => request {}'.format(url, r))
             remote_size = -1 if remote_size is None else remote_size
+        except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema) as e:
+            logger.error('HTTP Error for url: {}\n request: {}\n traceback: {}'.format(url, r, format_exc()))
+            pass
     try:
         remote_size = int(remote_size)
     except ValueError:
