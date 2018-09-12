@@ -5,7 +5,7 @@ import re
 import logging
 
 from nlpia.constants import BOOK_PATH
-from nlpia.regexes import RE_URL_SIMPLE
+from nlpia.regexes import RE_URL_SIMPLE, splitext
 from nlpia.loaders import get_url_title, get_url_filemeta
 from nlpia.transcoders import delimit_slug
 
@@ -71,11 +71,13 @@ def tag_lines(lines):
     Returns:
         list of tuples  [(tag, line), ...]
 
-    >> VALID_TAGS == {'anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start',
-    ... 'comment', 'comment_end', 'comment_start',
-    ... 'natural_heading1', 'natural_heading2', 'natural_heading3', 'natural_heading4', 'natural_heading5',
-    ... 'image_link', 'natural', 'natural_end', 'natural_start', 'source_header'}
-    True
+    >>> ' '.join(sorted(VALID_TAGS))
+    'anchor attribute blank_line block_header caption code code_end code_header code_start
+     comment comment_end comment_start image_link latexmath latexmath_end latexmath_start
+     natural natural_asside natural_asside_end natural_asside_start natural_end
+     natural_heading1 natural_heading2 natural_heading3 natural_heading4 natural_heading5
+     natural_quote natural_quote_end natural_quote_start
+     natural_sidenote natural_sidenote_end natural_sidenote_start natural_start'
     >>> tag_lines('|= Title| :chapter: 0|Hello|cruel world|==Heading Level 2| \t| [source,bash]|====|$ grep this|====|'.split('|'))
     [('blank_line', ''), ('natural_heading1', '= Title'), ('attribute', ':chapter: 0'), ('natural', 'Hello'),
      ('natural', 'cruel world'), ('natural_heading2', '==Heading Level 2'), ('blank_line', ''),
@@ -145,29 +147,46 @@ def tag_lines(lines):
     return tagged_lines
 
 
-def get_tagged_sections(book_dir):
+def get_tagged_sections(book_dir, include_tags=['natural']):
     return [(filepath, tag_lines(lines)) for filepath, lines in get_lines(book_dir)]
 
 
-def find_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']):
+def find_bad_footnote_urls(tagged_lines, include_tags=['natural']):
+    """ Find lines in the list of 2-tuples of adoc-tagged lines that contain bad footnotes (only urls) 
+
+    >>> sections = get_tagged_sections(BOOK_PATH)
+    >>> tagged_lines = sections[0][1]
+    >>> find_bad_footnote_urls(tagged_lines)
+    [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes...
+      'https://spacy.io/usage/linguistic-features#rule-based-morphology']]
+    """
+    section_baddies = []
+    logger.debug(tagged_lines[:3])
+    for tag, line in tagged_lines:
+        line_baddies = get_line_bad_footnotes(line=line, tag=tag)
+        if line_baddies and len(line_baddies) > 1:
+            section_baddies.append(line_baddies)
+    return section_baddies
+
+
+def find_all_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']):
     """ Find lines in the manuscript that contain bad footnotes (only urls) """
-    sections = get_tagged_sections(book_dir=book_dir)
-    bad_url_lines = []
+    sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
+    bad_url_lines = {}
     for filepath, tagged_lines in sections:
-        for tag, line in tagged_lines:
-            line_baddies = get_line_bad_footnotes(line=tagged_lines[1], tag=tagged_lines[0])
-            if line_baddies:
-                bad_url_lines.append()
+        section_baddies = find_bad_footnote_urls(tagged_lines, include_tags=include_tags)
+        if section_baddies:
+            bad_url_lines[filepath] = section_baddies
     return bad_url_lines
 
 
 def correct_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural'], skip_untitled=True):
     """ Find bad footnotes (only urls), visit the page, add the title to the footnote 
 
-    >>> correct_bad_footnote_urls(BOOK_PATH)
-    [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
-      ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
-       'Linguistic Features Â· spaCy Usage Documentation')]]
+    # >>> correct_bad_footnote_urls(BOOK_PATH)
+    # [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
+    #   ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
+    #    'Linguistic Features Â· spaCy Usage Documentation')]]
     """
     bad_url_lines = find_bad_footnote_urls(book_dir=book_dir)
     url_line_titles = []
@@ -188,6 +207,7 @@ def get_line_bad_footnotes(line, tag=None, include_tags=['natural']):
     if tag is None or include_tags is None or tag in include_tags or any((tag.startswith(t) for t in include_tags)):
         found_baddies = re_bad_footnotes.findall(line)
         return [line] + [baddie[0] for baddie in found_baddies]
+    return [line]
 
 
 def infer_url_title(url):
@@ -197,8 +217,8 @@ def infer_url_title(url):
     'the what if tool code free probing of'
     """
     meta = get_url_filemeta(url)
-    filename, fileext = os.path.splitext('filename')
     title = meta.get('filename', meta['hostname'])
+    title, fileext = splitext(title)
     return delimit_slug(title, ' ') 
 
 

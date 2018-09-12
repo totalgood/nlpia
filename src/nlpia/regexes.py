@@ -31,12 +31,9 @@ CRE_URL_SIMPLE = re.compile(RE_URL_SIMPLE)
 'this-Slug-should-be-Hypenated-In-Lots-Of-Places'
 """
 CRE_SLUG_DELIMITTER = re.compile(r'[^a-zA-Z]+|(?<=[a-z])(?=[A-Z])')
-
-
-CRE_FILENAME_EXT = re.compile(r'(?<=[.a-zA-Z0-9_])([.][a-zA-Z0-9]{1,8}){1,5}$')
 """
->>> CRE_FILENAME_EXT.search('.bashrc.asciidoc.ext.ps4.123').group()
-''
+>>> CRE_FILENAME_EXT.search('~/.bashrc.asciidoc.ext.ps4.42').group()
+'.asciidoc.ext.ps4.42'
 >>> CRE_FILENAME_EXT.sub('', 'this/path/has/a/file.html')
 'this/path/has/a/file'
 >>> CRE_FILENAME_EXT.search('.bashrc..asciidoc.ext.ps4.123').group()
@@ -44,6 +41,18 @@ CRE_FILENAME_EXT = re.compile(r'(?<=[.a-zA-Z0-9_])([.][a-zA-Z0-9]{1,8}){1,5}$')
 >>> CRE_FILENAME_EXT.search('.bashrc..asciidoc..ext.ps4.123').group()
 '.ext.ps4.123'
 """
+CRE_FILENAME_EXT = re.compile(r'(?<=[.a-zA-Z0-9_])([.][a-zA-Z0-9]{1,8}){1,5}$')
+
+
+def splitext(filepath):
+    """ Like os.path.splitext except splits compound extensions as one long one
+
+    >>> splitext('~/.bashrc.asciidoc.ext.ps4.42')
+    ('~/.bashrc', '.asciidoc.ext.ps4.42')
+    """
+    exts = CRE_FILENAME_EXT.search(filepath).group()
+    return (filepath[:(-len(exts) or None)], exts)
+
 
 # ? \(\): ()
 # \': '"'"' 
