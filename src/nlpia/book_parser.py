@@ -216,7 +216,9 @@ def translate_line_footnotes(line, tag=None, default_title='<NOT_FOUND>'):
 
     >>> translate_line_footnotes('*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves.'\
     ...     'footnote:[https://spacy.io/usage/linguistic-features#rule-based-morphology]')
-    '*Morph...elves.footnote:[See the web page titled "Linguistic Features Â· spaCy Usage Documentation" (https://sp...
+    '*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves.
+     footnote:[See the web page titled "Linguistic Features : spaCy Usage Documentation"
+     (https://spacy.io/usage/linguistic-features#rule-based-morphology).]'
     """
     line_urls = get_line_bad_footnotes(line, tag=tag)
     urls = line_urls[1:] if line_urls else []

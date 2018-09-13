@@ -79,10 +79,10 @@ class Pattern:
 
     >>> pattern = Pattern('Aaron[ ]Swartz')
     >>> pattern.match('Aaron Swartz')
-    <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
+    <regex.Match object; span=(0, 12), match='Aaron Swartz'>
     >>> pattern.fullmatch('Aaron Swartz!!')
     >>> pattern.match('Aaron Swartz!!')
-    <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
+    <regex.Match object; span=(0, 12), match='Aaron Swartz'>
     """
 
     def __init__(self, pattern):
@@ -107,6 +107,8 @@ class REPattern:
     >>> pattern.match('Aaron Swartz')
     <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
     >>> pattern.fullmatch('Aaron Swartz!!')
+    >>> pattern.fullmatch('Aaron Swartz')
+    <regex.Match object; span=(0, 12), match='Aaron Swartz'>
     >>> pattern.match('Aaron Swartz!!')
     <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
     """
