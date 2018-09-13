@@ -75,7 +75,15 @@ def to_tsv():
 
 
 class Pattern:
-    """ Container for _regex.Pattern object augmented with Irregular matching rules """
+    """ Container for _regex.Pattern object augmented with Irregular matching rules 
+
+    >>> pattern = Pattern('Aaron[ ]Swartz')
+    >>> pattern.match('Aaron Swartz')
+    <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
+    >>> pattern.fullmatch('Aaron Swartz!!')
+    >>> pattern.match('Aaron Swartz!!')
+    <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
+    """
 
     def __init__(self, pattern):
         self._compiled_pattern = regex.compile(pattern)
@@ -93,7 +101,15 @@ class Pattern:
 
 
 class REPattern:
-    """ Container for re.SRE_Pattern object augmented with Irregular matching rules """
+    """ Container for re.SRE_Pattern object augmented with Irregular matching rules
+
+    >>> pattern = REPattern('Aaron[ ]Swartz')
+    >>> pattern.match('Aaron Swartz')
+    <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
+    >>> pattern.fullmatch('Aaron Swartz!!')
+    >>> pattern.match('Aaron Swartz!!')
+    <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
+    """
 
     def __init__(self, pattern):
         self._compiled_pattern = re.compile(pattern)
