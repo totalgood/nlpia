@@ -2,7 +2,6 @@
 # pip install -r requirements.txt
 # Remember to also add them in setup.cfg but unpinned (unversioned).
 AIML-Bot>=0.0.3,<0.1.0
-cufflinks>=0.12.1
 future>=0.16.0
 gensim>=3.5.0,<3.6.0
 h5py>=2.7.1,<2.8.0

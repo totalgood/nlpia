@@ -73,7 +73,6 @@ packages:
   - pip>=8.1.2
   - pypandoc>=1.4.0
   - plotly>=2.2.2,<2.4.0
-  - cufflinks
   - python-Levenshtein>=0.12.0
   - scikit-learn>=0.18.1
   - scipy>=0.19.0
