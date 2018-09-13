@@ -81,10 +81,10 @@ def tag_lines(lines):
      natural_quote natural_quote_end natural_quote_start
      natural_sidenote natural_sidenote_end natural_sidenote_start natural_start'
     >>> tag_lines('|= Title| :chapter: 0|Hello|cruel world|==Heading Level 2| \t| [source,bash]|====|$ grep this|====|'.split('|'))
-    [('blank_line', ''), ('natural_heading1', '= Title'), ('attribute', ':chapter: 0'), ('natural', 'Hello'),
-     ('natural', 'cruel world'), ('natural_heading2', '==Heading Level 2'), ('blank_line', ''),
-     ('code_header', '[source,bash]'), ('code_start', '===='), ('code', '$ grep this'), ('code_end', '===='),
-     ('blank_line', '')]
+    [('blank_line', ''), ('natural_heading1', '= Title'), ('attribute', ' :chapter: 0'),
+     ('natural', 'Hello'), ('natural', 'cruel world'), ('natural_heading2', '==Heading Level 2'),
+     ('blank_line', ' \t'), ('code_header', ' [source,bash]'),
+     ('code_start', '===='), ('code', '$ grep this'), ('code_end', '===='), ('blank_line', '')]
     """
     current_block_type = None
     block_terminator = None
@@ -216,8 +216,8 @@ def translate_line_footnotes(line, tag=None, default_title='<NOT_FOUND>'):
 
     >>> translate_line_footnotes('*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves.'\
     ...     'footnote:[https://spacy.io/usage/linguistic-features#rule-based-morphology]')
-    '*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves.
-     footnote:[See the web page titled "Linguistic Features : spaCy Usage Documentation"
+    '*Morphemes*:: Parts of tokens or words that contain meaning in and of
+     themselves.footnote:[See the web page titled "Linguistic Features : spaCy Usage Documentation"
      (https://spacy.io/usage/linguistic-features#rule-based-morphology).]'
     """
     line_urls = get_line_bad_footnotes(line, tag=tag)
@@ -309,11 +309,15 @@ def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
     r""" Parse all the asciidoc files in book_dir, returning a list of 2-tuples of lists of 2-tuples (tagged lines) 
 
     >>> main(BOOK_PATH, verbosity=0)
-    [('...src/nlpia/data/book/Appendix F -- Glossary.asc',
-      [('natural_heading1', '= Glossary'),
-       ('blank_line', ''),
-       ('natural',
-        "We've collected some definitions ...
+    [('...src/nlpia/data/book/Appendix F -- Glossary.asc', [('natural_heading1', '= Glossary\n'),
+     ('blank_line', '\n'), ('natural', "We've collected some definitions of some common NLP and ML
+     acronyms and terminology here.footnote:[Bill Wilson at the university of New South Wales in Australia
+     has a more complete one here: https://www.cse.unsw.edu.au/~billw/nlpdict.html]\n"),
+     ('natural', 'You can find some of the tools we used to generate this list in the `nlpia` python package
+     at https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py:[github.com/totalgood/nlpia]].\n'),
+     ('blank_line', '\n'), ('natural_glossary_header', '[template="glossary",id="terms"]\n'),
+     ('natural_glossary', 'Acronyms\n'), ('natural_glossary_start', '--------\n'), ...
+     ('natural_glossary', '\n'), ('natural_glossary', '\n')])]
     >>> main(BOOK_PATH, include_tags='natural', verbosity=1)
     = Glossary
     We've collected some definitions of some common NLP and ML acronyms and terminology here.footnote:[Bill Wilson...
