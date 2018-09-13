@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/totalgood/nlpia.svg?branch=master)](https://travis-ci.org/totalgood/nlpia) 
 [![Coverage](https://codecov.io/gh/totalgood/nlpia/branch/master/graph/badge.svg)](https://codecov.io/gh/totalgood/nlpia) 
 [![GitHub release](https://img.shields.io/github/release/totalgood/nlpia.svg)](https://github.com/totalgood/nlpia/releases/latest)
+[![PyPI version](https://img.shields.io/pypi/pyversions/nlpia.svg)](https://pypi.org/project/nlpia/)
 
 <!---
 Some more badges from grakn.ai and search of github markdown files
