@@ -236,7 +236,8 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
 
     Find bad footnotes (only urls), visit the page, add the title to the footnote 
 
-    >>> correct_bad_footnote_urls(BOOK_PATH)
+    >> mapped_lines = correct_bad_footnote_urls(BOOK_PATH, dest='cleaned_footnotes')
+    >> shutil.copyfile()
     # [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
     #   ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
     #    'Linguistic Features Â· spaCy Usage Documentation')]]
@@ -268,13 +269,13 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
         if not dest:
             copyfile(filepath, filepath + ext)
         else:
-            destpath = os.path.join(dest, os.path.basename(filepath) + ext)
+            destpath = os.path.join(dest, os.path.basename(filepath))
         with open(destpath, 'w') as fout:
             for lineno, (tag, line) in enumerate(tagged_lines):
-                new_line = translate_line_footnotes(line)
+                new_line = translate_line_footnotes(line)  # TODO: be smarter about writing to files in-place
                 if line != new_line:
-                    file_line_maps.append((fileid, lineno, filepath, line, new_line))
-                fout.write(new_line)
+                    file_line_maps.append((fileid, lineno, filepath, destpath, line, new_line))
+                fout.write(new_line + os.linesep)
     return file_line_maps
 
 
