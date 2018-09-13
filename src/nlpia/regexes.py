@@ -49,8 +49,10 @@ def splitext(filepath):
 
     >>> splitext('~/.bashrc.asciidoc.ext.ps4.42')
     ('~/.bashrc', '.asciidoc.ext.ps4.42')
+    >>> splitext('~/.bash_profile')
+    ('~/.bash_profile', '')
     """
-    exts = CRE_FILENAME_EXT.search(filepath).group()
+    exts = getattr(CRE_FILENAME_EXT.search(filepath), 'group', str)()
     return (filepath[:(-len(exts) or None)], exts)
 
 

@@ -3,7 +3,9 @@ import sys
 import glob
 import re
 import logging
+from shutil import copyfile
 
+from pugnlp import futil
 from nlpia.constants import BOOK_PATH
 from nlpia.regexes import RE_URL_SIMPLE, splitext
 from nlpia.loaders import get_url_title, get_url_filemeta
@@ -160,7 +162,7 @@ def find_bad_footnote_urls(tagged_lines, include_tags=['natural']):
     [[17, 'https://spacy.io/usage/linguistic-features#rule-based-morphology']]
     """
     section_baddies = []
-    logger.debug(tagged_lines)
+    logger.debug(tagged_lines[:2])
     for lineno, (tag, line) in enumerate(tagged_lines):
         line_baddies = None
         if tag is None or include_tags is None or tag in include_tags or any((tag.startswith(t) for t in include_tags)):
@@ -173,15 +175,15 @@ def find_bad_footnote_urls(tagged_lines, include_tags=['natural']):
     return section_baddies
 
 
-def find_all_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']):
-    """ Find lines in the manuscript that contain bad footnotes (only urls) """
-    sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
-    bad_url_lines = {}
-    for fileid, (filepath, tagged_lines) in enumerate(sections):
-        section_baddies = find_bad_footnote_urls(tagged_lines, include_tags=include_tags)
-        if section_baddies:
-            bad_url_lines[filepath] = section_baddies
-    return bad_url_lines
+# def find_all_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']):
+#     """ Find lines in the manuscript that contain bad footnotes (only urls) """
+#     sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
+#     bad_url_lines = {}
+#     for fileid, (filepath, tagged_lines) in enumerate(sections):
+#         section_baddies = find_bad_footnote_urls(tagged_lines, include_tags=include_tags)
+#         if section_baddies:
+#             bad_url_lines[filepath] = section_baddies
+#     return bad_url_lines
 
 
 def infer_url_title(url):
@@ -218,42 +220,61 @@ def translate_line_footnotes(line, tag=None, default_title='<NOT_FOUND>'):
         brief_title = title.split('\n')[0].strip().split('|')[0].strip()
         title = brief_title if len(brief_title) > 3 and len(title) > 40 else title
         if title:
-            'footnote:[See the web page titled "{title}" ({url}).]'.format(title=(title or default_title), url=url)
+            new_footnote = 'footnote:[See the web page titled "{title}" ({url}).]'.format(title=(title or default_title), url=url)
         else:
-            'footnote:[See the web page ({url}).]'.format(url=url)
+            new_footnote = 'footnote:[See the web page ({url}).]'.format(url=url)
         if not default_title or title: 
             line = line.replace(
                 'footnote:[{url}]'.format(url=url),
-                'footnote:[See the web page titled "{title}" ({url}).]'.format(title=(title or default_title), url=url))
+                new_footnote)
     return line
 
 
-def correct_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural'], skip_untitled=True):
+def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=['natural'],
+                              ext='.nlpiabak', skip_untitled=True):
     """ DEPRECATED (see translate_line_footnotes)
 
     Find bad footnotes (only urls), visit the page, add the title to the footnote 
 
-    # >>> correct_bad_footnote_urls(BOOK_PATH)
+    >>> correct_bad_footnote_urls(BOOK_PATH)
     # [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
     #   ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
     #    'Linguistic Features Â· spaCy Usage Documentation')]]
     """
-    bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
+    # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
+    # file_line_maps = []
+    sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
     file_line_maps = []
-    for filepath, lines in bad_url_lines.items():
-        for line_urls in lines:
-            logger.debug('LINE: {}'.format(line_urls[0]))
-            logger.debug('URLS: {}'.format(line_urls[1:]))
-            line_maps = [filepath, line_urls[0]]
-            for url in line_urls[1:]:
-                logger.debug(url)
-                title = get_url_title(url)
-                logger.debug(title)
-                if not skip_untitled or title: 
-                    line_maps.append((url, title))
-            if len(line_maps) > 1:
-                file_line_maps.append(line_maps)
+    if dest is not None:
+        dest = dest.rstrip(os.path.sep)
+        if os.path.isdir(dest):
+            pass
+        elif os.path.isdir(os.path.dirname(dest)):
+            parent = os.path.dirname(dest)
+            dest = os.path.join(parent, dest[len(parent):])
+        elif os.path.sep in dest:
+            raise FileNotFoundError('Unable to find destination directory for the path: {}'.format(dest))
+        elif splitext(dest)[1]:
+            raise FileNotFoundError(
+                'Unable to find destination directory for the path. It looks like a file path rather than a directory: {}'.format(
+                    dest))
+        if not os.path.isdir(dest):
+            logger.warn('Creating directory with mkdir_p({})'.format(repr(dest)))
+        futil.mkdir_p(dest)
+        logger.info('Saving translated files in {}{}*{}'.format(dest, os.path.sep, ext))
 
+    for fileid, (filepath, tagged_lines) in enumerate(sections):
+        destpath = filepath
+        if not dest:
+            copyfile(filepath, filepath + ext)
+        else:
+            destpath = os.path.join(dest, os.path.basename(filepath) + ext)
+        with open(destpath, 'w') as fout:
+            for lineno, (tag, line) in enumerate(tagged_lines):
+                new_line = translate_line_footnotes(line)
+                if line != new_line:
+                    file_line_maps.append((fileid, lineno, filepath, line, new_line))
+                fout.write(new_line)
     return file_line_maps
 
 
@@ -305,8 +326,8 @@ def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
                 print(filepath)
                 print('-' * 75)
             for tagged_line in tagged_lines:
-                if include_tags is None or tagged_line[0] in include_tags or \
-                        any((tagged_line[0].startswith(t) for t in include_tags)):
+                if (include_tags is None or tagged_line[0] in include_tags or
+                        any((tagged_line[0].startswith(t) for t in include_tags))):
                     if verbosity == 1:
                         print(tagged_line[1])
                     if verbosity > 1:
