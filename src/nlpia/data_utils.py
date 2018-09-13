@@ -147,7 +147,8 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
             return itertools.chain.from_iterable(map(open, filepaths))
         url = is_valid_url(url_or_text)
         if url:
-            return requests.get(url, stream=True, allow_redirects=True)
+            for i in range(3):
+                return requests.get(url, stream=True, allow_redirects=True, timeout=5)
         else:
             return StringIO(url_or_text)
     elif isinstance(url_or_text, (list, tuple)):

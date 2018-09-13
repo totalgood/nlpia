@@ -225,7 +225,9 @@ def translate_line_footnotes(line, tag=None, default_title='<NOT_FOUND>'):
         new_footnote = footnote
         title = get_url_title(url)
         title = title or infer_url_title(url)
+        title = title.strip(' \t\n\r\f-_:|="\'/\\')
         title = title if ' ' in (title or 'X') else None
+
         if title:
             brief_title = title.split('\n')[0].strip().split('|')[0].strip().split('Â')[0].strip().split('·')[0].strip()
             logging.info('URL: {}'.format(url))
@@ -292,7 +294,7 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
                 new_line = translate_line_footnotes(line)  # TODO: be smarter about writing to files in-place
                 if line != new_line:
                     file_line_maps.append((fileid, lineno, filepath, destpath, line, new_line))
-                fout.write(new_line + os.linesep)
+                fout.write(new_line)
     return file_line_maps
 
 

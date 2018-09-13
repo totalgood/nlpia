@@ -880,7 +880,7 @@ def get_url_filemeta(url):
 
     url = parsed_url.geturl()
     try:
-        r = requests.get(url, stream=True, allow_redirects=True)
+        r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
         remote_size = r.headers.get('Content-Length', -1)
         return dict(url=url, hostname=parsed_url.hostname, path=parsed_url.path,
                     username=parsed_url.username, remote_size=remote_size,
@@ -902,7 +902,7 @@ def get_url_title(url):
     if parsed_url is None:
         return None
     try:
-        r = requests.get(parsed_url.geturl(), stream=False, allow_redirects=True)
+        r = requests.get(parsed_url.geturl(), stream=False, allow_redirects=True, timeout=5)
         tree = parse_html(r.content)
         title = tree.findtext('.//title')
         return title
@@ -1002,7 +1002,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     r = None
     if not remote_size or not stat['type'] == 'file' or not local_size >= remote_size or not stat['size'] > MIN_DATA_FILE_SIZE:
         try:
-            r = requests.get(url, stream=True, allow_redirects=True)
+            r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
             remote_size = r.headers.get('Content-Length', -1)
         except ConnectionError:
             logger.error('ConnectionError for url: {} => request {}'.format(url, r))
@@ -1216,13 +1216,13 @@ def get_wikidata_qnum(wikiarticle, wikisite):
     >>> print(get_wikidata_qnum(wikiarticle="Andromeda Galaxy", wikisite="enwiki"))
     Q2469
     """
-    resp = requests.get('https://www.wikidata.org/w/api.php', {
+    resp = requests.get('https://www.wikidata.org/w/api.php', params={
         'action': 'wbgetentities',
         'titles': wikiarticle,
         'sites': wikisite,
         'props': '',
         'format': 'json'
-    }).json()
+    }, timeout=5).json()
     return list(resp['entities'])[0]
 
 

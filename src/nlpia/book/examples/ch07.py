@@ -58,11 +58,12 @@ def dropbox_basename(url):
         return filename[:-len(match[0])]
     return filename
 
+
 def download_file(url, data_path='.', filename=None, size=None, chunk_size=4096, verbose=True):
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     if filename is None:
         filename = dropbox_basename(url)
-    file_path = os.path.join(data_path, filename)
+    file_path = os.path.join(data_path, filename, timeout=5)
     if url.endswith('?dl=0'):
         url = url[:-1] + '1'  # noninteractive download
     if verbose:
@@ -89,6 +90,7 @@ def download_file(url, data_path='.', filename=None, size=None, chunk_size=4096,
 
     r.close()
     return file_path
+
 
 def untar(fname):
     if fname.endswith("tar.gz"):
@@ -118,29 +120,31 @@ import os
 
 from random import shuffle
 
+
 def pre_process_data(filepath):
     """
     This is dependent on your training data source but we will try to generalize it as best as possible.
     """
     positive_path = os.path.join(filepath, 'pos')
     negative_path = os.path.join(filepath, 'neg')
-    
+
     pos_label = 1
     neg_label = 0
-    
+
     dataset = []
-    
+
     for filename in glob.glob(os.path.join(positive_path, '*.txt')):
         with open(filename, 'r') as f:
             dataset.append((pos_label, f.read()))
-            
+
     for filename in glob.glob(os.path.join(negative_path, '*.txt')):
         with open(filename, 'r') as f:
             dataset.append((neg_label, f.read()))
-    
+
     shuffle(dataset)
-    
+
     return dataset
+
 
 dataset = pre_process_data('./aclImdb/train')
 print(dataset[0])
@@ -152,6 +156,7 @@ print(dataset[0])
 from nltk.tokenize import TreebankWordTokenizer
 from gensim.models import KeyedVectors
 word_vectors = KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin.gz', binary=True, limit=200000)
+
 
 def tokenize_and_vectorize(dataset):
     tokenizer = TreebankWordTokenizer()
@@ -166,7 +171,7 @@ def tokenize_and_vectorize(dataset):
 
             except KeyError:
                 pass  # No matching token in the Google w2v vocab
-            
+
         vectorized_data.append(sample_vecs)
 
     return vectorized_data
@@ -193,7 +198,7 @@ expected = collect_expected(dataset)
 # In[ ]:
 
 
-split_point = int(len(vectorized_data)*.8)
+split_point = int(len(vectorized_data) * .8)
 
 x_train = vectorized_data[:split_point]
 y_train = expected[:split_point]
@@ -228,7 +233,7 @@ def pad_trunc(data, maxlen):
         zero_vector.append(0.0)
 
     for sample in data:
- 
+
         if len(sample) > maxlen:
             temp = sample[:maxlen]
         elif len(sample) < maxlen:

@@ -23,7 +23,7 @@ def geocode_osm(address, polygon=0):
         address=address, polygon=polygon, addressdetails=0)
 
     print(osm_url)
-    resp = requests.get(osm_url)
+    resp = requests.get(osm_url, timeout=5)
     print(resp)
     d = resp.json()
     print(d)
@@ -35,14 +35,14 @@ def geocode_osm(address, polygon=0):
 
 
 def encode_get_args(s):
-    return s.replace(' ', '+').replace('\r\n', ',').replace('\r',',').replace('\n',',')
+    return s.replace(' ', '+').replace('\r\n', ',').replace('\r', ',').replace('\n', ',')
 
 
 def geocode_google(address, apikey=None):
     apikey = apikey or 'AIzaSyC--s1-y1xkIxzO7wfIUOeHm8W-ID9fbfM'  # this is a Total Good API key, GET YOUR OWN!
     google_url = 'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={apikey}'.format(
         address=address, apikey=apikey)
-    resp = requests.get(google_url)
+    resp = requests.get(google_url, timeout=5)
     results = resp.json()
     results = results.get('results', {})
     results = [{}] if not len(results) else results
