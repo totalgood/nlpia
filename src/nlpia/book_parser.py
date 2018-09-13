@@ -144,7 +144,7 @@ def tag_lines(lines):
             tag = 'natural'
             current_block_type = None
 
-        tagged_lines.append((tag, line.strip()))
+        tagged_lines.append((tag, line))
 
     return tagged_lines
 
@@ -193,8 +193,13 @@ def infer_url_title(url):
     'the what if tool code free probing of'
     """
     meta = get_url_filemeta(url)
-    title = meta.get('filename', meta['hostname'])
-    title, fileext = splitext(title)
+    title = ''
+    if meta:
+        title = meta.get('filename', meta['hostname']) or meta['hostname']
+        title, fileext = splitext(title)
+    else:
+        logging.error('Unable to retrieve URL: {}'.format(url))
+        return None
     return delimit_slug(title, ' ') 
 
 
@@ -216,17 +221,29 @@ def translate_line_footnotes(line, tag=None, default_title='<NOT_FOUND>'):
     line_urls = get_line_bad_footnotes(line, tag=tag)
     urls = line_urls[1:] if line_urls else []
     for url in urls:
+        footnote = 'footnote:[{url}]'.format(url=url)
+        new_footnote = footnote
         title = get_url_title(url)
-        brief_title = title.split('\n')[0].strip().split('|')[0].strip()
-        title = brief_title if len(brief_title) > 3 and len(title) > 40 else title
+        title = title or infer_url_title(url)
+        title = title if ' ' in (title or 'X') else None
+        if title:
+            brief_title = title.split('\n')[0].strip().split('|')[0].strip().split('Â')[0].strip().split('·')[0].strip()
+            logging.info('URL: {}'.format(url))
+            logging.info('TITLE: {}'.format(title))
+            title = brief_title if len(brief_title) > 3 and len(title) > 55 else title
+            title = title.replace('Â', '').replace('·', ':').replace('|', ':').replace('\n', '--')
+            logging.info('FINAL: {}'.format(title))
+        title = title or default_title
         if title:
             new_footnote = 'footnote:[See the web page titled "{title}" ({url}).]'.format(title=(title or default_title), url=url)
+        elif title is None:
+            logging.error('Unable to find a title for url: {}'.format(url))
         else:
             new_footnote = 'footnote:[See the web page ({url}).]'.format(url=url)
-        if not default_title or title: 
-            line = line.replace(
-                'footnote:[{url}]'.format(url=url),
-                new_footnote)
+        line = line.replace(
+            footnote,
+            new_footnote)
+
     return line
 
 
@@ -252,7 +269,7 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
             pass
         elif os.path.isdir(os.path.dirname(dest)):
             parent = os.path.dirname(dest)
-            dest = os.path.join(parent, dest[len(parent):])
+            dest = os.path.join(parent, dest[len(parent):].lstrip(os.path.sep))
         elif os.path.sep in dest:
             raise FileNotFoundError('Unable to find destination directory for the path: {}'.format(dest))
         elif splitext(dest)[1]:

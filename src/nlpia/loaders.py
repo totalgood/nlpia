@@ -37,7 +37,6 @@ from future import standard_library
 standard_library.install_aliases()  # noqa
 from past.builtins import basestring
 
-
 # from traceback import format_exc
 import os
 import re
@@ -54,23 +53,21 @@ from urllib.parse import urlparse
 from urllib.error import URLError
 from lxml.html import fromstring as parse_html
 from copy import deepcopy
-# from traceback import print_exc
 
 import pandas as pd
+import gzip
 import tarfile
+import ftplib
+
 import spacy
 from tqdm import tqdm
 from gensim.models import KeyedVectors
 from gensim.scripts.glove2word2vec import glove2word2vec
 
-from pugnlp.futil import path_status, find_files
+from pugnlp.futil import mkdir_p, path_status, find_files
 from pugnlp.util import clean_columns
-# from nlpia.constants import DEFAULT_LOG_LEVEL  # , LOGGING_CONFIG
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
-
-from pugnlp.futil import mkdir_p
-import gzip
 
 
 _parse = None  # placeholder for SpaCy parser + language model
@@ -814,6 +811,43 @@ def create_big_url(name):
     return name
 
 
+def try_parse_url(url):
+    """ User urlparse to try to parse URL returning None on exception """
+    if len(url.strip()) < 4:
+        logger.error('Invalid URL: {}'.format(url))
+        return None
+    try:
+        parsed_url = urlparse(url)
+    except ValueError:
+        logger.error('Invalid URL: {}'.format(url))
+        return None
+    if parsed_url.scheme:
+        return parsed_url
+    try:
+        parsed_url = urlparse('http://' + parsed_url.geturl())
+    except ValueError:
+        logger.error('Invalid URL: {}'.format(url))
+        return None
+    if not parsed_url.scheme:
+        logger.error('Unable to guess a scheme for URL: {}'.format(url))
+        return None
+    return parsed_url
+
+
+def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood.com'):
+    """ FIXME: Get file size, hostname, path metadata from FTP server using parsed_url (urlparse)"""
+    return dict(
+        url=parsed_url.geturl(), hostname=parsed_url.hostname, path=parsed_url.path,
+        username=(parsed_url.username or username),
+        remote_size=-1,
+        filename=os.path.basename(parsed_url.path))
+    ftp = ftplib.FTP(parsed_url.hostname) 
+    ftp.login(username, password) 
+    ftp.cwd(parsed_url.path)
+    ftp.retrbinary("RETR " + filename, open(filename, 'wb').write)
+    ftp.quit()
+
+
 def get_url_filemeta(url):
     """ Request HTML for the page at the URL indicated and return the url, filename, and remote size
 
@@ -837,11 +871,13 @@ def get_url_filemeta(url):
     >>> 1000 <= int(get_url_filemeta('en.wikipedia.org')['remote_size']) <= 200000
     True
     """ 
-    parsed_url = urlparse(url)
-    if not parsed_url.scheme:
-        parsed_url = urlparse('http://' + parsed_url.geturl())
-    if not parsed_url.scheme:
+    parsed_url = try_parse_url(url)
+
+    if parsed_url is None:
         return None
+    if parsed_url.scheme.startswith('ftp'):
+        return get_ftp_filemeta(parsed_url)
+
     url = parsed_url.geturl()
     try:
         r = requests.get(url, stream=True, allow_redirects=True)
@@ -862,10 +898,8 @@ def get_url_title(url):
     >>> get_url_title('mozilla.com').strip()
     'Internet for people, not profit\n    — Mozilla'
     """
-    parsed_url = urlparse(url)
-    if not parsed_url.scheme:
-        parsed_url = urlparse('http://' + parsed_url.geturl().lstrip('/'))
-    if not parsed_url.scheme or not parsed_url.hostname:
+    parsed_url = try_parse_url(url)
+    if parsed_url is None:
         return None
     try:
         r = requests.get(parsed_url.geturl(), stream=False, allow_redirects=True)
@@ -873,10 +907,11 @@ def get_url_title(url):
         title = tree.findtext('.//title')
         return title
     except ConnectionError:
-        return None
+        logging.error('Unable to connect to internet to retrieve URL {}'.format(parsed_url.geturl()))
+        logging.error(format_exc())
     except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema):
-        return None
-    return None
+        logging.warn('Unable to retrieve URL {}'.format(parsed_url.geturl()))
+        logging.error(format_exc())
 
 
 def download_unzip(names=None, verbose=True):
