@@ -26,9 +26,10 @@ CRE_ACRONYM = re.compile(RE_ACRONYM2 + '|' + RE_ACRONYM3, re.IGNORECASE)
 RE_URL_SIMPLE = r'(?P<url>(?P<scheme>(?P<scheme_type>http|ftp|https)://)?([^/:(\["\'`)\]\s]+' \
     r'[.])(com|org|edu|gov|net|mil|uk|ca|de|jp|fr|au|us|ru|ch|it|nl|se|no|es|io|me)([^"\'`)\]\s]*))'
 CRE_URL_SIMPLE = re.compile(RE_URL_SIMPLE)
+RE_URL_WITH_SCHEME = RE_URL_SIMPLE.replace('://)', '://)?')  # require scheme
+CRE_URL_WITH_SCHEME = re.compile(CRE_URL_WITH_SCHEME)
 
-RE_HYPERLINK = RE_URL_SIMPLE.replace('://)', '://)?')  # require scheme
-RE_HYPERLINK = RE_HYPERLINK + r'\[(?P<name>[^\]]+)\]'
+RE_HYPERLINK = RE_URL_WITH_SCHEME + r'\[(?P<name>[^\]]+)\]'
 CRE_HYPERLINK = regex.compile(RE_HYPERLINK)
 """
 >>> CRE_SLUG_DELIMITTER.sub('-', 'thisSlug-should|beHypenatedInLots_OfPlaces')
@@ -135,7 +136,7 @@ class REPattern:
         return regex.fullmatch(self._compiled_pattern.pattern, *args, **kwargs)
 
 
-class HyperlinkPattern(Pattern):
+class HyperlinkStyleCorrector(Pattern):
     """ A pattern for matching asciidoc hyperlinks for transforming them to print-book version (Manning Style)
 
     >>> adoc = 'See http://totalgood.com[Total Good] about that.'
@@ -150,6 +151,8 @@ class HyperlinkPattern(Pattern):
     ...         ''.format(**m.groupdict()))
     >>> newdoc
     'See totalgood.com[Total Good] about that.'
+    >>> pattern.replace(adoc, '{scheme}', '{scheme_type}s://')
+    >>> pattern.replace(adoc, '{hostname}', '{scheme_type}s://')
     """
 
     def __init__(self, pattern=RE_HYPERLINK):

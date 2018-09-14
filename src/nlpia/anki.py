@@ -26,7 +26,7 @@ def get_anki_phrases(lang='english', limit=None):
     lang = LANG2ANKI[lang[:2]] if lang not in ANKI_LANGUAGES else lang
     if lang[:2] == 'en':
         return get_anki_phrases_english(limit=limit)
-    return sorted(get_data(lang).ix[:, -1].str.strip().values)
+    return sorted(get_data(lang).iloc[:, -1].str.strip().values)
 
 
 def get_anki_phrases_english(limit=None):
