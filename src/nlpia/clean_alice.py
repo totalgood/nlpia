@@ -102,7 +102,7 @@ def create_brain(path='aiml-en-us-foundation-alice.v1-9.zip'):
             bot.learn(path)
         except AimlParserError:
             logger.error(format_exc())
-            logger.warn('AIML Parse Error: {}'.format(path))
+            logger.warning('AIML Parse Error: {}'.format(path))
         num_templates = bot._brain.template_count - num_templates
         logger.info('Loaded {} trigger-response pairs.\n'.format(num_templates))
     print('Loaded {} trigger-response pairs from {} AIML files.'.format(bot._brain.template_count, len(paths)))

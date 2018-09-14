@@ -71,7 +71,7 @@ def download_file(url, data_path='.', filename=None, size=None, chunk_size=4096,
         print('requesting URL: {}'.format(url))
     else:
         tqdm_prog = no_tqdm
-    r = requests.get(url, stream=True, allow_redirects=True)
+    r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
     size = r.headers.get('Content-Length', None) if size is None else size
     print('remote size: {}'.format(size))
 

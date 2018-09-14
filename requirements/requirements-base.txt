@@ -2,34 +2,48 @@
 # pip install -r requirements.txt
 # Remember to also add them in setup.cfg but unpinned (unversioned).
 AIML-Bot>=0.0.3,<0.1.0
+annoy>=1.9.5,<2.0.0
+boto3>=1.9.3,<1.10.0
 future>=0.16.0
 gensim>=3.5.0,<3.6.0
 h5py>=2.7.1,<2.8.0
 jupyter>=1.0.0,<2.0.0
-matplotlib==2.2.2
+keras>=2.2.2,<2.3.0
+keras-preprocessing>=1.0.2,<1.1.0
+keras-applications>=1.0.4,<1.1.0
+matplotlib>=2.2.2,<2.3.0
 MechanicalSoup>=0.10.0,<1.0.0
-nltk>=3.2.2,<3.3.0
+nltk>=3.2.5,<3.3.0
+opencv-python>=3.4.1,<3.6.0
+pandas>=0.23.4,<0.25.0
 pandas-datareader>=0.5.0
-pandas>=0.19.2
+pillow>=4.3.0,<4.4.0
+pip>=18.0
+# pandoc>=2.1.2,<2.2.0  # conda => pip install 'pypandoc>=1.4.0'
 pathlib>=1.0.1,<2.0.0
-pip>=8.1.2
+plac>=0.9.6,<0.10.0
+plotly>=3.1.1,<3.2.0
 plyfile>=0.5.0,<1.0.0
 pugnlp>=0.1.10,<0.2.0
+# pyqt>=5.6.0,<5.7.0  # conda => pip install 'qtconsole>=4.2.1,<4.3.0' 'qt>=5.6.2' # ?
 pypandoc>=1.4.0
+python-levenshtein>=0.12.0,<0.13.0
+# python-igraph>=0.7.1.post6
 pytest>=3.2.1
 pytest-cov>=2.5.1
-# python-igraph>=0.7.1.post6
-python-Levenshtein>=0.12.0
+qtconsole>=4.2.1,<4.5.0  # 4.4.1 is available on OSX in conda and pip
+# redis-py>=2.10.6,<2.11  # conda => pip install 'redis>=2.10.6,<2.11.0'
+redis>=2.10.6,<2.11.0
 regex==2017.4.5
+seaborn>=0.8
 scikit-learn>=0.18.1
 scipy>=0.19.0
-seaborn>=0.8
+spacy>=2.0.12,<2.1.0
+# swig>=3.0.12,<3.1.0  # conda => wget 'http://prdownloads.sourceforge.net/swig/swig-3.0.12.tar.gz' && tar -xvzf && swig-swig-3.0.12.tar.gz && cd swig-3.0.12 && ./configure && make && make install
+tensorflow>=1.10.0,<1.11.0
 tqdm>=4.11.2
 wheel>=0.30.0a0
-annoy>=1.9.5,<2.0.0
-spacy>=2.0.12,<2.1.0
-tensorflow>=1.10.0,<1.11.0
-keras>=2.2.2,<2.3.0
+
 
 # ###################################################
 # NOTES

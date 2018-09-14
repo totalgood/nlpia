@@ -126,7 +126,7 @@ def load_imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(
         urlspath = os.path.join(dirpath, subdirs[0], 'urls_{}.txt'.format(subdirs[1]))
         if not os.path.isfile(urlspath):
             if subdirs != ('test', 'unsup'):  # test/ dir doesn't usually have an unsup subdirectory
-                logger.warn('Unable to find expected IMDB review list of URLs: {}'.format(urlspath))
+                logger.warning('Unable to find expected IMDB review list of URLs: {}'.format(urlspath))
             continue
         df = pd.read_csv(urlspath, header=None, names=['url'])
         # df.index.name = 'id'
@@ -134,7 +134,7 @@ def load_imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(
 
         textsdir = os.path.join(dirpath, subdirs[0], subdirs[1])
         if not os.path.isdir(textsdir):
-            logger.warn('Unable to find expected IMDB review text subdirectory: {}'.format(textsdir))
+            logger.warning('Unable to find expected IMDB review text subdirectory: {}'.format(textsdir))
             continue
         filenames = [fn for fn in os.listdir(textsdir) if fn.lower().endswith('.txt')]
         df['index0'] = subdirs[0]  # TODO: column names more generic so will work on other datasets
@@ -296,7 +296,7 @@ for name in GOOGLE_NGRAM_NAMES:
                                          {'sep': '\t', 'header': None, 'names': 'term_pos year term_freq book_freq'.split()})
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
-    logger.warn('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
+    logger.warning('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
         default=BIGDATA_INFO_FILE))
 except (IOError, pd.errors.EmptyDataError):
     BIGDATA_INFO = pd.DataFrame(columns='name url file_size'.split())
@@ -384,7 +384,7 @@ def untar(fname, verbose=True):
         if os.path.isdir(dirpath):
             return dirpath
     else:
-        logger.warn("Not a tar.gz file: {}".format(fname))
+        logger.warning("Not a tar.gz file: {}".format(fname))
 
 
 def series_rstrip(series, endswith='/usercomments', ignorecase=True):
@@ -405,7 +405,7 @@ def series_strip(series, startswith=None, endswith=None, startsorendswith=None, 
     else:
         mask = series
     if not (startsorendswith or endswith or startswith):
-        logger.warn('In series_strip(): You must specify endswith, startswith, or startsorendswith string arguments.')
+        logger.warning('In series_strip(): You must specify endswith, startswith, or startsorendswith string arguments.')
         return series
     if startsorendswith:
         startswith = endswith = startsorendswith
@@ -691,7 +691,7 @@ def normalize_filepath(filepath):
     cre_controlspace = re.compile(r'[\t\r\n\f]+')
     new_filename = cre_controlspace.sub('', filename)
     if not new_filename == filename:
-        logger.warn('Stripping whitespace from filename: {} => {}'.format(
+        logger.warning('Stripping whitespace from filename: {} => {}'.format(
             repr(filename), repr(new_filename)))
         filename = new_filename
     filename = filename.lower()
@@ -763,7 +763,7 @@ def unzip(filepath, verbose=True):
     for f in tqdm_prog(os.listdir(unzip_dir)):
         if f[-1] in ' \t\r\n\f':
             bad_path = os.path.join(unzip_dir, f)
-            logger.warn('Stripping whitespace from end of filename: {} -> {}'.format(
+            logger.warning('Stripping whitespace from end of filename: {} -> {}'.format(
                 repr(bad_path), repr(bad_path.rstrip())))
             shutil.move(bad_path, bad_path.rstrip())
             # rename_file(source=bad_path, dest=bad_path.rstrip())
@@ -1216,13 +1216,13 @@ def get_wikidata_qnum(wikiarticle, wikisite):
     >>> print(get_wikidata_qnum(wikiarticle="Andromeda Galaxy", wikisite="enwiki"))
     Q2469
     """
-    resp = requests.get('https://www.wikidata.org/w/api.php', params={
+    resp = requests.get('https://www.wikidata.org/w/api.php', timeout=5, params={
         'action': 'wbgetentities',
         'titles': wikiarticle,
         'sites': wikisite,
         'props': '',
         'format': 'json'
-    }, timeout=5).json()
+    }).json()
     return list(resp['entities'])[0]
 
 
@@ -1415,7 +1415,7 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
             try:
                 spacy.cli.download(lang)
             except URLError:
-                logger.warn("Unable to download Spacy language model '{}' so nlp(text) just returns text.split()".format(lang))
+                logger.warning("Unable to download Spacy language model '{}' so nlp(text) just returns text.split()".format(lang))
     parse = _parse or str.split
     # TODO: reverse this recursion (str first then sequence) to allow for sequences of sequences of texts
     if isinstance(texts, str):
@@ -1451,6 +1451,6 @@ def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),
     df = df[~(df[index_col] == INT_NAN)]
     df.set_index(index_col, inplace=True)
     if len(df) != original_len:
-        logger.warn(('Loaded {} rows from tsv. Original file, "{}", contained {} seemingly valid lines.' +
+        logger.warning(('Loaded {} rows from tsv. Original file, "{}", contained {} seemingly valid lines.' +
                      'Index column: {}').format(len(df), original_len, filepath, index_col))
     return df

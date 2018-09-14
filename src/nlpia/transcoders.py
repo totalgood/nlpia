@@ -48,7 +48,7 @@ def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified'
             start = match.start()
             altered_text += text[:start]
             resp = requests.get('https://api-ssl.bitly.com/v3/shorten?access_token={}&longUrl={}'.format(
-                access_token, url))
+                access_token, url), allow_redirects=True, timeout=5)
             js = resp.json()
             short_url = js['shortUrl']
             altered_text += short_url
@@ -183,7 +183,7 @@ def split_sentences_spacy(text, language_model='en'):
     doc = nlp(text)
     sentences = []
     if not hasattr(doc, 'sents'):
-        logger.warn("Using NLTK sentence tokenizer because SpaCy language model hasn't been loaded")
+        logger.warning("Using NLTK sentence tokenizer because SpaCy language model hasn't been loaded")
         return split_sentences_nltk(text)
     for w, span in enumerate(doc.sents):
         sent = ''.join(doc[i].string for i in range(span.start, span.end)).strip()

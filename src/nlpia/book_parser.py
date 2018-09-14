@@ -281,7 +281,7 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
                 'Unable to find destination directory for the path. It looks like a file path rather than a directory: {}'.format(
                     dest))
         if not os.path.isdir(dest):
-            logger.warn('Creating directory with mkdir_p({})'.format(repr(dest)))
+            logger.warning('Creating directory with mkdir_p({})'.format(repr(dest)))
         futil.mkdir_p(dest)
         logger.info('Saving translated files in {}{}*{}'.format(dest, os.path.sep, ext))
 

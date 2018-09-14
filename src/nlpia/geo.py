@@ -42,7 +42,7 @@ def geocode_google(address, apikey=None):
     apikey = apikey or 'AIzaSyC--s1-y1xkIxzO7wfIUOeHm8W-ID9fbfM'  # this is a Total Good API key, GET YOUR OWN!
     google_url = 'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={apikey}'.format(
         address=address, apikey=apikey)
-    resp = requests.get(google_url, timeout=5)
+    resp = requests.get(google_url, allow_redirects=True, timeout=5)
     results = resp.json()
     results = results.get('results', {})
     results = [{}] if not len(results) else results

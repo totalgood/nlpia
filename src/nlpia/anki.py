@@ -79,7 +79,7 @@ def get_word_vectors(vocab):
             if w in wv:
                 vectors[i, :] = wv[w]
         if not np.sum(np.abs(vectors[i])):
-            logger.warn('Unable to find {}, {}, or {} in word2vec.'.format(*variations))
+            logger.warning('Unable to find {}, {}, or {} in word2vec.'.format(*variations))
     return vectors
 
 

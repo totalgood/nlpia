@@ -24,7 +24,7 @@ class Pattern:
                 logger.debug('{}.{}.Pattern successfully "inherited" `_regex.Pattern.{}{}`'.format(
                     __package__, __name__, name, '()' if callable(attr) else ''))
             except:
-                logger.warn('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
+                logger.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
                     name, '()' if callable(attr) else ''))
 
 
@@ -42,5 +42,5 @@ class REPattern:
                 logger.debug('{}.{}.{} successfully "inherited" `_regex.Pattern.{}{}`'.format(
                     __package__, __name__, self.__class__, name, '()' if callable(attr) else ''))
             except:
-                logger.warn('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
+                logger.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
                     name, '()' if callable(attr) else ''))

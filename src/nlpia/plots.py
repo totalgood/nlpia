@@ -283,8 +283,8 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
     marker_default.update(marker)
     size_col = marker_default.pop('size')
     layout_default = {
-        'xaxis': graph_objs.XAxis(title=x, type=xscale),
-        'yaxis': graph_objs.YAxis(title=y, type=yscale),
+        'xaxis': graph_objs.layout.XAxis(title=x, type=xscale),
+        'yaxis': graph_objs.layout.YAxis(title=y, type=yscale),
     }
     layout_default.update(**layout)
     if config is not None:
@@ -305,7 +305,7 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
             graph_objs.Scatter(x=df[x][mask].values,
                                y=df[y][mask].values,
                                text=df[text_col][mask].values,
-                               marker=graph_objs.Marker(size=df[size_col][mask] if size_col in df.columns else size_col,
+                               marker=graph_objs.scatter.Marker(size=df[size_col][mask] if size_col in df.columns else size_col,
                                                         **marker_default),
                                mode='markers',
                                name=str(category_name)) for (category_name, mask) in zip(possible_categories, masks)

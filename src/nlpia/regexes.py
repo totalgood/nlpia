@@ -23,10 +23,13 @@ RE_ACRONYM2 = r'((\w)[\w0-9]{2,16}[ ](\w)[\w0-9]{2,16})[ ]\((\2\3)\)'
 RE_ACRONYM3 = r'((\w)[\w0-9]{2,16}[ ](\w)[\w0-9]{2,16}[ ](\w)[\w0-9]{2,16})[ ]\((\6\7\8)\)'
 CRE_ACRONYM = re.compile(RE_ACRONYM2 + '|' + RE_ACRONYM3, re.IGNORECASE)
 
-RE_URL_SIMPLE = r'(((http|ftp|https)://)?([^/:(\["\'`)\]\s]+' \
+RE_URL_SIMPLE = r'(?P<url>(?P<scheme>(?P<scheme_type>http|ftp|https)://)?([^/:(\["\'`)\]\s]+' \
     r'[.])(com|org|edu|gov|net|mil|uk|ca|de|jp|fr|au|us|ru|ch|it|nl|se|no|es|io|me)([^"\'`)\]\s]*))'
 CRE_URL_SIMPLE = re.compile(RE_URL_SIMPLE)
 
+RE_HYPERLINK = RE_URL_SIMPLE.replace('://)', '://)?')  # require scheme
+RE_HYPERLINK = RE_HYPERLINK + r'\[(?P<name>[^\]]+)\]'
+CRE_HYPERLINK = regex.compile(RE_HYPERLINK)
 """
 >>> CRE_SLUG_DELIMITTER.sub('-', 'thisSlug-should|beHypenatedInLots_OfPlaces')
 'this-Slug-should-be-Hypenated-In-Lots-Of-Places'
@@ -86,6 +89,7 @@ class Pattern:
     """
 
     def __init__(self, pattern):
+        pattern = getattr(pattern, 'pattern', pattern)
         self._compiled_pattern = regex.compile(pattern)
         for name in dir(self._compiled_pattern):
             if name in ('__class__', '__init__'):
@@ -96,7 +100,7 @@ class Pattern:
                 logger.debug('{}.{}.Pattern successfully "inherited" `_regex.Pattern.{}{}`'.format(
                     __package__, __name__, name, '()' if callable(attr) else ''))
             except:
-                logger.warn('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
+                logger.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
                     name, '()' if callable(attr) else ''))
 
 
@@ -124,9 +128,50 @@ class REPattern:
                 logger.debug('{}.{}.{} successfully "inherited" `_regex.Pattern.{}{}`'.format(
                     __package__, __name__, self.__class__, name, '()' if callable(attr) else ''))
             except:
-                logger.warn('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
+                logger.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
                     name, '()' if callable(attr) else ''))
 
     def fullmatch(self, *args, **kwargs):
         return regex.fullmatch(self._compiled_pattern.pattern, *args, **kwargs)
 
+
+class HyperlinkPattern(Pattern):
+    """ A pattern for matching asciidoc hyperlinks for transforming them to print-book version (Manning Style)
+
+    >>> adoc = 'See http://totalgood.com[Total Good] about that.'
+    >>> pattern = HyperlinkPattern()
+    >>> matches = list(pattern.finditer(adoc))
+    >>> m = matches[0]
+    >>> m
+    <regex.Match object; span=(4, 36), match='http://totalgood.com[Total Good]'>
+    >>> for m in matches:
+    ...     newdoc = adoc.replace(
+    ...         '{scheme}'.format(**m.groupdict()),
+    ...         ''.format(**m.groupdict()))
+    >>> newdoc
+    'See totalgood.com[Total Good] about that.'
+    """
+
+    def __init__(self, pattern=RE_HYPERLINK):
+        super().__init__(pattern=pattern)
+
+    def replace(text, template, from_template=None):
+        """ Replace all occurrences of rendered from_template in text with `template` rendered from each match.groupdict()
+
+        TODO: from_template 
+        """
+        matches = self.finditer(text)
+        for m in matches:
+            # this outer m.captures() loop is overkill:
+            #   overlapping pattern matches probably won't match after the first replace
+            for i, captured_str in enumerate(m.captures()):
+                if from_template:
+                    rendered_from_template = from_template.format(
+                        **dict((k, v[i]) for k, v in m.capturesdict())) 
+                else:
+                    rendered_from_template = captured_str
+                # TODO: render numbered references like r'\1' before rendering named references
+                #    or do them together in one `.format(**kwargs)` after translating \1 to {1} and groupsdict().update({1: ...})
+                rendered_to_template = template.format(**m.groupsdict())
+                newdoc = adoc.replace(rendered_from_template, rendered_to_template)
+        return newdoc
