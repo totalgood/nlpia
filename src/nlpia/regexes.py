@@ -27,7 +27,7 @@ RE_URL_SIMPLE = r'(?P<url>(?P<scheme>(?P<scheme_type>http|ftp|https)://)?([^/:(\
     r'[.])(com|org|edu|gov|net|mil|uk|ca|de|jp|fr|au|us|ru|ch|it|nl|se|no|es|io|me)([^"\'`)\]\s]*))'
 CRE_URL_SIMPLE = re.compile(RE_URL_SIMPLE)
 RE_URL_WITH_SCHEME = RE_URL_SIMPLE.replace('://)', '://)?')  # require scheme
-CRE_URL_WITH_SCHEME = re.compile(CRE_URL_WITH_SCHEME)
+CRE_URL_WITH_SCHEME = re.compile(RE_URL_WITH_SCHEME)
 
 RE_HYPERLINK = RE_URL_WITH_SCHEME + r'\[(?P<name>[^\]]+)\]'
 CRE_HYPERLINK = regex.compile(RE_HYPERLINK)
@@ -91,7 +91,7 @@ class Pattern:
 
     def __init__(self, pattern):
         pattern = getattr(pattern, 'pattern', pattern)
-        self._compiled_pattern = regex.compile(pattern)
+        self._compiled_pattern = pattern if hasattr(pattern, 'pattern') else regex.compile(pattern)
         for name in dir(self._compiled_pattern):
             if name in ('__class__', '__init__'):
                 continue
@@ -140,8 +140,8 @@ class HyperlinkStyleCorrector(Pattern):
     """ A pattern for matching asciidoc hyperlinks for transforming them to print-book version (Manning Style)
 
     >>> adoc = 'See http://totalgood.com[Total Good] about that.'
-    >>> pattern = HyperlinkPattern()
-    >>> matches = list(pattern.finditer(adoc))
+    >>> translator = HyperlinkStyleCorrector()
+    >>> matches = list(translator.finditer(adoc))
     >>> m = matches[0]
     >>> m
     <regex.Match object; span=(4, 36), match='http://totalgood.com[Total Good]'>
@@ -151,17 +151,22 @@ class HyperlinkStyleCorrector(Pattern):
     ...         ''.format(**m.groupdict()))
     >>> newdoc
     'See totalgood.com[Total Good] about that.'
-    >>> pattern.replace(adoc, '{scheme}', '{scheme_type}s://')
-    >>> pattern.replace(adoc, '{hostname}', '{scheme_type}s://')
+    >>> translator.replace(adoc, '{scheme}', '{scheme_type}s://')
+    >>> translator.replace(adoc, '{hostname}', '{scheme_type}s://')
     """
 
     def __init__(self, pattern=RE_HYPERLINK):
         super().__init__(pattern=pattern)
 
-    def replace(text, template, from_template=None):
+    def replace(self, text, to_template, from_template=None):
         """ Replace all occurrences of rendered from_template in text with `template` rendered from each match.groupdict()
 
         TODO: from_template 
+
+        >>> translator = HyperlinkStyleCorrector()
+        >>> adoc = 'See http://totalgood.com[Total Good] about that.'
+        >>> translator.replace(adoc, '{scheme_type}s://', '{scheme}')
+        'See https://totalgood.com[Total Good] about that.'
         """
         matches = self.finditer(text)
         for m in matches:
@@ -170,11 +175,22 @@ class HyperlinkStyleCorrector(Pattern):
             for i, captured_str in enumerate(m.captures()):
                 if from_template:
                     rendered_from_template = from_template.format(
-                        **dict((k, v[i]) for k, v in m.capturesdict())) 
+                        **dict((k, v[i]) for k, v in m.capturesdict().items())) 
                 else:
                     rendered_from_template = captured_str
                 # TODO: render numbered references like r'\1' before rendering named references
                 #    or do them together in one `.format(**kwargs)` after translating \1 to {1} and groupsdict().update({1: ...})
-                rendered_to_template = template.format(**m.groupsdict())
-                newdoc = adoc.replace(rendered_from_template, rendered_to_template)
+                rendered_to_template = to_template.format(**m.groupdict())
+                newdoc = text.replace(rendered_from_template, rendered_to_template)
         return newdoc
+
+    def translate(self, text, to_template='{name} ({url})', from_template=None):
+        """ Translate hyperinks into printable book style for Manning Publishing
+
+        >>> translator = HyperlinkStyleCorrector()
+        >>> adoc = 'See http://totalgood.com[Total Good] about that.'
+        >>> translator.translate(adoc)
+        'See Total Good (http://totalgood.com) about that.'
+        """
+        return self.replace(text, to_template=to_template, from_template=None)
+
