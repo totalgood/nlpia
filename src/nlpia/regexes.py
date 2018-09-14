@@ -153,7 +153,6 @@ class HyperlinkStyleCorrector(Pattern):
     'See totalgood.com[Total Good] about that.'
     >>> translator.replace(adoc, '{scheme}', '{scheme_type}s://')
     'See http://totalgood.com[Total Good] about that.'
-    >>> translator.replace(adoc, '{hostname}', '{scheme_type}s://')
     """
 
     def __init__(self, pattern=RE_HYPERLINK):

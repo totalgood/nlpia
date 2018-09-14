@@ -78,7 +78,7 @@ def prepend_http(url):
     return url
 
 
-def is_valid_url(url):
+def is_valid_url(url, allow_redirects=False, timeout=5):
     """ Check URL to see if it is a valid web page, return the redirected location if it is
 
     Returns:
@@ -96,7 +96,8 @@ def is_valid_url(url):
     True
     >>> is_valid_url('abcd')
     False
-    >>> is_valid_url('abcd.com')
+    >>> bool(is_valid_url('abcd.com'))
+    False
     """
     if not isinstance(url, basestring) or '.' not in url:
         return False
@@ -104,7 +105,7 @@ def is_valid_url(url):
     session = requests.Session()
     session.mount(url, HTTPAdapter(max_retries=2))
     try:
-        resp = session.get(normalized_url, allow_redirects=False)
+        resp = session.get(normalized_url, allow_redirects=allow_redirects, timeout=timeout)
     except ConnectionError:
         return None
     except:
