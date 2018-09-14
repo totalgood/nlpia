@@ -4,6 +4,8 @@
 
 sudo: false
 language: python
+cache: apt
+cache: pip
 virtualenv:
   system_site_packages: true
 env:
@@ -43,5 +45,4 @@ script:
 after_success:
   - codecov
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
-cache:
-  - apt
+

@@ -152,6 +152,7 @@ class HyperlinkStyleCorrector(Pattern):
     >>> newdoc
     'See totalgood.com[Total Good] about that.'
     >>> translator.replace(adoc, '{scheme}', '{scheme_type}s://')
+    'See http://totalgood.com[Total Good] about that.'
     >>> translator.replace(adoc, '{hostname}', '{scheme_type}s://')
     """
 

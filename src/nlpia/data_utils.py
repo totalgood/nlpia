@@ -97,7 +97,6 @@ def is_valid_url(url):
     >>> is_valid_url('abcd')
     False
     >>> is_valid_url('abcd.com')
-    False
     """
     if not isinstance(url, basestring) or '.' not in url:
         return False
@@ -111,9 +110,9 @@ def is_valid_url(url):
     except:
         return None
     if resp.status_code == 200:
-        return normalized_url
+        return normalized_url  # return the original URL that was requested/visited
     elif resp.status_code == 302:
-        return resp.headers['location']
+        return resp.headers['location']  # return redirected URL
     else:
         return False
 
