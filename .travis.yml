@@ -45,4 +45,6 @@ script:
 after_success:
   - codecov
   - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
+cache:
+  - apt
 
