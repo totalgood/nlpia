@@ -4,8 +4,8 @@
 
 sudo: false
 language: python
-cache: apt
-cache: pip
+# cache: apt
+# cache: pip
 virtualenv:
   system_site_packages: true
 env:
@@ -29,6 +29,7 @@ addons:
       - pandoc
       - portaudio19-dev
       - libasound*
+      # - swig
       # - python-pyaudio
       # - python3-numpy
       # - python3-scipy

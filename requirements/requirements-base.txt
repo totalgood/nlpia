@@ -40,7 +40,7 @@ seaborn>=0.8
 scikit-learn>=0.18.1
 scipy>=0.19.0
 spacy>=2.0.12,<2.1.0
-# swig>=3.0.12,<3.1.0  # conda => wget 'http://prdownloads.sourceforge.net/swig/swig-3.0.12.tar.gz' && tar -xvzf && swig-swig-3.0.12.tar.gz && cd swig-3.0.12 && ./configure && make && make install
+# swig>=3.0.10,<3.2.0  # conda => wget 'http://prdownloads.sourceforge.net/swig/swig-3.0.12.tar.gz' && tar -xvzf && swig-swig-3.0.12.tar.gz && cd swig-3.0.12 && ./configure && make && make install
 tensorflow>=1.10.0,<1.11.0
 tqdm>=4.11.2
 wheel>=0.30.0a0
