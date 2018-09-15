@@ -24,7 +24,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
     export PATH=$HOME/anaconda3/bin:$PATH
     conda update -q -y conda
     conda install -q -y pip
-    # conda install -q -y swig
+    conda install -q -y swig
 
     # Configure the conda environment and put it in the path using the provided versions
     if [[ -f "$ENVIRONMENT_YML" ]]; then
