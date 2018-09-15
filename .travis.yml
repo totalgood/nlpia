@@ -29,7 +29,6 @@ addons:
       - pandoc
       - portaudio19-dev
       - libasound*
-      - swig
       # - python-pyaudio
       # - python3-numpy
       # - python3-scipy
