@@ -21,7 +21,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
     wget -q http://repo.continuum.io/archive/Anaconda3-5.2.0-Linux-x86_64.sh -O $DOWNLOAD_DIR/anaconda3.sh
     chmod +x $DOWNLOAD_DIR/anaconda3.sh && bash $DOWNLOAD_DIR/anaconda3.sh -b -u -p $HOME/anaconda3
     # rm -r -d -f $DOWNLOAD_DIR
-    export PATH=$HOME/anaconda3/bin:$PATH
+    # export PATH=$HOME/anaconda3/bin:$PATH
     conda update -q -y conda
     conda install -q -y pip
     conda install -q -y swig
