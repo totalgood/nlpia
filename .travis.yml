@@ -2,6 +2,7 @@ language: python
 python:
   - "2.7"
   - "3.6"
+  - "3.6-dev"
 install:
   - sudo apt-get update
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -17,7 +18,7 @@ install:
   - conda info -a
   - echo "conda create -n testenv -f conda/environment.yml python=$TRAVIS_PYTHON_VERSION"
   - ls conda
-  - conda create -n testenv -f conda/environment.yml python=$TRAVIS_PYTHON_VERSION
+  - conda create -n testenv -f $ENVIRONMENT_YML python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
   - python setup.py install
 
