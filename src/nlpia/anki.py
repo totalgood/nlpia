@@ -49,6 +49,7 @@ def get_vocab(docs):
     """ Build a DataFrame containing all the words in the docs provided along with their POS tags etc
 
     >>> doc = nlp("Hey Mr. Tangerine Man!")
+    <BLANKLINE>
     ...
     >>> get_vocab([doc])
             word    pos  tag       dep ent_type ent_iob  sentiment
