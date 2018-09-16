@@ -33,7 +33,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
         echo "WARNING: Unable to find an environment.yml file !!!!!!"
         conda create -q -n testenv --yes python=$PYTHON_VERSION pip
     fi
-    conda activate testenv
+    source activate testenv
     echo "Installing pip with conda quietly"
     conda install -q -y pip
 
