@@ -15,7 +15,9 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -n testenv -f conda/environment.yml
+  - echo "conda create -n testenv -f conda/environment.yml python=$TRAVIS_PYTHON_VERSION"
+  - ls conda
+  - conda create -n testenv -f conda/environment.yml python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
   - python setup.py install
 
