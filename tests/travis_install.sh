@@ -25,19 +25,22 @@ if [[ "$DISTRIB" == "conda" ]]; then
     conda update -q -y conda
     conda install -q -y pip
     conda install -q -y swig
-
+    echo "creating conda environemnt -n testenv -f $ENVIRONMENT_YML"
     # Configure the conda environment and put it in the path using the provided versions
     if [[ -f "$ENVIRONMENT_YML" ]]; then
-        conda env create -q -n testenv -f "$ENVIRONMENT_YML"
+        conda env create -n testenv -f "$ENVIRONMENT_YML"
     else
         echo "WARNING: Unable to find an environment.yml file !!!!!!"
         conda create -q -n testenv --yes python=$PYTHON_VERSION pip
     fi
-    source activate testenv
+    conda activate testenv
+    echo "Installing pip with conda quietly"
     conda install -q -y pip
 
     # download spacy English language model
-    pip install --upgrade spacy
+    echo "Installing pip with conda quietly"
+    conda install spacy
+    echo "Downloading spacy language model"
     python -m spacy download en
 
     # download NLTK punkt, Penn Treebank, and wordnet corpora 
