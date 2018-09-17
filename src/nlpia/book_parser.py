@@ -273,9 +273,14 @@ def ensure_dir_exists(dest):
     return dest
 
 
-def translate_book(translate=HyperlinkStyleCorrector().translate,
+def translate_book(translate=(HyperlinkStyleCorrector().translate, translate_line_footnotes),
                    book_dir=os.path.curdir, dest=None, include_tags=['natural'],
                    ext='.nlpiabak', skip_untitled=True):
+    """ Fix any style corrections listed in `translate` list of translation functions
+
+    >>> len(translate_book(BOOK_PATH, dest='cleaned_hyperlinks'))
+    2
+    """
     if callable(translate) or not hasattr(translate, '__len__'):
         translate = (translate,)
     dest = ensure_dir_exists(dest)
@@ -292,10 +297,27 @@ def translate_book(translate=HyperlinkStyleCorrector().translate,
             for lineno, (tag, line) in enumerate(tagged_lines):
                 for t in translate:
                     new_line = t(line)  # TODO: be smarter about writing to files in-place
-                if line != new_line:
-                    file_line_maps.append((fileid, lineno, filepath, destpath, line, new_line))
-                fout.write(new_line)
+                    if line != new_line:
+                        line = new_line
+                        file_line_maps.append((fileid, lineno, filepath, destpath, line, line))
+                    fout.write(line)
     return file_line_maps
+
+
+def correct_hyperlinks(book_dir=os.path.curdir, dest=None, include_tags=['natural'],
+                       ext='.nlpiabak', skip_untitled=True):
+    """ DEPRECATED (see translate_line_footnotes)
+
+    Find bad footnotes (only urls), visit the page, add the title to the footnote 
+
+    >>> len(correct_hyperlinks(BOOK_PATH, dest='cleaned_hyperlinks'))
+    1
+    """
+    # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
+    # file_line_maps = []
+    return translate_book(translate=HyperlinkStyleCorrector().translate,
+                          book_dir=book_dir, dest=dest, include_tags=include_tags,
+                          ext=ext, skip_untitled=skip_untitled)
 
 
 def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=['natural'],
