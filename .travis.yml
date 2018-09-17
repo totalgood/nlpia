@@ -30,8 +30,8 @@ install:
       pip install PyScaffold ;
       conda install boto3 ;
     fi
-  - pip install -r requirements/requirements-base.txt
-  - python setup.py install
+  # - pip install -r requirements/requirements-base.txt
+  - pip install .
   # - conda build conda-build-recipe
   # - conda install nlpia --use-local
 
