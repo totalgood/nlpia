@@ -31,7 +31,7 @@ install:
       conda install boto3 ;
     fi
   # - pip install -r requirements/requirements-base.txt
-  - pip install .
+  - pip install -e .
   # - conda build conda-build-recipe
   # - conda install nlpia --use-local
 
