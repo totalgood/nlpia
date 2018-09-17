@@ -305,7 +305,7 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
     Find bad footnotes (only urls), visit the page, add the title to the footnote 
 
     >>> len(correct_bad_footnote_urls(BOOK_PATH, dest='cleaned_footnotes'))
-    2
+    1
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []

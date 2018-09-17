@@ -49,7 +49,8 @@ class HyperlinkStyleCorrector(Pattern):
         >>> translator.translate(adoc)
         'Two WAT (http://what.com) with longer url (https://another.com/api?q=1&a=2).'
         """
-        self.cre_name_regex = name_regex if hasattr(name_regex.pattern) else regex.compile(name_regex) 
+        name_regex = name_regex or ''
+        self.cre_name_regex = name_regex if hasattr(name_regex, 'pattern') else regex.compile(name_regex) 
         matches = self.finditer(text)
         newdoc = text
         for m in matches:
