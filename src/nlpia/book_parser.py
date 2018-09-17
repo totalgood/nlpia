@@ -315,7 +315,7 @@ def correct_hyperlinks(book_dir=os.path.curdir, dest=None, include_tags=['natura
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []
-    return translate_book(translate=HyperlinkStyleCorrector().translate,
+    return translate_book(translators=HyperlinkStyleCorrector().translate,
                           book_dir=book_dir, dest=dest, include_tags=include_tags,
                           ext=ext, skip_untitled=skip_untitled)
 
@@ -331,11 +331,12 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []
-    return translate_book(translate=translate_line_footnotes, book_dir=book_dir, dest=dest, include_tags=include_tags,
+    return translate_book(translators=translate_line_footnotes, book_dir=book_dir, dest=dest, include_tags=include_tags,
                           ext=ext, skip_untitled=skip_untitled)
 
 
 def filter_lines(input_file, output_file, translate=lambda line: line):
+    """ Translate all the lines of a single file """
     filepath, lines = get_lines([input_file])[0]
     return filepath, [(tag, translate(line=line, tag=tag)) for (tag, line) in lines]
 
