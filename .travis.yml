@@ -16,7 +16,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda info -a
   - echo "running-- conda env create -f conda/environment.yml -n testenv python=$TRAVIS_PYTHON_VERSION"
-  - conda env create -f conda/environment.yml -n testenv python=$TRAVIS_PYTHON_VERSION
+  - conda env create -q -f conda/environment.yml -n testenv python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
   - conda install pip
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
