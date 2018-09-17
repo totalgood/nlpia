@@ -273,16 +273,16 @@ def ensure_dir_exists(dest):
     return dest
 
 
-def translate_book(translate=(HyperlinkStyleCorrector().translate, translate_line_footnotes),
+def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_line_footnotes),
                    book_dir=os.path.curdir, dest=None, include_tags=['natural'],
                    ext='.nlpiabak', skip_untitled=True):
     """ Fix any style corrections listed in `translate` list of translation functions
 
-    >>> len(translate_book(BOOK_PATH, dest='cleaned_hyperlinks'))
+    >>> len(translate_book(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))
     2
     """
-    if callable(translate) or not hasattr(translate, '__len__'):
-        translate = (translate,)
+    if callable(translators) or not hasattr(translators, '__len__'):
+        translators = (translators,)
     dest = ensure_dir_exists(dest)
     sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
     file_line_maps = []
@@ -295,8 +295,8 @@ def translate_book(translate=(HyperlinkStyleCorrector().translate, translate_lin
             destpath = os.path.join(dest, os.path.basename(filepath))
         with open(destpath, 'w') as fout:
             for lineno, (tag, line) in enumerate(tagged_lines):
-                for t in translate:
-                    new_line = t(line)  # TODO: be smarter about writing to files in-place
+                for translate in translators:
+                    new_line = translate(line)  # TODO: be smarter about writing to files in-place
                     if line != new_line:
                         line = new_line
                         file_line_maps.append((fileid, lineno, filepath, destpath, line, line))
@@ -310,7 +310,7 @@ def correct_hyperlinks(book_dir=os.path.curdir, dest=None, include_tags=['natura
 
     Find bad footnotes (only urls), visit the page, add the title to the footnote 
 
-    >>> len(correct_hyperlinks(BOOK_PATH, dest='cleaned_hyperlinks'))
+    >>> len(correct_hyperlinks(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))
     1
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
@@ -326,7 +326,7 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
 
     Find bad footnotes (only urls), visit the page, add the title to the footnote 
 
-    >>> len(correct_bad_footnote_urls(BOOK_PATH, dest='cleaned_footnotes'))
+    >>> len(correct_bad_footnote_urls(book_dir=BOOK_PATH, dest='cleaned_footnotes'))
     1
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
