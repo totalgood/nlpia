@@ -3,12 +3,90 @@
 Instantiates Objects derived from the `_sre.SRE_Pattern` class (compiled regular expressions) so they work with regex.sub()
 """
 import logging
-import regex
+# Simport regex
+from copy import copy
 
 from nlpia.regexes import Pattern, RE_HYPERLINK
 
 # from nlpia.constants import DATA_PATH
 logger = logging.getLogger(__name__)
+
+
+def looks_like_name(s):
+    if len(s) < 3:
+        return None
+    if ' ' in s or '.' not in s or '/' not in s:
+        return s
+
+
+class Matcher(Pattern):
+    """ Pattern with additional .ismatch() that returns bool(re.match())
+
+    ismatch is desicned to be overriden by a custom function that returns a bool
+
+    >>> chars = list('Hello World!')
+    >>> m = Matcher('[a-z]')
+    >>> [m.ismatch(s) for s in chars]
+    [False, True, True, True, True, False, False, True, True, True, True, False]
+    >>> m = Matcher('^[A-Z][a-z]+$')
+
+    >>> tokens = 'A BIG Hello World to You!'.split()
+    >>> m = Matcher(lambda s: len(s) <= 3)
+    >>> [m.ismatch(s) for s in tokens]
+    [True, True, False, False, True, False]
+    >>> m = Matcher(None)
+    >>> [m.ismatch(s) for s in tokens]
+    [True, True, True, True, True, True]
+    """
+
+    def __init__(self, pattern='', ismatchfun=None):
+        if callable(pattern):
+            ismatchfun = pattern
+            pattern = ''
+        self._ismatchfun = ismatchfun or self._return_true
+        super().__init__(pattern or '')
+
+    def _return_true(self, *args, **kwargs):
+        return True
+
+    def _return_false(self, *args, **kwargs):
+        return False
+
+    def _ismatchfun(self, s):
+        return self._return_true()
+
+    def ismatch(self, s):
+        """ like compiled_re.match() but returns True or False """
+        if self._ismatchfun(s) and self._compiled_pattern.match(s):
+            return True
+        return False
+
+    def match(self, s, *args, **kwargs):
+        if self.ismatchfun(s):
+            return super().match(s, *args, **kwargs)
+
+
+class Filter(Matcher):
+    """ Pattern with additional .ismatch() and .filter() methods
+
+    >>> chars = list('Hello World!')
+    >>> m = Filter('[a-z]')
+    >>> [m.filter(c) for c in chars]
+    ['', 'e', 'l', 'l', 'o', '', '', 'o', 'r', 'l', 'd', '']
+    >>> m = Filter('^[A-Z][a-z]+$')
+    >>> tokens = 'A BIG Hello World to You!'.split()
+    >>> [m.filter(s) for s in tokens]
+    ['', '', 'Hello', 'World', '', '']
+    >>> m = Filter(None)
+    >>> [m.filter(s) for s in tokens] 
+    ['A', 'BIG', 'Hello', 'World', 'to', 'You!']
+    """
+
+    def filter(self, s):
+        """ like compiled_re.match() but returns the entire string if it matches or empty string otherwise """
+        if self.ismatch(s):
+            return s
+        return ''
 
 
 class HyperlinkStyleCorrector(Pattern):
@@ -33,7 +111,11 @@ class HyperlinkStyleCorrector(Pattern):
     def __init__(self, pattern=RE_HYPERLINK):
         super().__init__(pattern=pattern)
 
-    def replace(self, text, to_template='{name} ({url})', from_template=None, name_regex=None):
+    def name_matcher(s):
+        return s 
+
+    def replace(self, text, to_template='{name} ({url})', from_template=None,
+                name_matcher=Matcher(looks_like_name), url_matcher=Matcher(r'.*[^:]+$')):
         """ Replace all occurrences of rendered from_template in text with `template` rendered from each match.groupdict()
 
         TODO: from_template 
@@ -49,17 +131,30 @@ class HyperlinkStyleCorrector(Pattern):
         >>> translator.translate(adoc)
         'Two WAT (http://what.com) with longer url (https://another.com/api?q=1&a=2).'
         """
-        name_regex = name_regex or ''
-        self.cre_name_regex = name_regex if hasattr(name_regex, 'pattern') else regex.compile(name_regex) 
+        self.name_matcher = name_matcher or Matcher()
+        self.url_matcher = url_matcher or Matcher()
         matches = self.finditer(text)
-        newdoc = text
+        newdoc = copy(text)
+        logger.debug('before translate: {}'.format(newdoc))
         for m in matches:
             # this outer m.captures() loop is overkill:
             #   overlapping pattern matches probably won't match after the first replace
+            logger.debug('match: {}'.format(m))
+            logger.debug('match.captures(): {}'.format(m.captures()))
             for i, captured_str in enumerate(m.captures()):
-                captureddict = dict((k, v[i]) for k, v in m.capturesdict().items())
+                captureddict = {'name': None, 'scheme': None, 'url': None}
+                for k, v in m.capturesdict().items():
+                    if len(v) > i:
+                        captureddict[k] = v[i]
+                    else:
+                        captureddict[k] = None
+                        logger.warning('Overlapping captured matches were mishandled: {}'.format(m.capturesdict()))
+                # need to check for optional args:
                 name = captureddict.get('name', None)
-                if not self.cre_name_regex.match(name):
+                url = captureddict.get('url', None)
+                scheme = captureddict.get('scheme', None)
+                if (not scheme or not name or not self.name_matcher.ismatch(name) or 
+                        not url or not self.url_matcher.ismatch(url)):
                     continue
                 if from_template:
                     rendered_from_template = from_template.format(**captureddict)
@@ -71,7 +166,7 @@ class HyperlinkStyleCorrector(Pattern):
                 newdoc = newdoc.replace(rendered_from_template, rendered_to_template)
         return newdoc
 
-    def translate(self, text, to_template='{name} ({url})', from_template=None, name_regex=None):
+    def translate(self, text, to_template='{name} ({url})', from_template=None, name_matcher=None, url_matcher=None):
         """ Translate hyperinks into printable book style for Manning Publishing
 
         >>> translator = HyperlinkStyleCorrector()
@@ -79,5 +174,6 @@ class HyperlinkStyleCorrector(Pattern):
         >>> translator.translate(adoc)
         'See Total Good (http://totalgood.com) about that.'
         """
-        return self.replace(text, to_template=to_template, from_template=from_template, name_regex=name_regex)
+        return self.replace(text, to_template=to_template, from_template=from_template,
+                            name_matcher=name_matcher, url_matcher=url_matcher)
 

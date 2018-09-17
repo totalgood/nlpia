@@ -160,7 +160,7 @@ def find_bad_footnote_urls(tagged_lines, include_tags=['natural']):
     >>> sections = get_tagged_sections(BOOK_PATH)
     >>> tagged_lines = sections[0][1]
     >>> find_bad_footnote_urls(tagged_lines)
-    [[17, 'https://spacy.io/usage/linguistic-features#rule-based-morphology']]
+    [[30, 'https://spacy.io/usage/linguistic-features#rule-based-morphology']]
     """
     section_baddies = []
     logger.debug(tagged_lines[:2])
@@ -226,9 +226,10 @@ def translate_line_footnotes(line, tag=None, default_title='<NOT_FOUND>'):
     for url in urls:
         footnote = 'footnote:[{url}]'.format(url=url)
         new_footnote = footnote
+        # TODO: use these to extract name from hyperlinks
         title = get_url_title(url)
         title = title or infer_url_title(url)
-        title = title.strip(' \t\n\r\f-_:|="\'/\\')
+        title = (title or '').strip(' \t\n\r\f-_:|="\'/\\')
         title = title if ' ' in (title or 'X') else None
 
         if title:
@@ -279,7 +280,7 @@ def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_l
     """ Fix any style corrections listed in `translate` list of translation functions
 
     >>> len(translate_book(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))
-    2
+    3
     """
     if callable(translators) or not hasattr(translators, '__len__'):
         translators = (translators,)
@@ -295,12 +296,14 @@ def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_l
             destpath = os.path.join(dest, os.path.basename(filepath))
         with open(destpath, 'w') as fout:
             for lineno, (tag, line) in enumerate(tagged_lines):
-                for translate in translators:
-                    new_line = translate(line)  # TODO: be smarter about writing to files in-place
-                    if line != new_line:
-                        line = new_line
-                        file_line_maps.append((fileid, lineno, filepath, destpath, line, line))
-                    fout.write(line)
+                if (include_tags is None or tag in include_tags or
+                        any((tag.startswith(t) for t in include_tags))):
+                    for translate in translators:
+                        new_line = translate(line)  # TODO: be smarter about writing to files in-place
+                        if line != new_line:
+                            file_line_maps.append((fileid, lineno, filepath, destpath, line, new_line))
+                            line = new_line
+                fout.write(line)
     return file_line_maps
 
 
@@ -311,7 +314,7 @@ def correct_hyperlinks(book_dir=os.path.curdir, dest=None, include_tags=['natura
     Find bad footnotes (only urls), visit the page, add the title to the footnote 
 
     >>> len(correct_hyperlinks(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))
-    1
+    2
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []
@@ -345,14 +348,15 @@ def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
     r""" Parse all the asciidoc files in book_dir, returning a list of 2-tuples of lists of 2-tuples (tagged lines) 
 
     >>> main(BOOK_PATH, verbosity=0)
-    [('...src/nlpia/data/book/Appendix F -- Glossary.asc', [('natural_heading1', '= Glossary\n'),
+    [('.../src/nlpia/data/book/Appendix F -- Glossary.asc', [('natural_heading1', '= Glossary\n'),
      ('blank_line', '\n'), ('natural', "We've collected some definitions of some common NLP and ML
      acronyms and terminology here.footnote:[Bill Wilson at the university of New South Wales in Australia
      has a more complete one here: https://www.cse.unsw.edu.au/~billw/nlpdict.html]\n"),
      ('natural', 'You can find some of the tools we used to generate this list in the `nlpia` python package
-     at https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py:[github.com/totalgood/nlpia]].\n'),
-     ('blank_line', '\n'), ('natural_glossary_header', '[template="glossary",id="terms"]\n'),
-     ('natural_glossary', 'Acronyms\n'), ('natural_glossary_start', '--------\n'), ...
+     at https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py[github.com/totalgood/nlpia]].\n'),
+     ('blank_line', '\n'), ('caption', '.Translate hyperlinks and footnotes\n'),
+     ('code_header', '[source,python]\n'), ('code_start', '----\n'), ('code', '>>> from nlpia.book_parser import *\n'),
+     ('code', ">>> len(translate_book(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))\n"),...
      ('natural_glossary', '\n'), ('natural_glossary', '\n')])]
     >>> main(BOOK_PATH, include_tags='natural', verbosity=1)
     = Glossary

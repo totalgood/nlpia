@@ -92,6 +92,7 @@ class Pattern:
     def __init__(self, pattern):
         pattern = getattr(pattern, 'pattern', pattern)
         self._compiled_pattern = pattern if hasattr(pattern, 'pattern') else regex.compile(pattern)
+        self._cre = self._compiled_pattern
         for name in dir(self._compiled_pattern):
             if name in ('__class__', '__init__'):
                 continue
