@@ -27,9 +27,10 @@ install:
     else
       pip install PyScaffold ;
     fi
-  # - python setup.py install
-  - conda build conda-build-recipe
-  - conda install nlpia --use-local
+  - pip install -r requirmeents/requirements-base.txt
+  - python setup.py install
+  # - conda build conda-build-recipe
+  # - conda install nlpia --use-local
 
 
 script:

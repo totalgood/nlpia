@@ -3,6 +3,8 @@
 Instantiates Objects derived from the `_sre.SRE_Pattern` class (compiled regular expressions) so they work with regex.sub()
 """
 import logging
+import regex
+
 from nlpia.regexes import Pattern, RE_HYPERLINK
 
 # from nlpia.constants import DATA_PATH
@@ -31,7 +33,7 @@ class HyperlinkStyleCorrector(Pattern):
     def __init__(self, pattern=RE_HYPERLINK):
         super().__init__(pattern=pattern)
 
-    def replace(self, text, to_template, from_template=None):
+    def replace(self, text, to_template, from_template=None, name_regex=None):
         """ Replace all occurrences of rendered from_template in text with `template` rendered from each match.groupdict()
 
         TODO: from_template 
@@ -47,17 +49,21 @@ class HyperlinkStyleCorrector(Pattern):
         >>> translator.translate(adoc)
         'Two WAT (http://what.com) with longer url (https://another.com/api?q=1&a=2).'
         """
+        self.cre_name_regex = name_regex if hasattr(name_regex.pattern) else regex.compile(name_regex) 
         matches = self.finditer(text)
         newdoc = text
         for m in matches:
             # this outer m.captures() loop is overkill:
             #   overlapping pattern matches probably won't match after the first replace
             for i, captured_str in enumerate(m.captures()):
+                captureddict = dict((k, v[i]) for k, v in m.capturesdict().items())
+                name = captureddict.get('name', None)
+                if not self.cre_name_regex.match(name):
+                    continue
                 if from_template:
-                    rendered_from_template = from_template.format(
-                        **dict((k, v[i]) for k, v in m.capturesdict().items())) 
+                    rendered_from_template = from_template.format(**captureddict)
                 else:
-                    rendered_from_template = captured_str
+                    rendered_from_template = captureddict
                 # TODO: render numbered references like r'\1' before rendering named references
                 #    or do them together in one `.format(**kwargs)` after translating \1 to {1} and groupsdict().update({1: ...})
                 rendered_to_template = to_template.format(**m.groupdict())
