@@ -25,7 +25,10 @@ install:
     else
       pip install 'PyScaffold==2.5'
     fi
-  - python setup.py install
+  # - python setup.py install
+  - conda build conda-build-recipe
+  - conda install nlpia --use-local
+
 
 script:
   - python setup.py test
