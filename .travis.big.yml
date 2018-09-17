@@ -1,0 +1,55 @@
+# Travis configuration file using the build matrix feature
+# Read more under http://docs.travis-ci.com/user/build-configuration/
+# THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
+
+sudo: false
+language: python
+python:
+  - "3.6-dev"
+cache:
+  - apt
+  - pip
+virtualenv:
+  system_site_packages: true
+env:
+  matrix:
+    # - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
+    # - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
+    # - DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
+    # - DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="true"
+    - DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="true" ENVIRONMENT_YML="conda/environment.yml"
+addons:
+  apt:
+    packages:
+      - git
+      - build-essential
+      - gfortran
+      - libopenblas-dev
+      - liblapack-dev
+      - python3-matplotlib
+      - python-dev
+      - python3-dev
+      - pandoc
+      - portaudio19-dev
+      - libasound*
+      # - python-pyaudio
+      # - python3-numpy
+      # - python3-scipy
+install:
+  - source tests/travis_install.sh
+  - pip install -r requirements/requirements-test.txt
+  - pip install --upgrade pip
+  - pip install -e .
+before_script:
+  - git config --global user.email "travis.nlpia@totalgood.com"
+  - git config --global user.name "nlpia Travis tests"
+script:
+  - python setup.py test  # does this do a build? do we need pip install above?
+after_success:
+  - codecov
+  - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
+cache:
+  - apt
+#  - pip
+
+
