@@ -10,6 +10,7 @@ from nlpia.constants import BOOK_PATH
 from nlpia.regexes import RE_URL_SIMPLE, splitext
 from nlpia.loaders import get_url_title, get_url_filemeta
 from nlpia.transcoders import delimit_slug
+from nlpia.translators import HyperlinkStyleCorrector
 
 
 logger = logging.getLogger(__name__)
@@ -251,22 +252,7 @@ def translate_line_footnotes(line, tag=None, default_title='<NOT_FOUND>'):
     return line
 
 
-def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=['natural'],
-                              ext='.nlpiabak', skip_untitled=True):
-    """ DEPRECATED (see translate_line_footnotes)
-
-    Find bad footnotes (only urls), visit the page, add the title to the footnote 
-
-    >> mapped_lines = correct_bad_footnote_urls(BOOK_PATH, dest='cleaned_footnotes')
-    >> shutil.copyfile()
-    # [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
-    #   ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
-    #    'Linguistic Features Â· spaCy Usage Documentation')]]
-    """
-    # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
-    # file_line_maps = []
-    sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
-    file_line_maps = []
+def ensure_dir_exists(dest):
     if dest is not None:
         dest = dest.rstrip(os.path.sep)
         if os.path.isdir(dest):
@@ -283,7 +269,18 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
         if not os.path.isdir(dest):
             logger.warning('Creating directory with mkdir_p({})'.format(repr(dest)))
         futil.mkdir_p(dest)
-        logger.info('Saving translated files in {}{}*{}'.format(dest, os.path.sep, ext))
+        logger.info('Saving translated files in {}{}*'.format(dest, os.path.sep))
+    return dest
+
+
+def translate_book(translate=HyperlinkStyleCorrector().translate,
+                   book_dir=os.path.curdir, dest=None, include_tags=['natural'],
+                   ext='.nlpiabak', skip_untitled=True):
+    if callable(translate) or not hasattr(translate, '__len__'):
+        translate = (translate,)
+    dest = ensure_dir_exists(dest)
+    sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
+    file_line_maps = []
 
     for fileid, (filepath, tagged_lines) in enumerate(sections):
         destpath = filepath
@@ -293,11 +290,30 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
             destpath = os.path.join(dest, os.path.basename(filepath))
         with open(destpath, 'w') as fout:
             for lineno, (tag, line) in enumerate(tagged_lines):
-                new_line = translate_line_footnotes(line)  # TODO: be smarter about writing to files in-place
+                for t in translate:
+                    new_line = t(line)  # TODO: be smarter about writing to files in-place
                 if line != new_line:
                     file_line_maps.append((fileid, lineno, filepath, destpath, line, new_line))
                 fout.write(new_line)
     return file_line_maps
+
+
+def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=['natural'],
+                              ext='.nlpiabak', skip_untitled=True):
+    """ DEPRECATED (see translate_line_footnotes)
+
+    Find bad footnotes (only urls), visit the page, add the title to the footnote 
+
+    >> mapped_lines = correct_bad_footnote_urls(BOOK_PATH, dest='cleaned_footnotes')
+    >> shutil.copyfile()
+    # [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
+    #   ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
+    #    'Linguistic Features Â· spaCy Usage Documentation')]]
+    """
+    # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
+    # file_line_maps = []
+    return translate_book(translate=translate_line_footnotes, book_dir=book_dir, dest=dest, include_tags=include_tags,
+                          ext=ext, skip_untitled=skip_untitled)
 
 
 def filter_lines(input_file, output_file, translate=lambda line: line):
