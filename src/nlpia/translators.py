@@ -33,7 +33,7 @@ class HyperlinkStyleCorrector(Pattern):
     def __init__(self, pattern=RE_HYPERLINK):
         super().__init__(pattern=pattern)
 
-    def replace(self, text, to_template, from_template=None, name_regex=None):
+    def replace(self, text, to_template='{name} ({url})', from_template=None, name_regex=None):
         """ Replace all occurrences of rendered from_template in text with `template` rendered from each match.groupdict()
 
         TODO: from_template 
@@ -64,14 +64,14 @@ class HyperlinkStyleCorrector(Pattern):
                 if from_template:
                     rendered_from_template = from_template.format(**captureddict)
                 else:
-                    rendered_from_template = captureddict
+                    rendered_from_template = captured_str
                 # TODO: render numbered references like r'\1' before rendering named references
                 #    or do them together in one `.format(**kwargs)` after translating \1 to {1} and groupsdict().update({1: ...})
                 rendered_to_template = to_template.format(**m.groupdict())
                 newdoc = newdoc.replace(rendered_from_template, rendered_to_template)
         return newdoc
 
-    def translate(self, text, to_template='{name} ({url})', from_template=None):
+    def translate(self, text, to_template='{name} ({url})', from_template=None, name_regex=None):
         """ Translate hyperinks into printable book style for Manning Publishing
 
         >>> translator = HyperlinkStyleCorrector()
@@ -79,5 +79,5 @@ class HyperlinkStyleCorrector(Pattern):
         >>> translator.translate(adoc)
         'See Total Good (http://totalgood.com) about that.'
         """
-        return self.replace(text, to_template=to_template, from_template=None)
+        return self.replace(text, to_template=to_template, from_template=from_template, name_regex=name_regex)
 
