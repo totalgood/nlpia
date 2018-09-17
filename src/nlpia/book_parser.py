@@ -61,9 +61,11 @@ def get_lines(file_path=BOOK_PATH):
         if os.path.sep not in file_path:
             file_path = os.path.join(os.path.abspath(os.path.curdir), file_path)
         files = glob.glob(file_path)
+    else:
+        raise FileNotFoundError("Unable to find the directory or files requested.")
     lines = []
-    for file in files:
-        with open(file, 'r') as f:
+    for filepath in files:
+        with open(filepath, 'r') as f:
             lines.append(f.readlines())
     return zip(files, lines)
 
