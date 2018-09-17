@@ -1,0 +1,49 @@
+{% set name = "nlpia" %}
+{% set version = "0.1.48" %}
+{% set file_ext = "tar.gz" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "5966f6a995dfb3f5e8ef07ddda2cbf0a70c6487f16d7ecf4357a05a6b81f2cf0" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  fn: '{{ name }}-{{ version }}.{{ file_ext }}'
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.{{ file_ext }}
+  '{{ hash_type }}': '{{ hash_value }}'
+
+build:
+  number: 0
+  entry_points:
+    - renderbook=nlpia.scripts.countpages:main
+    - cleandialog=nlpia.scripts.cleandialog:main
+    - downloadgdrive=nlpia.scripts.google_drive:main
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  host:
+    - python
+    - setuptools
+  run:
+    - python
+    - setuptools
+
+test:
+  commands:
+    - renderbook --help
+    - cleandialog --help
+    - downloadgdrive --help
+
+about:
+  home: http://github.com/totalgood/nlpia
+  license: MIT License
+  license_family: MIT
+  license_file: LICENSE.txt
+  summary: Community-driven code for the book Natural Language Processing in Action.
+  description: README.md
+  doc_url: ''
+  dev_url: ''
+
+extra:
+  recipe-maintainers: ''
