@@ -25,8 +25,10 @@ install:
   - conda install pip
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       pip install 'PyScaffold==2.5' ;
+      conda install boto ;
     else
       pip install PyScaffold ;
+      conda install boto3 ;
     fi
   - pip install -r requirements/requirements-base.txt
   - python setup.py install
