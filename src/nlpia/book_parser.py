@@ -304,11 +304,8 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
 
     Find bad footnotes (only urls), visit the page, add the title to the footnote 
 
-    >> mapped_lines = correct_bad_footnote_urls(BOOK_PATH, dest='cleaned_footnotes')
-    >> shutil.copyfile()
-    # [['*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves. The morphemes ...
-    #   ('https://spacy.io/usage/linguistic-features#rule-based-morphology',
-    #    'Linguistic Features Â· spaCy Usage Documentation')]]
+    >>> len(correct_bad_footnote_urls(BOOK_PATH, dest='cleaned_footnotes'))
+    2
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []
