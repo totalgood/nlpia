@@ -15,23 +15,23 @@ install:
     fi
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
+  - cp conda/.condarc ~/.condarc
   - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda config --add channels conda-forge
-  - conda info -a
+  # - conda config --set always_yes yes --set changeps1 no
+  # - conda config --add channels conda-forge
   - echo "running-- conda env create -f $ENVIRONMENT_YML -n testenv python=$TRAVIS_PYTHON_VERSION"
   - travis_wait 30 conda env create -q -f $ENVIRONMENT_YML -n testenv python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
   - conda install pip
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       pip install 'PyScaffold==2.5' ;
-      conda install boto ;
     else
       pip install PyScaffold ;
-      conda install boto3 ;
     fi
   # - pip install -r requirements/requirements-base.txt
   - pip install -e .
+  - conda info -a
+  - conda list
   # - conda build conda-build-recipe
   # - conda install nlpia --use-local
 

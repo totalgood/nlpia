@@ -6,9 +6,10 @@ channels:
 
 dependencies:
   - python
-  - setuptools
-  - conda-build
-  - gensim>=3.4.0,<3.5.0
+  - pip
+  - boto3
+  # - conda-build
+  - gensim>=2.3,<3.0
   - jupyter>=1.0.0,<3.0.0
   - keras-applications>=1.0.4,<1.1.0
   - keras-preprocessing>=1.0.2,<1.1.0
