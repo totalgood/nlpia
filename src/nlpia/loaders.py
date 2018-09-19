@@ -497,7 +497,7 @@ def get_longest_table(url='https://www.openoffice.org/dev_docs/source/file_exten
     return longest_table(dfs)
 
 
-def get_leet_dict():
+def get_leet_map():
     """ Retrieve mapping from English letters to l33t like E => 3 or A => /\ or /-\ or @ """
     df = get_longest_table(
         'https://sites.google.com/site/inhainternetlanguage/different-internet-languages/l33t/list-of-l33ts', header=None)
@@ -510,18 +510,18 @@ def get_leet_dict():
             table.append((row['eng'].strip(), s.strip()))
     table = pd.DataFrame(table, columns=df.columns)
     leet_path = os.path.join(DATA_PATH, 'l33t.csv')
-    logger.info('Saving to l33t translation dict to {}'.format(leet_path))
+    logger.info('Saving l33t dictionary (character mapping) to {}'.format(leet_path))
     table.to_csv(leet_path)
     return table
 
 
-def get_chat_acronyms():
+def get_netspeak_map():
     """ Retrieve mapping from chat/text abbreviations and acronyms like LMK => Let Me Know """
     dfs = pd.read_html('https://www.webopedia.com/quick_ref/textmessageabbreviations.asp')
     df = dfs[0].drop(index=0)
     df.columns = ['abbrev', 'definition']
-    csv_path = os.path.join(DATA_PATH, 'chat_vocab.csv')
-    logger.info('Saving to l33t translation dict to {}'.format(csv_path))
+    csv_path = os.path.join(DATA_PATH, 'netspeak.csv')
+    logger.info('Saving netspeak dictionary (word mapping) to {}'.format(csv_path))
     df.to_csv(csv_path)
     return df
 
@@ -1040,8 +1040,8 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
             logger.error('ConnectionError for url: {} => request {}'.format(url, r))
             remote_size = -1 if remote_size is None else remote_size
         except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema) as e:
+            logger.error(e)
             logger.error('HTTP Error for url: {}\n request: {}\n traceback: {}'.format(url, r, format_exc()))
-            pass
     try:
         remote_size = int(remote_size)
     except ValueError:
