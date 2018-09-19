@@ -29,6 +29,7 @@ install:
     else
       pip install -U PyScaffold ;
     fi
+  # - sudo apt-get install -y python-boto
   # - pip install -r requirements/requirements-base.txt
   - pip install -U -e .
   - conda info -a
