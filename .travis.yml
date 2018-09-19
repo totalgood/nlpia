@@ -24,12 +24,12 @@ install:
   - source activate testenv
   - conda install pip
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      pip install 'PyScaffold==2.5' ;
+      pip install -U 'PyScaffold==2.5' ;
     else
-      pip install PyScaffold ;
+      pip install -U PyScaffold ;
     fi
   # - pip install -r requirements/requirements-base.txt
-  - pip install -e .
+  - pip install -U -e .
   - conda info -a
   - conda list
   # - conda build conda-build-recipe
