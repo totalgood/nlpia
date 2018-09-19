@@ -227,10 +227,8 @@ def segment_sentences(path=os.path.join(DATA_PATH, 'book'), splitter=split_sente
     >> import nltk
     >> nltk.download('punkt')
     >>> 10000 > len(segment_sentences(path=os.path.join(DATA_PATH, 'book'))) >= 4
-     ...
     True
     >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'psychology-scripts.txt'), splitter=split_sentences_nltk))
-     ...
     23
     """
     sentences = []
