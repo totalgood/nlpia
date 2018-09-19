@@ -32,6 +32,7 @@ install:
   # - sudo apt-get install -y python-boto
   # - pip install -r requirements/requirements-base.txt
   - pip install -U -e .
+  - python -c "import nltk; nltk.download('punkt')"
   - conda info -a
   - conda list
   # - conda build conda-build-recipe
