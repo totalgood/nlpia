@@ -21,12 +21,14 @@ install:
   - hash -r
   # - conda config --set always_yes yes --set changeps1 no
   # - conda config --add channels conda-forge
-  - echo "running-- conda env create -f $ENVIRONMENT_YML -n testenv"
-  - travis_wait 30 conda env create -q -f $ENVIRONMENT_YML -n testenv
+  - echo "running-- conda env create -f $ENVIRONMENT_YML -n testenv python=$TRAVIS_PYTHON_VERSION"
+  - travis_wait 30 conda env create -q -f $ENVIRONMENT_YML -n testenv python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
   - conda install pip
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      pip install -U 'PyScaffold==2.5' ;
+      pip uninstall setuptools ;
+      conda remove setuptools ;
+      pip install -U 'PyScaffold==2.5';
     else
       pip install -U PyScaffold ;
     fi

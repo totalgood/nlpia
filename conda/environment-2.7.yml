@@ -5,7 +5,7 @@ channels:
   - defaults
 
 dependencies:
-  - python=2.7
+  - python
   - pip
   # - boto3
   # - conda-build
@@ -31,7 +31,7 @@ dependencies:
   - spacy=2.0.12
   - swig=3.0.12
   - tensorflow>=1.10.0
-  - jupyter
+  - theano
 
   - pip:
     - -r ../requirements/requirements-base.txt
