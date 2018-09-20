@@ -1,4 +1,4 @@
-AIML-Bot>=0.0.3,<0.1.0
+AIML-Bot>=0.0.3
 MechanicalSoup>=0.10.0,<1.0.0
 annoy>=1.9.5,<2.0.0
 # boto3

@@ -5,7 +5,7 @@ python:
   # - "3.6-dev"
   # - "3.7"
 install:
-  - ENVIRONMENT_YML="conda/environment.yml"
+  - ENVIRONMENT_YML="conda/environment-$TRAVIS_PYTHON_VERSION.yml"
   - sudo apt-get update
   - sudo apt-get remove -y python-boto
   - sudo apt-get install -y libasound* build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev
@@ -17,6 +17,7 @@ install:
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - cp conda/.condarc ~/.condarc
+  - conda update -n base conda
   - hash -r
   # - conda config --set always_yes yes --set changeps1 no
   # - conda config --add channels conda-forge

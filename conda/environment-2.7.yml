@@ -5,7 +5,7 @@ channels:
   - defaults
 
 dependencies:
-  - python=3.6
+  - python=2.7
   - pip
   # - boto3
   # - conda-build
