@@ -7,7 +7,7 @@ channels:
 dependencies:
   - python
   - pip
-  - boto3
+  # - boto3
   # - conda-build
   - gensim>=2.3,<3.0
   - jupyter>=1.0.0,<3.0.0
