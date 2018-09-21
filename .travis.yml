@@ -34,7 +34,7 @@ install:
     fi
   # - sudo apt-get install -y python-boto
   # - pip install -y -r requirements/requirements-base.txt
-  - pip install -y -U -e .
+  - pip install -U -e .
   - python -c "import nltk; nltk.download('punkt')"
   - conda info -a
   - conda list

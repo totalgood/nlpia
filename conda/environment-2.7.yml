@@ -29,7 +29,7 @@ dependencies:
   - scipy>=0.19.0
   - spacy=2.0.12
   - swig=3.0.12
-  - tensorflow>=1.10.0
+  - tensorflow>=1.10.0,<1.11.0
   - theano
 
   - pip:
