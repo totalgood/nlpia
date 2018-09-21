@@ -33,4 +33,4 @@ dependencies:
   - theano
 
   - pip:
-    - -r ../requirements/requirements-base.txt
+    - -r ../requirements/requirements-2.7.txt

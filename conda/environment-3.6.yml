@@ -5,8 +5,6 @@ channels:
   - defaults
 
 dependencies:
-  - python
-  - pip
   # - boto3
   # - conda-build
   - gensim>=2.3,<3.0
@@ -34,4 +32,4 @@ dependencies:
   - jupyter
 
   - pip:
-    - -r ../requirements/requirements-base.txt
+    - -r ../requirements/requirements-3.6.txt
