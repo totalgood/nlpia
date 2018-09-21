@@ -5,31 +5,7 @@ channels:
   - defaults
 
 dependencies:
-  # - boto3
-  # - conda-build
-  - gensim>=2.3,<3.0
-  - jupyter>=1.0.0,<3.0.0
-  - keras-applications>=1.0.4,<1.1.0
-  - keras-preprocessing>=1.0.2,<1.1.0
-  - keras>=2.2.2,<2.3.0
-  - matplotlib>=2.2.2,<2.3.0
-  - nltk>=3.2.5,<3.3.0
-  # - numpy>=1.13.3,<=1.14.5
-  - opencv>=3.3.0,<3.5.0
-  - pandas
-  - pandoc>=2.1.2,<3.0.0
-  - pillow>=4.3.0,<4.4.0
-  - plac>=0.9.6,<0.10.0
-  - plotly>=3.1.1,<3.2.0
-  - pyqt>=5.6,<5.7
-  - pyscaffold
-  - python-levenshtein
-  - redis-py>=2.10.6
-  - scipy>=0.19.0
-  - spacy=2.0.12
-  - swig=3.0.12
-  - tensorflow>=1.10.0
-  - jupyter
+  - -f environment.yml
 
   - pip:
     - -r ../requirements/requirements-3.6.txt
