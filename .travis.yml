@@ -33,8 +33,8 @@ install:
       pip install -U PyScaffold ;
     fi
   # - sudo apt-get install -y python-boto
-  # - pip install -r "requirements/requirements-${TRAVIS_PYTHON_VERSION}.txt"
-  - pip install -U -e .
+  - pip install -r "requirements/requirements-${TRAVIS_PYTHON_VERSION}.txt"
+  - pip install -e .
   - python -c "import nltk; nltk.download('punkt')"
   - conda info -a
   - conda list
