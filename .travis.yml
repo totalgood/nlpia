@@ -26,15 +26,15 @@ install:
   - source activate testenv
   - conda install pip
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      pip uninstall setuptools ;
+      pip uninstall -y setuptools ;
       conda remove setuptools ;
       pip install -U 'PyScaffold==2.5';
     else
       pip install -U PyScaffold ;
     fi
   # - sudo apt-get install -y python-boto
-  # - pip install -r requirements/requirements-base.txt
-  - pip install -U -e .
+  # - pip install -y -r requirements/requirements-base.txt
+  - pip install -y -U -e .
   - python -c "import nltk; nltk.download('punkt')"
   - conda info -a
   - conda list
