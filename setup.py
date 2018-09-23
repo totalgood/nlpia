@@ -24,7 +24,7 @@ downloadgdrive = nlpia.scripts.google_drive:main
 def setup_package():
     needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
     sphinx = ['sphinx'] if needs_sphinx else []
-    setup(setup_requires=['pyscaffold>=3.0a0,<3.1a0'] + sphinx,
+    setup(setup_requires=['pyscaffold==2.5.10'] + sphinx,
           entry_points=entry_points,
           use_pyscaffold=True)
 
