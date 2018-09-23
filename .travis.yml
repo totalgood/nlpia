@@ -27,14 +27,14 @@ install:
   - conda install pip
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       pip uninstall -y setuptools ;
-      conda remove setuptools ;
-      pip install -U 'PyScaffold==2.5';
+      # conda remove setuptools ;
+      conda install 'PyScaffold==2.5';
     else
       pip install -U PyScaffold ;
     fi
   # - sudo apt-get install -y python-boto
-  - pip install -r "requirements/requirements-${TRAVIS_PYTHON_VERSION}.txt"
-  - pip install -e .
+  # - pip install -r "requirements/requirements-${TRAVIS_PYTHON_VERSION}.txt"
+  - pip install .
   - python -c "import nltk; nltk.download('punkt')"
   - conda info -a
   - conda list
