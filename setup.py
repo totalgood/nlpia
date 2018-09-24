@@ -13,12 +13,12 @@ from setuptools import setup
 
 # Add here console scripts and other entry points in ini-style format
 # audio = nlpia.scripts.audio:main
-entry_points = """
-[console_scripts]
-renderbook = nlpia.scripts.countpages:main
-cleandialog = nlpia.scripts.cleandialog:main
-downloadgdrive = nlpia.scripts.google_drive:main
-"""
+entry_points = ""
+# [console_scripts]
+# renderbook = nlpia.scripts.countpages:main
+# cleandialog = nlpia.scripts.cleandialog:main
+# downloadgdrive = nlpia.scripts.google_drive:main
+# """
 
 pyscaffold_ver = '3.1'
 if sys.version_info[0] < 3:
