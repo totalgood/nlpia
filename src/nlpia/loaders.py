@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """ Loaders and downloaders for data files and models required for the examples in NLP in Action
 
 >>> df = get_data('cities_us')
@@ -6,46 +8,70 @@
 131484    4295856  Indian Hills Cherokee Section
 137549    5322551                         Agoura
 134468    4641562                         Midway
+
+Google N-Gram Viewer data (at least the 1-grams) is available with get_data as well.
+The smallest 1-gram table is for the "first letter" pos (part of speech tags all alone):
+>>> df = get_data('1gram_pos')
+>>> df
+  term_pos  year  term_freq  book_freq
+0    _ADP_  1505       3367          1
+1    _ADP_  1507       4619          1
+2    _ADP_  1515      37423          1
+...
+
+The words that start with X is also a pretty small list:
+>>> df = get_data('1gram_x')
+>>> df
+        term_pos  year  term_freq  book_freq
+0         X'rays  1914          1          1
+1         X'rays  1917          1          1
+2         X'rays  1919          1          1
+3         X'rays  1921          1          1
+...
+[3929235 rows x 4 columns]
 """
-# -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
 from builtins import (bytes, dict, int, list, object, range, str,  # noqa
     ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
 standard_library.install_aliases()  # noqa
 from past.builtins import basestring
-from itertools import zip_longest
-from urllib.parse import urlparse
-from copy import deepcopy
-# from traceback import print_exc
 
 # from traceback import format_exc
 import os
 import re
 import json
-import requests
 import logging
 import shutil
+from traceback import format_exc
 from zipfile import ZipFile
 from math import ceil
-from itertools import product
+from itertools import product, zip_longest
+import requests
+from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, InvalidHeader, MissingSchema
+from urllib.parse import urlparse
+from urllib.error import URLError
+from lxml.html import fromstring as parse_html
+from copy import deepcopy
 
 import pandas as pd
+import gzip
 import tarfile
+import ftplib
+
+import spacy
 from tqdm import tqdm
 from gensim.models import KeyedVectors
 from gensim.models.keyedvectors import REAL, Vocab
 from gensim.scripts.glove2word2vec import glove2word2vec
 
-from pugnlp.futil import path_status, find_files
+from pugnlp.futil import mkdir_p, path_status, find_files
 from pugnlp.util import clean_columns
-# from nlpia.constants import DEFAULT_LOG_LEVEL  # , LOGGING_CONFIG
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
 
-from pugnlp.futil import mkdir_p
-import gzip
 
+_parse = None  # placeholder for SpaCy parser + language model
 
 INT_MAX = INT64_MAX = 2 ** 63 - 1
 INT_MIN = INT64_MIN = - 2 ** 63
@@ -78,7 +104,7 @@ ZIP_FILES = {
 ZIP_PATHS = [[os.path.join(BIGDATA_PATH, fn) for fn in ZIP_FILES[k]] if ZIP_FILES[k] else k for k in ZIP_FILES.keys()]
 
 
-def imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(('train', 'test'), ('pos', 'neg', 'unsup'))):
+def load_imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(('train', 'test'), ('pos', 'neg', 'unsup'))):
     """ Walk directory tree starting at `path` to compile a DataFrame of movie review text labeled with their 1-10 star ratings
 
     Returns:
@@ -101,7 +127,7 @@ def imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(('tra
         urlspath = os.path.join(dirpath, subdirs[0], 'urls_{}.txt'.format(subdirs[1]))
         if not os.path.isfile(urlspath):
             if subdirs != ('test', 'unsup'):  # test/ dir doesn't usually have an unsup subdirectory
-                logger.warn('Unable to find expected IMDB review list of URLs: {}'.format(urlspath))
+                logger.warning('Unable to find expected IMDB review list of URLs: {}'.format(urlspath))
             continue
         df = pd.read_csv(urlspath, header=None, names=['url'])
         # df.index.name = 'id'
@@ -109,7 +135,7 @@ def imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(('tra
 
         textsdir = os.path.join(dirpath, subdirs[0], subdirs[1])
         if not os.path.isdir(textsdir):
-            logger.warn('Unable to find expected IMDB review text subdirectory: {}'.format(textsdir))
+            logger.warning('Unable to find expected IMDB review text subdirectory: {}'.format(textsdir))
             continue
         filenames = [fn for fn in os.listdir(textsdir) if fn.lower().endswith('.txt')]
         df['index0'] = subdirs[0]  # TODO: column names more generic so will work on other datasets
@@ -205,12 +231,35 @@ def get_en2fr(url='http://www.manythings.org/anki/fra-eng.zip'):
     return pd.read_table(url, compression='zip', header=None, skip_blank_lines=True, sep='\t', skiprows=0, names='en fr'.split())
 
 
+def load_anki_df(language='deu'):
+    """ Load into a DataFrame statements in one language along with their translation into English
+
+    >>> get_data('zsm').head()
+                    eng                                zsm
+    0      Are you new?                         Awak baru?
+    1      I'm at home.       Saya sedang berada di rumah.
+    2   I have no clue.     Saya tiada pembayang langsung.
+    3   I'm not pretty.                   Saya tak cantik.
+    4  I had to resign.  Saya terpaksa meletakkan jawatan.
+    """
+    if os.path.isfile(language):
+        filepath = language
+        lang = re.search('[a-z]{3}-eng/', filepath).group()[:3].lower()
+    else:
+        lang = (language or 'deu').lower()[:3]
+        filepath = os.path.join(BIGDATA_PATH, '{}-eng'.format(lang), '{}.txt'.format(lang))
+    df = pd.read_table(filepath, skiprows=1, header=None)
+    df.columns = ['eng', lang]
+    return df
+
+
 BIG_URLS = {
     'w2v': (
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
         1647046227,
         'GoogleNews-vectors-negative300.bin.gz',
-        KeyedVectors.load_word2vec_format
+        KeyedVectors.load_word2vec_format,
+        {'binary': True},
     ),
     'glove_twitter': (
         'https://nlp.stanford.edu/data/glove.twitter.27B.zip',
@@ -256,9 +305,15 @@ BIG_URLS = {
     ),
     'imdb': (
         'https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1',
-        84125825,  # 3112841563,  # 3112841312,
+        84125825,
         'aclImdb',  # directory for extractall
-        imdb_df,  # postprocessor to combine text files into a single DataFrame
+        load_imdb_df,  # postprocessor to combine text files into a single DataFrame
+    ),
+    'imdb_test': (
+        'https://www.dropbox.com/s/cpgrf3udzkbmvuu/aclImdb_test.tar.gz?dl=1',
+        10858,
+        'aclImdb_test',  # directory for extractall
+        load_imdb_df,
     ),
     'alice': (
         # 'https://www.dropbox.com/s/py952zad3mntyvp/aiml-en-us-foundation-alice.v1-9.zip?dl=1',
@@ -278,9 +333,34 @@ BIG_URLS['word2vec'] = BIG_URLS['w2v']
 BIG_URLS['glove_small'] = BIG_URLS['glove']
 BIG_URLS['ubuntu'] = BIG_URLS['ubuntu_dialog'] = BIG_URLS['ubuntu_dialog_1500k']
 
+ANKI_LANGUAGES = 'afr arq ara aze eus bel ben ber bul yue cat cbk cmn chv hrv ces dan nld est fin fra glg kat ' \
+                 'deu ell heb hin hun isl ind ita jpn kha khm kor lvs lit nds mkd zsm mal mri mar max nob pes ' \
+                 'pol por ron rus srp slk slv spa swe tgl tam tat tha tur ukr urd uig vie'.split()
+LANG2ANKI = dict((lang[:2], lang) for lang in ANKI_LANGUAGES)
+"""
+>>> len(ANKI_LANGUAGES) - len(LANG2ANKI)
+9
+"""
+for lang in ANKI_LANGUAGES:
+    BIG_URLS[lang] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-eng'.format(lang), load_anki_df)
+
+"""
+Google N-Gram Viewer meta data is from:
+* [GOOGLE_NGRAM files](https://storage.googleapis.com/books/ngrams/books/datasetsv2.html)
+* [GOOGLE_NGRAM data format](https://books.google.com/ngrams/info)
+"""
+GOOGLE_NGRAM_URL = 'http://storage.googleapis.com/books/ngrams/books/'
+GOOGLE_NGRAM_NAMES = '0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o other p pos punctuation q r s t u v w x y z'.split()
+GOOGLE_NGRAM_FILE = 'googlebooks-eng-all-1gram-20120701-{}.gz'
+
+for name in GOOGLE_NGRAM_NAMES: 
+    BIG_URLS['1gram_{}'.format(name)] = (GOOGLE_NGRAM_URL + GOOGLE_NGRAM_FILE.format(name),
+                                         1000, GOOGLE_NGRAM_FILE.format(name),
+                                         pd.read_table,
+                                         {'sep': '\t', 'header': None, 'names': 'term_pos year term_freq book_freq'.split()})
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
-    logger.warn('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
+    logger.warning('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
         default=BIGDATA_INFO_FILE))
 except (IOError, pd.errors.EmptyDataError):
     BIGDATA_INFO = pd.DataFrame(columns='name url file_size'.split())
@@ -355,16 +435,20 @@ def normalize_ext_rename(filepath):
 
 
 def untar(fname, verbose=True):
+    """ Uunzip and untar a tar.gz file into a subdir of the BIGDATA_PATH directory """
     if fname.lower().endswith(".tar.gz"):
+        dirpath = os.path.join(BIGDATA_PATH, os.path.basename(fname)[:-7])
+        if os.path.isdir(dirpath):
+            return dirpath
         with tarfile.open(fname) as tf:
-            # tf.extractall(
-            #     path=BIGDATA_PATH,  # path=os.path.join(BIGDATA_PATH, fname.lower().split('.')[0]), name)
-            #     members=(tqdm if verbose else no_tqdm)(tf))
-            # path = '.' but what does that really mean
-            tf.extractall()
+            members = tf.getmembers()
+            for member in tqdm(members, total=len(members)):
+                tf.extract(member, path=BIGDATA_PATH)
+        dirpath = os.path.join(BIGDATA_PATH, members[0].name)
+        if os.path.isdir(dirpath):
+            return dirpath
     else:
-        logger.warn("Not a tar.gz file: {}".format(fname))
-    return fname[:-7]  # strip .tar.gz extension
+        logger.warning("Not a tar.gz file: {}".format(fname))
 
 
 def series_rstrip(series, endswith='/usercomments', ignorecase=True):
@@ -385,7 +469,7 @@ def series_strip(series, startswith=None, endswith=None, startsorendswith=None, 
     else:
         mask = series
     if not (startsorendswith or endswith or startswith):
-        logger.warn('In series_strip(): You must specify endswith, startswith, or startsorendswith string arguments.')
+        logger.warning('In series_strip(): You must specify endswith, startswith, or startsorendswith string arguments.')
         return series
     if startsorendswith:
         startswith = endswith = startsorendswith
@@ -462,6 +546,79 @@ def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
     ):
         return True
     return False
+
+
+def get_longest_table(url='https://www.openoffice.org/dev_docs/source/file_extensions.html', header=0):
+    """ Retrieve the HTML tables from a URL and return the longest DataFrame found 
+
+    >>> get_longest_table('https://en.wikipedia.org/wiki/List_of_sovereign_states').columns
+    Index(['Common and formal names', 'Membership within the UN System[a]',
+       'Sovereignty dispute[b]',
+       'Further information on status and recognition of sovereignty[d]'],
+      dtype='object')
+    """
+    dfs = pd.read_html(url, header=header)
+    return longest_table(dfs)
+
+
+def get_leet_map():
+    """ Retrieve mapping from English letters to l33t like E => 3 or A => /\ or /-\ or @ """
+    df = get_longest_table(
+        'https://sites.google.com/site/inhainternetlanguage/different-internet-languages/l33t/list-of-l33ts', header=None)
+    df = df.drop(index=0).iloc[:, :2]
+    df.columns = ['eng', 'l33t']
+    df['l33t'] = df['l33t'].str.split(',')
+    table = []
+    for i, row in df.iterrows():
+        for s in row['l33t']:
+            table.append((row['eng'].strip(), s.strip()))
+    table = pd.DataFrame(table, columns=df.columns)
+    leet_path = os.path.join(DATA_PATH, 'l33t.csv')
+    logger.info('Saving l33t dictionary (character mapping) to {}'.format(leet_path))
+    table.to_csv(leet_path)
+    return table
+
+
+def get_netspeak_map():
+    """ Retrieve mapping from chat/text abbreviations and acronyms like LMK => Let Me Know """
+    dfs = pd.read_html('https://www.webopedia.com/quick_ref/textmessageabbreviations.asp')
+    df = dfs[0].drop(index=0)
+    df.columns = ['abbrev', 'definition']
+    csv_path = os.path.join(DATA_PATH, 'netspeak.csv')
+    logger.info('Saving netspeak dictionary (word mapping) to {}'.format(csv_path))
+    df.to_csv(csv_path)
+    return df
+
+
+# more nontabular lists at 'https://simple.wikipedia.org/wiki/Leet
+
+
+def longest_table(dfs):
+    """ Return this single longest DataFrame that among an array/list/tuple of DataFrames 
+
+    Useful for automagically finding the DataFrame you want when using pd.read_html() on a Wikipedia page.
+    """
+    sorted_indices = sorted((len(df if hasattr(df, '__len__') else []), i) for i, df in enumerate(dfs))
+    return dfs[sorted_indices[-1][1]]
+
+
+def get_filename_extensions(url='https://www.webopedia.com/quick_ref/fileextensionsfull.asp'):
+    """ Load a DataFrame of filename extensions from the indicated url
+
+    >>> df = get_filename_extensions('https://www.openoffice.org/dev_docs/source/file_extensions.html')
+    >>> df.head(2)
+        ext                      description
+    0    .a        UNIX static library file.
+    1  .asm  Non-UNIX assembler source file.
+    """
+    df = get_longest_table(url)
+    columns = list(df.columns)
+    columns[0] = 'ext'
+    columns[1] = 'description'
+    if len(columns) > 2:
+        columns[2] = 'details'
+    df.columns = columns
+    return df
 
 
 def read_csv(*args, **kwargs):
@@ -626,7 +783,7 @@ def normalize_filepath(filepath):
     cre_controlspace = re.compile(r'[\t\r\n\f]+')
     new_filename = cre_controlspace.sub('', filename)
     if not new_filename == filename:
-        logger.warn('Stripped whitespace from filename: {} => {}'.format(
+        logger.warning('Stripping whitespace from filename: {} => {}'.format(
             repr(filename), repr(new_filename)))
         filename = new_filename
     filename = filename.lower()
@@ -691,25 +848,32 @@ def unzip(filepath, verbose=True):
     if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist):
         z.extractall(path=unzip_dir)
 
+    logger.info('unzip_dir contains: {}'.format(os.listdir(unzip_dir)))
+    # for f in os.listdir(unzip_dir):
+    #     if f.lower().endswith('about.txt'):
+    #         os.remove(os.path.join(unzip_dir, f))
     for f in tqdm_prog(os.listdir(unzip_dir)):
         if f[-1] in ' \t\r\n\f':
             bad_path = os.path.join(unzip_dir, f)
-            logger.warn('Stripping whitespace from end of filename: {} -> {}'.format(
+            logger.warning('Stripping whitespace from end of filename: {} -> {}'.format(
                 repr(bad_path), repr(bad_path.rstrip())))
             shutil.move(bad_path, bad_path.rstrip())
             # rename_file(source=bad_path, dest=bad_path.rstrip())
+    anki_paths = [os.path.join(unzip_dir, f) for f in os.listdir(unzip_dir)
+                  if f.lower()[:3] in ANKI_LANGUAGES and f.lower()[3:] == '.txt']
+    logger.info('anki_paths: {}'.format(anki_paths))
 
-    w2v_paths = [os.path.join(BIGDATA_PATH, f[:-4] + '.w2v.txt') for f in os.listdir(unzip_dir) if f.lower().endswith('.txt')]
+    w2v_paths = [os.path.join(BIGDATA_PATH, f[:-4] + '.w2v.txt') for f in os.listdir(unzip_dir)
+                 if f.lower().endswith('.txt') and 'glove' in f.lower()]
     for f, word2vec_output_file in zip(os.listdir(unzip_dir), w2v_paths):
-        if f.lower().endswith('.txt'):
-            glove_input_file = os.path.join(unzip_dir, f)
-            logger.info('Attempting to convert GloVE format to Word2vec: {} -> {}'.format(
+        glove_input_file = os.path.join(unzip_dir, f)
+        logger.info('Attempting to converting GloVE format to Word2vec: {} -> {}'.format(
+            repr(glove_input_file), repr(word2vec_output_file)))
+        try:
+            glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
+        except:
+            logger.info('Failed to convert GloVE format to Word2vec: {} -> {}'.format(
                 repr(glove_input_file), repr(word2vec_output_file)))
-            try:
-                glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
-            except:
-                logger.info('Failed to convert GloVE format to Word2vec: {} -> {}'.format(
-                    repr(glove_input_file), repr(word2vec_output_file)))
 
     txt_paths = [os.path.join(BIGDATA_PATH, f.lower()[:-4] + '.txt') for f in os.listdir(unzip_dir) if f.lower().endswith('.asc')]
     for f, txt_file in zip(os.listdir(unzip_dir), txt_paths):
@@ -719,7 +883,127 @@ def unzip(filepath, verbose=True):
                 repr(input_file), repr(txt_file)))
             shutil.move(input_file, txt_file)
 
-    return txt_paths + w2v_paths
+    return anki_paths + txt_paths + w2v_paths
+
+
+def create_big_url(name):
+    """ If name looks like a url, with an http, add an entry for it in BIG_URLS """
+    # BIG side effect
+    global BIG_URLS
+    filemeta = get_url_filemeta(name)
+    if not filemeta:
+        return None
+    filename = filemeta['filename']
+    remote_size = filemeta['remote_size']
+    url = filemeta['url']
+    name = filename.split('.')
+    name = (name[0] if name[0] not in ('', '.') else name[1]).replace(' ', '-')
+    name = name.lower().strip()
+    BIG_URLS[name] = (url, int(remote_size or -1), filename)
+    return name
+
+
+def try_parse_url(url):
+    """ User urlparse to try to parse URL returning None on exception """
+    if len(url.strip()) < 4:
+        logger.error('Invalid URL: {}'.format(url))
+        return None
+    try:
+        parsed_url = urlparse(url)
+    except ValueError:
+        logger.error('Invalid URL: {}'.format(url))
+        return None
+    if parsed_url.scheme:
+        return parsed_url
+    try:
+        parsed_url = urlparse('http://' + parsed_url.geturl())
+    except ValueError:
+        logger.error('Invalid URL: {}'.format(url))
+        return None
+    if not parsed_url.scheme:
+        logger.error('Unable to guess a scheme for URL: {}'.format(url))
+        return None
+    return parsed_url
+
+
+def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood.com'):
+    """ FIXME: Get file size, hostname, path metadata from FTP server using parsed_url (urlparse)"""
+    return dict(
+        url=parsed_url.geturl(), hostname=parsed_url.hostname, path=parsed_url.path,
+        username=(parsed_url.username or username),
+        remote_size=-1,
+        filename=os.path.basename(parsed_url.path))
+    ftp = ftplib.FTP(parsed_url.hostname) 
+    ftp.login(username, password) 
+    ftp.cwd(parsed_url.path)
+    ftp.retrbinary("RETR " + filename, open(filename, 'wb').write)
+    ftp.quit()
+
+
+def get_url_filemeta(url):
+    """ Request HTML for the page at the URL indicated and return the url, filename, and remote size
+
+    TODO: just add remote_size and basename and filename attributes to the urlparse object 
+          instead of returning a dict
+
+    >>> sorted(get_url_filemeta('mozilla.com').items())
+    [('filename', ''),
+     ('hostname', 'mozilla.com'),
+     ('path', ''),
+     ('remote_size', -1),
+     ('url', 'http://mozilla.com'),
+     ('username', None)]
+    >>> sorted(get_url_filemeta('https://duckduckgo.com/about?q=nlp').items())
+    [('filename', 'about'),
+     ('hostname', 'duckduckgo.com'),
+     ('path', '/about'),
+     ('remote_size', -1),
+     ('url', 'https://duckduckgo.com/about?q=nlp'),
+     ('username', None)]
+    >>> 1000 <= int(get_url_filemeta('en.wikipedia.org')['remote_size']) <= 200000
+    True
+    """ 
+    parsed_url = try_parse_url(url)
+
+    if parsed_url is None:
+        return None
+    if parsed_url.scheme.startswith('ftp'):
+        return get_ftp_filemeta(parsed_url)
+
+    url = parsed_url.geturl()
+    try:
+        r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
+        remote_size = r.headers.get('Content-Length', -1)
+        return dict(url=url, hostname=parsed_url.hostname, path=parsed_url.path,
+                    username=parsed_url.username, remote_size=remote_size,
+                    filename=os.path.basename(parsed_url.path))
+    except ConnectionError:
+        return None
+    except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema):
+        return None
+    return None
+
+
+def get_url_title(url):
+    r""" Request HTML for the page at the URL indicated and return it's <title> property
+
+    >>> get_url_title('mozilla.com').strip()
+    'Internet for people, not profit\n    — Mozilla'
+    """
+    parsed_url = try_parse_url(url)
+    if parsed_url is None:
+        return None
+    try:
+        r = requests.get(parsed_url.geturl(), stream=False, allow_redirects=True, timeout=5)
+        tree = parse_html(r.content)
+        title = tree.findtext('.//title')
+        return title
+    except ConnectionError:
+        logging.error('Unable to connect to internet to retrieve URL {}'.format(parsed_url.geturl()))
+        logging.error(format_exc())
+    except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema):
+        logging.warn('Unable to retrieve URL {}'.format(parsed_url.geturl()))
+        logging.error(format_exc())
 
 
 def download_unzip(names=None, normalize_filenames=False, verbose=True):
@@ -736,22 +1020,14 @@ def download_unzip(names=None, normalize_filenames=False, verbose=True):
     # names = names or list(BIG_URLS.keys())  # download them all, if none specified!
     file_paths = {}
     for name in names:
-        parsed_url = urlparse(name)
-        if parsed_url.scheme:
-            try:
-                r = requests.get(parsed_url.geturl(), stream=True, allow_redirects=True)
-                remote_size = r.headers.get('Content-Length', -1)
-                name = os.path.basename(parsed_url.path).split('.')
-                name = (name[0] if name[0] not in ('', '.') else name[1]).replace(' ', '-')
-                BIG_URLS[name] = (parsed_url.geturl(), int(remote_size or -1))
-            except requests.ConnectionError:
-                pass
-        name = name.lower().strip()
+        created = create_big_url(name)
+        name = (created or name).lower().strip()
 
         if name in BIG_URLS:
-            file_paths[name] = download_name(name, verbose=verbose)
-            if normalize_filenames:
-                file_paths[name] = normalize_ext_rename(file_paths[name])
+            filepath = download_name(name, verbose=verbose)
+            if not filepath:
+                continue
+            file_paths[name] = normalize_ext_rename(filepath)
             logger.debug('downloaded name={} to filepath={}'.format(name, file_paths[name]))
             fplower = file_paths[name].lower()
             if fplower.endswith('.tar.gz'):
@@ -766,7 +1042,6 @@ def download_unzip(names=None, normalize_filenames=False, verbose=True):
             df.columns = clean_columns(df.columns)
             file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
             df.to_csv(file_paths[name])
-
         file_paths[name] = normalize_ext_rename(file_paths[name])
     return file_paths
 
@@ -784,9 +1059,9 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     >>> download_file(url=meta[0], verbose=False).endswith(pathend)
     True
     >>> t0 = time.time()
-    >>> download_file(url=BIG_URLS['ubuntu_dialog_test'][0], verbose=False).endswith(pathend)
-    True
-    >>> 0.01 < (time.time() - t0) < 3.0
+    >>> localpath = download_file(url=BIG_URLS['ubuntu_dialog_test'][0], verbose=False)
+    >>> t1 = time.time()
+    >>> localpath is None or ((0.015 < (t1 - t0) < 5.0) and localpath.endswith(pathend))
     True
     >>> t0 = time.time()
     >>> download_file(url=meta[0], size=meta[1], verbose=False).endswith(pathend)
@@ -821,11 +1096,14 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     r = None
     if not remote_size or not stat['type'] == 'file' or not local_size >= remote_size or not stat['size'] > MIN_DATA_FILE_SIZE:
         try:
-            r = requests.get(url, stream=True, allow_redirects=True)
+            r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
             remote_size = r.headers.get('Content-Length', -1)
-        except requests.exceptions.ConnectionError:
+        except ConnectionError:
             logger.error('ConnectionError for url: {} => request {}'.format(url, r))
             remote_size = -1 if remote_size is None else remote_size
+        except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema) as e:
+            logger.error(e)
+            logger.error('HTTP Error for url: {}\n request: {}\n traceback: {}'.format(url, r, format_exc()))
     try:
         remote_size = int(remote_size)
     except ValueError:
@@ -854,6 +1132,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
         r.close()
     else:
         logger.error('Unable to request URL: {} using request object {}'.format(url, r))
+        return None
 
     logger.debug('nlpia.loaders.download_file: bytes={}'.format(bytes_downloaded))
     stat = path_status(filepath)
@@ -936,6 +1215,15 @@ def get_data(name='sms-spam', nrows=None):
     >>> words = get_data('words_ubuntu_us')
     >>> len(words)
     99171
+    >>> get_data('imdb_test').info()
+    <class 'pandas.core.frame.DataFrame'>
+    MultiIndex: 20 entries, (train, pos, 0) to (train, neg, 9)
+    Data columns (total 3 columns):
+    url       20 non-null object
+    rating    20 non-null int64
+    text      20 non-null object
+    dtypes: int64(1), object(2)
+    memory usage: 809.0+ bytes
     >>> list(words[:8])
     ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
     >>> get_data('ubuntu_dialog_test').iloc[0]
@@ -950,6 +1238,10 @@ def get_data(name='sms-spam', nrows=None):
         filepath = filepaths[name][0] if isinstance(filepaths[name], (list, tuple)) else filepaths[name]
         logger.debug('nlpia.loaders.get_data.filepath=' + str(filepath))
         filepathlow = filepath.lower()
+
+        if len(BIG_URLS[name]) >= 4:
+            kwargs = BIG_URLS[name][4] if len(BIG_URLS[name]) >= 5 else {}
+            return BIG_URLS[name][3](filepath, **kwargs)
         if filepathlow.endswith('.w2v.txt'):
             try:
                 return KeyedVectors.load_word2vec_format(filepath, binary=False)
@@ -1018,7 +1310,7 @@ def get_wikidata_qnum(wikiarticle, wikisite):
     >>> print(get_wikidata_qnum(wikiarticle="Andromeda Galaxy", wikisite="enwiki"))
     Q2469
     """
-    resp = requests.get('https://www.wikidata.org/w/api.php', {
+    resp = requests.get('https://www.wikidata.org/w/api.php', timeout=5, params={
         'action': 'wbgetentities',
         'titles': wikiarticle,
         'sites': wikisite,
@@ -1202,6 +1494,66 @@ def isglove(filepath):
     return False
 
 
+def nlp(texts, lang='en', linesep=None, verbose=True):
+    r""" Use the SpaCy parser to parse and tag natural language strings. 
+
+    Load the SpaCy parser language model lazily and share it among all nlpia modules.
+    Probably unnecessary, since SpaCy probably takes care of this with `spacy.load()`
+
+    >>> _parse is None
+    True
+    >>> doc = nlp("Domo arigatto Mr. Roboto.")
+    >>> doc.text
+    'Domo arigatto Mr. Roboto.'
+    >>> doc.ents
+    (Roboto,)
+    >>> docs = nlp("Hey Mr. Tangerine Man!\nPlay a song for me.\n", linesep='\n')
+    >>> doc = docs[0]
+    >>> [t for t in doc]
+    [Hey, Mr., Tangerine, Man, !]
+    >>> [tok.text for tok in doc]
+    ['Hey', 'Mr.', 'Tangerine', 'Man', '!']
+    >>> [(tok.text, tok.tag_) for tok in doc]
+    [('Hey', 'UH'),
+     ('Mr.', 'NNP'),
+     ('Tangerine', 'NNP'),
+     ('Man', 'NN'),
+     ('!', '.')]
+    >>> [(ent.text, ent.ent_id, ent.has_vector, ent.vector[:3].round(3)) for ent in doc.ents]
+    [('Tangerine Man', 0, True, array([0.72 , 1.913, 2.675], dtype=float32))]
+    """
+    # doesn't let you load a different model anywhere else in the module
+    linesep = os.linesep if linesep in ('default', True, 1, 'os') else linesep
+    tqdm_prog = no_tqdm if (not verbose or (hasattr(texts, '__len__') and len(texts) < 3)) else tqdm
+    global _parse
+    if not _parse:
+        try:
+            _parse = spacy.load(lang)
+        except (OSError, IOError):
+            try:
+                spacy.cli.download(lang)
+            except URLError:
+                logger.warning("Unable to download Spacy language model '{}' so nlp(text) just returns text.split()".format(lang))
+    parse = _parse or str.split
+    # TODO: reverse this recursion (str first then sequence) to allow for sequences of sequences of texts
+    if isinstance(texts, str):
+        if linesep:
+            return nlp(texts.split(linesep))
+        else: 
+            return nlp([texts])
+    if hasattr(texts, '__len__'):
+        if len(texts) == 1:
+            return parse(texts[0])
+        elif len(texts) > 1:
+            return [(parse or str.split)(text) for text in tqdm_prog(texts)]
+        else:
+            return None
+    else: 
+        # return generator if sequence of strings doesn't have __len__ which means its an iterable or generator itself
+        return (parse(text) for text in tqdm_prog(texts))
+    # TODO: return the same type as the input, e.g. `type(texts)(texts)`
+
+
 def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),
                   index_col=False, sep='\t', lineterminator='\r', error_bad_lines=False, **kwargs):
     """ Load and clean tab-separated files saved on Windows OS ('\r\n') """
@@ -1217,6 +1569,6 @@ def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),
     df = df[~(df[index_col] == INT_NAN)]
     df.set_index(index_col, inplace=True)
     if len(df) != original_len:
-        logger.warn(('Loaded {} rows from tsv. Original file, "{}", contained {} seemingly valid lines.' +
-                     'Index column: {}').format(len(df), original_len, filepath, index_col))
+        logger.warning(('Loaded {} rows from tsv. Original file, "{}", contained {} seemingly valid lines.' +
+                        'Index column: {}').format(len(df), original_len, filepath, index_col))
     return df

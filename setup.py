@@ -13,18 +13,22 @@ from setuptools import setup
 
 # Add here console scripts and other entry points in ini-style format
 # audio = nlpia.scripts.audio:main
-entry_points = """
-[console_scripts]
-renderbook = nlpia.scripts.countpages:main
-cleandialog = nlpia.scripts.cleandialog:main
-downloadgdrive = nlpia.scripts.google_drive:main
-"""
+entry_points = ""
+# [console_scripts]
+# renderbook = nlpia.scripts.countpages:main
+# cleandialog = nlpia.scripts.cleandialog:main
+# downloadgdrive = nlpia.scripts.google_drive:main
+# """
+
+pyscaffold_ver = '3.1'
+if sys.version_info[0] < 3:
+    pyscaffold_ver = '2.5.10'
 
 
 def setup_package():
     needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
     sphinx = ['sphinx'] if needs_sphinx else []
-    setup(setup_requires=['pyscaffold>=3.0a0,<3.1a0'] + sphinx,
+    setup(setup_requires=['pyscaffold=={}'.format(pyscaffold_ver)] + sphinx,
           entry_points=entry_points,
           use_pyscaffold=True)
 

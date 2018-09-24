@@ -1,48 +1,46 @@
-# Travis configuration file using the build matrix feature
-# Read more under http://docs.travis-ci.com/user/build-configuration/
-# THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
-
-sudo: false
 language: python
-virtualenv:
-  system_site_packages: true
-env:
-  matrix:
-    # - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
-    # - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
-    # - DISTRIB="conda" PYTHON_VERSION="3.4" COVERAGE="false"
-    # - DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="true"
-    - DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="true" ENVIRONMENT_YML="conda/environment.yml"
-addons:
-  apt:
-    packages:
-      - git
-      - build-essential
-      - gfortran
-      - libopenblas-dev
-      - liblapack-dev
-      - python3-matplotlib
-      - python-dev
-      - python3-dev
-      - pandoc
-      - portaudio19-dev
-      - libasound*
-      # - python-pyaudio
-      # - python3-numpy
-      # - python3-scipy
+python:
+  - "3.6"
+  # - "2.7"
+  # - "3.6-dev"
+  # - "3.7"
 install:
-  - source tests/travis_install.sh
-  - pip install -r requirements/requirements-test.txt
-  - pip install --upgrade pip
-  - pip install -e .
-before_script:
-  - git config --global user.email "travis.nlpia@totalgood.com"
-  - git config --global user.name "nlpia Travis tests"
-script:
-  - python setup.py test  # does this do a build? do we need pip install above?
-after_success:
-  - codecov
+  - ENVIRONMENT_YML="conda/environment-$TRAVIS_PYTHON_VERSION.yml"
+  - sudo apt-get update
+  - sudo apt-get remove -y python-boto
+  - sudo apt-get install -y libasound* build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - cp conda/.condarc ~/.condarc
+  - conda update -n base conda
+  - hash -r
+  # - conda config --set always_yes yes --set changeps1 no
+  # - conda config --add channels conda-forge
+  - echo "running-- conda env create -f $ENVIRONMENT_YML -n testenv python=$TRAVIS_PYTHON_VERSION"
+  - travis_wait 30 conda env create -q -f $ENVIRONMENT_YML -n testenv python=$TRAVIS_PYTHON_VERSION
+  - source activate testenv
+  - conda install pip
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      pip uninstall -y setuptools ;
+      # conda remove setuptools ;
+      conda install 'PyScaffold==2.5';
+    else
+      pip install -U PyScaffold ;
+    fi
+  # - sudo apt-get install -y python-boto
+  # - pip install -r "requirements/requirements-${TRAVIS_PYTHON_VERSION}.txt"
+  - pip install .
+  - python -c "import nltk; nltk.download('punkt')"
+  - conda info -a
+  - conda list
+  # - conda build conda-build-recipe
+  # - conda install nlpia --use-local
 
-  - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
-cache:
-  - apt
+
+script:
+  - python setup.py test

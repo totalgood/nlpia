@@ -1,0 +1,2 @@
+AIML-Bot>=0.0.3,<0.1.0
+-r requirements-base.txt

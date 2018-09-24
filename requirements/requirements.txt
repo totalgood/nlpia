@@ -7,7 +7,7 @@
 # -r requirements-twitter.txt
 
 # Deep Learning Requirements (`pip install nlpia[deep]`)
-# -r requirements-deep.txt
+-r requirements-deep.txt
 
 # Chatbot Requirements (`pip install nlpia[voice]`)
 # -r requirements-voice.txt

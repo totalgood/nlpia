@@ -53,6 +53,7 @@ def dropbox_basename(url):
         return filename[:-len(match[0])]
     return filename
 
+
 def download_file(url, data_path='.', filename=None, size=None, chunk_size=4096, verbose=True):
     """Uses stream=True and a reasonable chunk size to be able to download large (GB) files over https"""
     if filename is None:
@@ -65,7 +66,7 @@ def download_file(url, data_path='.', filename=None, size=None, chunk_size=4096,
         print('requesting URL: {}'.format(url))
     else:
         tqdm_prog = no_tqdm
-    r = requests.get(url, stream=True, allow_redirects=True)
+    r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
     size = r.headers.get('Content-Length', None) if size is None else size
     print('remote size: {}'.format(size))
 
@@ -84,6 +85,7 @@ def download_file(url, data_path='.', filename=None, size=None, chunk_size=4096,
 
     r.close()
     return file_path
+
 
 def untar(fname):
     if fname.endswith("tar.gz"):
@@ -123,7 +125,7 @@ model.add(Dropout(.2))
 model.add(Flatten())
 model.add(Dense(1, activation='sigmoid'))
 
-model.compile('rmsprop', 'binary_crossentropy',  metrics=['accuracy'])
+model.compile('rmsprop', 'binary_crossentropy', metrics=['accuracy'])
 print(model.summary())
 
 
@@ -135,28 +137,29 @@ import os
 
 from random import shuffle
 
+
 def pre_process_data(filepath):
     """
     This is dependent on your training data source but we will try to generalize it as best as possible.
     """
     positive_path = os.path.join(filepath, 'pos')
     negative_path = os.path.join(filepath, 'neg')
-    
+
     pos_label = 1
     neg_label = 0
-    
+
     dataset = []
-    
+
     for filename in glob.glob(os.path.join(positive_path, '*.txt')):
         with open(filename, 'r') as f:
             dataset.append((pos_label, f.read()))
-            
+
     for filename in glob.glob(os.path.join(negative_path, '*.txt')):
         with open(filename, 'r') as f:
             dataset.append((neg_label, f.read()))
-    
+
     shuffle(dataset)
-    
+
     return dataset
 
 
@@ -166,6 +169,7 @@ def pre_process_data(filepath):
 from nltk.tokenize import TreebankWordTokenizer
 from gensim.models import KeyedVectors
 word_vectors = KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin.gz', binary=True, limit=200000)
+
 
 def tokenize_and_vectorize(dataset):
     tokenizer = TreebankWordTokenizer()
@@ -180,7 +184,7 @@ def tokenize_and_vectorize(dataset):
 
             except KeyError:
                 pass  # No matching token in the Google w2v vocab
-            
+
         vectorized_data.append(sample_vecs)
 
     return vectorized_data
@@ -210,7 +214,7 @@ def pad_trunc(data, maxlen):
         zero_vector.append(0.0)
 
     for sample in data:
- 
+
         if len(sample) > maxlen:
             temp = sample[:maxlen]
         elif len(sample) < maxlen:
@@ -233,7 +237,7 @@ dataset = pre_process_data('./aclImdb_v1/train')
 vectorized_data = tokenize_and_vectorize(dataset)
 expected = collect_expected(dataset)
 
-split_point = int(len(vectorized_data)*.8)
+split_point = int(len(vectorized_data) * .8)
 
 x_train = vectorized_data[:split_point]
 y_train = expected[:split_point]
@@ -271,7 +275,7 @@ model.add(Dropout(.2))
 model.add(Flatten())
 model.add(Dense(1, activation='sigmoid'))
 
-model.compile('rmsprop', 'binary_crossentropy',  metrics=['accuracy'])
+model.compile('rmsprop', 'binary_crossentropy', metrics=['accuracy'])
 print(model.summary())
 
 
@@ -330,11 +334,12 @@ def test_len(data, maxlen):
         elif len(sample) < maxlen:
             padded += 1
         else:
-            exact +=1 
+            exact += 1 
     print('Padded: {}'.format(padded))
     print('Equal: {}'.format(exact))
     print('Truncated: {}'.format(truncated))
-    print('Avg length: {}'.format(total_len/len(data)))
+    print('Avg length: {}'.format(total_len / len(data)))
+
 
 dataset = pre_process_data('./aclImdb_v1/train')
 vectorized_data = tokenize_and_vectorize(dataset)
@@ -360,7 +365,7 @@ dataset = pre_process_data('./aclImdb_v1/train')
 vectorized_data = tokenize_and_vectorize(dataset)
 expected = collect_expected(dataset)
 
-split_point = int(len(vectorized_data)*.8)
+split_point = int(len(vectorized_data) * .8)
 
 x_train = vectorized_data[:split_point]
 y_train = expected[:split_point]
@@ -386,7 +391,7 @@ model.add(Dropout(.2))
 model.add(Flatten())
 model.add(Dense(1, activation='sigmoid'))
 
-model.compile('rmsprop', 'binary_crossentropy',  metrics=['accuracy'])
+model.compile('rmsprop', 'binary_crossentropy', metrics=['accuracy'])
 print(model.summary())
 
 
@@ -419,7 +424,8 @@ def avg_len(data):
     total_len = 0
     for sample in data:
         total_len += len(sample[1])
-    print(total_len/len(data))
+    print(total_len / len(data))
+
 
 print(avg_len(dataset))
 
@@ -438,9 +444,10 @@ def clean_data(data):
                 new_sample.append(char)
             else:
                 new_sample.append('UNK')
-       
+
         new_data.append(new_sample)
     return new_data
+
 
 listified_data = clean_data(dataset)
 
@@ -461,6 +468,7 @@ def char_pad_trunc(data, maxlen):
             new_data = sample
         new_dataset.append(new_data)
     return new_dataset
+
 
 maxlen = 1500
 
@@ -483,10 +491,11 @@ def create_dicts(data):
 
 import numpy as np
 
+
 def onehot_encode(dataset, char_indices, maxlen):
     """ 
     One hot encode the tokens
-    
+
     Args:
         dataset  list of lists of tokens
         char_indices  dictionary of {key=character, value=index to use encoding vector}
@@ -518,7 +527,7 @@ encoded_data = onehot_encode(common_length_data, char_indices, maxlen)
 # In[ ]:
 
 
-split_point = int(len(encoded_data)*.8)
+split_point = int(len(encoded_data) * .8)
 
 x_train = encoded_data[:split_point]
 y_train = expected[:split_point]
@@ -544,14 +553,11 @@ model.add(Dropout(.2))
 model.add(Flatten())
 model.add(Dense(1, activation='sigmoid'))
 
-model.compile('rmsprop', 'binary_crossentropy',  metrics=['accuracy'])
+model.compile('rmsprop', 'binary_crossentropy', metrics=['accuracy'])
 print(model.summary())
 
 
 # In[ ]:
-
-
-
 
 
 # In[ ]:
@@ -663,20 +669,20 @@ for i in range(5):
               batch_size=batch_size,
               epochs=epochs)
 
-    model.save_weights("shakes_lstm_weights_{}.h5".format(i+1))
+    model.save_weights("shakes_lstm_weights_{}.h5".format(i + 1))
     print('Model saved.')
 
 
 # In[ ]:
 
 
-### NOT IN CHAPTER, Just to reproduce output
+# NOT IN CHAPTER, Just to reproduce output
 
 from keras.models import model_from_json
 
 with open('shakes_lstm_model.json', 'r') as f:
     model_json = f.read()
-    
+
 model = model_from_json(model_json)
 model.load_weights('shakes_lstm_weights_4.h5')
 
@@ -685,6 +691,7 @@ model.load_weights('shakes_lstm_weights_4.h5')
 
 
 import random
+
 
 def sample(preds, temperature=1.0):
     # helper function to sample an index from a probability array

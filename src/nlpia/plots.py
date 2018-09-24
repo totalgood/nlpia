@@ -14,7 +14,10 @@ import pandas as pd
 import plotly.plotly as plotly
 from plotly.offline.offline import _plot_html
 from pugnlp.util import clean_columns
-from plotly import graph_objs  # Scatter, Marker, Layout, YAxis, XAxis
+# from plotly import graph_objs  # Scatter, scatter.Marker, Layout, layout.YAxis, layout.XAxis
+from plotly.graph_objs import Scatter, Layout
+from plotly.graph_objs.scatter import Marker
+from plotly.graph_objs.layout import XAxis, YAxis
 import cufflinks as cf  # noqa
 
 from nlpia.constants import DATA_PATH
@@ -51,7 +54,8 @@ DEFAULT_PLOTLY_CONFIG = {
     'displayModeBar': 'true',  # display the modebar (true, false, or 'hover')
     'displaylogo': False,  # add the plotly logo on the end of the modebar
     'plot3dPixelRatio': 2,  # increase the pixel ratio for 3D plot images
-    'setBackground': 'opaque'  # fn to add the background color to a different container or 'opaque' to ensure there's white behind it
+    'setBackground': 'opaque'  # fn to add the background color to a different container or 'opaque'
+                               # to ensure there's white behind it
 }
 
 
@@ -186,7 +190,6 @@ def offline_plotly_data(data, filename=None, config=None, validate=True,
                         default_width='100%', default_height=525, global_requirejs=False):
     r""" Write a plotly scatter plot to HTML file that doesn't require server
 
-    >>> from plotly.graph_objs import Scatter, Marker, Layout, YAxis, XAxis
     >>> from nlpia.loaders import get_data
     >>> df = get_data('etpinard')  # pd.read_csv('https://plot.ly/~etpinard/191.csv')
     >>> df.columns = [eval(c) if c[0] in '"\'' else str(c) for c in df.columns]
@@ -194,7 +197,7 @@ def offline_plotly_data(data, filename=None, config=None, validate=True,
     ...          Scatter(x=df[continent+', x'],
     ...                  y=df[continent+', y'],
     ...                  text=df[continent+', text'],
-    ...                  marker=Marker(size=df[continent+', size'], sizemode='area', sizeref=131868,),
+    ...                  marker=Marker(size=df[continent+', size'].fillna(10000), sizemode='area', sizeref=131868,),
     ...                  mode='markers',
     ...                  name=continent) for continent in ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
     ...      ],
@@ -281,8 +284,8 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
     marker_default.update(marker)
     size_col = marker_default.pop('size')
     layout_default = {
-        'xaxis': graph_objs.XAxis(title=x, type=xscale),
-        'yaxis': graph_objs.YAxis(title=y, type=yscale),
+        'xaxis': XAxis(title=x, type=xscale),
+        'yaxis': YAxis(title=y, type=yscale),
     }
     layout_default.update(**layout)
     if config is not None:
@@ -300,14 +303,14 @@ def offline_plotly_scatter_bubble(df, x='x', y='y', size_col='size', text_col='t
     else:
         masks = [np.array([True] * len(df))] * len(possible_categories)
     data = {'data': [
-            graph_objs.Scatter(x=df[x][mask].values,
-                               y=df[y][mask].values,
-                               text=df[text_col][mask].values,
-                               marker=graph_objs.Marker(size=df[size_col][mask] if size_col in df.columns else size_col,
-                                                        **marker_default),
-                               mode='markers',
-                               name=str(category_name)) for (category_name, mask) in zip(possible_categories, masks)
+            Scatter(x=df[x][mask].values,
+                    y=df[y][mask].values,
+                    text=df[text_col][mask].values,
+                    marker=Marker(size=df[size_col][mask] if size_col in df.columns else size_col,
+                                  **marker_default),
+                    mode='markers',
+                    name=str(category_name)) for (category_name, mask) in zip(possible_categories, masks)
             ],
-            'layout': graph_objs.Layout(**layout_default)
+            'layout': Layout(**layout_default)
             }
     return offline_plotly_data(data, filename=filename, config=config_default)

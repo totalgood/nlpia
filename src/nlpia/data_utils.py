@@ -17,7 +17,8 @@ except ImportError:
 
 import requests
 from requests.adapters import HTTPAdapter
-from requests.exceptions import MissingSchema, ConnectionError
+from requests.exceptions import ConnectionError  # MissingSchema
+from urllib.parse import urlparse
 import pandas as pd
 
 from pugnlp.futil import find_files
@@ -26,8 +27,9 @@ from annoy import AnnoyIndex
 
 from nlpia.constants import logging
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
-from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH
-from nlpia.loaders import read_csv, expand_filepath
+from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
+from nlpia.data.loaders import read_csv
+
 
 np = pd.np
 logger = logging.getLogger(__name__)
@@ -66,28 +68,19 @@ NAME_ASCII = {
 }
 
 
-def looks_like_url(url):
-    """ Check URL to see if it is a valid web page, return the redirected location if it is
+def prepend_http(url):
+    """ Ensure there's a scheme specified at the beginning of a url, defaulting to http://
 
-    Returns:
-      None if ConnectionError
-      False if url is invalid (any HTTP error code)
-      cleaned up URL (following redirects and possibly adding HTTP schema "http://")
-
-    >> is_valid_url("totalgood.org")
-    'https://totalgood.org'
-
-    >>> url = looks_like_url("totalgood.org")
-    True
+    >>> prepend_http('duckduckgo.com')
+    'http://duckduckgo.com'
     """
-    if not isinstance(url, basestring):
-        return False
-    if not isinstance(url, basestring) or len(url) >= 1024 or not cre_url.match(url):
-        return False
-    return True
+    url = url.lstrip()
+    if not urlparse(url).scheme:
+        return 'http://' + url
+    return url
 
 
-def is_valid_url(url):
+def is_valid_url(url, allow_redirects=False, timeout=5):
     """ Check URL to see if it is a valid web page, return the redirected location if it is
 
     Returns:
@@ -99,40 +92,51 @@ def is_valid_url(url):
     'https://totalgood.org'
 
     >>> url = is_valid_url("totalgood.org")
-    >>> url.startswith('http')
+    >>> url is None or url.startswith('http')
     True
     >>> url.endswith('totalgood.org')
     True
+    >>> is_valid_url('abcd')
+    False
+    >>> bool(is_valid_url('abcd.com'))
+    False
     """
-    if not looks_like_url(url):
+    if not isinstance(url, basestring) or '.' not in url:
         return False
-    normalized_url = url.lower().strip()
-    if not normalized_url[:7] in ('http://', 'https:/'):
-        url = 'http://' + url.lstrip('/')
+    normalized_url = prepend_http(url)
     session = requests.Session()
-    session.mount(url, HTTPAdapter(max_retries=3))
+    session.mount(url, HTTPAdapter(max_retries=2))
     try:
-        resp = session.get(url, allow_redirects=False)
-    except MissingSchema:
-        try:
-            url = 'https://' + url
-            resp = session.get(url, allow_redirects=False)
-        except ConnectionError:
-            try:
-                url = 'http://' + url
-                resp = session.get(url, allow_redirects=False)
-            except ConnectionError:
-                return False
+        resp = session.get(normalized_url, allow_redirects=allow_redirects, timeout=timeout)
     except ConnectionError:
-        return False
+        return None
     except:
         return None
     if resp.status_code == 200:
-        return url
+        return normalized_url  # return the original URL that was requested/visited
     elif resp.status_code == 302:
-        return resp.headers['location']
+        return resp.headers['location']  # return redirected URL
     else:
         return False
+
+
+def looks_like_url(url):
+    """ Simplified check to see if the text appears to be a URL.
+
+    Similar to `urlparse` but much more basic.
+
+    Returns:
+      True if the url str appears to be valid.
+      False otherwise.
+
+    >>> url = looks_like_url("totalgood.org")
+    True
+    """
+    if not isinstance(url, basestring):
+        return False
+    if not isinstance(url, basestring) or len(url) >= 1024 or not cre_url.match(url):
+        return False
+    return True
 
 
 def iter_lines(url_or_text, ext=None, mode='rt'):
@@ -146,34 +150,26 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
     3
     >>> len(list(iter_lines('abc\n def\n gh')))
     3
-    >>> 20000 > len(list(iter_lines(os.path.join(DATA_PATH, 'book')))) > 200
+    >>> 20000 > len(list(iter_lines(BOOK_PATH))) > 200
     True
     """
     if url_or_text is None or not url_or_text:
         return []
         # url_or_text = 'https://www.fileformat.info/info/charset/UTF-8/list.htm'
     elif isinstance(url_or_text, (str, bytes, basestring)):
-        expanded = None
-        if len(url_or_text) <= 513:
-            if os.path.isfile(url_or_text):
-                return open(url_or_text, mode=mode)
-            if os.path.sep in url_or_text or url_or_text[0] == '~' or '$' in url_or_text:
-                expanded = expand_filepath(url_or_text)
-                if os.path.isfile(expanded):
-                    return open(expanded, mode=mode)
-                expanded = os.path.join(DATA_PATH, expanded)
-                if os.path.isfile(expanded):
-                    return open(expanded, mode=mode)
-        if expanded and os.path.isfile(expanded):
-            return open(expanded, mode=mode)
-        if os.path.isfile(url_or_text):
+        if '\n' in url_or_text or '\r' in url_or_text:
+            return StringIO(url_or_text)
+        elif os.path.isfile(os.path.join(DATA_PATH, url_or_text)):
+            return open(os.path.join(DATA_PATH, url_or_text), mode=mode)
+        elif os.path.isfile(url_or_text):
             return open(os.path.join(url_or_text), mode=mode)
         if os.path.isdir(url_or_text):
             filepaths = [filemeta['path'] for filemeta in find_files(url_or_text, ext=ext)]
             return itertools.chain.from_iterable(map(open, filepaths))
         url = is_valid_url(url_or_text)
         if url:
-            return requests.get(url, stream=True, allow_redirects=True)
+            for i in range(3):
+                return requests.get(url, stream=True, allow_redirects=True, timeout=5)
         else:
             return StringIO(url_or_text)
     elif isinstance(url_or_text, (list, tuple)):

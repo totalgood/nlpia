@@ -1,0 +1,40 @@
+name: nlpiaenv
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  # - boto3
+  # - conda-build
+  - cython
+  - gensim=3.4.0
+  - jupyter=1.0.0
+  # - keras-applications>=1.0.4,<1.1.0
+  # - keras-preprocessing>=1.0.2,<1.1.0
+  - keras=2.2.2
+  - matplotlib=2.2.3
+  - nltk=3.3.0
+  # - numpy>=1.15.1
+  - opencv=3.4.2
+  # - pandas
+  - pandoc=2.2.3
+  - pip
+  - plac=0.9.6
+  - plotly=3.2.1
+  - pyqt=5.9.2
+  - pyscaffold=2.5
+  - python=2.7
+  - python-levenshtein=0.12.0
+  - redis-py
+  - regex=2017.4.5
+  - scipy=1.1.0
+  - spacy=2.0.12
+  - swig=3.0.12
+  - tensorflow=1.10.0
+  - tensorflow-hub=0.1.1
+  - theano=1.0.2
+
+
+  - pip:
+    - -r ../requirements/requirements-2.7.txt

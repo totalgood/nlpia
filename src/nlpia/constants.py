@@ -18,7 +18,7 @@ import platform
 
 
 LOG_LEVEL = 'WARN' if not os.environ.get('DEBUG') else 'DEBUG'
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 system_name = platform.system()
 if system_name == 'Darwin':
@@ -92,9 +92,10 @@ logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 USER_HOME = os.path.expanduser("~")
-PROJECT_PATH = os.path.dirname(os.path.dirname(__file__))
+PROJECT_PATH = PRJECT_DIR = BASE_DIR
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
+BOOK_PATH = os.path.join(DATA_PATH, 'book')
 DATA_INFO_FILE = os.path.join(DATA_PATH, 'data_info.csv')
 
 BIGDATA_PATH = os.path.join(os.path.dirname(__file__), 'bigdata')

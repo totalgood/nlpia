@@ -1,0 +1,23 @@
+name,shortname,filename,description
+American English 2012,eng_us_2012,googlebooks-eng-us-all-20120701,Books predominantly in the English language that were published in the United States.
+American English 2009,eng_us_2009,googlebooks-eng-us-all-20090715,Books predominantly in the English language that were published in the United States.
+British English 2012,eng_gb_2012,googlebooks-eng-gb-all-20120701,Books predominantly in the English language that were published in Great Britain.
+British English 2009,eng_gb_2009,googlebooks-eng-gb-all-20090715,Books predominantly in the English language that were published in Great Britain.
+Chinese 2012,chi_sim_2012,googlebooks-chi-sim-all-20120701,Books predominantly in the English language that were published in Great Britain.
+Chinese 2009,chi_sim_2009,googlebooks-chi-sim-all-20090715,Books predominantly in the English language that were published in Great Britain.
+English 2012,eng_2012,googlebooks-eng-all-20120701,Books predominantly in the English language published in any country.
+English 2009,eng_2009,googlebooks-eng-all-20090715,Books predominantly in the English language published in any country.
+English Fiction 2012,eng_fiction_2012,googlebooks-eng-fiction-all-20120701,Books predominantly in the English language that a library or publisher identified as fiction.
+English Fiction 2009,eng_fiction_2009,googlebooks-eng-fiction-all-20090715,Books predominantly in the English language that a library or publisher identified as fiction.
+English One Million,eng_1m_2009,googlebooks-eng-1M-20090715,"The ""Google Million"". All are in English with dates ranging from 1500 to 2008. No more than about 6000 books were chosen from any one year, which means that all of the scanned books from early years are present, and books from later years are randomly sampled. The random samplings reflect the subject distributions for the year (so there are more computer books in 2000 than 1980)."
+French 2012,fre_2012,googlebooks-fre-all-20120701,Books predominantly in the French language.
+French 2009,fre_2009,googlebooks-fre-all-20090715,Books predominantly in the French language.
+German 2012,ger_2012,googlebooks-ger-all-20120701,Books predominantly in the German language.
+German 2009,ger_2009,googlebooks-ger-all-20090715,Books predominantly in the German language.
+Hebrew 2012,heb_2012,googlebooks-heb-all-20120701,Books predominantly in the Hebrew language.
+Hebrew 2009,heb_2009,googlebooks-heb-all-20090715,Books predominantly in the Hebrew language.
+Spanish 2012,spa_2012,googlebooks-spa-all-20120701,Books predominantly in the Spanish language.
+Spanish 2009,spa_2009,googlebooks-spa-all-20090715,Books predominantly in the Spanish language.
+Russian 2012,rus_2012,googlebooks-rus-all-20120701,Books predominantly in the Russian language.
+Russian 2009,rus_2009,googlebooks-rus-all-20090715,Books predominantly in the Russian language.
+Italian 2012,ita_2012,googlebooks-ita-all-20120701,Books predominantly in the Italian language.

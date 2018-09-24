@@ -1,15 +1,17 @@
 """ Translate documents in some way, like `sed`, only a bit more complex """
+# -*- coding: utf-8 -*-
 import os
 import requests
 import regex
+import re
 import json
-from urllib.error import URLError
 
 import nltk
-import spacy
 
 from pugnlp.futil import find_files
 from nlpia.data_utils import iter_lines
+from nlpia.loaders import nlp
+from nlpia.regexes import CRE_SLUG_DELIMITTER
 
 from .constants import secrets, DATA_PATH
 
@@ -46,7 +48,7 @@ def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified'
             start = match.start()
             altered_text += text[:start]
             resp = requests.get('https://api-ssl.bitly.com/v3/shorten?access_token={}&longUrl={}'.format(
-                access_token, url))
+                access_token, url), allow_redirects=True, timeout=5)
             js = resp.json()
             short_url = js['shortUrl']
             altered_text += short_url
@@ -55,6 +57,36 @@ def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified'
         with open(filemeta['path'] + (output_ext or ''), 'wt') as fout:
             fout.write(altered_text)
     return altered_text
+
+
+def delimit_slug(slug, sep=' '):
+    """ Return a str of separated tokens found within a slugLike_This => 'slug Like This'
+
+    >>> delimit_slug("slugLike_ThisW/aTLA's")
+    'slug Like This W a TLA s'
+    >>> delimit_slug('slugLike_ThisW/aTLA', '|')
+    'slug|Like|This|W|a|TLA'
+    """
+    hyphenated_slug = re.sub(CRE_SLUG_DELIMITTER, sep, slug)
+    return hyphenated_slug
+
+
+def hyphenate_slug(slug):
+    """ Return a str of hyphenated tokens found within a slugLike_This => slug-Like-This
+
+    >>> hyphenate_slug('slugLike_ThisW/aTLA')
+    'slug-Like-This-W-a-TLA'
+    """
+    return delimit_slug(slug, sep='-')
+
+
+def split_slug(slug):
+    """ Return a list of tokens from within a slugLike_This => ['slug', 'Like', 'This'] 
+
+    >>> split_slug('slugLike_ThisW/aTLA') 
+    ['slug', 'Like', 'This', 'W', 'a', 'TLA']
+    """
+    return delimit_slug(slug, sep=' ').split()
 
 
 class TokenNormalizer:
@@ -87,7 +119,7 @@ class TokenNormalizer:
 
 
 def clean_asciidoc(text):
-    """ Transform asciidoc text into ASCII text that NL parsers can handle
+    r""" Transform asciidoc text into ASCII text that NL parsers can handle
 
     TODO:
       Tag lines and words with meta data like italics, underlined, bold, title, heading 1, etc
@@ -95,8 +127,8 @@ def clean_asciidoc(text):
     >>> clean_asciidoc('**Hello** _world_!')
     '"Hello" "world"!'
     """
-    text = regex.sub(r'(\b|^)[[_*]{1,2}([a-zA-Z0-9])', r'"\2', text)
-    text = regex.sub(r'([a-zA-Z0-9])[]_*]{1,2}', r'\1"', text)
+    text = re.sub(r'(\b|^)[\[_*]{1,2}([a-zA-Z0-9])', r'"\2', text)
+    text = re.sub(r'([a-zA-Z0-9])[\]_*]{1,2}', r'\1"', text)
     return text
 
 
@@ -148,18 +180,13 @@ def split_sentences_spacy(text, language_model='en'):
     >>> split_sentences_nltk("Hi Ms. Lovelace. I'm at I.B.M. --Watson 2.0")
     ['Hi Ms. Lovelace.', "I'm at I.B.M.", '--Watson 2.0']
     """
-    try:
-        nlp = spacy.load(language_model)
-    except (OSError, IOError):
-        try:
-            spacy.cli.download(language_model)
-        except URLError:
-            logger.warn("Unable to download Spacy language model '{}'. Using offline NLTK punkt sentence splitter instead.")
-            return split_sentences_nltk(text)
-    parsed_text = nlp(text)
+    doc = nlp(text)
     sentences = []
-    for w, span in enumerate(parsed_text.sents):
-        sent = ''.join(parsed_text[i].string for i in range(span.start, span.end)).strip()
+    if not hasattr(doc, 'sents'):
+        logger.warning("Using NLTK sentence tokenizer because SpaCy language model hasn't been loaded")
+        return split_sentences_nltk(text)
+    for w, span in enumerate(doc.sents):
+        sent = ''.join(doc[i].string for i in range(span.start, span.end)).strip()
         if len(sent):
             sentences.append(sent)
     return sentences
@@ -197,11 +224,11 @@ def segment_sentences(path=os.path.join(DATA_PATH, 'book'), splitter=split_sente
         4. process each 1-3 line window (breaking on empty lines) with syntax net to label them
         5. label each 1-3-line window of lines as "complete sentence, partial sentence/phrase, or multi-sentence"
 
+    >> import nltk
+    >> nltk.download('punkt')
     >>> 10000 > len(segment_sentences(path=os.path.join(DATA_PATH, 'book'))) >= 4
-    ...
     True
     >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'psychology-scripts.txt'), splitter=split_sentences_nltk))
-    ...
     23
     """
     sentences = []

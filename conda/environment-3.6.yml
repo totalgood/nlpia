@@ -32,5 +32,7 @@ dependencies:
   - tensorflow-hub>=0.1.1
   - theano>=1.0.2
 
+
   - pip:
-    - -r ../requirements/requirements-base.txt
+    - -r ../requirements/requirements-3.6.txt
+
