@@ -117,8 +117,8 @@ about:
   license_file: LICENSE.txt
   summary: Community-driven code for the book Natural Language Processing in Action.
   description: README.md
-  doc_url: ''
-  dev_url: ''
+  doc_url: 'http://github.com/totalgood/nlpia'
+  dev_url: 'http://github.com/totalgood/nlpia'
 
 extra:
-  recipe-maintainers: ''
+  recipe-maintainers: 'Hobson Lane <nlpia@totalgood.com>'
