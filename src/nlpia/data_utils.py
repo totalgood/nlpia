@@ -130,6 +130,7 @@ def looks_like_url(url):
       False otherwise.
 
     >>> url = looks_like_url("totalgood.org")
+    >>> bool(url)
     True
     """
     if not isinstance(url, basestring):

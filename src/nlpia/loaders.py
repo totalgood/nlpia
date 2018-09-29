@@ -162,9 +162,9 @@ def load_glove(filepath, batch_size=1000, limit=None, verbose=True):
 
     >>> wv = load_glove(os.path.join(BIGDATA_PATH, 'glove_test.txt'))
     >>> wv.most_similar('two')[:3]
-    [('three', 0.9885902404785156),
-     ('with', 0.8966675996780396),
-     ('one', 0.87330561876297)]
+    [('three', 0.98...),
+     ('with', 0.89...),
+     ('one', 0.87...)]
     """
     num_dim = isglove(filepath)
     tqdm_prog = tqdm if verbose else no_tqdm
@@ -776,7 +776,7 @@ def normalize_filepath(filepath):
     >>> normalize_filepath('/Hello_World.txt\n')
     'hello_world.txt'
     >>> normalize_filepath('NLPIA/src/nlpia/bigdata/Goog New 300Dneg\f.bIn\n.GZ')
-    'NLPIA/src/nlpia/bigdata/goog new 300dneg.w2v.bin.gz'
+    'NLPIA/src/nlpia/bigdata/goog new 300dneg.bin.gz'
     """
     filename = os.path.basename(filepath)
     dirpath = filepath[:-len(filename)]
