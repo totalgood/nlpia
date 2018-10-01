@@ -1257,6 +1257,8 @@ def get_data(name='sms-spam', nrows=None):
                 filepath = gzip.open(filepath)
             except:
                 pass
+        if re.match(r'.json([.][a-z]{0,3}){0,2}', filepathlow):
+            return read_json(filepath)
         if filepathlow.endswith('.tsv.gz') or filepathlow.endswith('.tsv'):
             try:
                 return pd.read_table(filepath)

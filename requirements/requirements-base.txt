@@ -5,9 +5,9 @@ future>=0.16.0
 gensim>=3.4.0,<4.0
 h5py>=2.7.1,<2.8.0
 jupyter>=1.0.0,<3.0.0  # pandas>=0.23.4,<0.30.0
-# keras-applications>=1.0.4,<1.1.0
-# keras-preprocessing>=1.0.2,<1.1.0
-keras>=2.2.2,<2.3.0
+keras-applications==1.0.4
+keras-preprocessing==1.0.2
+keras==2.2.2
 matplotlib>=2.2.3,<2.3.0
 MechanicalSoup>=0.10.0,<1.0.0
 nltk>=3.2.5,<3.3.0
@@ -31,9 +31,9 @@ regex==2017.4.5
 scikit-learn>=0.18.1
 scipy>=1.1.0
 seaborn>=0.8
-setuptools<=39.1.0
-spacy>=2.0.12
-tensorflow>=1.10.0
+setuptools==39.1.0
+spacy==2.0.12
+tensorflow==1.11.0
 tensorflow-hub>=0.1.1
 theano>=1.0.2
 tqdm>=4.11.2
