@@ -14,6 +14,7 @@ from nlpia.regexes import RE_URL_SIMPLE, splitext
 from nlpia.loaders import get_url_title, get_url_filemeta
 from nlpia.transcoders import delimit_slug
 from nlpia.translators import HyperlinkStyleCorrector
+from nlpia.futil import rm_rf  # noqa  (used in doctests to clean up)
 
 logger = logging.getLogger(__name__)
 
@@ -333,7 +334,7 @@ def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_l
 
     >>> len(translate_book(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))
     3
-    >>> os.removedirs(os.path.join(BOOK_PATH, 'cleaned_hyperlinks'))
+    >>> rm_rf(os.path.join(BOOK_PATH, 'cleaned_hyperlinks'))
     """
     if callable(translators) or not hasattr(translators, '__len__'):
         translators = (translators,)
