@@ -61,7 +61,7 @@ def get_lines(file_path=BOOK_PATH):
     Returns:
         list of lists of str, one list for each Chapter or Appendix
 
-    >>> lines = get_lines(os.path.join(BOOK_PATH))
+    >>> lines = get_lines(BOOK_PATH)
     >>> next(lines)
     ('.../src/nlpia/data/book/Appendix F -- Glossary.asc',
      ['= Glossary\n',
@@ -107,10 +107,7 @@ def get_acronyms(manuscript=os.path.expanduser('~/code/nlpia/lane/manuscript')):
 
 
 def write_glossary(manuscript=os.path.expanduser('~/code/nlpia/lane/manuscript'), linesep=None):
-    """ Compose an asciidoc string with acronyms culled from the manuscript
-
-    >>> 
-    """
+    """ Compose an asciidoc string with acronyms culled from the manuscript """
     linesep = linesep or os.linesep
     lines = ['[acronyms]', '== Acronyms', '', '[acronyms,template="glossary",id="terms"]']
     acronyms = get_acronyms(manuscript)
@@ -119,7 +116,7 @@ def write_glossary(manuscript=os.path.expanduser('~/code/nlpia/lane/manuscript')
     return linesep.join(lines)
 
 
-def tag_lines(lines):
+def tag_lines(lines, include_tags=None):
     r""" Naively tags lines from manuscript with: code, natural, heading, etc.
 
     Returns:
@@ -198,11 +195,15 @@ def tag_lines(lines):
 
         tagged_lines.append((tag, line))
 
-    return tagged_lines
+    return filter_tagged_lines(tagged_lines, include_tags=include_tags)
 
 
-def get_tagged_sections(book_dir, include_tags=['natural']):
-    return [(filepath, tag_lines(lines)) for filepath, lines in get_lines(book_dir)]
+def get_tagged_sections(book_dir=BOOK_PATH, include_tags=['natural']):
+    """ Get list of (adoc_file_path, (adoc_syntax_tag, raw_line_str))
+
+    >>> get_tagged_sections()
+    """
+    return [(filepath, tag_lines(lines, include_tags=include_tags)) for filepath, lines in get_lines(book_dir)]
 
 
 def find_bad_footnote_urls(tagged_lines, include_tags=['natural']):
@@ -227,7 +228,7 @@ def find_bad_footnote_urls(tagged_lines, include_tags=['natural']):
     return section_baddies
 
 
-# def find_all_bad_footnote_urls(book_dir=os.path.curdir, include_tags=['natural']):
+# def find_all_bad_footnote_urls(book_dir=BOOK_PATH, include_tags=['natural']):
 #     """ Find lines in the manuscript that contain bad footnotes (only urls) """
 #     sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
 #     bad_url_lines = {}
@@ -326,26 +327,32 @@ def ensure_dir_exists(dest):
 
 
 def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_line_footnotes),
-                   book_dir=os.path.curdir, dest=None, include_tags=['natural'],
+                   book_dir=BOOK_PATH, dest=None, include_tags=['natural'],
                    ext='.nlpiabak', skip_untitled=True):
     """ Fix any style corrections listed in `translate` list of translation functions
 
     >>> len(translate_book(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))
     3
+    >>> os.removedirs(os.path.join(BOOK_PATH, 'cleaned_hyperlinks'))
     """
     if callable(translators) or not hasattr(translators, '__len__'):
         translators = (translators,)
-    dest = ensure_dir_exists(dest)
+
     sections = get_tagged_sections(book_dir=book_dir, include_tags=include_tags)
     file_line_maps = []
 
     for fileid, (filepath, tagged_lines) in enumerate(sections):
+        logger.info('filepath={}'.format(filepath))
         destpath = filepath
         if not dest:
-            copyfile(filepath, filepath + ext)
-        else:
+            copyfile(filepath, filepath + '.' + ext.lstrip('.'))
+        elif os.path.sep in dest:
             destpath = os.path.join(dest, os.path.basename(filepath))
+        else:
+            destpath = os.path.join(os.path.dirname(filepath), dest, os.path.basename(filepath))
+        ensure_dir_exists(os.path.dirname(destpath))
         with open(destpath, 'w') as fout:
+            logger.info('destpath={}'.format(destpath))
             for lineno, (tag, line) in enumerate(tagged_lines):
                 if (include_tags is None or tag in include_tags or
                         any((tag.startswith(t) for t in include_tags))):
@@ -358,7 +365,7 @@ def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_l
     return file_line_maps
 
 
-def correct_hyperlinks(book_dir=os.path.curdir, dest=None, include_tags=['natural'],
+def correct_hyperlinks(book_dir=BOOK_PATH, dest=None, include_tags=['natural'],
                        ext='.nlpiabak', skip_untitled=True):
     """ DEPRECATED (see translate_line_footnotes)
 
@@ -366,6 +373,7 @@ def correct_hyperlinks(book_dir=os.path.curdir, dest=None, include_tags=['natura
 
     >>> len(correct_hyperlinks(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))
     2
+    >>> os.removedirs(os.path.join(BOOK_PATH, 'cleaned_hyperlinks'))
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []
@@ -374,7 +382,7 @@ def correct_hyperlinks(book_dir=os.path.curdir, dest=None, include_tags=['natura
                           ext=ext, skip_untitled=skip_untitled)
 
 
-def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=['natural'],
+def correct_bad_footnote_urls(book_dir=BOOK_PATH, dest=None, include_tags=['natural'],
                               ext='.nlpiabak', skip_untitled=True):
     """ DEPRECATED (see translate_line_footnotes)
 
@@ -382,6 +390,7 @@ def correct_bad_footnote_urls(book_dir=os.path.curdir, dest=None, include_tags=[
 
     >>> len(correct_bad_footnote_urls(book_dir=BOOK_PATH, dest='cleaned_footnotes'))
     1
+    >>> os.removedirs(os.path.join(BOOK_PATH, 'cleaned_footnotes'))
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []
@@ -395,7 +404,28 @@ def filter_lines(input_file, output_file, translate=lambda line: line):
     return filepath, [(tag, translate(line=line, tag=tag)) for (tag, line) in lines]
 
 
-def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
+def filter_tagged_lines(tagged_lines, include_tags=None, exclude_tags=None):
+    """ Return iterable of tagged lines where the tags all start with one of the include_tags prefixes
+
+    >>> filter_tagged_lines([('natural', "Hello."), ('code', '[source,python]'), ('code', '>>> hello()')])
+    <generator object filter_tagged_lines at ...>
+    >>> list(filter_tagged_lines([('natural', "Hello."), ('code', '[source,python]'), ('code', '>>> hello()')]))
+    [('natural', 'Hello.')]
+    """
+    for tagged_line in tagged_lines:
+        if (include_tags is None or tagged_line[0] in include_tags or
+                any((tagged_line[0].startswith(t) for t in include_tags))):
+            if exclude_tags is None or not any((tagged_line[0].startswith(t) for t in exclude_tags)):
+                yield tagged_line
+            else:
+                logger.debug('skipping tag {} because it starts with one of the exclude_tags={}'.format(
+                    tagged_line[0], exclude_tags))
+
+        else:
+            logger.debug('skipping tag {} because not in {}'.format(tagged_line[0], include_tags))
+
+
+def main(book_dir=BOOK_PATH, include_tags=None, verbosity=1):
     r""" Parse all the asciidoc files in book_dir, returning a list of 2-tuples of lists of 2-tuples (tagged lines) 
 
     >>> main(BOOK_PATH, verbosity=0)
@@ -436,24 +466,24 @@ def main(book_dir=os.path.curdir, include_tags=None, verbosity=1):
     include_tags = [include_tags] if isinstance(include_tags, str) else include_tags
     include_tags = None if not include_tags else set([t.lower().strip() for t in include_tags])
     sections = get_tagged_sections(book_dir=book_dir)
-    if verbosity > 0:
+    if verbosity >= 1:
         for filepath, tagged_lines in sections:
+            tagged_lines = filter_tagged_lines(tagged_lines, include_tags=include_tags)
             if verbosity > 1:
                 print('=' * 75)
                 print(filepath)
                 print('-' * 75)
-            for tagged_line in tagged_lines:
-                if (include_tags is None or tagged_line[0] in include_tags or
-                        any((tagged_line[0].startswith(t) for t in include_tags))):
-                    if verbosity == 1:
-                        print(tagged_line[1])
-                    if verbosity > 1:
-                        print(tagged_line)
-                else:
-                    logger.debug('skipping tag {} because not in {}'.format(tagged_line[0], include_tags))
+            if verbosity == 1:
+                for tag, line in tagged_lines:
+                    print(line)
+            else:
+                for tagged_line in tagged_lines:
+                    print(tagged_line)
             if verbosity > 1:
                 print('=' * 79)
                 print()
+    else:
+        logger.debug('vebosity={} so nothing output to stdout with print()'.format(verbosity))
     return sections
 
 
