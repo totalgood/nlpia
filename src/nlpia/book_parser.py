@@ -374,7 +374,7 @@ def correct_hyperlinks(book_dir=BOOK_PATH, dest=None, include_tags=['natural'],
 
     >>> len(correct_hyperlinks(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))
     2
-    >>> os.removedirs(os.path.join(BOOK_PATH, 'cleaned_hyperlinks'))
+    >>> rm_rf(os.path.join(BOOK_PATH, 'cleaned_hyperlinks'))
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []
@@ -391,7 +391,7 @@ def correct_bad_footnote_urls(book_dir=BOOK_PATH, dest=None, include_tags=['natu
 
     >>> len(correct_bad_footnote_urls(book_dir=BOOK_PATH, dest='cleaned_footnotes'))
     1
-    >>> os.removedirs(os.path.join(BOOK_PATH, 'cleaned_footnotes'))
+    >>> rm_rf(os.path.join(BOOK_PATH, 'cleaned_footnotes'))
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []
