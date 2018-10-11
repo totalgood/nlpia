@@ -130,7 +130,8 @@ def tag_lines(lines, include_tags=None):
      natural_heading1 natural_heading2 natural_heading3 natural_heading4 natural_heading5
      natural_quote natural_quote_end natural_quote_start
      natural_sidenote natural_sidenote_end natural_sidenote_start natural_start'
-    >>> tag_lines('|= Title| :chapter: 0|Hello|cruel world|==Heading Level 2| \t| [source,bash]|====|$ grep this|====|'.split('|'))
+    >>> list(tag_lines('|= Title| :chapter: 0|Hello|cruel world|==Heading Level 2| \t| [source,bash]|====|$ grep this|====|'\
+    ...                .split('|')))
     [('blank_line', ''), ('natural_heading1', '= Title'), ('attribute', ' :chapter: 0'),
      ('natural', 'Hello'), ('natural', 'cruel world'), ('natural_heading2', '==Heading Level 2'),
      ('blank_line', ' \t'), ('code_header', ' [source,bash]'),
@@ -203,6 +204,7 @@ def get_tagged_sections(book_dir=BOOK_PATH, include_tags=['natural']):
     """ Get list of (adoc_file_path, (adoc_syntax_tag, raw_line_str))
 
     >>> get_tagged_sections()
+    [('...src/nlpia/data/book/Appendix F -- Glossary.asc', <generator object filter_tagged_lines at ...>)]
     """
     return [(filepath, tag_lines(lines, include_tags=include_tags)) for filepath, lines in get_lines(book_dir)]
 
@@ -211,7 +213,7 @@ def find_bad_footnote_urls(tagged_lines, include_tags=['natural']):
     """ Find lines in the list of 2-tuples of adoc-tagged lines that contain bad footnotes (only urls) 
 
     >>> sections = get_tagged_sections(BOOK_PATH)
-    >>> tagged_lines = sections[0][1]
+    >>> tagged_lines = list(sections[0][1])
     >>> find_bad_footnote_urls(tagged_lines)
     [[30, 'https://spacy.io/usage/linguistic-features#rule-based-morphology']]
     """
@@ -406,13 +408,16 @@ def filter_lines(input_file, output_file, translate=lambda line: line):
 
 
 def filter_tagged_lines(tagged_lines, include_tags=None, exclude_tags=None):
-    """ Return iterable of tagged lines where the tags all start with one of the include_tags prefixes
+    r""" Return iterable of tagged lines where the tags all start with one of the include_tags prefixes
 
     >>> filter_tagged_lines([('natural', "Hello."), ('code', '[source,python]'), ('code', '>>> hello()')])
     <generator object filter_tagged_lines at ...>
-    >>> list(filter_tagged_lines([('natural', "Hello."), ('code', '[source,python]'), ('code', '>>> hello()')]))
+    >>> list(filter_tagged_lines([('natural', "Hello."), ('code', '[source,python]'), ('code', '>>> hello()')],
+    ...      include_tags='natural'))
     [('natural', 'Hello.')]
     """
+    include_tags = (include_tags,) if isinstance(include_tags, str) else include_tags
+    exclude_tags = (exclude_tags,) if isinstance(exclude_tags, str) else exclude_tags
     for tagged_line in tagged_lines:
         if (include_tags is None or tagged_line[0] in include_tags or
                 any((tagged_line[0].startswith(t) for t in include_tags))):
@@ -430,16 +435,7 @@ def main(book_dir=BOOK_PATH, include_tags=None, verbosity=1):
     r""" Parse all the asciidoc files in book_dir, returning a list of 2-tuples of lists of 2-tuples (tagged lines) 
 
     >>> main(BOOK_PATH, verbosity=0)
-    [('.../src/nlpia/data/book/Appendix F -- Glossary.asc', [('natural_heading1', '= Glossary\n'),
-     ('blank_line', '\n'), ('natural', "We've collected some definitions of some common NLP and ML
-     acronyms and terminology here.footnote:[Bill Wilson at the university of New South Wales in Australia
-     has a more complete one here: https://www.cse.unsw.edu.au/~billw/nlpdict.html]\n"),
-     ('natural', 'You can find some of the tools we used to generate this list in the `nlpia` python package
-     at https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py[github.com/totalgood/nlpia]].\n'),
-     ('blank_line', '\n'), ('caption', '.Translate hyperlinks and footnotes\n'),
-     ('code_header', '[source,python]\n'), ('code_start', '----\n'), ('code', '>>> from nlpia.book_parser import *\n'),
-     ('code', ">>> len(translate_book(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))\n"),...
-     ('natural_glossary', '\n'), ('natural_glossary', '\n')])]
+    [('.../src/nlpia/data/book/Appendix F -- Glossary.asc', <generator object filter_tagged_lines at ...>)]
     >>> main(BOOK_PATH, include_tags='natural', verbosity=1)
     = Glossary
     We've collected some definitions of some common NLP and ML acronyms and terminology here.footnote:[Bill Wilson...
@@ -447,12 +443,14 @@ def main(book_dir=BOOK_PATH, include_tags=None, verbosity=1):
     https://www.cse.unsw.edu.au/~billw/nlpdict.html]...
     You can find some of the tools we used to generate this list in the `nlpia` python package at...
     ...
-    >>> tagged_lines = main(BOOK_PATH, include_tags=['natural', 'blank'], verbosity=0)
-    >>> tagged_lines = main(BOOK_PATH, include_tags=['natural', 'blank'], verbosity=1)
+    >>> tagged_lines = list(main(BOOK_PATH, include_tags=['natural', 'blank'], verbosity=0))
+    >>> len(tagged_lines[0])
+    2
+    >>> tagged_lines = list(main(BOOK_PATH, include_tags=['natural', 'blank'], verbosity=1))
     = Glossary
     <BLANKLINE>
     We've collected some definitions of some common NLP and ML acronyms and terminology here.footnote:[...
-    >>> tagged_lines = main(BOOK_PATH, include_tags='natural', verbosity=1)
+    >>> tagged_lines = list(main(BOOK_PATH, include_tags='natural', verbosity=1))
     = Glossary
     We've collected some definitions of some common NLP and ML acronyms and terminology here.footnote:[...
 

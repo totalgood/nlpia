@@ -1,12 +1,12 @@
 """ File utilities comparable to similarly named bash utils: rm_rf(), rm_f(), and mkdir_p() """
 import os
-from futil import expand_path, mkdir_p  # noqa
+from pugnlp.futil import expand_path, mkdir_p  # noqa
 
 
 def ls(path, force=False):
     """ bash `ls -a`: List both file paths or directory contents (files and directories)
 
-    >>> len(ls('.')) > 0
+    >>> ls('.')
     [...]
     >>> ls('~/')
     [...]
@@ -29,7 +29,8 @@ def ls(path, force=False):
 def ls_a(path, force=False):
     """ bash `ls -a`: List both file paths or directory contents (files and directories)
 
-    >>> ls(os.path.join('.', __name__))).endswith(os.path.join('nlpia', 'futil.py'))
+    >>> path = ls(os.path.join('.', __name__)))
+    >>> path.endswith(os.path.join('nlpia', 'futil.py'))
     True
     """
     return ls(path, force=force)
@@ -39,7 +40,6 @@ def rm_r(path, force=False):
     """ bash `rm -r`: Recursively remove dirpath. If `force==True`, don't raise exception if path doesn't exist.
 
     >>> rm_r('/tmp/nlpia_dir_that_doesnt_exist_3.141591234/', force=True)
-    ''
     >>> rm_r('/tmp/nlpia_dir_that_doesnt_exist_3.141591234/')
     Traceback (most recent call last):
       ...
@@ -59,7 +59,6 @@ def rm_rf(path):
     """ bash `rm -rf`: Recursively remove dirpath. Don't raise exception if path doesn't exist.
 
     >>> rm_rf('/tmp/nlpia_dir_that_doesnt_exist_3.141591234/')
-    ''
     """
     return rm_r(path, force=True)
 
