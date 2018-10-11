@@ -200,7 +200,7 @@ def tag_lines(lines, include_tags=None):
     return filter_tagged_lines(tagged_lines, include_tags=include_tags)
 
 
-def get_tagged_sections(book_dir=BOOK_PATH, include_tags=['natural']):
+def get_tagged_sections(book_dir=BOOK_PATH, include_tags=None):
     """ Get list of (adoc_file_path, (adoc_syntax_tag, raw_line_str))
 
     >>> get_tagged_sections()
