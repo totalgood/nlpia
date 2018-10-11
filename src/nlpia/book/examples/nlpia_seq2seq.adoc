@@ -1,0 +1,47 @@
+
+# Build character sequence-to-sequence training set
+from nlpia.loaders import get_data
+input_texts = get_data('imdb')
+input_texts = []  # <2>
+target_texts = []
+input_vocabulary = set()  # <3>
+output_vocabulary = set()
+start_token = '\t'  # <4>
+stop_token = '\n'
+
+with open(corpus_filepath, 'r') as fh:
+    lines = fh.read().split('\n')  # <5>
+max_training_samples = min(25000, len(lines) - 1)  # <6>
+
+for line in lines[:max_training_samples]:
+    input_text, target_text = line.split('\t')  # <7>
+    target_text = start_token + target_text + stop_token  # <8>
+    input_texts.append(input_text)
+    target_texts.append(target_text)
+    for char in input_text:  # <9>
+        if char not in input_vocabulary:
+            input_vocabulary.add(char)
+    for char in target_text:
+        if char not in output_vocabulary:
+            output_vocabulary.add(char)
+
+
+# Character sequence-to-sequency model parameters
+>>> input_vocabulary = sorted(list(input_vocabulary))  # <1>
+>>> output_vocabulary = sorted(list(output_vocabulary))
+
+>>> input_vocab_size = len(input_vocabulary)  # <2>
+>>> output_vocab_size = len(output_vocabulary)
+>>> max_encoder_seq_length = max(
+...     [len(txt) for txt in input_texts])  # <3>
+>>> max_decoder_seq_length = max(
+...     [len(txt) for txt in target_texts])
+
+>>> input_token_index = dict([(char, i) for i, char in
+...     enumerate(input_vocabulary)])  # <4>
+>>> target_token_index = dict(
+...     [(char, i) for i, char in enumerate(output_vocabulary)])
+>>> reverse_input_char_index = dict((i, char) for char, i in
+...     input_token_index.items())  # <5>
+>>> reverse_target_char_index = dict((i, char) for char, i in
+...     target_token_index.items())

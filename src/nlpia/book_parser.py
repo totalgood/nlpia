@@ -14,7 +14,7 @@ from nlpia.regexes import RE_URL_SIMPLE, splitext
 from nlpia.loaders import get_url_title, get_url_filemeta
 from nlpia.transcoders import delimit_slug
 from nlpia.translators import HyperlinkStyleCorrector
-from nlpia.futil import rm_rf  # noqa  (used in doctests to clean up)
+from nlpia.futil import rm_rf, rm_r  # noqa  (used in doctests to clean up)
 
 logger = logging.getLogger(__name__)
 
@@ -393,7 +393,7 @@ def correct_bad_footnote_urls(book_dir=BOOK_PATH, dest=None, include_tags=None,
 
     >>> len(correct_bad_footnote_urls(book_dir=BOOK_PATH, dest='cleaned_footnotes'))
     1
-    >>> rm_rf(os.path.join(BOOK_PATH, 'cleaned_footnotes'))
+    >>> rm_r(os.path.join(BOOK_PATH, 'cleaned_footnotes'))
     """
     # bad_url_lines = find_all_bad_footnote_urls(book_dir=book_dir)
     # file_line_maps = []

@@ -52,15 +52,34 @@ def rm_r(path, force=False):
         ...
     FileNotFoundError: [Errno 2] No such file or directory: '/tmp/nlpia_dir_that_doesnt_exist_3.141591234'
     """
-    paths = ls(path, force=force)
-    if isinstance(paths, list):
-        for p in paths:
-            rm_r(p, force=force)
-    elif isinstance(paths, str):
-        rm_r(paths, force=force)
+    path = expand_path(path)
+    logger.debug('path={}'.format(path))
+    if os.path.isfile(path):
+        return os.remove(path)
+    elif os.path.isdir(path):
+        try:
+            return os.rmdir(path)
+        except OSError:  # OSError: [Errno 66] Directory not empty: 
+            pass
+        except:
+            if not force:
+                raise
+    elif not force:
+        return os.rmdir(path)
+    names = ls(path, force=force)
+    # if ls() returns a list, path must be the full path to a directory
+    if isinstance(names, list):
+        if names:
+            for filename in names:
+                return rm_r(os.path.join(path, filename), force=force)
+        else:
+            os.rmdir(path)
+    # if ls() returns a str, path must be the full path to a file
+    elif isinstance(names, str):
+        return os.remove(names, force=force)
     if force:
         return None
-    return os.removedir(path)
+    return os.rmdir(path)
 
 
 def rm_rf(path):
