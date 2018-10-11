@@ -209,7 +209,7 @@ def get_tagged_sections(book_dir=BOOK_PATH, include_tags=None):
     return [(filepath, tag_lines(lines, include_tags=include_tags)) for filepath, lines in get_lines(book_dir)]
 
 
-def find_bad_footnote_urls(tagged_lines, include_tags=['natural']):
+def find_bad_footnote_urls(tagged_lines, include_tags=None):
     """ Find lines in the list of 2-tuples of adoc-tagged lines that contain bad footnotes (only urls) 
 
     >>> sections = get_tagged_sections(BOOK_PATH)
@@ -259,7 +259,7 @@ def infer_url_title(url):
     return delimit_slug(title, ' ') 
 
 
-def get_line_bad_footnotes(line, tag=None, include_tags=['natural']):
+def get_line_bad_footnotes(line, tag=None, include_tags=None):
     """ Return [original_line, url_footnote1, url_footnote2, ... url_footnoteN] for N bad footnotes in the line """ 
     if tag is None or include_tags is None or tag in include_tags or any((tag.startswith(t) for t in include_tags)):
         found_baddies = re_bad_footnotes.findall(line)
@@ -330,7 +330,7 @@ def ensure_dir_exists(dest):
 
 
 def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_line_footnotes),
-                   book_dir=BOOK_PATH, dest=None, include_tags=['natural'],
+                   book_dir=BOOK_PATH, dest=None, include_tags=None,
                    ext='.nlpiabak', skip_untitled=True):
     """ Fix any style corrections listed in `translate` list of translation functions
 
@@ -368,7 +368,7 @@ def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_l
     return file_line_maps
 
 
-def correct_hyperlinks(book_dir=BOOK_PATH, dest=None, include_tags=['natural'],
+def correct_hyperlinks(book_dir=BOOK_PATH, dest=None, include_tags=None,
                        ext='.nlpiabak', skip_untitled=True):
     """ DEPRECATED (see translate_line_footnotes)
 
