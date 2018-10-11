@@ -385,7 +385,7 @@ def correct_hyperlinks(book_dir=BOOK_PATH, dest=None, include_tags=None,
                           ext=ext, skip_untitled=skip_untitled)
 
 
-def correct_bad_footnote_urls(book_dir=BOOK_PATH, dest=None, include_tags=['natural'],
+def correct_bad_footnote_urls(book_dir=BOOK_PATH, dest=None, include_tags=None,
                               ext='.nlpiabak', skip_untitled=True):
     """ DEPRECATED (see translate_line_footnotes)
 
