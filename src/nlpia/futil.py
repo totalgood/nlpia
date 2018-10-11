@@ -1,6 +1,9 @@
 """ File utilities comparable to similarly named bash utils: rm_rf(), rm_f(), and mkdir_p() """
 import os
+from nlpia.constants import logging
 from pugnlp.futil import expand_path, mkdir_p  # noqa
+
+logger = logging.getLogger(__name__)
 
 
 def ls(path, force=False):
@@ -10,10 +13,14 @@ def ls(path, force=False):
     [...]
     >>> ls('~/')
     [...]
-    >>> ls(os.path.join('.', __name__))).endswith(os.path.join('nlpia', 'futil.py'))
+
+    >>> __file__.endswith(os.path.join('nlpia', 'futil.py'))
+    True
+    >>> ls(__file__).endswith(os.path.join('nlpia', 'futil.py'))
     True
     """
     path = expand_path(path)
+    logger.debug('path={}'.format(path))
     if os.path.isfile(path):
         return path
     elif os.path.isdir(path):
@@ -29,7 +36,7 @@ def ls(path, force=False):
 def ls_a(path, force=False):
     """ bash `ls -a`: List both file paths or directory contents (files and directories)
 
-    >>> path = ls(os.path.join('.', __name__)))
+    >>> path = ls(__file__)
     >>> path.endswith(os.path.join('nlpia', 'futil.py'))
     True
     """
@@ -42,7 +49,8 @@ def rm_r(path, force=False):
     >>> rm_r('/tmp/nlpia_dir_that_doesnt_exist_3.141591234/', force=True)
     >>> rm_r('/tmp/nlpia_dir_that_doesnt_exist_3.141591234/')
     Traceback (most recent call last):
-      ...
+        ...
+    FileNotFoundError: [Errno 2] No such file or directory: '/tmp/nlpia_dir_that_doesnt_exist_3.141591234'
     """
     paths = ls(path, force=force)
     if isinstance(paths, list):
