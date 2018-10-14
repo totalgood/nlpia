@@ -86,7 +86,7 @@ You have two alternative package managers you can use to install `nlpia`:
 
 ### 5.1. `conda`
 
-In most cases, conda will be able to install python packages faster and more reliably than pip, because packages like `python-levenshtein` require you to compile a C library during installation, and Windows doesn't have an installer that will "just work."
+In most cases, `conda` will be able to install python packages faster and more reliably than pip. Without `conda` Some packages, such as `python-levenshtein`, require you to compile a C library during installation. Windows doesn't have an installer that will "just work."
 
 So use conda (part of the Anaconda package that you installed in Step 1 above) to create an environment called `nlpiaenv`:
 
@@ -109,7 +109,7 @@ Make sure you can import nlpia with:
 python -c "print(import nlpia)"
 ```
 
-Skip to Step 6 "Have fun!" if you have successfully created and activated an environment containing the `nlpia` package and its dependencies.
+Skip to Step 6 ("Have fun!") if you have successfully created and activated an environment containing the `nlpia` package and its dependencies.
 
 ### 5.2. `pip`
 
