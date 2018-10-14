@@ -1,0 +1,21 @@
+Machine learning gives us a way to trick machines into behaving as if we'd spent a lifetime programming them with hundreds of complex regular expressions or algorithms.
+We can teach a machine to respond to patterns similar to the patterns defined in regular expressions by merely providing it examples of user statements and the responses we want the chatbot to mimic.
+And the "models" of language, the FSMs, produced by machine learning, are much better.
+They are less picky about mispelings and typoz.
+
+And machine learning NLP pipelines are easier to "program."
+We don't have to anticipate every possible use of symbols in our language.
+We just have to feed the training pipeline with examples of the phrases that match and example phrases that don't match.
+As long we label them during training, so that the chatbot knows which is which, it will learn to discriminate between them.
+And there are even machine learning approaches that require little if any "labeled" data.
+
+We've given you some exciting reasons to learn about natural language processing.
+You want to help save the world, don't you?
+And we've attempted to pique your interest with some practical NLP applications that are revolutionizing the way we communicate, learn, do business, and even think.
+It won't be long before you're able to build a system that approaches human-like conversational behavior.
+And you should be able to see in upcoming chapters how to train a chatbot or NLP pipeline with any domain knowledge that interests you -- from finance and sports to psychology and literature.
+If you can find a corpus of writing about it, then you can train a machine to understand it.
+
+The rest of this book is about using machine learning to save us from having to anticipate all the ways people can say things in natural language.
+Each chapter incrementally improves on the basic NLP pipeline for the chatbot introduced in this chapter.
+As you learn the tools of natural language processing, you'll be building an NLP pipeline that can not only carry on a conversation but help you accomplish your goals in business and in life.
