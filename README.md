@@ -235,9 +235,11 @@ Now you can display your 307x300 spectrogram or "wordogram":
 >>> plt.show()
 ```
 
+[![307x300 spectrogram or "wordogram"](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png)](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png) 
+
 Can you think of some image processing or deep learning algorithms you could run on images of natural language text?
 
-Once you've mastered wordvectors you can play around with Google's Universal Sentence Encoder and create spectrograms of entire books.
+Once you've mastered word vectors you can play around with Google's Universal Sentence Encoder and create spectrograms of entire books.
 
 #### Feature 5: Build your own Sequence-to-Sequence translator
 
