@@ -78,7 +78,7 @@ git clone https://github.com/totalgood/nlpia.git
 
 5. Install `nlpia` 
 
-You have two tools you can use to install `nlpia`:
+You have two alternative package managers you can use to install `nlpia`:
 
 5.1. `conda`  
 5.2. `pip`  
@@ -88,7 +88,7 @@ You have two tools you can use to install `nlpia`:
 
 In most cases, conda will be able to install python packages faster and more reliably than pip, because packages like `python-levenshtein` require you to compile a C library during installation, and Windows doesn't have an installer that will "just work."
 
-So use conda (part of the Anaconda package that we already installed) to create an environment called `nlpiaenv`:
+So use conda (part of the Anaconda package that you installed in Step 1 above) to create an environment called `nlpiaenv`:
 
 ```bash
 cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`
@@ -101,11 +101,15 @@ Whenever you want to be able to import or run any `nlpia` modules, you'll need t
 
 ```bash
 source activate nlpiaenv
+```
+
+Make sure you can import nlpia with:
+
+```bash
 python -c "print(import nlpia)"
 ```
 
-
-Skip to Step 4 if you have successfully created and activated an environment containing the `nlpia` package.
+Skip to Step 6 "Have fun!" if you have successfully created and activated an environment containing the `nlpia` package and its dependencies.
 
 ### 5.2. `pip`
 
