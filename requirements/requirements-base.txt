@@ -2,6 +2,7 @@
 annoy>=1.9.5,<2.0.0
 # boto
 coverage>=4.3.4
+cython==0.29
 future>=0.16.0
 gensim>=3.4.0,<4.0
 h5py>=2.7.1,<2.8.0
