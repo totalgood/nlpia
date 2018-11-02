@@ -27,7 +27,7 @@ Some more badges from grakn.ai and search of github markdown files
 
 # NLPIA
 
-Community-driven code for the book [**N**atural **L**anguage **P**rocessing **i**n **A**ction](https://bit.ly/nlpiabook).
+Community-driven code for the book [**N**atural **L**anguage **P**rocessing **i**n **A**ction](http://bit.ly/gh-readme-nlpia-book).
 
 ## Description
 
