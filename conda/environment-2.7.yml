@@ -8,7 +8,7 @@ dependencies:
   # - boto3
   # - conda-build
   - cython
-  - gensim=3.4.0
+  - gensim>=3.4.0,<3.7.0
   - jupyter=1.0.0
   # - keras-applications>=1.0.4,<1.1.0
   # - keras-preprocessing>=1.0.2,<1.1.0
