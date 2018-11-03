@@ -5,7 +5,7 @@ python:
   # - "3.6-dev"
   # - "3.7"
 install:
-  - export ENVIRONMENT_YML="conda/environment-$TRAVIS_PYTHON_VERSION.yml"
+  - export ENVIRONMENT_YML="conda/environment.yml"
   - echo "ENVIRONMENT_YML = $ENVIRONMENT_YML"
   - echo "TRAVIS_PYTHON_VERSION = $TRAVIS_PYTHON_VERSION"
   - env
