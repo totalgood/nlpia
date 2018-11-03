@@ -5,7 +5,10 @@ python:
   # - "3.6-dev"
   # - "3.7"
 install:
-  - ENVIRONMENT_YML="conda/environment-$TRAVIS_PYTHON_VERSION.yml"
+  - export ENVIRONMENT_YML="conda/environment-$TRAVIS_PYTHON_VERSION.yml"
+  - echo "ENVIRONMENT_YML = $ENVIRONMENT_YML"
+  - echo "TRAVIS_PYTHON_VERSION = $TRAVIS_PYTHON_VERSION"
+  - env
   - sudo apt-get update
   - sudo apt-get remove -y python-boto
   - sudo apt-get install -y libasound* build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev
