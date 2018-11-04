@@ -7,7 +7,14 @@ omit =
    src/nlpia/book/*
 
 include = 
-   src/nlpia/book/examples/ch06_sentence_embeddings.py
+   src/nlpia/book/examples/ch02.py
+   src/nlpia/book/examples/ch03.py
+   src/nlpia/book/examples/ch04.py
+   src/nlpia/book/examples/ch04_spam_lda.py
+   src/nlpia/book/examples/ch05_2.py
+   src/nlpia/book/examples/ch05_book_sentence_lsa.py
+   src/nlpia/book/examples/ch_app_d.py
+   src/nlpia/book/examples/ch_app_h.py
 
 [report]
 # Regexes for lines to exclude from consideration
