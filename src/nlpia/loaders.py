@@ -234,13 +234,9 @@ def get_en2fr(url='http://www.manythings.org/anki/fra-eng.zip'):
 def load_anki_df(language='deu'):
     """ Load into a DataFrame statements in one language along with their translation into English
 
-    >>> get_data('zsm').head()
+    >>> get_data('zsm').head(1)
                     eng                                zsm
     0      Are you new?                         Awak baru?
-    1      I'm at home.       Saya sedang berada di rumah.
-    2   I have no clue.     Saya tiada pembayang langsung.
-    3   I'm not pretty.                   Saya tak cantik.
-    4  I had to resign.  Saya terpaksa meletakkan jawatan.
     """
     if os.path.isfile(language):
         filepath = language

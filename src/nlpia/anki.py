@@ -32,8 +32,8 @@ def get_anki_phrases(lang='english', limit=None):
 def get_anki_phrases_english(limit=None):
     """ Return all the English phrases in the Anki translation flashcards 
 
-    >>> len(get_anki_phrases_english(limit=100))
-    704
+    >>> len(get_anki_phrases_english(limit=100)) > 700
+    True
     """
     texts = set()
     for lang in ANKI_LANGUAGES:
