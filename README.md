@@ -171,6 +171,22 @@ ls
 Help other NLP practicioners by contributing your code and knowledge.
 Here are some ideas for a few features others might find handy.
 
+## Using Docker
+### 1. Build your image (This process might take few minutes for download jupyter docker image)
+- `docker build -t nlpia .`
+
+### 2. Run your image
+- `docker run -p 8888:8888 nlpia`
+- Copy the `token` obtained from the run log
+- Open Browser and use the link `http://localhost:8888/?token=...`
+
+### 3. Play around
+- If you want to keep your notebook file or share a folder with the running container then use the command:
+
+  `docker run -p 8888:8888 -v ~:/home/jovyan/work nlpia`
+
+- Open new notebook and test your code, and make sure save it inside `work` directory.
+
 #### Feature 1: Glossary Compiler
 
 Skeleton code and APIs that could be added to the https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py:`transcoders.py` module.
