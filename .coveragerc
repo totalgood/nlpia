@@ -3,15 +3,18 @@
 branch = True
 source = */nlpia/*
 omit = 
-   src/nlpia/book/examples/*
    src/nlpia/data/*
    src/nlpia/book/*
+
+include = 
+   src/nlpia/book/examples/ch06_sentence_embeddings.py
 
 [report]
 # Regexes for lines to exclude from consideration
 exclude_lines =
     # Have to re-enable the standard pragma
     pragma: no cover
+    nocover
 
     # Don't complain about missing debug-only code:
     def __repr__

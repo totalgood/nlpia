@@ -269,7 +269,7 @@ If you have pairs of statements or words in two languages, you can build a seque
 
 #### Other Ideas
 
-There are a lot more project ideas mentioned in NLPIA "Appendix E -- Resources". Here's an early draft of [that resource list](https://github.com/totalgood/nlpia/blob/master/src/nlpia/data/book/Appendix%20E%20--%20Resources.asc.md).
+There are a lot more project ideas mentioned in the "Resources" section at the end of NLPIA. Here's an early draft of [that resource list](https://github.com/totalgood/nlpia/blob/master/src/nlpia/data/book/Appendix%20E%20--%20Resources.asc.md).
 
 
 
