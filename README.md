@@ -93,16 +93,23 @@ Use conda (part of the Anaconda package that you installed in Step 1 above) to c
 cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`
 conda env create -n nlpiaenv -f conda/environment.yml
 conda install pip  # to get the latest version of pip
+source activate nlpiaenv
 pip install -e .
 ```
 
 Whenever you want to be able to import or run any `nlpia` modules, you'll need to activate this conda environment first:
 
 ```bash
-source activate nlpiaenv
+$ source activate nlpiaenv
 ```
 
-Make sure you can import nlpia with:
+On **Windows** CMD prompt (Anaconda Prompt in Applications) there is no source command so:
+
+```dos
+C:\ activate nlpiaenv
+```
+
+Now you can finally make sure you can import nlpia with:
 
 ```bash
 python -c "print(import nlpia)"
@@ -111,6 +118,20 @@ python -c "print(import nlpia)"
 Skip to Step 6 ("Have fun!") if you have successfully created and activated an environment containing the `nlpia` package and its dependencies.
 
 #### Alternative 5.2. `pip`
+
+You can try this first, if you're feeling lucky:
+
+```bash
+cd nlpia
+pip install --upgrade pip
+pip install -e .
+```
+
+Or if you don't think you'll be editing any of the source code for nlpia your can just:
+
+```bash
+pip install nlpia
+```
 
 Linux-based OSes like Ubuntu and OSX come with C++ compilers built-in, so you may be able to install the dependencies using pip instead of `conda`. 
 But if you're on Windows and you want to install packages, like `python-levenshtein` that need compiled C++ libraries, you'll need a compiler. 
