@@ -39,9 +39,13 @@ install:
   - python -c "import nltk; nltk.download('punkt')"
   - conda info -a
   - conda list
+  - pip install codecov
   # - conda build conda-build-recipe
   # - conda install nlpia --use-local
 
+after_success:
+  - bash < (curl -s https://codecov.io/bash)
+  - codecov
 
 script:
   - python setup.py test
