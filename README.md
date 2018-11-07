@@ -42,7 +42,7 @@ Once you have Git installed, launch a bash terminal.
 It will usually be found among your other applications with the name `git-bash`. 
 
 
-### Step 1. Install [Anaconda3 (Python3.6)](https://docs.anaconda.com/anaconda/install/)
+### Step 1. Install [Anaconda3](https://docs.anaconda.com/anaconda/install/)
 
 * [Linux](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.sh)
 * [MacOSX](https://repo.anaconda.com/archive/Anaconda3-5.2.0-MacOSX-x86_64.pkg)
