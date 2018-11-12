@@ -1,0 +1,5 @@
+# OAuth
+
+Oauth is used by many web applications to authenticate you without a password. This is especially useful for APIs. To build an client app (like a Slack or Twitter Chat Bot) that uses OAuth to interact with an API, you'll need to set up a OAuth Authentication server to confirm your bot's identity (authenticate) with Slack. The authentication server you put up will serve a response to Slack or Twitter when they redirect users to your Oauth server URI.
+
+There are a lot of [Djano apps](https://www.djangopackages.com/grids/g/oauth-servers/) that you can install to serve up OAuth responses without too much hassle. The one I chose was [django-oauth-toolkit]() because it promised to [get me going in 1 minute](http://django-oauth-toolkit.readthedocs.org/en/latest/tutorial/tutorial_01.html?highlight=server)
