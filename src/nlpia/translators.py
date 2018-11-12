@@ -89,6 +89,69 @@ class Filter(Matcher):
         return ''
 
 
+class Translator(Pattern):
+    r""" A pattern for translating a diff file into a more human (non-programmer) readable form
+
+    >>> difftxt = get_data('forum_user_557658.patch')
+    >>> tran = Translator()
+    """
+
+    def __init__(self, pattern=r'^\-(?P<text>.*)', template='      was: {text}'):
+        super().__init__(pattern=pattern)
+
+    def replace(self, text, to_template='{name} ({url})', from_template=None,
+                name_matcher=Matcher(looks_like_name), url_matcher=Matcher(r'.*[^:]+$')):
+        """ Replace all occurrences of rendered from_template in text with `template` rendered from each match.groupdict()
+
+        TODO: from_template 
+
+        >>> translator = HyperlinkStyleCorrector()
+        >>> adoc = 'See http://totalgood.com[Total Good] about that.'
+        >>> translator.replace(adoc, '{scheme_type}s://', '{scheme}://')
+        'See https://totalgood.com[Total Good] about that.'
+        >>> adoc = "Nada here:// Only a .com & no (parens.symbol) or http/[hyperlinks] or anything!"
+        >>> translator.translate(adoc)
+        'Nada here:// Only a .com & no (parens.symbol) or http/[hyperlinks] or anything!'
+        >>> adoc = "Two http://what.com[WAT] with https://another.com/api?q=1&a=2[longer url]."
+        >>> translator.translate(adoc)
+        'Two WAT (http://what.com) with longer url (https://another.com/api?q=1&a=2).'
+        """
+        self.name_matcher = name_matcher or Matcher()
+        self.url_matcher = url_matcher or Matcher()
+        matches = self.finditer(text)
+        newdoc = copy(text)
+        logger.debug('before translate: {}'.format(newdoc))
+        for m in matches:
+            # this outer m.captures() loop is overkill:
+            #   overlapping pattern matches probably won't match after the first replace
+            logger.debug('match: {}'.format(m))
+            logger.debug('match.captures(): {}'.format(m.captures()))
+            for i, captured_str in enumerate(m.captures()):
+                captureddict = {'name': None, 'scheme': None, 'url': None}
+                for k, v in m.capturesdict().items():
+                    if len(v) > i:
+                        captureddict[k] = v[i]
+                    else:
+                        captureddict[k] = None
+                        logger.warning('Overlapping captured matches were mishandled: {}'.format(m.capturesdict()))
+                # need to check for optional args:
+                name = captureddict.get('name', None)
+                url = captureddict.get('url', None)
+                scheme = captureddict.get('scheme', None)
+                if (not scheme or not name or not self.name_matcher.ismatch(name) or 
+                        not url or not self.url_matcher.ismatch(url)):
+                    continue
+                if from_template:
+                    rendered_from_template = from_template.format(**captureddict)
+                else:
+                    rendered_from_template = captured_str
+                # TODO: render numbered references like r'\1' before rendering named references
+                #    or do them together in one `.format(**kwargs)` after translating \1 to {1} and groupsdict().update({1: ...})
+                rendered_to_template = to_template.format(**m.groupdict())
+                newdoc = newdoc.replace(rendered_from_template, rendered_to_template)
+        return newdoc
+
+
 class HyperlinkStyleCorrector(Pattern):
     """ A pattern for matching asciidoc hyperlinks for transforming them to print-book version (Manning Style)
 
