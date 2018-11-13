@@ -42,7 +42,7 @@ Once you have Git installed, launch a bash terminal.
 It will usually be found among your other applications with the name `git-bash`. 
 
 
-### Step 1. Install [Anaconda3 (Python3.6)](https://docs.anaconda.com/anaconda/install/)
+### Step 1. Install [Anaconda3](https://docs.anaconda.com/anaconda/install/)
 
 * [Linux](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.sh)
 * [MacOSX](https://repo.anaconda.com/archive/Anaconda3-5.2.0-MacOSX-x86_64.pkg)
@@ -93,16 +93,23 @@ Use conda (part of the Anaconda package that you installed in Step 1 above) to c
 cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`
 conda env create -n nlpiaenv -f conda/environment.yml
 conda install pip  # to get the latest version of pip
+source activate nlpiaenv
 pip install -e .
 ```
 
 Whenever you want to be able to import or run any `nlpia` modules, you'll need to activate this conda environment first:
 
 ```bash
-source activate nlpiaenv
+$ source activate nlpiaenv
 ```
 
-Make sure you can import nlpia with:
+On **Windows** CMD prompt (Anaconda Prompt in Applications) there is no source command so:
+
+```dos
+C:\ activate nlpiaenv
+```
+
+Now you can finally make sure you can import nlpia with:
 
 ```bash
 python -c "print(import nlpia)"
@@ -111,6 +118,20 @@ python -c "print(import nlpia)"
 Skip to Step 6 ("Have fun!") if you have successfully created and activated an environment containing the `nlpia` package and its dependencies.
 
 #### Alternative 5.2. `pip`
+
+You can try this first, if you're feeling lucky:
+
+```bash
+cd nlpia
+pip install --upgrade pip
+pip install -e .
+```
+
+Or if you don't think you'll be editing any of the source code for nlpia your can just:
+
+```bash
+pip install nlpia
+```
 
 Linux-based OSes like Ubuntu and OSX come with C++ compilers built-in, so you may be able to install the dependencies using pip instead of `conda`. 
 But if you're on Windows and you want to install packages, like `python-levenshtein` that need compiled C++ libraries, you'll need a compiler. 
@@ -149,6 +170,22 @@ ls
 
 Help other NLP practicioners by contributing your code and knowledge.
 Here are some ideas for a few features others might find handy.
+
+## Using Docker
+### 1. Build your image (This process might take few minutes for download jupyter docker image)
+- `docker build -t nlpia .`
+
+### 2. Run your image
+- `docker run -p 8888:8888 nlpia`
+- Copy the `token` obtained from the run log
+- Open Browser and use the link `http://localhost:8888/?token=...`
+
+### 3. Play around
+- If you want to keep your notebook file or share a folder with the running container then use the command:
+
+  `docker run -p 8888:8888 -v ~:/home/jovyan/work nlpia`
+
+- Open new notebook and test your code, and make sure save it inside `work` directory.
 
 #### Feature 1: Glossary Compiler
 
@@ -248,7 +285,7 @@ If you have pairs of statements or words in two languages, you can build a seque
 
 #### Other Ideas
 
-There are a lot more project ideas mentioned in NLPIA "Appendix E -- Resources". Here's an early draft of [that resource list](https://github.com/totalgood/nlpia/blob/master/src/nlpia/data/book/Appendix%20E%20--%20Resources.asc.md).
+There are a lot more project ideas mentioned in the "Resources" section at the end of NLPIA. Here's an early draft of [that resource list](https://github.com/totalgood/nlpia/blob/master/src/nlpia/data/book/Appendix%20E%20--%20Resources.asc.md).
 
 
 
