@@ -11,3 +11,5 @@ Contributors
 * Ashwin Kannan @ashwinkannan94
 * Kim Falk @kimfalk
 * jSON @d0tN3t
+* Ben Mainye @Shuyib
+* Hoang Chung Hien @hoangchunghien
