@@ -1,5 +1,5 @@
 # AIML-Bot>=0.0.3,<0.1.0  # requirements-3.6.txt
-annoy>=1.9.5,<2.0.0
+# annoy>=1.9.5,<2.0.0
 # boto
 coverage>=4.3.4
 cython==0.29
