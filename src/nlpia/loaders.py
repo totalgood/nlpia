@@ -283,6 +283,10 @@ BIG_URLS = {
         'https://www.dropbox.com/s/5gpb43c494mc8p0/tweets.csv.gz?dl=1',
         311725313,
     ),
+    'tweets': (
+        'https://www.dropbox.com/s/mg4yokpifu3n6u5/crimedata.csv.gz?dl=1',
+        2126689,
+    ),
     'lsa_tweets': (
         'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1',
         3112841563,
