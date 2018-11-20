@@ -92,6 +92,8 @@ class Filter(Matcher):
 class Translator(Pattern):
     r""" A pattern for translating a diff file into a more human (non-programmer) readable form
 
+    This is the start of a translator demo that turns diff patch files into human-readable email.
+    >>> from nlpia.loaders import get_data
     >>> difftxt = get_data('forum_user_557658.patch')
     >>> tran = Translator()
     """
@@ -108,7 +110,7 @@ class Translator(Pattern):
         >>> translator = HyperlinkStyleCorrector()
         >>> adoc = 'See http://totalgood.com[Total Good] about that.'
         >>> translator.replace(adoc, '{scheme_type}s://', '{scheme}://')
-        'See https://totalgood.com[Total Good] about that.'
+        'See http://totalgood.com[Total Good] about that.'
         >>> adoc = "Nada here:// Only a .com & no (parens.symbol) or http/[hyperlinks] or anything!"
         >>> translator.translate(adoc)
         'Nada here:// Only a .com & no (parens.symbol) or http/[hyperlinks] or anything!'
