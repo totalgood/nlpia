@@ -93,8 +93,9 @@ class Translator(Pattern):
     r""" A pattern for translating a diff file into a more human (non-programmer) readable form
 
     This is the start of a translator demo that turns diff patch files into human-readable email.
-    >>> from nlpia.loaders import get_data
-    >>> difftxt = get_data('forum_user_557658.patch')
+    >> from nlpia.loaders import get_data
+    >> difftxt = get_data('forum_user_557658.patch')
+
     >>> tran = Translator()
     """
 
