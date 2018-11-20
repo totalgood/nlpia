@@ -257,6 +257,10 @@ BIG_URLS = {
         KeyedVectors.load_word2vec_format,
         {'binary': True},
     ),
+    'words_google_news': (
+        'https://www.dropbox.com/s/9pm0js9qdjr04jy/words_google_news.txt.gz?dl=1',
+        3015517
+    ),
     'glove_twitter': (
         'https://nlp.stanford.edu/data/glove.twitter.27B.zip',
         1000000000,  # FIXME: make sure size check is `>=`
@@ -283,9 +287,25 @@ BIG_URLS = {
         'https://www.dropbox.com/s/5gpb43c494mc8p0/tweets.csv.gz?dl=1',
         311725313,
     ),
-    'tweets': (
+    'crimedata': (
         'https://www.dropbox.com/s/mg4yokpifu3n6u5/crimedata.csv.gz?dl=1',
         2126689,
+    ),
+    'cities': (
+        'https://www.dropbox.com/s/tcri5eyzpabhnyy/cities.csv.gz?dl=1',
+        8396891,
+    ),
+    'cities_us_wordvectors': (
+        'https://www.dropbox.com/s/7ujezmo03b637q3/cities_us_wordvectors.csv.gz?dl=1',
+        8451128,
+    ),
+    'dialog': (
+        'https://www.dropbox.com/s/5543bkihxflzry9/dialog.csv.gz?dl=1',
+        4415234,
+    ),
+    'save_dialog_tweets': (
+        'https://www.dropbox.com/s/tlrr9bm45uzm9yl/save_dialog_tweets.txt.gz?dl=1',
+        4517000,
     ),
     'lsa_tweets': (
         'https://www.dropbox.com/s/rpjt0d060t4n1mr/lsa_tweets_5589798_2003588x200.tar.gz?dl=1',
