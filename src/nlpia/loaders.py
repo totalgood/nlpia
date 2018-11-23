@@ -743,9 +743,9 @@ def wc(f, verbose=False, nrows=None):
     tqdm_prog = tqdm if verbose else no_tqdm
     with ensure_open(f, mode='r') as fin:
         for i, line in tqdm_prog(enumerate(fin)):
-            if nrows is not None and i >= nrows:
+            if nrows is not None and i >= nrows - 1:
                 break
-        fin.seek(0)
+        # fin.seek(0)
         return i + 1
 
 
