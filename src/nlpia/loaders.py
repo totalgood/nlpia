@@ -104,6 +104,11 @@ ZIP_FILES = {
 ZIP_PATHS = [[os.path.join(BIGDATA_PATH, fn) for fn in ZIP_FILES[k]] if ZIP_FILES[k] else k for k in ZIP_FILES.keys()]
 
 
+harry_docs = ["The faster Harry got to the store, the faster and faster Harry would get home.",
+              "Harry is hairy and faster than Jill.",
+              "Jill is not as hairy as Harry."]
+
+
 def load_imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(('train', 'test'), ('pos', 'neg', 'unsup'))):
     """ Walk directory tree starting at `path` to compile a DataFrame of movie review text labeled with their 1-10 star ratings
 
@@ -144,8 +149,8 @@ def load_imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(
         df['rating'] = np.array([int(fn[:-4].split('_')[1]) for fn in filenames])
         texts = []
         for fn in filenames:
-            with open(os.path.join(textsdir, fn)) as fin:
-                texts.append(fin.read())
+            with ensure_open(os.path.join(textsdir, fn)) as f:
+                texts.append(f.read())
         df['text'] = np.array(texts)
         del texts
         df.set_index('index0 index1 index2'.split(), inplace=True)
@@ -173,14 +178,14 @@ def load_glove(filepath, batch_size=1000, limit=None, verbose=True):
     if limit:
         vocab_size = int(limit)
     else:
-        with open(filepath) as fin:
+        with ensure_open(filepath) as fin:
             for i, line in enumerate(fin):
                 pass
         vocab_size = i + 1
 
     wv.vectors = np.zeros((vocab_size, num_dim), REAL)
 
-    with open(filepath) as fin:
+    with ensure_open(filepath) as fin:
         batch, words = [], []
         for i, line in enumerate(tqdm_prog(fin, total=vocab_size)):
             line = line.split()
@@ -408,6 +413,7 @@ DDL_DS_QUESTIONS_URL = 'http://minimum-entropy.districtdatalabs.com/api/question
 DDL_DS_ANSWERS_URL = 'http://minimum-entropy.districtdatalabs.com/api/answers/?format=json'
 
 
+# Files to load into local variables like loaders.kite_text loaders.kite_history
 TEXTS = ['kite_text.txt', 'kite_history.txt']
 CSVS = ['mavis-batey-greetings.csv', 'sms-spam.csv']
 
@@ -419,8 +425,8 @@ def rename_file(source, dest):
 
     >>> from tempfile import mkdtemp
     >>> tmpdir = mkdtemp(suffix='doctest_rename_file', prefix='tmp')
-    >>> fout = open(os.path.join(tmpdir, 'fake_data.bin.gz'), 'w')
-    >>> fout.write('fake nlpia.loaders.rename_file')
+    >>> fout = ensure_open(os.path.join(tmpdir, 'fake_data.bin.gz'), 'w')
+    >>> fout.write(b'fake nlpia.loaders.rename_file')
     30
     >>> fout.close()
     >>> dest = rename_file(os.path.join(tmpdir, 'fake_data.bin.gz'), os.path.join(tmpdir, 'Fake_Data.bin.gz'))
@@ -539,12 +545,6 @@ def startswith_strip(s, startswith='http://', ignorecase=True):
 def combine_dfs(dfs, index_col='index0 index1 index2'.split()):
     if isinstance(dfs, 'dict'):
         dfs = list(dfs.values())
-
-
-for filename in TEXTS:
-    with open(os.path.join(DATA_PATH, filename)) as fin:
-        locals()[filename.split('.')[0]] = fin.read()
-del fin
 
 
 def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
@@ -672,8 +672,64 @@ def read_csv(*args, **kwargs):
     return df
 
 
-def wc(f, verbose=False):
-    """ Count lines in a text file 
+def ensure_open(f, mode='r'):
+    r""" Return a file pointer using gzip.open if filename ends with .gz otherwise open()
+
+    TODO: try to read a gzip rather than relying on gz extension, likewise for zip and other formats
+    TODO: monkey patch the file so that .write_bytes=.write and .write writes both str and bytes
+
+    >>> fn = os.path.join(DATA_PATH, 'pointcloud.csv.gz')
+    >>> fp = ensure_open(fn)
+    >>> fp
+    <gzip _io.BufferedReader name='...src/nlpia/data/pointcloud.csv.gz' 0x...>
+    >>> fp.closed
+    False
+    >>> with fp:
+    ...     print(len(fp.readlines()))
+    48485
+    >>> fp.read()
+    Traceback (most recent call last):
+      ...
+    ValueError: I/O operation on closed file
+    >>> len(ensure_open(fp).readlines())
+    48485
+    >>> fn = os.path.join(DATA_PATH, 'mavis-batey-greetings.txt')
+    >>> fp = ensure_open(fn)
+    >>> len(fp.read())
+    314
+    >>> len(fp.read())
+    0
+    >>> len(ensure_open(fp).read())
+    0
+    >>> fp.close()
+    >>> len(fp.read())
+    Traceback (most recent call last):
+      ...
+    ValueError: I/O operation on closed file.
+    """
+    if not hasattr(f, 'seek') or not hasattr(f, 'readlines'):
+        if f.lower().endswith('.gz'):
+            return gzip.open(f, mode=mode)
+        else:
+            return open(f, mode=mode)
+    elif f.closed:
+        if hasattr(f, '_write_gzip_header'):
+            return gzip.open(f.name, mode=mode)
+        else:
+            return open(f.name, mode=mode)
+    return f
+
+
+#######################################################################
+# Populate some local string variables with text files from DATA_PATH
+for filename in TEXTS:
+    with ensure_open(os.path.join(DATA_PATH, filename)) as fin:
+        locals()[filename.split('.')[0]] = fin.read()
+del fin
+
+
+def wc(f, verbose=False, nrows=None):
+    r""" Count lines in a text file 
 
     References:
         https://stackoverflow.com/q/845058/623735
@@ -684,44 +740,58 @@ def wc(f, verbose=False):
     >>> wc(fin.name)
     7037
     """
-    if not hasattr(f, 'readlines'):
-        with open(f, 'r') as fin:
-            return wc(fin)
-    else:
-        tqdm_prog = tqdm if verbose else no_tqdm
-        for i, line in tqdm_prog(enumerate(f)):
-            pass
-        f.seek(0)
+    tqdm_prog = tqdm if verbose else no_tqdm
+    with ensure_open(f, mode='r') as fin:
+        for i, line in tqdm_prog(enumerate(fin)):
+            if nrows is not None and i >= nrows:
+                break
+        fin.seek(0)
         return i + 1
 
 
-def read_txt(fin, nrows=None, verbose=True):
-    lines = []
-    if isinstance(fin, str):
-        fin = open(fin)
+def ensure_str(s):
+    r""" Ensure that s is a str and not a bytes (.decode() if necessary)
+
+    >>> ensure_str(b"I'm 2. When I grow up I want to be a str!")
+    "I'm 2. When I grow up I want to be a str!"
+    >>> ensure_str(42)
+    '42'
+    """
+    try:
+        return s.decode()
+    except AttributeError:
+        if isinstance(s, str):
+            return s
+    return repr(s)  # create a python repr (str) of a non-bytes nonstr object
+
+
+def read_txt(forfn, nrows=None, verbose=True):
+    r""" Read all the lines (up to nrows) from a text file or txt.gz file
+
+    >>> fn = os.path.join(DATA_PATH, 'mavis-batey-greetings.txt')
+    >>> len(read_txt(fn, nrows=3))
+    3
+    """
     tqdm_prog = tqdm if verbose else no_tqdm
-    with fin:
-        for line in tqdm_prog(fin, total=wc(fin)):
-            lines += [line.rstrip('\n').rstrip('\r')]
-            if nrows is not None and len(lines) >= nrows:
+    nrows = wc(forfn, nrows=nrows)  # not necessary when nrows==None
+    lines = np.empty(dtype=object, shape=nrows)
+    with ensure_open(forfn) as f:
+        for i, line in enumerate(tqdm_prog(f, total=nrows)):
+            if i >= len(lines):
                 break
-        lines = np.array(lines)
+            lines[i] = ensure_str(line).rstrip('\n').rstrip('\r')
         if all('\t' in line for line in lines):
             num_tabs = [sum([1 for c in line if c == '\t']) for line in lines]
+            del lines
             if all(i == num_tabs[0] for i in num_tabs):
-                fin.seek(0)
-                return read_csv(fin, sep='\t', header=None)
+                f.seek(0)
+                return read_csv(f, sep='\t', header=None, nrows=nrows)
     return lines
 
 
 for filename in CSVS:
     locals()['df_' + filename.split('.')[0].replace('-', '_')] = read_csv(
         os.path.join(DATA_PATH, filename))
-
-
-harry_docs = ["The faster Harry got to the store, the faster and faster Harry would get home.",
-              "Harry is hairy and faster than Jill.",
-              "Jill is not as hairy as Harry."]
 
 
 def no_tqdm(it, total=1, **kwargs):
@@ -1235,6 +1305,12 @@ def get_data(name='sms-spam', nrows=None):
     >>> words = get_data('words_ubuntu_us')
     >>> len(words)
     99171
+    >>> list(words[:8])
+    ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
+    >>> get_data('ubuntu_dialog_test').iloc[0]
+    Context      i think we could import the old comments via r...
+    Utterance    basically each xfree86 upload will NOT force u...
+    Name: 0, dtype: object
     >>> get_data('imdb_test').info()
     <class 'pandas.core.frame.DataFrame'>
     MultiIndex: 20 entries, (train, pos, 0) to (train, neg, 9)
@@ -1244,12 +1320,6 @@ def get_data(name='sms-spam', nrows=None):
     text      20 non-null object
     dtypes: int64(1), object(2)
     memory usage: 809.0+ bytes
-    >>> list(words[:8])
-    ['A', "A's", "AA's", "AB's", "ABM's", "AC's", "ACTH's", "AI's"]
-    >>> get_data('ubuntu_dialog_test').iloc[0]
-    Context      i think we could import the old comments via r...
-    Utterance    basically each xfree86 upload will NOT force u...
-    Name: 0, dtype: object
     """
     if name in BIG_URLS:
         logger.info('Downloading {}'.format(name))
@@ -1274,7 +1344,7 @@ def get_data(name='sms-spam', nrows=None):
                 pass
         if filepathlow.endswith('.gz'):
             try:
-                filepath = gzip.open(filepath)
+                filepath = ensure_open(filepath)
             except:
                 pass
         if re.match(r'.json([.][a-z]{0,3}){0,2}', filepathlow):
@@ -1323,7 +1393,7 @@ def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1,
 
 def read_json(filepath):
     filepath = expand_filepath(filepath)
-    return json.load(open(filepath, 'rt'))
+    return json.load(ensure_open(filepath, mode='rt'))
 
 
 def get_wikidata_qnum(wikiarticle, wikisite):
@@ -1499,8 +1569,8 @@ def isglove(filepath):
     False
     """
 
-    with open(filepath, 'r') as fin:
-        line = fin.readline()
+    with ensure_open(filepath, 'r') as f:
+        line = f.readline()
     line = line.split()
     if len(line) < 11:
         return False
