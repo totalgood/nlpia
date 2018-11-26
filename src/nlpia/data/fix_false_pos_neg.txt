@@ -1,0 +1,51 @@
+             >>> y_true = np.array([0, 0, 0, 1, 1, 1, 1, 1, 1, 1])  # <1>
+             >>> y_pred = np.array([0, 0, 1, 1, 1, 1, 1, 0, 0, 0])  # <2>
+change_this: >>> true_positives = ((y_pred == y_true) & (y_true == 1)).sum()
+    to_this: >>> true_positives = ((y_pred == y_true) & (y_pred == 1)).sum()
+             >>> true_positives  # <3>
+             4
+change_this: >>> true_negatives = ((y_pred == y_true) & (y_true == 0)).sum()
+    to_this: >>> true_negatives = ((y_pred == y_true) & (y_pred == 0)).sum()
+             >>> true_negatives  # <4>
+             2
+             ----
+             <1> `y_true` is a numpy array of the true (correct) class labels. Usually these are determined by a human
+             <2> `y_pred` is a numpy array of your model's predicted class labels (0 or 1)
+change_this: <3> `true_positives` are the positive class labels (1) that your model got right (labeled a 1 when they should be)
+change_this: <4> `true_negatives` are the negative class labels (0) that your model got right (labeled a 0 when they should be)
+    to_this: <3> `true_positives` are the positive class labels (1) that your model got right (correctly labeled 1)
+    to_this: <4> `true_negatives` are the negative class labels (0) that your model got right (correctly labeled 0)
+             
+change_this: Often it's also important to count up the predictions that your model got wrong, like this:
+    to_this: It's also important to count up the predictions that your model got wrong, like this:
+             
+             .Count what the model got wrong
+             [source,python]
+             ----
+change_this: >>> false_positives = ((y_pred != y_true) & (y_true == 1)).sum()
+    to_this: >>> false_positives = ((y_pred != y_true) & (y_pred == 1)).sum()
+             >>> false_positives  # <1>
+change_this: 3
+change_this: >>> false_negatives = ((y_pred != y_true) & (y_true == 0)).sum()
+change_this: >>> false_negatives  # <2>
+             1
+    to_this: >>> false_negatives = ((y_pred != y_true) & (y_pred == 0)).sum()
+    to_this: >>> false_negatives  # <2>
+    to_this: 3
+             ----
+change_this: <1> `true_positives` are the positive class labels (1) that your model got right (labeled a 1 when they should be)
+change_this: <2> `true_negatives` are the negative class labels (0) that your model got right (labeled a 0 when they should be)
+    to_this: <1> `false_positives` are the negative class examples (1) that were falsely labeled positive by your model (labeled 1 when they should be 0)
+    to_this: <2> `false_negatives` are the positive class examples (0) that were falsely labeled negative by your model (labeled 0 when they should be 1)
+
+             Sometimes these four numbers are combined into a single 4x4 matrix called an error matrix or confusion matrix.
+             Here's what our made-up predictions and truth values would look like in a confusion matrix:
+             
+             >>> confusion
+                           1  0
+             pred \ truth      
+change_this: 1             4  3
+change_this: 0             1  2
+    to_this: 1             4  1
+    to_this: 0             3  2
+             ----
