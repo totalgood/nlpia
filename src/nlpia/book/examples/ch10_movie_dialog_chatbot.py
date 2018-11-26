@@ -24,8 +24,8 @@
 ...             output_vocabulary.add(char)
 """
 import os
-from nlpia.loaders import get_data
-df = get_data(os.path.join('..', 'book', 'data', 'dialog.txt'))
+from nlpia.loaders import get_data, DATA_PATH
+df = get_data(os.path.join(DATA_PATH, '..', 'book', 'data', 'dialog.txt'))
 df.columns = 'statement reply'.split()
 df = df.fillna(' ')
 input_texts, target_texts = [], []  # <1>
