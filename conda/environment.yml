@@ -15,7 +15,9 @@ dependencies:
   - keras==2.2.4
   - matplotlib>=2.2.2,<2.3.0
   - nltk>=3.2.5,<3.3.0
-  - numpy==1.14.5
+  # spacy 2.0.18 has requirement numpy>=1.15.0, but you'll have numpy 1.14.3 which is incompatible.
+  # - numpy>=1.15.0,<1.16.0
+  # - numpy==1.14.5
   - opencv>=3.3.0,<3.5.0
   # - pandas
   - pandoc>=2.2.3,<3.0.0
@@ -26,9 +28,10 @@ dependencies:
   - pyscaffold>=3.1
   - python-levenshtein>=0.12.0
   - redis-py>=2.10.6
-  - regex==2017.4.5
-  - scipy>=1.1.0
-  - spacy>=2.0.12
+  # spacy 2.0.18 has requirement regex==2018.01.10, but you'll have regex 2018.11.22 which is incompatible.
+  # - regex==2018.01.10
+  - scipy==1.1.0
+  - spacy==2.0.18
   - swig>=3.0.12
   - tensorflow==1.11.0
   - tensorflow-hub==0.1.1

@@ -151,7 +151,7 @@ for i, (input_text, target_text) in enumerate(
 # <6> For the training data for the decoder, you create the `decoder_input_data` and `decoder_target_data` (which is one time step behind the _decoder_input_data_).
 
 
-"""
+"""Construct and train a character sequence encoder-decoder network
 >>> from keras.models import Model
 >>> from keras.layers import Input, LSTM, Dense
 
@@ -205,3 +205,57 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
 model.fit([encoder_input_data, decoder_input_data],
           decoder_target_data, batch_size=batch_size, epochs=epochs,
           validation_split=0.1)  # <4>
+
+
+""" .Construct response generator model
+>>> encoder_model = Model(encoder_inputs, encoder_states)
+>>> thought_input = [
+...     Input(shape=(num_neurons,)), Input(shape=(num_neurons,))]
+>>> decoder_outputs, state_h, state_c = decoder_lstm(
+...     decoder_inputs, initial_state=thought_input)
+>>> decoder_states = [state_h, state_c]
+>>> decoder_outputs = decoder_dense(decoder_outputs)
+
+>>> decoder_model = Model(
+...     inputs=[decoder_inputs] + thought_input,
+...     output=[decoder_outputs] + decoder_states)
+"""
+encoder_model = Model(encoder_inputs, encoder_states)
+thought_input = [
+    Input(shape=(num_neurons,)), Input(shape=(num_neurons,))]
+decoder_outputs, state_h, state_c = decoder_lstm(
+    decoder_inputs, initial_state=thought_input)
+decoder_states = [state_h, state_c]
+decoder_outputs = decoder_dense(decoder_outputs)
+
+decoder_model = Model(
+    inputs=[decoder_inputs] + thought_input,
+    output=[decoder_outputs] + decoder_states)
+
+"""
+>>> def decode_sequence(input_seq):
+...     thought = encoder_model.predict(input_seq)  # <1>
+
+...     target_seq = np.zeros((1, 1, output_vocab_size))  # <2>
+...     target_seq[0, 0, target_token_index[stop_token]
+...         ] = 1.  # <3>
+...     stop_condition = False
+...     generated_sequence = ''
+
+...     while not stop_condition:
+...         output_tokens, h, c = decoder_model.predict(
+...             [target_seq] + thought) # <4>
+
+...         generated_token_idx = np.argmax(output_tokens[0, -1, :])
+...         generated_char = reverse_target_char_index[generated_token_idx]
+...         generated_sequence += generated_char
+...         if (generated_char == stop_token or
+...                 len(generated_sequence) > max_decoder_seq_length
+...                 ):  # <5>
+...             stop_condition = True
+
+...         target_seq = np.zeros((1, 1, output_vocab_size))  # <6>
+...         target_seq[0, 0, generated_token_idx] = 1.
+...         thought = [h, c]  # <7>
+
+...     return generated_sequence
