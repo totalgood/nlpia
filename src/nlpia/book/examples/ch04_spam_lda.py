@@ -5,9 +5,8 @@ pd.options.display.width = 120  # <1>
 sms = get_data('sms-spam')
 index = ['sms{}{}'.format(i, '!'*j) for (i,j) in zip(range(len(sms)), sms.spam)]  # <2>
 sms = pd.DataFrame(sms.values, columns=sms.columns, index=index)
-mask = sms.spam.astype(bool)
+mask = sms.spam.astype(bool).values
 sms['spam'] = sms.spam.astype(int)
-
 """
 >>> sms.head(6)
        spam                                               text
@@ -35,9 +34,9 @@ tfidf_docs = tfidf_model.fit_transform(raw_documents=sms.text).toarray()
 638
 """
 
-
-spam_centroid = tfidf_docs[sms.spam.astype(bool)].mean(axis=0)
-ham_centroid = tfidf_docs[~sms.spam.astype(bool)].mean(axis=0)
+mask = sms.spam.astype(bool).values  # <1>
+spam_centroid = tfidf_docs[mask].mean(axis=0) # <2>
+ham_centroid = tfidf_docs[~mask].mean(axis=0)
 """
 >>> mask = sms.spam.astype(bool)
 >>> spam_centroid = tfidf_docs[mask].mean(axis=0)
@@ -57,7 +56,7 @@ array([-0.01469806, -0.02007376,  0.03856095, ..., -0.01014774, -0.00344281,  0.
 
 from sklearn.preprocessing import MinMaxScaler
 sms['lda_score'] = MinMaxScaler().fit_transform(spamminess_score.reshape(-1,1))
-sms['lda_predict'] = (sms.lda > .5).astype(int)
+sms['lda_predict'] = (sms.lda_score > .5).astype(int)
 
 """
 >>> from sklearn.preprocessing import MinMaxScaler
@@ -73,17 +72,6 @@ sms4      0            0       0.29
 sms5!     1            1       0.55
 """
 
-from sklearn.decomposition import PCA
-from matplotlib import pyplot as plt
-import seaborn
-pca_model = PCA(n_components=3)
-tfidf_docs_3d = pca_model.fit_transform(tfidf_docs)
-df = pd.DataFrame(tfidf_docs_3d)
-ax = df[~mask].plot(x=0, y=1, kind='scatter', alpha=.5, c='green')
-df[mask].plot(x=0, y=1, ax=ax, alpha=.1, kind='scatter', c='red')
-plt.xlabel(' x')
-plt.ylabel(' y')
-plt.savefig('spam_lda_2d_scatter.png')
 """
 >>> from sklearn.decomposition import PCA
 >>> from matplotlib import pyplot as plt
@@ -97,6 +85,18 @@ plt.savefig('spam_lda_2d_scatter.png')
 >>> plt.ylabel(' y')
 >>> plt.savefig('spam_lda_2d_scatter.png')
 """
+from sklearn.decomposition import PCA
+from matplotlib import pyplot as plt
+import seaborn
+pca_model = PCA(n_components=3)
+tfidf_docs_3d = pca_model.fit_transform(tfidf_docs)
+df = pd.DataFrame(tfidf_docs_3d)
+ax = df[~mask].plot(x=0, y=1, kind='scatter', alpha=.5, c='green')
+df[mask].plot(x=0, y=1, ax=ax, alpha=.1, kind='scatter', c='red')
+plt.xlabel(' x')
+plt.ylabel(' y')
+plt.savefig('spam_lda_2d_scatter.png')
+
 
 import plotly as py
 spam_trace = dict(
