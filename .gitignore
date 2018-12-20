@@ -63,8 +63,10 @@ nlpia/data/*.zip
 nlpia/bigdata/*.gz
 nlpia/bigdata/*.tgz
 
-# OSX
+# system files
 .DS_STore
+.vscode
+.coveralls.yml
 
 # Anaconda conda
 envs/
