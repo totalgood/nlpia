@@ -62,6 +62,7 @@ nlpia/data/*.xz
 nlpia/data/*.zip
 nlpia/bigdata/*.gz
 nlpia/bigdata/*.tgz
+nlpia/data/*.h5
 
 # system files
 .DS_STore
@@ -86,3 +87,4 @@ src/nlpia/data/aiml-en-us-foundation-alice/
 
 # models
 *.ann
+
