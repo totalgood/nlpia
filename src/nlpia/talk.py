@@ -1,6 +1,8 @@
 """ Speech recognition and generation tools based on pocketsphinx and wavenet """
 import os
 
+import numpy as np
+import pyaudio as pa
 from pocketsphinx import pocketsphinx as ps
 # from sphinxbase import sphinxbase as sb
 
@@ -23,6 +25,10 @@ LIBDIR = os.path.join(os.environ.get('CONDA_PREFIX'),
                       'pkgs',
                       *("pocketsphinx-python-0.1.3-py36h470a237_0/lib/python3.6/site-packages/pocketsphinx".split('/')))
 MODELDIR = os.path.join(LIBDIR, 'model')
+
+RATE = 16000
+BUFSIZE = 1024
+SECONDS = 5
 
 
 def find_model():
@@ -67,6 +73,37 @@ def evaluate_results(dec):
         segments=tuple((seg.word for seg in dec.seg()))
         )
     return report
+
+def listen(seconds=SECONDS, rate=RATE, bufsize=BUFSIZE):
+    dec = get_decoder()
+    pa = pa.PyAudio()
+    stream = pa.open(format=pa.paInt16, channels=1, rate=rate, input=True, frames_per_buffer=bufsize)
+    stream.start_stream()
+
+    in_speech_bf = False
+    dec.start_utt()
+
+    recording = []
+    for i in range(int(seconds * rate / bufsize)):
+        buf = stream.read(bufsize, exception_on_overflow=False)
+
+        if buf:
+            # recording += list(np.array(buf))
+            # print(np.array(buf).std())
+            dec.process_raw(buf, False, False)
+            if dec.get_in_speech() != in_speech_bf:
+                in_speech_bf = dec.get_in_speech()
+                if not in_speech_bf:
+                    dec.end_utt()
+                    print('Result:', dec.hyp().hypstr)
+                    dec.start_utt()
+        else:
+            break
+    dec.end_utt()
+
+    # import pandas as pd
+    # df = pd.DataFrame(recording)
+    return recording
 
 
 if __name__ == '__main__':
