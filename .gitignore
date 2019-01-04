@@ -63,6 +63,9 @@ nlpia/data/*.zip
 nlpia/bigdata/*.gz
 nlpia/bigdata/*.tgz
 *.h5
+*seq2seq_keras_weights*
+*seq2seq_keras_model*
+
 
 # system files
 .DS_STore
