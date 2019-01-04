@@ -270,7 +270,7 @@ BIG_URLS = {
         'https://nlp.stanford.edu/data/glove.twitter.27B.zip',
         1000000000,  # FIXME: make sure size check is `>=`
     ),
-    'glove_sm': (
+    'glove_small': (
         'https://nlp.stanford.edu/data/glove.6B.zip',
         862182613,
         os.path.join('glove.6B', 'glove.6B.50d.txt'),
@@ -355,10 +355,10 @@ BIG_URLS = {
 for yr in range(2011, 2017):
     BIG_URLS['cdc' + str(yr)[-2:]] = ('https://www.cdc.gov/brfss/annual_data/{yr}/files/LLCP{yr}ASC.zip'.format(yr=yr), None)
 BIG_URLS['word2vec'] = BIG_URLS['wv'] = BIG_URLS['w2v']
-BIG_URLS['glove'] = BIG_URLS['glove_small'] = BIG_URLS['glove-small'] = BIG_URLS['glovesm'] = BIG_URLS['glove-sm'] = BIG_URLS['glove_sm']
+BIG_URLS['glove'] = BIG_URLS['glovesm'] = BIG_URLS['glove-sm'] = BIG_URLS['glove_sm'] = BIG_URLS['glove-small'] = BIG_URLS['glove_small']
 BIG_URLS['ubuntu'] = BIG_URLS['ubuntu_dialog'] = BIG_URLS['ubuntu_dialog_1500k']
-BUG_URLS['glovelg'] = BUG_URLS['glove_lg'] = BUG_URLS['glove-lg'] = BUG_URLS['glove-large'] = BIG_URLS['glove_large']
-BUG_URLS['glovemed'] = BUG_URLS['glove_med'] = BUG_URLS['glove-med'] = BUG_URLS['glove-medium'] = BIG_URLS['glove_medium']
+BIG_URLS['glovelg'] = BIG_URLS['glove_lg'] = BIG_URLS['glove-lg'] = BIG_URLS['glove-large'] = BIG_URLS['glove_large']
+BIG_URLS['glovemed'] = BIG_URLS['glove_med'] = BIG_URLS['glove-med'] = BIG_URLS['glove-medium'] = BIG_URLS['glove_medium']
 
 ANKI_LANGUAGES = 'afr arq ara aze eus bel ben ber bul yue cat cbk cmn chv hrv ces dan nld est fin fra glg kat ' \
                  'deu ell heb hin hun isl ind ita jpn kha khm kor lvs lit nds mkd zsm mal mri mar max nob pes ' \
@@ -380,7 +380,7 @@ GOOGLE_NGRAM_URL = 'http://storage.googleapis.com/books/ngrams/books/'
 GOOGLE_NGRAM_NAMES = '0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o other p pos punctuation q r s t u v w x y z'.split()
 GOOGLE_NGRAM_FILE = 'googlebooks-eng-all-1gram-20120701-{}.gz'
 
-for name in GOOGLE_NGRAM_NAMES: 
+for name in GOOGLE_NGRAM_NAMES:
     BIG_URLS['1gram_{}'.format(name)] = (GOOGLE_NGRAM_URL + GOOGLE_NGRAM_FILE.format(name),
                                          1000, GOOGLE_NGRAM_FILE.format(name),
                                          pd.read_table,
@@ -423,7 +423,7 @@ DATA_INFO = pd.read_csv(DATA_INFO_FILE, header=0)
 
 
 def rename_file(source, dest):
-    """ Rename (mv) file(s) from source to dest 
+    """ Rename (mv) file(s) from source to dest
 
     >>> from tempfile import mkdtemp
     >>> tmpdir = mkdtemp(suffix='doctest_rename_file', prefix='tmp')
@@ -571,7 +571,7 @@ def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
 
 
 def get_longest_table(url='https://www.openoffice.org/dev_docs/source/file_extensions.html', header=0):
-    """ Retrieve the HTML tables from a URL and return the longest DataFrame found 
+    """ Retrieve the HTML tables from a URL and return the longest DataFrame found
 
     >>> get_longest_table('https://en.wikipedia.org/wiki/List_of_sovereign_states').columns
     Index(['Common and formal names', 'Membership within the UN System[a]',
@@ -584,7 +584,7 @@ def get_longest_table(url='https://www.openoffice.org/dev_docs/source/file_exten
 
 
 def get_leet_map():
-    """ Retrieve mapping from English letters to l33t like E => 3 or A => /\ or /-\ or @ """
+    r""" Retrieve mapping from English letters to l33t like E => 3 or A => /\ or /-\ or @ """
     df = get_longest_table(
         'https://sites.google.com/site/inhainternetlanguage/different-internet-languages/l33t/list-of-l33ts', header=None)
     df = df.drop(index=0).iloc[:, :2]
@@ -616,7 +616,7 @@ def get_netspeak_map():
 
 
 def longest_table(dfs):
-    """ Return this single longest DataFrame that among an array/list/tuple of DataFrames 
+    """ Return this single longest DataFrame that among an array/list/tuple of DataFrames
 
     Useful for automagically finding the DataFrame you want when using pd.read_html() on a Wikipedia page.
     """
@@ -731,7 +731,7 @@ del fin
 
 
 def wc(f, verbose=False, nrows=None):
-    r""" Count lines in a text file 
+    r""" Count lines in a text file
 
     References:
         https://stackoverflow.com/q/845058/623735
@@ -801,12 +801,12 @@ def no_tqdm(it, total=1, **kwargs):
 
 
 def expand_filepath(filepath):
-    """ Expand any '~', '.', '*' variables in filepath. 
+    """ Expand any '~', '.', '*' variables in filepath.
 
     See also: pugnlp.futil.expand_path
 
     >>> len(expand_filepath('~')) > 3
-    True 
+    True
     """
     return os.path.abspath(os.path.expandvars(os.path.expanduser(filepath)))
 
@@ -863,7 +863,7 @@ def normalize_ext(filepath):
 
 
 def normalize_filepath(filepath):
-    r""" Lowercase the filename and ext, expanding extensions like .tgz to .tar.gz. 
+    r""" Lowercase the filename and ext, expanding extensions like .tgz to .tar.gz.
 
     >>> normalize_filepath('/Hello_World.txt\n')
     'hello_world.txt'
@@ -926,7 +926,7 @@ def normalize_glove(filepath):
 
 
 def unzip(filepath, verbose=True):
-    r""" Unzip GloVE models and convert to word2vec binary models (gensim.KeyedVectors) 
+    r""" Unzip GloVE models and convert to word2vec binary models (gensim.KeyedVectors)
 
     The only kinds of files that are returned are "*.asc" and "*.txt" and only after renaming.
     """
@@ -963,7 +963,7 @@ def unzip(filepath, verbose=True):
             repr(glove_input_file), repr(word2vec_output_file)))
         try:
             glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
-        except:
+        except:  # noqa
             logger.info('Failed to convert GloVE format to Word2vec: {} -> {}'.format(
                 repr(glove_input_file), repr(word2vec_output_file)))
 
@@ -1025,8 +1025,8 @@ def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood
         username=(parsed_url.username or username),
         remote_size=-1,
         filename=os.path.basename(parsed_url.path))
-    ftp = ftplib.FTP(parsed_url.hostname) 
-    ftp.login(username, password) 
+    ftp = ftplib.FTP(parsed_url.hostname)
+    ftp.login(username, password)
     ftp.cwd(parsed_url.path)
     ftp.retrbinary("RETR " + filename, open(filename, 'wb').write)
     ftp.quit()
@@ -1348,19 +1348,19 @@ def get_data(name='sms-spam', nrows=None, limit=None):
         if filepathlow.endswith('.gz'):
             try:
                 filepath = ensure_open(filepath)
-            except:
+            except:  # noqa
                 pass
         if re.match(r'.json([.][a-z]{0,3}){0,2}', filepathlow):
             return read_json(filepath)
         if filepathlow.endswith('.tsv.gz') or filepathlow.endswith('.tsv'):
             try:
                 return pd.read_table(filepath)
-            except:
+            except:  # noqa
                 pass
         if filepathlow.endswith('.csv.gz') or filepathlow.endswith('.csv'):
             try:
                 return read_csv(filepath)
-            except:
+            except:  # noqa
                 pass
         if filepathlow.endswith('.txt'):
             try:
@@ -1488,7 +1488,7 @@ def clean_column_values(df, inplace=True):
                     values = values.astype(float)
             except ValueError:
                 values = None
-            except:
+            except:  # noqa
                 logger.error('Error on column {} with dtype {}'.format(c, df[c].dtype))
                 raise
 
