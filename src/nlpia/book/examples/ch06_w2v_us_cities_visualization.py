@@ -92,6 +92,9 @@ us[us.columns[-3:]].head()
 import numpy as np
 vocab = pd.np.concatenate([us.city, us.st, us.state])
 vocab = np.array([word for word in vocab if word in wv.wv])
+vocab[:5]
+# array(['Edna', 'Henderson', 'Natalia', 'Yorktown', 'Brighton', 'Berry',
+#        'Trinity', 'Villas', 'Bessemer', 'Aurora'], dtype='<U15')
 vocab[:10]
 # array(['Edna', 'Henderson', 'Natalia', 'Yorktown', 'Brighton', 'Berry',
 #        'Trinity', 'Villas', 'Bessemer', 'Aurora'], dtype='<U15')

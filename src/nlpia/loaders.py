@@ -1293,7 +1293,7 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
         pass
 
 
-def get_data(name='sms-spam', nrows=None):
+def get_data(name='sms-spam', nrows=None, limit=None):
     """ Load data from a json, csv, or txt file if it exists in the data dir.
 
     References:
@@ -1321,6 +1321,7 @@ def get_data(name='sms-spam', nrows=None):
     dtypes: int64(1), object(2)
     memory usage: 809.0+ bytes
     """
+    nrows = nrows or limit
     if name in BIG_URLS:
         logger.info('Downloading {}'.format(name))
         filepaths = download_unzip(name, normalize_filenames=True)
@@ -1334,12 +1335,12 @@ def get_data(name='sms-spam', nrows=None):
             return BIG_URLS[name][3](filepath, **kwargs)
         if filepathlow.endswith('.w2v.txt'):
             try:
-                return KeyedVectors.load_word2vec_format(filepath, binary=False)
+                return KeyedVectors.load_word2vec_format(filepath, binary=False, limit=nrows)
             except (TypeError, UnicodeError):
                 pass
-        if filepathlow.endswith('.w2v.bin') or filepathlow.endswith('.bin.gz'):
+        if filepathlow.endswith('.w2v.bin') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
             try:
-                return KeyedVectors.load_word2vec_format(filepath, binary=True)
+                return KeyedVectors.load_word2vec_format(filepath, binary=True, limit=nrows)
             except (TypeError, UnicodeError):
                 pass
         if filepathlow.endswith('.gz'):
@@ -1359,7 +1360,7 @@ def get_data(name='sms-spam', nrows=None):
                 return read_csv(filepath)
             except:
                 pass
-        if filepathlow.endswith('.txt') or filepathlow.endswith('.bin.gz') or filepathlow.endswith('.w2v.bin.gz'):
+        if filepathlow.endswith('.txt'):
             try:
                 return read_txt(filepath)
             except (TypeError, UnicodeError):
