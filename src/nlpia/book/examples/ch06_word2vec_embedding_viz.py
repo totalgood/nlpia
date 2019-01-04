@@ -8,7 +8,9 @@ from tensorflow.contrib.tensorboard.plugins import projector
 words = ('Sacramento', 'California', 'Oregon', 'Salem', 'Washington', 'Olympia')
 
 # loading your gensim
-model = gensim.models.KeyedVectors.load_word2vec_format('~/Downloads/GoogleNews-vectors-negative300.bin.gz', binary=True, limit=200000)
+# model = gensim.models.KeyedVectors.load_word2vec_format('~/Downloads/GoogleNews-vectors-negative300.bin.gz', binary=True, limit=200000)
+from nlpia.loaders import get_data
+model = get_data('w2v', limit=200000)  # <1>
 
 # project part of vocab, 10K of 300 dimension
 w2v_10K = np.zeros((6, 300))

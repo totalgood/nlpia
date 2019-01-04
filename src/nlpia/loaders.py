@@ -355,7 +355,7 @@ BIG_URLS = {
 for yr in range(2011, 2017):
     BIG_URLS['cdc' + str(yr)[-2:]] = ('https://www.cdc.gov/brfss/annual_data/{yr}/files/LLCP{yr}ASC.zip'.format(yr=yr), None)
 BIG_URLS['word2vec'] = BIG_URLS['wv'] = BIG_URLS['w2v']
-BIG_URLS['glove'] = BIG_URLS['glove_small'] = BIG_URLS['glove-small'] BIG_URLS['glovesm'] = BIG_URLS['glove-sm'] = BIG_URLS['glove_sm']
+BIG_URLS['glove'] = BIG_URLS['glove_small'] = BIG_URLS['glove-small'] = BIG_URLS['glovesm'] = BIG_URLS['glove-sm'] = BIG_URLS['glove_sm']
 BIG_URLS['ubuntu'] = BIG_URLS['ubuntu_dialog'] = BIG_URLS['ubuntu_dialog_1500k']
 BUG_URLS['glovelg'] = BUG_URLS['glove_lg'] = BUG_URLS['glove-lg'] = BUG_URLS['glove-large'] = ['glove_large']
 BUG_URLS['glovemed'] = BUG_URLS['glove_med'] = BUG_URLS['glove-med'] = BUG_URLS['glove-medium'] = ['glove_medium']
