@@ -160,11 +160,13 @@ def load_imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(
 
 
 def load_glove(filepath, batch_size=1000, limit=None, verbose=True):
-    """ Load a pretrained GloVE word vector model
+    r""" Load a pretrained GloVE word vector model
 
-    First line of GloVE text file should look like:
-        the .11 .25 .12 .42 ...
-
+    First header line of GloVE text file should look like:
+        400000 50\n
+    First vector of GloVE text file should look like:
+        the .12 .22 .32 .42 ... .42
+    
     >>> wv = load_glove(os.path.join(BIGDATA_PATH, 'glove_test.txt'))
     >>> wv.most_similar('two')[:3]
     [('three', 0.98...),
@@ -354,11 +356,28 @@ BIG_URLS = {
 }
 for yr in range(2011, 2017):
     BIG_URLS['cdc' + str(yr)[-2:]] = ('https://www.cdc.gov/brfss/annual_data/{yr}/files/LLCP{yr}ASC.zip'.format(yr=yr), None)
+
 BIG_URLS['word2vec'] = BIG_URLS['wv'] = BIG_URLS['w2v']
 BIG_URLS['glove'] = BIG_URLS['glovesm'] = BIG_URLS['glove-sm'] = BIG_URLS['glove_sm'] = BIG_URLS['glove-small'] = BIG_URLS['glove_small']
 BIG_URLS['ubuntu'] = BIG_URLS['ubuntu_dialog'] = BIG_URLS['ubuntu_dialog_1500k']
 BIG_URLS['glovelg'] = BIG_URLS['glove_lg'] = BIG_URLS['glove-lg'] = BIG_URLS['glove-large'] = BIG_URLS['glove_large']
 BIG_URLS['glovemed'] = BIG_URLS['glove_med'] = BIG_URLS['glove-med'] = BIG_URLS['glove-medium'] = BIG_URLS['glove_medium']
+
+for num_dim in (50, 100, 200, 300):
+    for suffixes, num_words in zip(('sm -sm _sm -small _small'.split(),
+                                    'med -med _med -medium _medium'.split(),
+                                    'lg -lg _lg -large _large'.split()),
+                                   (6, 42, 840)
+                                  )
+        for suf in suffixes[:-1]:
+            name = 'glove' + suf + str(num_dim)
+            dirname = 'glove.{num_words}B'.format(num_words=num_words)
+            glove.42B.300d.w2v.txt
+            filename = dirname + '.{num_dim}d.w2v.txt'.format(num_dim=num_dim)
+            BIG_URLS[name] = BIG_URLS['glove' + suffixes[-1]].copy()
+            BIG_URLS[name][2] = os.path.join(dirname, filename)
+            BIG_URLS[name][3] = load_glove
+
 
 ANKI_LANGUAGES = 'afr arq ara aze eus bel ben ber bul yue cat cbk cmn chv hrv ces dan nld est fin fra glg kat ' \
                  'deu ell heb hin hun isl ind ita jpn kha khm kor lvs lit nds mkd zsm mal mri mar max nob pes ' \
@@ -1003,17 +1022,17 @@ def try_parse_url(url):
     try:
         parsed_url = urlparse(url)
     except ValueError:
-        logger.error('Invalid URL: {}'.format(url))
+        logger.info('Invalid URL: {}'.format(url))
         return None
     if parsed_url.scheme:
         return parsed_url
     try:
         parsed_url = urlparse('http://' + parsed_url.geturl())
     except ValueError:
-        logger.error('Invalid URL: {}'.format(url))
+        logger.info('Invalid URL: urlparse("{}") from "{}" '.format('http://' + parsed_url.geturl(), url))
         return None
     if not parsed_url.scheme:
-        logger.error('Unable to guess a scheme for URL: {}'.format(url))
+        logger.info('Unable to guess a scheme for URL: {}'.format(url))
         return None
     return parsed_url
 
@@ -1194,8 +1213,9 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
             logger.error('ConnectionError for url: {} => request {}'.format(url, r))
             remote_size = -1 if remote_size is None else remote_size
         except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema) as e:
-            logger.error(e)
-            logger.error('HTTP Error for url: {}\n request: {}\n traceback: {}'.format(url, r, format_exc()))
+            logger.warn(e)
+            logger.warn('HTTP Error for url: {}\n request: {}\n traceback: {}'.format(url, r, format_exc()))
+            logger.warn('This can happen for Google Word Vector download links to Dropbox or Google Docs.')
     try:
         remote_size = int(remote_size)
     except ValueError:
@@ -1229,7 +1249,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     logger.debug('nlpia.loaders.download_file: bytes={}'.format(bytes_downloaded))
     stat = path_status(filepath)
     logger.info("local file stat {}".format(stat))
-    logger.debug("filepath={}: remote {}, downloaded {}".format(
+    logger.debug("filepath={}: local_size={}, remote_size={}, downloaded_bytes={}".format(
         filepath, size, remote_size, bytes_downloaded))
     return filepath
 
@@ -1573,18 +1593,23 @@ def isglove(filepath):
     """
 
     with ensure_open(filepath, 'r') as f:
-        line = f.readline()
-    line = line.split()
-    if len(line) < 11:
-        return False
-    vector = line[1:]
+        header_line = f.readline()
+        vector_line = f.readline()
+    try:
+        num_vectors, num_dim = header_line.split()
+        return int(num_dim)
+    except (ValueError, TypeError):
+        pass
+    vector = vector_line.split()[1:]
     if len(vector) % 10:
+        print(vector)
+        print(len(vector) % 10)
         return False    
     try:
         vector = np.array([float(x) for x in vector])
-    except ValueError:
+    except (ValueError, TypeError):
         return False
-    if np.all(np.abs(vector) < 6.):
+    if np.all(np.abs(vector) < 12.):
         return len(vector)
     return False
 
