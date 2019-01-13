@@ -52,7 +52,7 @@ from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, Inva
 from urllib.parse import urlparse
 from urllib.error import URLError
 from lxml.html import fromstring as parse_html
-from copy import deepcopy
+from copy import deepcopy, copy
 
 import pandas as pd
 import gzip
@@ -93,7 +93,8 @@ W2V_FILES = [
     'GoogleNews-vectors-negative300.bin.gz',
     'glove.6B.zip', 'glove.twitter.27B.zip', 'glove.42B.300d.zip', 'glove.840B.300d.zip',
 ]
-# You probably want to rm nlpia/src/nlpia/data/bigdata_info.csv if you modify any of these so they don't overwrite what you do here
+# You probably want to `rm nlpia/src/nlpia/data/bigdata_info.csv` if you modify any of these
+# so they don't overwrite what you hardcode within loaders.py here:
 ZIP_FILES = {
     'GoogleNews-vectors-negative300.bin.gz': None,
     'glove.6B.zip': ['glove.6B.50d.w2v.txt', 'glove.6B.100d.w2v.txt', 'glove.6B.200d.w2v.txt', 'glove.6B.300d.w2v.txt'],
@@ -103,6 +104,7 @@ ZIP_FILES = {
 }
 ZIP_PATHS = [[os.path.join(BIGDATA_PATH, fn) for fn in ZIP_FILES[k]] if ZIP_FILES[k] else k for k in ZIP_FILES.keys()]
 
+print(x+y)  #FIXME: intentional pep8, comment, syntax and linting error
 
 harry_docs = ["The faster Harry got to the store, the faster and faster Harry would get home.",
               "Harry is hairy and faster than Jill.",
@@ -166,7 +168,7 @@ def load_glove(filepath, batch_size=1000, limit=None, verbose=True):
         400000 50\n
     First vector of GloVE text file should look like:
         the .12 .22 .32 .42 ... .42
-    
+
     >>> wv = load_glove(os.path.join(BIGDATA_PATH, 'glove_test.txt'))
     >>> wv.most_similar('two')[:3]
     [('three', 0.98...),
@@ -357,27 +359,46 @@ BIG_URLS = {
 for yr in range(2011, 2017):
     BIG_URLS['cdc' + str(yr)[-2:]] = ('https://www.cdc.gov/brfss/annual_data/{yr}/files/LLCP{yr}ASC.zip'.format(yr=yr), None)
 
-BIG_URLS['word2vec'] = BIG_URLS['wv'] = BIG_URLS['w2v']
-BIG_URLS['glove'] = BIG_URLS['glovesm'] = BIG_URLS['glove-sm'] = BIG_URLS['glove_sm'] = BIG_URLS['glove-small'] = BIG_URLS['glove_small']
-BIG_URLS['ubuntu'] = BIG_URLS['ubuntu_dialog'] = BIG_URLS['ubuntu_dialog_1500k']
-BIG_URLS['glovelg'] = BIG_URLS['glove_lg'] = BIG_URLS['glove-lg'] = BIG_URLS['glove-large'] = BIG_URLS['glove_large']
-BIG_URLS['glovemed'] = BIG_URLS['glove_med'] = BIG_URLS['glove-med'] = BIG_URLS['glove-medium'] = BIG_URLS['glove_medium']
 
-for num_dim in (50, 100, 200, 300):
-    for suffixes, num_words in zip(('sm -sm _sm -small _small'.split(),
-                                    'med -med _med -medium _medium'.split(),
-                                    'lg -lg _lg -large _large'.split()),
-                                   (6, 42, 840)
-                                  )
-        for suf in suffixes[:-1]:
-            name = 'glove' + suf + str(num_dim)
-            dirname = 'glove.{num_words}B'.format(num_words=num_words)
-            glove.42B.300d.w2v.txt
-            filename = dirname + '.{num_dim}d.w2v.txt'.format(num_dim=num_dim)
-            BIG_URLS[name] = BIG_URLS['glove' + suffixes[-1]].copy()
-            BIG_URLS[name][2] = os.path.join(dirname, filename)
-            BIG_URLS[name][3] = load_glove
+# Aliases for bigurls. Canonical name given on line by itself.
+BIG_URLS['word2vec'] = BIG_URLS['wv'] = \
+    BIG_URLS['w2v']
+BIG_URLS['glove'] = BIG_URLS['glovesm'] = BIG_URLS['glove-sm'] = BIG_URLS['glove_sm'] = BIG_URLS['glove-small'] = \
+    BIG_URLS['glove_small']
+BIG_URLS['ubuntu'] = BIG_URLS['ubuntu_dialog'] = \
+    BIG_URLS['ubuntu_dialog_1500k']
+BIG_URLS['glovelg'] = BIG_URLS['glove_lg'] = BIG_URLS['glove-lg'] = BIG_URLS['glove-large'] = \
+    BIG_URLS['glove_large']
+BIG_URLS['glovemed'] = BIG_URLS['glove_med'] = BIG_URLS['glove-med'] = BIG_URLS['glove-medium'] = \
+    BIG_URLS['glove_medium']
 
+
+def generate_big_urls_glove(bigurls=None):
+    """ Generate a dictionary of URLs for various combinations of GloVe training set sizes and dimensionality """
+    bigurls = bigurls or {}
+    for num_dim in (50, 100, 200, 300):
+        # not all of these dimensionality, and training set size combinations were trained by Stanford
+        for suffixes, num_words in zip(
+                                       ('sm -sm _sm -small _small'.split(),
+                                        'med -med _med -medium _medium'.split(),
+                                        'lg -lg _lg -large _large'.split()),
+                                       (6, 42, 840)
+                                      ):
+            for suf in suffixes[:-1]:
+                name = 'glove' + suf + str(num_dim)
+                dirname = 'glove.{num_words}B'.format(num_words=num_words)
+                # glove.42B.300d.w2v.txt
+                filename = dirname + '.{num_dim}d.w2v.txt'.format(num_dim=num_dim)
+                # seed the alias named URL with the URL for that training set size's canonical name
+                bigurl_tuple = BIG_URLS['glove' + suffixes[-1]]
+                bigurls[name] =  list(bigurl_tuple[:2])
+                bigurls[name].append(os.path.join(dirname, filename))
+                bigurls[name].append(load_glove)
+                bigurls[name] = tuple(bigurls[name])
+    return bigurls
+
+
+BIG_URLS.update(generate_big_urls_glove())
 
 ANKI_LANGUAGES = 'afr arq ara aze eus bel ben ber bul yue cat cbk cmn chv hrv ces dan nld est fin fra glg kat ' \
                  'deu ell heb hin hun isl ind ita jpn kha khm kor lvs lit nds mkd zsm mal mri mar max nob pes ' \
@@ -1054,7 +1075,7 @@ def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood
 def get_url_filemeta(url):
     """ Request HTML for the page at the URL indicated and return the url, filename, and remote size
 
-    TODO: just add remote_size and basename and filename attributes to the urlparse object 
+    TODO: just add remote_size and basename and filename attributes to the urlparse object
           instead of returning a dict
 
     >>> sorted(get_url_filemeta('mozilla.com').items())
@@ -1073,7 +1094,7 @@ def get_url_filemeta(url):
      ('username', None)]
     >>> 1000 <= int(get_url_filemeta('en.wikipedia.org')['remote_size']) <= 200000
     True
-    """ 
+    """
     parsed_url = try_parse_url(url)
 
     if parsed_url is None:
@@ -1179,7 +1200,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     True
     >>> time.time() - t0 < 0.02
     True
-    """ 
+    """
     if isinstance(url, (list, tuple)):
         return [
             download_file(
@@ -1240,7 +1261,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
             for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size), total=ceil(remote_size / float(chunk_size))):
                 bytes_downloaded += len(chunk)
                 if chunk:  # filter out keep-alive chunks
-                    f.write(chunk)      
+                    f.write(chunk)
         r.close()
     else:
         logger.error('Unable to request URL: {} using request object {}'.format(url, r))
@@ -1604,7 +1625,7 @@ def isglove(filepath):
     if len(vector) % 10:
         print(vector)
         print(len(vector) % 10)
-        return False    
+        return False
     try:
         vector = np.array([float(x) for x in vector])
     except (ValueError, TypeError):
@@ -1615,7 +1636,7 @@ def isglove(filepath):
 
 
 def nlp(texts, lang='en', linesep=None, verbose=True):
-    r""" Use the SpaCy parser to parse and tag natural language strings. 
+    r""" Use the SpaCy parser to parse and tag natural language strings.
 
     Load the SpaCy parser language model lazily and share it among all nlpia modules.
     Probably unnecessary, since SpaCy probably takes care of this with `spacy.load()`
@@ -1659,7 +1680,7 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
     if isinstance(texts, str):
         if linesep:
             return nlp(texts.split(linesep))
-        else: 
+        else:
             return nlp([texts])
     if hasattr(texts, '__len__'):
         if len(texts) == 1:
@@ -1668,7 +1689,7 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
             return [(parse or str.split)(text) for text in tqdm_prog(texts)]
         else:
             return None
-    else: 
+    else:
         # return generator if sequence of strings doesn't have __len__ which means its an iterable or generator itself
         return (parse(text) for text in tqdm_prog(texts))
     # TODO: return the same type as the input, e.g. `type(texts)(texts)`
