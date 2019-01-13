@@ -70,7 +70,6 @@ from pugnlp.util import clean_columns
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
 
-
 _parse = None  # placeholder for SpaCy parser + language model
 
 INT_MAX = INT64_MAX = 2 ** 63 - 1
@@ -103,8 +102,6 @@ ZIP_FILES = {
     'glove.840B.300d.zip': None,
 }
 ZIP_PATHS = [[os.path.join(BIGDATA_PATH, fn) for fn in ZIP_FILES[k]] if ZIP_FILES[k] else k for k in ZIP_FILES.keys()]
-
-print(x+y)  #FIXME: intentional pep8, comment, syntax and linting error
 
 harry_docs = ["The faster Harry got to the store, the faster and faster Harry would get home.",
               "Harry is hairy and faster than Jill.",
@@ -268,11 +265,11 @@ BIG_URLS = {
     ),
     'words_google_news': (
         'https://www.dropbox.com/s/9pm0js9qdjr04jy/words_google_news.txt.gz?dl=1',
-        3015517
+        3015517,
     ),
     'glove_twitter': (
         'https://nlp.stanford.edu/data/glove.twitter.27B.zip',
-        1000000000,  # FIXME: make sure size check is `>=`
+        1520408563,
     ),
     'glove_small': (
         'https://nlp.stanford.edu/data/glove.6B.zip',
@@ -282,11 +279,11 @@ BIG_URLS = {
     ),
     'glove_large': (
         'https://nlp.stanford.edu/data/glove.840B.300d.zip',
-        1000000000,
+        2176768927,
     ),
     'glove_medium': (
         'https://nlp.stanford.edu/data/glove.42B.300d.zip',
-        1000000000,
+        1877800501,
     ),
     'slang': (
         'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
@@ -321,8 +318,9 @@ BIG_URLS = {
         3112841563,
     ),
     'lsa_tweets_pickle': (
+        'https://www.dropbox.com/s/7k0nvl2dx3hsbqp/lsa_tweets_5589798_2003588x200.pkl.projection.u.npy?dl=0'
         'https://www.dropbox.com/s/7k0nvl2dx3hsbqp/lsa_tweets_5589798_2003588x200.pkl.projection.u.npy?dl=1',
-        2990000000,
+        2900000000,
     ),
     'ubuntu_dialog_1500k': (
         'https://www.dropbox.com/s/krvi79fbsryytc2/ubuntu_dialog_1500k.csv.gz?dl=1',
