@@ -80,7 +80,7 @@ def prepend_http(url):
     return url
 
 
-def is_valid_url(url, allow_redirects=False, timeout=5):
+def is_up_url(url, allow_redirects=False, timeout=5):
     """ Check URL to see if it is a valid web page, return the redirected location if it is
 
     Returns:
@@ -88,17 +88,18 @@ def is_valid_url(url, allow_redirects=False, timeout=5):
       False if url is invalid (any HTTP error code)
       cleaned up URL (following redirects and possibly adding HTTP schema "http://")
 
-    >> is_valid_url("totalgood.org")
+    >> is_up_url("totalgood.org")
     'https://totalgood.org'
 
-    >>> url = is_valid_url("totalgood.org")
-    >>> url is None or url.startswith('http')
+    >>> is_up_url("duckduckgo.com")  # best search engine in the world!
+    >>> urlisup = is_up_url("totalgood.org")
+    >>> not urlisup or str(urlisup).startswith('http')
     True
-    >>> url.endswith('totalgood.org')
+    >>> not urlisup or urlisup.endswith('totalgood.org')
     True
-    >>> is_valid_url('abcd')
+    >>> is_up_url('abcd')
     False
-    >>> bool(is_valid_url('abcd.com'))
+    >>> bool(is_up_url('abcd.com'))
     False
     """
     if not isinstance(url, basestring) or '.' not in url:
