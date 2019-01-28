@@ -309,6 +309,12 @@ BIG_URLS = {
         'https://www.dropbox.com/s/5543bkihxflzry9/dialog.csv.gz?dl=1',
         4415234,
     ),
+    'cornellmovies': (
+        'http://www.cs.cornell.edu/~cristian/data/cornell_movie_dialogs_corpus.zip',
+        9916637,
+        'cornell_movie_dialogs_corpus',
+        
+    ),
     'save_dialog_tweets': (
         'https://www.dropbox.com/s/tlrr9bm45uzm9yl/save_dialog_tweets.txt.gz?dl=1',
         4517000,
@@ -318,7 +324,6 @@ BIG_URLS = {
         3112841563,
     ),
     'lsa_tweets_pickle': (
-        'https://www.dropbox.com/s/7k0nvl2dx3hsbqp/lsa_tweets_5589798_2003588x200.pkl.projection.u.npy?dl=0'
         'https://www.dropbox.com/s/7k0nvl2dx3hsbqp/lsa_tweets_5589798_2003588x200.pkl.projection.u.npy?dl=1',
         2900000000,
     ),
@@ -359,6 +364,9 @@ for yr in range(2011, 2017):
 
 
 # Aliases for bigurls. Canonical name given on line by itself.
+BIG_URLS['cornell'] = BIG_URLS['cornellmoviedialog'] = BIG_URLS['cornellmoviedialogs'] = BIG_URLS['cornell_movie_dialog'] = \
+    BIG_URLS['cornell_movie_dialogs'] = BIG_URLS['cornell_movie_dialog_corpus'] = BIG_URLS['cornell_movie_dialogs_corpus'] = \
+    BIG_URLS['cornellmovies']
 BIG_URLS['word2vec'] = BIG_URLS['wv'] = \
     BIG_URLS['w2v']
 BIG_URLS['glove'] = BIG_URLS['glovesm'] = BIG_URLS['glove-sm'] = BIG_URLS['glove_sm'] = BIG_URLS['glove-small'] = \
@@ -406,8 +414,15 @@ LANG2ANKI = dict((lang[:2], lang) for lang in ANKI_LANGUAGES)
 >>> len(ANKI_LANGUAGES) - len(LANG2ANKI)
 9
 """
+ENGLISHES = 'eng usa us bri british american australian aus'.split()
 for lang in ANKI_LANGUAGES:
-    BIG_URLS[lang] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-eng'.format(lang), load_anki_df)
+    for eng in ENGLISHES:
+        BIG_URLS[lang] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-{}'.format(lang, eng), load_anki_df)
+        BIG_URLS[lang + '-eng'] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-{}'.format(lang, eng), load_anki_df)
+
+for eng in ENGLISHES:
+    for synonym, lang in zip('fre esp ger french spanish german'.split(), 'fra spa deu fra spa deu'.split()):
+        BIG_URLS[synonym + '-eng'] = BIG_URLS[lang + '-eng']
 
 """
 Google N-Gram Viewer meta data is from:
@@ -425,7 +440,7 @@ for name in GOOGLE_NGRAM_NAMES:
                                          {'sep': '\t', 'header': None, 'names': 'term_pos year term_freq book_freq'.split()})
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
-    logger.warning('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIGDATA_URLS !!!'.format(
+    logger.warning('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIG_URLS !!!'.format(
         default=BIGDATA_INFO_FILE))
 except (IOError, pd.errors.EmptyDataError):
     BIGDATA_INFO = pd.DataFrame(columns='name url file_size'.split())
@@ -849,6 +864,25 @@ def expand_filepath(filepath):
     return os.path.abspath(os.path.expandvars(os.path.expanduser(filepath)))
 
 
+def find_filepath(filename):
+    """ Given a filename or path see if it exists in any of the common places datafiles might be
+
+    >>> p = find_filepath('iq_test.csv')
+    >>> p == expand_filepath(os.path.join(DATA_PATH, 'iq_test.csv'))
+    True
+    >>> p[-len('iq_test.csv'):]
+    'iq_test.csv'
+    """
+    if os.path.isfile(filename):
+        return filename
+    for basedir in (os.path.curdir, DATA_PATH, BIGDATA_PATH, '~', '~/Downloads',
+                    os.path.join('/', 'tmp')):
+        fullpath = expand_filepath(os.path.join(basedir, filename))
+        if os.path.isfile(fullpath):
+            return fullpath
+    return filename
+
+
 def dropbox_basename(url):
     filename = os.path.basename(url)
     match = re.findall(r'\?dl=[0-9]$', filename)
@@ -1144,7 +1178,7 @@ def download_unzip(names=None, normalize_filenames=False, verbose=True):
     Also looks
 
     If names or [names] is a valid URL then download it and create a name
-        from the url in BIGDATA_URLS (not yet pushed to data_info.csv)
+        from the url in BIG_URLS (not yet pushed to data_info.csv)
     """
     names = [names] if isinstance(names, (str, basestring)) else names
     # names = names or list(BIG_URLS.keys())  # download them all, if none specified!
@@ -1603,6 +1637,34 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
     df['country'] = cleancanon.country
     return df
 
+def clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip', subdir='cornell movie-dialogs corpus'):
+    """ Load a dataframe of ~100k raw (uncollated) movie lines from the cornell movies dialog corpus
+    
+    >>> download_file(BIG_URLS['cornell_movie_dialogs_corpus'][0])
+    >>> df = clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip')
+    >>> df.describe(include='all')
+              user   movie  person utterance
+    count   304713  304713  304713    304446
+    unique    9035     617    5356    265783
+    top      u4525    m289    JACK     What?
+    freq       537    1530    3032      1684
+    """
+    fullpath_zipfile = find_filepath(filename)
+    dirname = os.path.basename(filename)
+    subdir = 'cornell movie-dialogs corpus'
+    if fullpath_zipfile.lower().endswith('.zip'):
+        retval = unzip(fullpath_zipfile)
+        dirname = dirname[:-4]
+    fullpath_movie_lines = os.path.join(BIGDATA_PATH, dirname, subdir, 'movie_lines.txt')
+    dialog = pd.read_csv(
+        fullpath_movie_lines, sep=r'\+\+\+\$\+\+\+', engine='python', header=None, index_col=0)
+    dialog.columns = 'user movie person utterance'.split()
+    dialog.index.name = 'line'
+    dialog.index = [int(s.strip()[1:]) for s in dialog.index.values]
+    dialog.sort_index(inplace=True)
+    for col in dialog.columns:
+        dialog[col] = dialog[col].str.strip()
+    return dialog
 
 def isglove(filepath):
     """ Get the first word vector in a GloVE file and return its dimensionality or False if not a vector
