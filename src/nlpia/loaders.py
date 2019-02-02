@@ -69,14 +69,10 @@ from pugnlp.futil import mkdir_p, path_status, find_files
 from pugnlp.util import clean_columns
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
+from nlpia.constants import INT_MIN, INT_NAN, MAX_LEN_FILEPATH, MIN_DATA_FILE_SIZE
 
 _parse = None  # placeholder for SpaCy parser + language model
 
-INT_MAX = INT64_MAX = 2 ** 63 - 1
-INT_MIN = INT64_MIN = - 2 ** 63
-INT_NAN = INT64_NAN = INT64_MIN
-INT_MIN = INT64_MIN = INT64_MIN + 1
-MIN_DATA_FILE_SIZE = 100  # get_data will fail on files < 100 bytes
 
 np = pd.np
 logger = logging.getLogger(__name__)
@@ -727,6 +723,27 @@ def read_csv(*args, **kwargs):
     return df
 
 
+def find_filepath(filename):
+    """ Given a filename or path see if it exists in any of the common places datafiles might be
+
+    >>> p = find_filepath('iq_test.csv')
+    >>> p == expand_filepath(os.path.join(DATA_PATH, 'iq_test.csv'))
+    True
+    >>> p[-len('iq_test.csv'):]
+    'iq_test.csv'
+    >>> find_filepath('exponentially-crazy-filename-2.718281828459045.nonexistent')
+    False
+    """
+    if os.path.isfile(filename):
+        return filename
+    for basedir in (os.path.curdir, DATA_PATH, BIGDATA_PATH, '~', '~/Downloads',
+                    os.path.join('/', 'tmp')):
+        fullpath = expand_filepath(os.path.join(basedir, filename))
+        if os.path.isfile(fullpath):
+            return fullpath
+    return False
+
+
 def ensure_open(f, mode='r'):
     r""" Return a file pointer using gzip.open if filename ends with .gz otherwise open()
 
@@ -762,11 +779,16 @@ def ensure_open(f, mode='r'):
       ...
     ValueError: I/O operation on closed file.
     """
-    if not hasattr(f, 'seek') or not hasattr(f, 'readlines'):
-        if f.lower().endswith('.gz'):
-            return gzip.open(f, mode=mode)
-        else:
-            return open(f, mode=mode)
+    fin = f
+    if isinstance(f, basestring):
+        if len(f) <= MAX_LEN_FILEPATH:
+            f = find_filepath(f) or f
+            if f and (not hasattr(f, 'seek') or not hasattr(f, 'readlines')):
+                if f.lower().endswith('.gz'):
+                    return gzip.open(f, mode=mode)
+                return open(f, mode=mode)
+            f = fin  # reset path in case it is the text that needs to be opened with StringIO
+        f = io.StringIO(f) 
     elif f.closed:
         if hasattr(f, '_write_gzip_header'):
             return gzip.open(f.name, mode=mode)
@@ -820,11 +842,11 @@ def ensure_str(s):
     return repr(s)  # create a python repr (str) of a non-bytes nonstr object
 
 
-def read_txt(forfn, nrows=None, verbose=True):
+def read_text(forfn, nrows=None, verbose=True):
     r""" Read all the lines (up to nrows) from a text file or txt.gz file
 
     >>> fn = os.path.join(DATA_PATH, 'mavis-batey-greetings.txt')
-    >>> len(read_txt(fn, nrows=3))
+    >>> len(read_text(fn, nrows=3))
     3
     """
     tqdm_prog = tqdm if verbose else no_tqdm
@@ -842,6 +864,9 @@ def read_txt(forfn, nrows=None, verbose=True):
                 f.seek(0)
                 return read_csv(f, sep='\t', header=None, nrows=nrows)
     return lines
+
+
+read_txt = read_text
 
 
 for filename in CSVS:
@@ -862,25 +887,6 @@ def expand_filepath(filepath):
     True
     """
     return os.path.abspath(os.path.expandvars(os.path.expanduser(filepath)))
-
-
-def find_filepath(filename):
-    """ Given a filename or path see if it exists in any of the common places datafiles might be
-
-    >>> p = find_filepath('iq_test.csv')
-    >>> p == expand_filepath(os.path.join(DATA_PATH, 'iq_test.csv'))
-    True
-    >>> p[-len('iq_test.csv'):]
-    'iq_test.csv'
-    """
-    if os.path.isfile(filename):
-        return filename
-    for basedir in (os.path.curdir, DATA_PATH, BIGDATA_PATH, '~', '~/Downloads',
-                    os.path.join('/', 'tmp')):
-        fullpath = expand_filepath(os.path.join(basedir, filename))
-        if os.path.isfile(fullpath):
-            return fullpath
-    return filename
 
 
 def dropbox_basename(url):
