@@ -52,6 +52,7 @@ from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, Inva
 from urllib.parse import urlparse
 from urllib.error import URLError
 from lxml.html import fromstring as parse_html
+from html2text import html2text
 from copy import deepcopy, copy
 
 import pandas as pd
@@ -1700,6 +1701,11 @@ def isglove(filepath):
         return len(vector)
     return False
 
+
+def read_status_codes(filename='html_status_codes.html'):
+    with ensure_open(filename) as fin:
+        html = fin.read()
+        text = html2text(text)
 
 def nlp(texts, lang='en', linesep=None, verbose=True):
     r""" Use the SpaCy parser to parse and tag natural language strings.
