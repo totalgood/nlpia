@@ -118,6 +118,8 @@ INT_MIN = INT64_MIN = INT64_MIN + 1
 MIN_DATA_FILE_SIZE = 100  # loaders.get_data() will fail on files < 100 bytes
 MAX_LEN_FILEPATH = 1023  # on OSX `open(fn)` raises OSError('Filename too long') if len(fn)>=1024 
 
+HTML_TAGS = '<HTML', '<A HREF=', '<P>', '<BOLD>', '<SCRIPT', '<DIV', '<TITLE', '<BODY', '<HEADER'
+EOL = os.linesep
 
 # rename secrets.cfg.EXAMPLE_TEMPLATE -> secrets.cfg then edit secrets.cfg to include your actual credentials
 secrets = configparser.RawConfigParser()

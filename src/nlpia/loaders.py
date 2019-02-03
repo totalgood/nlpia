@@ -71,6 +71,7 @@ from pugnlp.util import clean_columns
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
 from nlpia.constants import INT_MIN, INT_NAN, MAX_LEN_FILEPATH, MIN_DATA_FILE_SIZE
+from nlpia.constants import HTML_TAGS, EOL
 
 _parse = None  # placeholder for SpaCy parser + language model
 
@@ -864,6 +865,9 @@ def read_text(forfn, nrows=None, verbose=True):
             if all(i == num_tabs[0] for i in num_tabs):
                 f.seek(0)
                 return read_csv(f, sep='\t', header=None, nrows=nrows)
+        elif sum((1 for line in lines if any((tag.lower() in line.lower() for tag in HTML_TAGS)))
+                ) / float(len(lines)) > .05:
+            return np.array(html2text(EOL.join(lines)).split(EOL))
     return lines
 
 
@@ -873,6 +877,38 @@ read_txt = read_text
 for filename in CSVS:
     locals()['df_' + filename.split('.')[0].replace('-', '_')] = read_csv(
         os.path.join(DATA_PATH, filename))
+
+
+def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
+    """ Return a list of 2-tuples with a level integer for the heading levels
+    
+    >>> get_markdown_levels('paragraph \n##bad\n# hello\n  ### world\n')
+    [(0, 'paragraph '), (2, 'bad'), (0, '# hello'), (3, 'world')]
+    >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n')
+    [(0, '- bullet '), (2, 'bad'), (0, '# hello'), (3, 'world')]
+
+    FIXME:
+    >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n', 1)
+    [(2, 'bad'), (3, 'world')]
+    """
+    if isinstance(levels, (int, float, basestring, str, bytes)):
+        levels = set([int(float(levels))])
+    else:
+        levels = set([int(i) for i in levels])
+    if isinstance(lines, basestring):
+        lines = lines.splitlines()
+    level_lines = []
+    for line in lines:
+        level_line = None
+        if 0 in levels:
+            level_line = (0, line)
+        for i in range(6, 1, -1):
+            if line.lstrip().startswith('#' * i):
+                level_line = (i, line.lstrip()[i:].lstrip())
+                break
+        if level_line is not None:
+            level_lines.append(level_line)
+    return level_lines
 
 
 def no_tqdm(it, total=1, **kwargs):
