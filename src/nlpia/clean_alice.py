@@ -41,7 +41,7 @@ from aiml_bot.aiml_parser import AimlParserError
 
 from nlpia.constants import logging
 from nlpia.constants import BIGDATA_PATH
-from nlpia.data_utils import find_data_path
+from nlpia.futil import find_data_path
 
 logger = logging.getLogger(__name__)
 

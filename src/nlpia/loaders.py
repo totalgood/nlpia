@@ -68,10 +68,12 @@ from gensim.scripts.glove2word2vec import glove2word2vec
 
 from pugnlp.futil import mkdir_p, path_status, find_files
 from pugnlp.util import clean_columns
+
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
 from nlpia.constants import INT_MIN, INT_NAN, MAX_LEN_FILEPATH, MIN_DATA_FILE_SIZE
 from nlpia.constants import HTML_TAGS, EOL
+from nlpia.futil import find_filepath, expand_filepath, ensure_open
 
 _parse = None  # placeholder for SpaCy parser + language model
 
@@ -725,80 +727,6 @@ def read_csv(*args, **kwargs):
     return df
 
 
-def find_filepath(filename):
-    """ Given a filename or path see if it exists in any of the common places datafiles might be
-
-    >>> p = find_filepath('iq_test.csv')
-    >>> p == expand_filepath(os.path.join(DATA_PATH, 'iq_test.csv'))
-    True
-    >>> p[-len('iq_test.csv'):]
-    'iq_test.csv'
-    >>> find_filepath('exponentially-crazy-filename-2.718281828459045.nonexistent')
-    False
-    """
-    if os.path.isfile(filename):
-        return filename
-    for basedir in (os.path.curdir, DATA_PATH, BIGDATA_PATH, '~', '~/Downloads',
-                    os.path.join('/', 'tmp')):
-        fullpath = expand_filepath(os.path.join(basedir, filename))
-        if os.path.isfile(fullpath):
-            return fullpath
-    return False
-
-
-def ensure_open(f, mode='r'):
-    r""" Return a file pointer using gzip.open if filename ends with .gz otherwise open()
-
-    TODO: try to read a gzip rather than relying on gz extension, likewise for zip and other formats
-    TODO: monkey patch the file so that .write_bytes=.write and .write writes both str and bytes
-
-    >>> fn = os.path.join(DATA_PATH, 'pointcloud.csv.gz')
-    >>> fp = ensure_open(fn)
-    >>> fp
-    <gzip _io.BufferedReader name='...src/nlpia/data/pointcloud.csv.gz' 0x...>
-    >>> fp.closed
-    False
-    >>> with fp:
-    ...     print(len(fp.readlines()))
-    48485
-    >>> fp.read()
-    Traceback (most recent call last):
-      ...
-    ValueError: I/O operation on closed file
-    >>> len(ensure_open(fp).readlines())
-    48485
-    >>> fn = os.path.join(DATA_PATH, 'mavis-batey-greetings.txt')
-    >>> fp = ensure_open(fn)
-    >>> len(fp.read())
-    314
-    >>> len(fp.read())
-    0
-    >>> len(ensure_open(fp).read())
-    0
-    >>> fp.close()
-    >>> len(fp.read())
-    Traceback (most recent call last):
-      ...
-    ValueError: I/O operation on closed file.
-    """
-    fin = f
-    if isinstance(f, basestring):
-        if len(f) <= MAX_LEN_FILEPATH:
-            f = find_filepath(f) or f
-            if f and (not hasattr(f, 'seek') or not hasattr(f, 'readlines')):
-                if f.lower().endswith('.gz'):
-                    return gzip.open(f, mode=mode)
-                return open(f, mode=mode)
-            f = fin  # reset path in case it is the text that needs to be opened with StringIO
-        f = io.StringIO(f) 
-    elif f.closed:
-        if hasattr(f, '_write_gzip_header'):
-            return gzip.open(f.name, mode=mode)
-        else:
-            return open(f.name, mode=mode)
-    return f
-
-
 #######################################################################
 # Populate some local string variables with text files from DATA_PATH
 for filename in TEXTS:
@@ -879,54 +807,17 @@ for filename in CSVS:
         os.path.join(DATA_PATH, filename))
 
 
-def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
-    """ Return a list of 2-tuples with a level integer for the heading levels
-    
-    >>> get_markdown_levels('paragraph \n##bad\n# hello\n  ### world\n')
-    [(0, 'paragraph '), (2, 'bad'), (0, '# hello'), (3, 'world')]
-    >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n')
-    [(0, '- bullet '), (2, 'bad'), (0, '# hello'), (3, 'world')]
-
-    FIXME:
-    >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n', 1)
-    [(2, 'bad'), (3, 'world')]
-    """
-    if isinstance(levels, (int, float, basestring, str, bytes)):
-        levels = set([int(float(levels))])
-    else:
-        levels = set([int(i) for i in levels])
-    if isinstance(lines, basestring):
-        lines = lines.splitlines()
-    level_lines = []
-    for line in lines:
-        level_line = None
-        if 0 in levels:
-            level_line = (0, line)
-        for i in range(6, 1, -1):
-            if line.lstrip().startswith('#' * i):
-                level_line = (i, line.lstrip()[i:].lstrip())
-                break
-        if level_line is not None:
-            level_lines.append(level_line)
-    return level_lines
-
-
 def no_tqdm(it, total=1, **kwargs):
+    """ Do-nothing iterable wrapper to subsitute for tqdm when verbose==False """
     return it
 
 
-def expand_filepath(filepath):
-    """ Expand any '~', '.', '*' variables in filepath.
-
-    See also: pugnlp.futil.expand_path
-
-    >>> len(expand_filepath('~')) > 3
-    True
-    """
-    return os.path.abspath(os.path.expandvars(os.path.expanduser(filepath)))
-
-
 def dropbox_basename(url):
+    """ Strip off the dl=0 suffix from dropbox links
+    
+    >>> dropbox_basename('https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1')
+    'aclImdb_v1.tar.gz'
+    """
     filename = os.path.basename(url)
     match = re.findall(r'\?dl=[0-9]$', filename)
     if match:
@@ -1511,6 +1402,12 @@ def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1,
 
 
 def read_json(filepath):
+    """ Expand file path variables like ~, look for file at common locations, open and deserialize it
+    
+    >>> read_json('HTTP_1.1  Status Code Definitions.html.json')
+    {'100': 'Continue',
+     '101': 'Switching Protocols',...
+    """
     filepath = expand_filepath(filepath)
     return json.load(ensure_open(filepath, mode='rt'))
 
@@ -1683,7 +1580,7 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
 def clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip', subdir='cornell movie-dialogs corpus'):
     """ Load a dataframe of ~100k raw (uncollated) movie lines from the cornell movies dialog corpus
     
-    >>> download_file(BIG_URLS['cornell_movie_dialogs_corpus'][0])
+    >>> local_filepath = download_file(BIG_URLS['cornell_movie_dialogs_corpus'][0])
     >>> df = clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip')
     >>> df.describe(include='all')
               user   movie  person utterance
@@ -1737,11 +1634,6 @@ def isglove(filepath):
         return len(vector)
     return False
 
-
-def read_status_codes(filename='html_status_codes.html'):
-    with ensure_open(filename) as fin:
-        html = fin.read()
-        text = html2text(text)
 
 def nlp(texts, lang='en', linesep=None, verbose=True):
     r""" Use the SpaCy parser to parse and tag natural language strings.
