@@ -409,20 +409,23 @@ BIG_URLS.update(generate_big_urls_glove())
 ANKI_LANGUAGES = 'afr arq ara aze eus bel ben ber bul yue cat cbk cmn chv hrv ces dan nld est fin fra glg kat ' \
                  'deu ell heb hin hun isl ind ita jpn kha khm kor lvs lit nds mkd zsm mal mri mar max nob pes ' \
                  'pol por ron rus srp slk slv spa swe tgl tam tat tha tur ukr urd uig vie'.split()
+ANKI_LANGUAGE_SYNONYMS = list(zip('fre esp ger french spanish german turkish turkey dut dutch'.split(),
+                                  'fra spa deu fra    spa     deu    tur     tur    dan dan'.split()))
 LANG2ANKI = dict((lang[:2], lang) for lang in ANKI_LANGUAGES)
 """
 >>> len(ANKI_LANGUAGES) - len(LANG2ANKI)
 9
 """
-ENGLISHES = 'eng usa us bri british american australian aus'.split()
+ENGLISHES = 'eng usa us bri british american aus australian'.split()
 for lang in ANKI_LANGUAGES:
     for eng in ENGLISHES:
         BIG_URLS[lang] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-{}'.format(lang, eng), load_anki_df)
         BIG_URLS[lang + '-eng'] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-{}'.format(lang, eng), load_anki_df)
 
-for eng in ENGLISHES:
-    for synonym, lang in zip('fre esp ger french spanish german'.split(), 'fra spa deu fra spa deu'.split()):
-        BIG_URLS[synonym + '-eng'] = BIG_URLS[lang + '-eng']
+for syn, lang in ANKI_LANGUAGE_SYNONYMS:
+    BIG_URLS[syn] = BIG_URLS[lang]
+    for eng in ENGLISHES:
+        BIG_URLS[lang + '-' + eng] = BIG_URLS[lang + '-eng']
 
 """
 Google N-Gram Viewer meta data is from:
@@ -1004,19 +1007,19 @@ def create_big_url(name):
 def try_parse_url(url):
     """ User urlparse to try to parse URL returning None on exception """
     if len(url.strip()) < 4:
-        logger.error('Invalid URL: {}'.format(url))
+        logger.info('URL too short: {}'.format(url))
         return None
     try:
         parsed_url = urlparse(url)
     except ValueError:
-        logger.info('Invalid URL: {}'.format(url))
+        logger.info('Parse URL ValueError: {}'.format(url))
         return None
     if parsed_url.scheme:
         return parsed_url
     try:
         parsed_url = urlparse('http://' + parsed_url.geturl())
     except ValueError:
-        logger.info('Invalid URL: urlparse("{}") from "{}" '.format('http://' + parsed_url.geturl(), url))
+        logger.info('Invalid URL for assumed http scheme: urlparse("{}") from "{}" '.format('http://' + parsed_url.geturl(), url))
         return None
     if not parsed_url.scheme:
         logger.info('Unable to guess a scheme for URL: {}'.format(url))
