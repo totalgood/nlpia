@@ -73,13 +73,11 @@ decoder_target_onehot = np.zeros(
 for i, (input_text, target_text) in enumerate(
         zip(df.statement, df.target)):  # <3>
     for t, c in enumerate(input_text):  # <4>
-        encoder_input_onehot[
-            i, t, input_vocab.index(c)] = 1.  # <5>
-    for t, c in enumerate(target_text):  # <6>
-        decoder_input_onehot[
-            i, t, output_vocab.index(c)] = 1.
-        if t > 0:
-            decoder_target_onehot[i, t - 1, output_vocab.index(c)] = 1
+        k = input_vocab.index(c)
+        encoder_input_onehot[i, t, k] = 1.  # <5>
+    k = np.array([output_vocab.index(c) for c in target_text])
+    decoder_input_onehot[i, np.arange(len(target_text)), k] = 1.
+    decoder_target_onehot[i, np.arange(len(target_text) - 1), k[1:]] = 1.
 # <1> You use numpy for the matrix manipulations.
 # <2> The training tensors are initialized as zero tensors with the shape of number of samples (this number should be equal for the input and target samples) times the maximum number of sequence tokens times the number of possible characters.
 # <3> Loop over the training samples; input and target texts need to match.
