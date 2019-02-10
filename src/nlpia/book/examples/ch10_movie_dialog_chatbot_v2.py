@@ -272,7 +272,7 @@ decoder_model = Model(
     inputs=[decoder_inputs] + thought_input,
     output=[decoder_outputs] + decoder_states)
 
-"""
+r"""
 >>> def decode_sequence(input_seq):
 ...     thought = encoder_model.predict(input_seq)  # <1>
 
@@ -299,3 +299,4 @@ decoder_model = Model(
 ...         thought = [h, c]  # <7>
 
 ...     return generated_sequence
+"""
