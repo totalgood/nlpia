@@ -57,7 +57,7 @@ Microsoft's VSCode is supposed to be an OK editor for Python so feel free to use
 You can skip this step if you are happy using `jupyter notebook` or `VSCode` or the editor built into Anaconda3. 
 
 I like [Sublime Text](https://www.sublimetext.com/3). 
-It's a lot cleaner more mature. 
+It's a lot cleaner and more mature than the alternatives. 
 Plus it has more plugins written by individual developers like you.
 
 ### Step 3. Install Git and Bash
@@ -68,7 +68,7 @@ Plus it has more plugins written by individual developers like you.
 
 If you're on Linux or Mac OS, you're good to go. Just figure out how to launch a terminal and make sure you can run `ipython` or `jupyter notebook` in it. This is where you'll play around with your own NLP pipeline. 
 
-On Windows you have a bit more work to do. Supposedly Windows 10 will let you install Ubuntu with a terminal and bash. But the terminal and shell that comes with [`git`](https://git-scm.com/downloads) is probably a safer bet. It's mained by a broader open source community.
+On Windows you have a bit more work to do. Supposedly Windows 10 will let you install Ubuntu with a terminal and bash. But the terminal and shell that comes with [`git`](https://git-scm.com/downloads) is probably a safer bet. It's maintained by a broader open source community.
 
 ### Step 4. Clone this repository
 
@@ -83,7 +83,11 @@ You have two alternative package managers you can use to install `nlpia`:
 5.1. `conda`  
 5.2. `pip`  
 
-In most cases, `conda` will be able to install python packages faster and more reliably than pip. Without `conda` Some packages, such as `python-levenshtein`, require you to compile a C library during installation. Windows doesn't have an installer that will "just work."
+Or you can a reader's container with:
+
+5.3. `docker`
+
+In most cases, `conda` will be able to install python packages faster and more reliably than pip. Without `conda` Some packages, such as `python-levenshtein`, require you to compile a C library during installation. Windows doesn't have a a compiler and python package installer that will "just work."
 
 #### Alternative 5.1. `conda`
 
@@ -127,7 +131,7 @@ pip install --upgrade pip
 pip install -e .
 ```
 
-Or if you don't think you'll be editing any of the source code for nlpia your can just:
+Or if you don't think you'll be editing any of the source code for nlpia and you don't want to contribute to the community here you can just:
 
 ```bash
 pip install nlpia
@@ -149,13 +153,39 @@ pip install -e .
 pip install -r requirements-deep.txt
 ```
 
-The chatbots(including TTS and STT audio drivers) that come with `nlpia` may not be compatible with Windows due to problems install `pycrypto`.
+The chatbots(including TTS and STT audio drivers) that come with `nlpia` may not be compatible with Windows due to problems installing `pycrypto`.
 If you are on a Linux or Darwin(Mac OSX) system or want to try to help us debug the pycrypto problem feel free to install the chatbot requirements:
 
 ```bash
 # pip install -r requirements-chat.txt
 # pip install -r requirements-voice.txt
 ```
+
+## Alternative 5.3. `docker`
+
+### 5.3.1. Build your image
+
+This might take a few minutes to download the jupyter docker image:
+
+```bash
+docker build -t nlpia .
+```
+
+### 5.3.2. Run your image
+
+- `docker run -p 8888:8888 nlpia`
+- Copy the `token` obtained from the run log
+- Open Browser and use the link `http://localhost:8888/?token=...`
+
+### 5.3.3. Play around
+
+If you want to keep your notebook file or share a folder with the running container then use:
+
+```bash
+docker run -p 8888:8888 -v ~:/home/jovyan/work nlpia
+```
+
+Then open a new notebook and test your code. Make sure save it inside `work` directory so it's accessible outside the container.
 
 ### 6. Have Fun!
 
@@ -166,28 +196,11 @@ cd nlpia/book/examples
 ls
 ```
 
-### 7. Contribute
+Help other NLP practitioners by contributing your code and knowledge.
 
-Help other NLP practicioners by contributing your code and knowledge.
-Here are some ideas for a few features others might find handy.
+Below are some nlpia feature ideas others might find handy. Contribute your own ideas to https://github.com/totalgood/nlpia/issues .
 
-## Using Docker
-### 1. Build your image (This process might take few minutes for download jupyter docker image)
-- `docker build -t nlpia .`
-
-### 2. Run your image
-- `docker run -p 8888:8888 nlpia`
-- Copy the `token` obtained from the run log
-- Open Browser and use the link `http://localhost:8888/?token=...`
-
-### 3. Play around
-- If you want to keep your notebook file or share a folder with the running container then use the command:
-
-  `docker run -p 8888:8888 -v ~:/home/jovyan/work nlpia`
-
-- Open new notebook and test your code, and make sure save it inside `work` directory.
-
-#### Feature 1: Glossary Compiler
+#### 6.1. Feature 1: Glossary Compiler
 
 Skeleton code and APIs that could be added to the https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py:`transcoders.py` module.
 
@@ -219,12 +232,12 @@ def glossary_from_dir(path, format='asciidoc'):
     return text
 ```
 
-#### Feature 2: Semantic Search
+#### 6.2. Feature 2: Semantic Search
 
 Use a parser to extract only natural language sentences and headings/titles from a list of lines/sentences from an asciidoc book like "Natural Language Processing in Action".
 Use a sentence segmenter in https://github.com/totalgood/nlpia/blob/master/src/nlpia/transcoders.py:[nlpia.transcoders] to split a book, like _NLPIA_, into a seequence of sentences.
 
-#### Feature 3: Semantic Spectrograms
+#### 6.3. Feature 3: Semantic Spectrograms
 
 A sequence of word vectors or topic vectors forms a 2D array or matrix which can be displayed as an image. I used `word2vec` (`nlpia.loaders.get_data('word2vec')`) to embed the words in the last four paragraphs of Chapter 1 in NLPIA and it produced a spectrogram that was a lot noisier than I expected. Nonetheless stripes and blotches of meaning are clearly visible.
 
@@ -278,14 +291,15 @@ Can you think of some image processing or deep learning algorithms you could run
 
 Once you've mastered word vectors you can play around with Google's Universal Sentence Encoder and create spectrograms of entire books.
 
-#### Feature 5: Build your own Sequence-to-Sequence translator
+#### 6.4. Feature 4: Build your own Sequence-to-Sequence translator
 
-If you have pairs of statements or words in two languages, you can build a sequence-to-sequence translator.  You could even design your own language like you did in gradeschool with piglatin or build yourself a L337 translator. 
+If you have pairs of statements or words in two languages, you can build a sequence-to-sequence translator.  You could even design your own language like you did in gradeschool with piglatin or build yourself a L337 translator.
 
+Or you could create a universal sentence embedding using `dfs = [get_data(lang) for lang in nlpia.loaders.ANKI_LANGUAGES]` and then replacing the movie character chatbot dataset in Chapter 10 with these translation pairs, one at a time. Start with a fresh clean decoder for each new language. That way you'll have a separate decoder that you can use to translate into any language. But you want to reuse the encoder so that you end up with a Universal thought vector for encoding English sentences. This will be similar to Google's Unversal Sentence Encoding, but yours will be character-based so it can handle mispelled English words.
 
 #### Other Ideas
 
-There are a lot more project ideas mentioned in the "Resources" section at the end of NLPIA. Here's an early draft of [that resource list](https://github.com/totalgood/nlpia/blob/master/src/nlpia/data/book/Appendix%20E%20--%20Resources.asc.md).
+There are a lot more project ideas mentioned in the "Resources" section at the end of the NLPIA Book. Here's an early draft of [that resource list](https://github.com/totalgood/nlpia/blob/master/src/nlpia/data/book/Appendix%20E%20--%20Resources.asc.md).
 
 
 
