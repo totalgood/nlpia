@@ -35,6 +35,11 @@
 - [grunt tutorial](https://lincolnloop.com/blog/simplifying-your-django-frontend-tasks-grunt/)
 - [node.js in a python virtualenv](https://lincolnloop.com/blog/installing-nodejs-and-npm-python-virtualenv/)
 
+## Collections
+
+- [Public AI Datasets gathered by Analytics Insight](https://www.analyticsinsight.net/working-on-ai-get-these-free-public-data-sources-for-2019/)
+- [State-of-the-Art Papers and Datasets](https://nlpprogress.com/)
+
 ## Open Source Software
 
 - [Tweet Impact Predictor (twip)](http://github.com/totalgood/twip)

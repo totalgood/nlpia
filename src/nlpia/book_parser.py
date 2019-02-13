@@ -68,6 +68,8 @@ def get_lines(file_path=BOOK_PATH):
      ['= Glossary\n',
       '\n',
       "We've collected some ...
+     ]
+    )
     """
     if os.path.isdir(file_path):
         file_path = os.path.join(file_path, '*.asc')

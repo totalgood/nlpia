@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+""" Constants and global configuration options, like `logging.getLogger` and loading secrets.cfg """
 from __future__ import print_function, unicode_literals, division, absolute_import
-from builtins import (bytes, dict, int, list, object, range, str,  # noqa
-    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from builtins import (bytes, dict, int, list, object, range, str, ascii, chr,  # noqa
+                      hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
 standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 
@@ -20,10 +21,10 @@ import platform
 LOG_LEVEL = 'WARN' if not os.environ.get('DEBUG') else 'DEBUG'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-system_name = platform.system()
-if system_name == 'Darwin':
+SYSTEM_NAME = platform.system()
+if SYSTEM_NAME == 'Darwin':
     SYSLOG_PATH = os.path.join(os.path.sep, 'var', 'run', 'syslog')
-elif system_name == 'Linux':
+elif SYSTEM_NAME == 'Linux':
     SYSLOG_PATH = os.path.join('dev', 'log')
 else:
     SYSLOG_PATH = None
@@ -70,7 +71,7 @@ LOGGING_CONFIG = {
 
 
 # Set up syslogger for loggly service if the /dev socket exists or use NTEventLogHandler on Windows (no syslog /dev).
-if system_name == 'Windows':
+if SYSTEM_NAME == 'Windows':
     LOGGING_CONFIG['loggers']['loggly']['handlers'] += ['logging.handlers.NTEventLogHandler']
     LOGGING_CONFIG['handlers']['logging.handlers.NTEventLogHandler'] = {
         'level': 'DEBUG',
@@ -109,6 +110,16 @@ UTF8_TABLE = read_csv(os.path.join(DATA_PATH, 'utf8.csv'))
 UTF8_TO_MULTIASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.multiascii))
 UTF8_TO_ASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.ascii))
 
+INT_MAX = INT64_MAX = 2 ** 63 - 1
+INT_MIN = INT64_MIN = - 2 ** 63
+INT_NAN = INT64_NAN = INT64_MIN
+INT_MIN = INT64_MIN = INT64_MIN + 1
+
+MIN_DATA_FILE_SIZE = 100  # loaders.get_data() will fail on files < 100 bytes
+MAX_LEN_FILEPATH = 1023  # on OSX `open(fn)` raises OSError('Filename too long') if len(fn)>=1024 
+
+HTML_TAGS = '<HTML', '<A HREF=', '<P>', '<BOLD>', '<SCRIPT', '<DIV', '<TITLE', '<BODY', '<HEADER'
+EOL = os.linesep
 
 # rename secrets.cfg.EXAMPLE_TEMPLATE -> secrets.cfg then edit secrets.cfg to include your actual credentials
 secrets = configparser.RawConfigParser()
@@ -116,8 +127,8 @@ try:
     secrets.read(os.path.join(PROJECT_PATH, 'secrets.cfg'))
     secrets = secrets._sections
 except IOError:
-    logger.error('Unable to load/parse secrets.cfg file at "{}". Does it exist?'.format(
-                 os.path.join(PROJECT_PATH, 'secrets.cfg')))
+    logger.error('Unable to load/parse secrets.cfg file at "%s". Does it exist?',
+                 os.path.join(PROJECT_PATH, 'secrets.cfg'))
     secrets = {}
 
 secrets = dict2obj(secrets)
