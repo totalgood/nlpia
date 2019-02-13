@@ -1404,17 +1404,6 @@ def multifile_dataframe(paths=['urbanslang{}of4.csv'.format(i) for i in range(1,
     return df
 
 
-def read_json(filepath):
-    """ Expand file path variables like ~, look for file at common locations, open and deserialize it
-    
-    >>> read_json('HTTP_1.1  Status Code Definitions.html.json')
-    {'100': 'Continue',
-     '101': 'Switching Protocols',...
-    """
-    filepath = expand_filepath(filepath)
-    return json.load(ensure_open(filepath, mode='rt'))
-
-
 def get_wikidata_qnum(wikiarticle, wikisite):
     """Retrieve the Query number for a wikidata database of metadata about a particular article
 

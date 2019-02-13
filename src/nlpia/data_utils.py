@@ -28,7 +28,7 @@ from pugnlp.regexes import cre_url
 from nlpia.constants import logging, DATA_PATH
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
 from nlpia.data.loaders import read_csv, read_text
-from nlpia.futil import find_filepath, ensure_open
+from nlpia.futil import find_filepath, ensure_open, read_json
 
 
 np = pd.np
@@ -81,7 +81,7 @@ def prepend_http(url):
 
 
 def is_up_url(url, allow_redirects=False, timeout=5):
-    """ Check URL to see if it is a valid web page, return the redirected location if it is
+    r""" Check URL to see if it is a valid web page, return the redirected location if it is
 
     Returns:
       None if ConnectionError
@@ -154,7 +154,7 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
 
 
 def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
-    """ Parse the HTTP documentation HTML page in filename
+    r""" Parse the HTTP documentation HTML page in filename
     
     Return:
         code_dict: {200: "OK", ...}
@@ -172,7 +172,7 @@ def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
 
 
 def http_status_code(code):
-    """ convert 3-digit integer into a short name of the response status code for an HTTP request
+    r""" convert 3-digit integer into a short name of the response status code for an HTTP request
     
     >>> http_status_code(301)
 

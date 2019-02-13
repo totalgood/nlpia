@@ -213,3 +213,13 @@ def find_filepath(filename):
         if os.path.isfile(fullpath):
             return fullpath
     return False
+
+
+def read_json(filepath):
+    """ read text from filepath (`open(find_filepath(expand_filepath(fp)))`) then json.loads()
+    
+    >>> read_json('HTTP_1.1  Status Code Definitions.html.json')
+    {'100': 'Continue',
+     '101': 'Switching Protocols',...
+    """ 
+    return json.load(ensure_open(find_filepath(filepath), mode='rt'))
