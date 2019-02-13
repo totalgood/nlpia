@@ -175,7 +175,11 @@ def http_status_code(code):
     r""" convert 3-digit integer into a short name of the response status code for an HTTP request
     
     >>> http_status_code(301)
-
+    'status code'
+    >>> http_status_code(302)
+    'response as described here for 303'
+    >>> http_status_code(404)
+    'Not Found'
     """
     code_dict = read_json('HTTP_1.1  Status Code Definitions.html.json')
     return code_dict.get(code, None)

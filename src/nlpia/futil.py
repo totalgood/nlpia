@@ -8,6 +8,7 @@ from past.builtins import basestring
 standard_library.install_aliases()  # noqa
 
 import os
+import json
 
 from pugnlp.futil import mkdir_p  # noqa
 
@@ -215,11 +216,32 @@ def find_filepath(filename):
     return False
 
 
-def read_json(filepath):
+def update_dict_types(d, keys=True, values=True, typ=int):
+    di = {}
+    for k, v in d.items():
+        if values:
+            try:
+                vi = typ(v)
+            except ValueError:
+                vi = v
+        if keys:
+            try:
+                ki = typ(k)
+            except:
+                ki = k
+        di[ki] = vi
+    d.update(di)
+    return d
+            
+
+def read_json(filepath, intkeys=True, intvalues=True):
     """ read text from filepath (`open(find_filepath(expand_filepath(fp)))`) then json.loads()
     
     >>> read_json('HTTP_1.1  Status Code Definitions.html.json')
     {'100': 'Continue',
      '101': 'Switching Protocols',...
-    """ 
-    return json.load(ensure_open(find_filepath(filepath), mode='rt'))
+    """
+    d = json.load(ensure_open(find_filepath(filepath), mode='rt'))
+    d = update_dict_types(d, keys=intkeys, values=intvalues)
+    return d
+    
