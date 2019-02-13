@@ -288,7 +288,7 @@ r"""
 ...         generated_char = reverse_target_char_index[generated_token_idx]
 ...         generated_sequence += generated_char
 ...         if (generated_char == stop_token or
-...                 len(generated_sequence) > max_decoder_seq_length
+...                 len(generated_sequence) > max_decoder_seq_len
 ...                 ):  # <5>
 ...             stop_condition = True
 
@@ -297,4 +297,142 @@ r"""
 ...         thought = [h, c]  # <7>
 
 ...     return generated_sequence
+"""
+
+encoder_model = Model(encoder_inputs, encoder_states)
+thought_input = [
+    Input(shape=(num_neurons,)), Input(shape=(num_neurons,))]
+decoder_outputs, state_h, state_c = decoder_lstm(
+    decoder_inputs, initial_state=thought_input)
+decoder_states = [state_h, state_c]
+decoder_outputs = decoder_dense(decoder_outputs)
+decoder_model = Model(
+    inputs=[decoder_inputs] + thought_input,
+    output=[decoder_outputs] + decoder_states)
+
+
+def decode_sequence(input_seq):
+    thought = encoder_model.predict(input_seq)  # <1>
+
+    target_seq = np.zeros((1, 1, len(output_vocab)))  # <2>
+    target_seq[0, 0, output_vocab.index(stop_token)
+        ] = 1.  # <3>
+    stop_condition = False
+    generated_sequence = ''
+
+    while not stop_condition:
+        output_tokens, h, c = decoder_model.predict(
+            [target_seq] + thought) # <4>
+
+        generated_token_idx = np.argmax(output_tokens[0, -1, :])
+        generated_char = output_vocab[generated_token_idx]
+        generated_sequence += generated_char
+        if (generated_char == stop_token or
+                len(generated_sequence) > max_decoder_seq_len
+                ):  # <5>
+            stop_condition = True
+
+        target_seq = np.zeros((1, 1, len(output_vocab)))  # <6>
+        target_seq[0, 0, generated_token_idx] = 1.
+        thought = [h, c]  # <7>
+
+    return generated_sequence
+
+
+def respond(input_text):
+    input_text = input_text.lower()
+    input_text = ''.join(c if c in input_vocab else ' ' for c in input_text)
+    input_seq = np.zeros((1, max_encoder_seq_len, len(input_vocab)), dtype='float32')
+    for t, c in enumerate(input_text):
+        input_seq[0, t, input_vocab.index(c)] = 1.
+    decoded_sentence = decode_sequence(input_seq)
+    print('Human: {}'.format(input_text))
+    print('Bot:', decoded_sentence)
+    return decoded_sentence
+
+"""
+respond('Hi Rosa, how are you?')
+respond('Hi Jim, how are you?')
+respond('Hi Barak, how are you?')
+respond('Hi Amy, how are you?')
+respond('Hi Paris, how are you?')
+respond('Hi Joe, how are you?')
+respond('Hi Jane, how are you?')
+respond('Hey Jane, how are you?')
+respond('Hey Jon, how are you?')
+respond('Hey John, how are you?')
+respond('Hey Joe, how are you?')
+respond('Hey Jim, how are you?')
+respond('Hey Ashley, how are you?')
+respond('Hey my love, how are you?')
+respond('Hey Arzu, how are you?')
+respond("I'm talking about us.")
+respond("What are you trying to say?")
+In [38]: respond('Hi Rosa, how are you?')
+Human: hi rosa, how are you?
+Bot: hello, he was the one when you wanted to see you again.
+
+In [39]: respond('Hi Jim, how are you?')
+Human: hi jim, how are you?
+Bot: how are you?
+
+In [40]: respond('Hi Barak, how are you?')
+Human: hi barak, how are you?
+Bot: hello, he was the one when i get the best way to get the show off the back.
+
+In [41]: respond('Hi Amy, how are you?')
+Human: hi amy, how are you?
+Bot: hello, man. i was a second.
+
+In [42]: respond('Hi Paris, how are you?')
+Human: hi paris, how are you?
+Bot: his heart studs the fucking chark off.
+
+In [43]: respond('Hi Joe, how are you?')
+Human: hi joe, how are you?
+Bot: his his hate is beautiful on the way i was the one who wanted to say that.
+
+In [44]: respond('Hi Jane, how are you?')
+Human: hi jane, how are you?
+Bot: hello, hello, martine. i got a second. i'm a fine boy from the ship.
+
+In [45]: respond('Hey Jane, how are you?')                                                                                        [870/1906]
+Human: hey jane, how are you?
+Bot: hello, mr. decker. what do you mean what happened?
+
+In [46]: respond('Hey Jon, how are you?')
+Human: hey jon, how are you?
+Bot: hello, mr. decker. what do you mean what happened?
+
+In [47]: respond('Hey John, how are you?')
+Human: hey john, how are you?
+Bot: hello, mr. decker. what do you mean what happened?
+
+In [48]: respond('Hey Joe, how are you?')
+Human: hey joe, how are you?
+Bot: hello, mr. decker. what do you mean what happened?
+
+In [49]: respond('Hey Jim, how are you?')
+Human: hey jim, how are you?
+Bot: how much money i want to say that?
+
+In [50]: respond('Hey Ashley, how are you?')
+Human: hey ashley, how are you?
+Bot: his his morning.
+
+In [51]: respond('Hey my love, how are you?')
+Human: hey my love, how are you?
+Bot: here. i was just thinking about it.
+
+In [52]: respond('Hey Arzu, how are you?')
+Human: hey arzu, how are you?
+Bot: hi. what are you talking about?
+
+In [53]: respond("I'm talking about us.")
+Human: i'm talking about us.
+Bot: i know.
+
+In [54]: respond("What are you trying to say?")
+Human: what are you trying to say?
+Bot: i don't know.
 """
