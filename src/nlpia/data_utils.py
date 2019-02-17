@@ -25,7 +25,7 @@ import pandas as pd
 from pugnlp.futil import find_files
 from pugnlp.regexes import cre_url
 
-from nlpia.constants import logging, DATA_PATH
+from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
 from nlpia.data.loaders import read_csv, read_text
 from nlpia.futil import find_filepath, ensure_open, read_json
@@ -98,9 +98,7 @@ def is_up_url(url, allow_redirects=False, timeout=5):
     True
     >>> not urlisup or urlisup.endswith('totalgood.org')
     True
-    >>> is_up_url('abcd')
-    False
-    >>> bool(is_up_url('8158989668202919656.org'))
+    >>> bool(is_up_url('8158989668202919656'))
     False
     """
     if not isinstance(url, basestring) or '.' not in url:
@@ -184,9 +182,9 @@ def http_status_code(code):
     r""" convert 3-digit integer into a short name of the response status code for an HTTP request
     
     >>> http_status_code(301)
-    'status code'
+    'Moved Permanently'
     >>> http_status_code(302)
-    'response as described here for 303'
+    'Found'
     >>> http_status_code(404)
     'Not Found'
     """
