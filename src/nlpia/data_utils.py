@@ -91,7 +91,8 @@ def is_up_url(url, allow_redirects=False, timeout=5):
     >> is_up_url("totalgood.org")
     'https://totalgood.org'
 
-    >>> is_up_url("duckduckgo.com")  # best search engine in the world!
+    >>> is_up_url("duckduckgo.com")  # a more private, less manipulative search engine
+    'https://duckduckgo.com/'
     >>> urlisup = is_up_url("totalgood.org")
     >>> not urlisup or str(urlisup).startswith('http')
     True
@@ -99,7 +100,7 @@ def is_up_url(url, allow_redirects=False, timeout=5):
     True
     >>> is_up_url('abcd')
     False
-    >>> bool(is_up_url('abcd.com'))
+    >>> bool(is_up_url('8158989668202919656.org'))
     False
     """
     if not isinstance(url, basestring) or '.' not in url:
@@ -128,15 +129,12 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
     [(0, 'paragraph '), (2, 'bad'), (0, '# hello'), (3, 'world')]
     >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n')
     [(0, '- bullet '), (2, 'bad'), (0, '# hello'), (3, 'world')]
-
-    FIXME:
-    >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n', 1)
-    [(2, 'bad'), (3, 'world')]
+    >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n', 2)
+    [(2, 'bad')]
     """
     if isinstance(levels, (int, float, basestring, str, bytes)):
-        levels = set([int(float(levels))])
-    else:
-        levels = set([int(i) for i in levels])
+        levels = [float(levels)]
+    levels = set([int(i) for i in levels])
     if isinstance(lines, basestring):
         lines = lines.splitlines()
     level_lines = []
@@ -144,11 +142,12 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
         level_line = None
         if 0 in levels:
             level_line = (0, line)
+        lstripped = line.lstrip()
         for i in range(6, 1, -1):
-            if line.lstrip().startswith('#' * i):
-                level_line = (i, line.lstrip()[i:].lstrip())
+            if lstripped.startswith('#' * i):
+                level_line = (i, lstripped[i:].lstrip())
                 break
-        if level_line is not None and level_line[0] in levels:
+        if level_line and level_line[0] in levels:
             level_lines.append(level_line)
     return level_lines
 
@@ -158,9 +157,20 @@ def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
     
     Return:
         code_dict: {200: "OK", ...}
+
+    >>> fn = 'HTTP_1.1  Status Code Definitions.html'
+    >>> code_dict = read_http_status_codes(fn)
+    >>> code_dict
+    {'100': 'Continue',
+    100: 'Continue',
+    '101': 'Switching Protocols',
+    101: 'Switching Protocols',
+    '200': 'OK',
+    200: 'OK',...
+    >>> json.dump(code_dict, open(os.path.join(DATA_PATH, fn + '.json'), 'wt'), indent=2)
     """ 
     lines = read_text(filename)
-    level_lines = get_markdown_levels(lines)
+    level_lines = get_markdown_levels(lines, 3)
     code_dict = {}
     for level, line in level_lines:
         code, name = (re.findall(r'\s(\d\d\d)[\W]+([-\w\s]*)', line) or [[0, '']])[0]
@@ -168,7 +178,6 @@ def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
             code_dict[code] = name
             code_dict[int(code)] = name
     return code_dict
-    # json.dump(code_dict, open(os.path.join(DATA_PATH, fn + '.json'), 'wt'), indent=2)
 
 
 def http_status_code(code):
@@ -232,7 +241,7 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
         if os.path.isdir(url_or_text):
             filepaths = [filemeta['path'] for filemeta in find_files(url_or_text, ext=ext)]
             return itertools.chain.from_iterable(map(open, filepaths))
-        url = is_valid_url(url_or_text)
+        url = looks_like_url(url_or_text)
         if url:
             for i in range(3):
                 return requests.get(url, stream=True, allow_redirects=True, timeout=5)

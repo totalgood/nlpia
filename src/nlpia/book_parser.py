@@ -67,9 +67,7 @@ def get_lines(file_path=BOOK_PATH):
     ('.../src/nlpia/data/book/Appendix F -- Glossary.asc',
      ['= Glossary\n',
       '\n',
-      "We've collected some ...
-     ]
-    )
+      "We've collected some ...])
     """
     if os.path.isdir(file_path):
         file_path = os.path.join(file_path, '*.asc')
