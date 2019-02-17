@@ -8,7 +8,9 @@ from past.builtins import basestring
 standard_library.install_aliases()  # noqa
 
 import os
+import io
 import json
+import gzip
 
 from pugnlp.futil import mkdir_p  # noqa
 
@@ -126,17 +128,6 @@ def expand_filepath(filepath):
     return os.path.abspath(os.path.expandvars(os.path.expanduser(filepath)))
 
 
-def expand_filepath(filepath):
-    """ Expand any '~', '.', '*' variables in filepath.
-
-    See also: pugnlp.futil.expand_path
-
-    >>> len(expand_filepath('~')) > 3
-    True
-    """
-    return os.path.abspath(os.path.expandvars(os.path.expanduser(filepath)))
-
-
 def ensure_open(f, mode='r'):
     r""" Return a file pointer using gzip.open if filename ends with .gz otherwise open()
 
@@ -190,7 +181,9 @@ def ensure_open(f, mode='r'):
     return f
 
 
-def find_filepath(filename):
+def find_filepath(
+        filename,
+        basepaths=(os.path.curdir, DATA_PATH, BIGDATA_PATH, BASE_DIR, '~', '~/Downloads', os.path.join('/', 'tmp'), '..')):
     """ Given a filename or path see if it exists in any of the common places datafiles might be
 
     >>> p = find_filepath('iq_test.csv')
@@ -203,13 +196,7 @@ def find_filepath(filename):
     """
     if os.path.isfile(filename):
         return filename
-    for basedir in (os.path.curdir,
-                    DATA_PATH,
-                    BIGDATA_PATH,
-                    BASE_DIR,
-                    '~',
-                    '~/Downloads',
-                    os.path.join('/', 'tmp')):
+    for basedir in basepaths:
         fullpath = expand_filepath(os.path.join(basedir, filename))
         if os.path.isfile(fullpath):
             return fullpath
