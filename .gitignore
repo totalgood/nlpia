@@ -48,14 +48,17 @@ MANIFEST
 secret*
 !secrets.cfg.EXAMPLE_TEMPLATE
 
-# big data
+# WIP data-driven way to specify BIGDATA_URLS and preprocessing logic:
 src/nlpia/data/bigdata_info.csv
+# recreated with each run of loaders.py so it can be used to replace bigdata_info.csv and hard-coded definitions can be removed:
+src/nlpia/data/bigdata_info.latest.csv
+# big data directory
 src/nlpia/bigdata/*
+# small data compressed/binary files
 src/nlpia/data/*.gz
 src/nlpia/data/*.bz2
 src/nlpia/data/*.xz
 src/nlpia/data/*.zip
-nlpia/bigdata/*
 nlpia/data/*.gz
 nlpia/data/*.bz2
 nlpia/data/*.xz
@@ -63,9 +66,9 @@ nlpia/data/*.zip
 nlpia/bigdata/*.gz
 nlpia/bigdata/*.tgz
 *.h5
+# models created within examples (ch10?)
 *seq2seq_keras_weights*
 *seq2seq_keras_model*
-
 
 # system files
 .DS_STore
