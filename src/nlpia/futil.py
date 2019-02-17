@@ -12,7 +12,7 @@ import io
 import json
 import gzip
 
-from pugnlp.futil import mkdir_p  # noqa
+from pugnlp.futil import mkdir_p, path_status, find_files  # noqa
 
 from nlpia.constants import logging, MAX_LEN_FILEPATH
 from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
