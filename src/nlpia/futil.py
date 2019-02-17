@@ -172,8 +172,9 @@ def ensure_open(f, mode='r'):
                     return gzip.open(f, mode=mode)
                 return open(f, mode=mode)
             f = fin  # reset path in case it is the text that needs to be opened with StringIO
-        f = io.StringIO(f) 
-    elif f.closed:
+        else:
+            f = io.StringIO(f) 
+    elif f and getattr(f, 'closed', None):
         if hasattr(f, '_write_gzip_header'):
             return gzip.open(f.name, mode=mode)
         else:

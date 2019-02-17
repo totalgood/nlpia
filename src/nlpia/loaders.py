@@ -1379,7 +1379,7 @@ def get_data(name='sms-spam', nrows=None, limit=None):
                 pass
         return filepaths[name]
     elif name in DATASET_NAME2FILENAME:
-        return read_named_csv(name, data_path=DATA_PATH, nrows=nrows)
+        return get_data(DATASET_NAME2FILENAME[name], nrows=nrows)
     elif name in DATA_NAMES:
         return read_named_csv(DATA_NAMES[name], nrows=nrows)
     elif os.path.isfile(name):
