@@ -1277,7 +1277,11 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
     if os.path.isfile(os.path.join(data_path, name)):
         return read_csv(os.path.join(data_path, name), nrows=nrows)
     if name in DATASET_NAME2FILENAME:
-        return read_csv(os.path.join(data_path, DATASET_NAME2FILENAME[name]), nrows=nrows)
+        name = DATASET_NAME2FILENAME[name]
+        if name.lower().endswith('.txt') or name.lower().endswith('.txt.gz'):
+            return read_text(os.path.join(data_path, name), nrows=nrows)
+        else:
+            return read_csv(os.path.join(data_path, name), nrows=nrows)
     try:
         return read_csv(os.path.join(data_path, name + '.csv.gz'), nrows=nrows)
     except IOError:
@@ -1428,8 +1432,8 @@ DATASET_FILENAMES = [f['name'] for f in find_files(DATA_PATH, ext='.csv.gz', lev
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, ext='.csv', level=0)]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, ext='.json', level=0)]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, ext='.txt', level=0)]
-DATASET_NAMES =
-    [f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]]
+DATASET_NAMES =[
+    f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]]
 DATASET_NAME2FILENAME = dict(sorted(zip(DATASET_NAMES, DATASET_FILENAMES)))
 
 

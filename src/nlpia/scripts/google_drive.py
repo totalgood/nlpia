@@ -7,12 +7,16 @@ https://stackoverflow.com/a/39225039/623735
 import sys
 import requests
 from tqdm import tqdm
+from .loaders import get_url_title
 
 
-def download_file_from_google_drive(id, destination):
-    if 'id=' in id:
+def download_file_from_google_drive(driveid, destination=None):
+    if '&id=' in driveid:
         # https://drive.google.com/uc?export=download&id=0BwmD_VLjROrfM1BxdkxVaTY2bWs  # dailymail_stories.tgz
-        id = id.split('=')[-1]
+        driveid = driveid.split('&id=')[-1]
+    if '?id=' in driveid:
+        # 'https://drive.google.com/open?id=14mELuzm0OvXnwjb0mzAiG-Ake9_NP_LQ'  # SSD pretrainined keras model
+        driveid = driveid.split('?id=')[-1]
 
     def get_confirm_token(response):
         for key, value in response.cookies.items():
@@ -33,13 +37,17 @@ def download_file_from_google_drive(id, destination):
 
     session = requests.Session()
 
-    response = session.get(URL, params={'id': id}, stream=True)
+    response = session.get(URL, params={'id': driveid}, stream=True)
     token = get_confirm_token(response)
 
     if token:
-        params = {'id': id, 'confirm': token}
+        params = {'id': driveid, 'confirm': token}
         response = session.get(URL, params=params, stream=True)
 
+    if not destination:
+        destination = get_url_title('https://drive.google.com/open?id={}'.format(driveid))
+        if destination.endswith('Google Drive'):
+            destination = destination[:-len('Google Drive')].rstrip().rstrip('-:').rstrip()
     save_response_content(response, destination)    
 
 
