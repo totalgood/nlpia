@@ -1274,6 +1274,10 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
         except (IOError, UnicodeDecodeError):
             pass
     data_path = expand_filepath(data_path)
+    if os.path.isfile(os.path.join(data_path, name)):
+        return read_csv(os.path.join(data_path, name), nrows=nrows)
+    if name in DATASET_NAME2FILENAME:
+        return read_csv(os.path.join(data_path, DATASET_NAME2FILENAME[name]), nrows=nrows)
     try:
         return read_csv(os.path.join(data_path, name + '.csv.gz'), nrows=nrows)
     except IOError:
@@ -1379,7 +1383,7 @@ def get_data(name='sms-spam', nrows=None, limit=None):
                 pass
         return filepaths[name]
     elif name in DATASET_NAME2FILENAME:
-        return get_data(DATASET_NAME2FILENAME[name], nrows=nrows)
+        return read_named_csv(name, nrows=nrows)
     elif name in DATA_NAMES:
         return read_named_csv(DATA_NAMES[name], nrows=nrows)
     elif os.path.isfile(name):
@@ -1420,13 +1424,13 @@ def get_wikidata_qnum(wikiarticle, wikisite):
     return list(resp['entities'])[0]
 
 
-DATASET_FILENAMES = [f['name'] for f in find_files(DATA_PATH, '.csv.gz', level=0)]
-DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.csv', level=0)]
-DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.json', level=0)]
-DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, '.txt', level=0)]
-DATASET_NAMES = sorted(
-    [f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]])
-DATASET_NAME2FILENAME = dict(zip(DATASET_NAMES, DATASET_FILENAMES))
+DATASET_FILENAMES = [f['name'] for f in find_files(DATA_PATH, ext='.csv.gz', level=0)]
+DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, ext='.csv', level=0)]
+DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, ext='.json', level=0)]
+DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, ext='.txt', level=0)]
+DATASET_NAMES =
+    [f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]]
+DATASET_NAME2FILENAME = dict(sorted(zip(DATASET_NAMES, DATASET_FILENAMES)))
 
 
 def str2int(s):

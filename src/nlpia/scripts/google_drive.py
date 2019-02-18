@@ -1,7 +1,8 @@
 #!/python
 """ Download script for google drive shared links 
 
-Thank you @turdus-merula and Andrew Hundt! https://stackoverflow.com/a/39225039/623735
+Thank you @turdus-merula and Andrew Hundt! 
+https://stackoverflow.com/a/39225039/623735
 """
 import sys
 import requests

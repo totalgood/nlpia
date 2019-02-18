@@ -15,9 +15,9 @@ lxml>=4.3.0
 matplotlib>=2.2.3,<2.3.0
 MechanicalSoup>=0.10.0,<1.0.0
 nltk>=3.2.5,<3.3.0
-# spacy 2.0.18 has requirement numpy>=1.15.0, but you'll have numpy 1.14.3 which is incompatible.
+# spacy 2.0.18 has requirement numpy>=1.15.0, but you'll have numpy 1.14.5 which is incompatible.
 # spacy 2.0.18 has requirement regex==2018.01.10, but you'll have regex 2018.11.22 which is incompatible.
-# numpy<=1.14.5,>=1.13.3  # tensorflow 1.10 requires numpy<=1.14.5,>=1.13.3, scipy prefers want numpy>=1.15.1  
+numpy==1.14.5  # tensorflow 1.10 requires numpy<=1.14.5,>=1.13.3, scipy prefers want numpy>=1.15.1  
 opencv-python>=3.4.2,<3.5.0
 # pandas-datareader>=0.5.0
 # pandoc>=2.2.3,<3.0.0
@@ -33,8 +33,9 @@ pytest>=3.2.1
 python-levenshtein>=0.12.0,<0.13.0
 qtconsole>=4.2.1,<6.0.0  # 4.4.1 is available on OSX in conda and pip  # pyqt>=5.9.2,<6.0
 redis>=2.10.6,<2.11.0
+regex>=2018.01.10
 # spacy 2.0.18 has requirement regex==2018.01.10, but you'll have regex 2018.11.22 which is incompatible.
-# regex==2018.01.10
+-e git://github.com/totalgood/spacy.git#egg=spacy
 scikit-learn>=0.18.1
 scipy>=1.1.0
 seaborn>=0.8

@@ -29,9 +29,10 @@ dependencies:
   - python-levenshtein>=0.12.0
   - redis-py>=2.10.6
   # spacy 2.0.18 has requirement regex==2018.01.10, but you'll have regex 2018.11.22 which is incompatible.
-  # - regex==2018.01.10
+  # - spacy==2.0.18
+  - regex>=2018.10.0
   - scipy==1.1.0
-  - spacy==2.0.18
+  - numpy==1.14.5
   - swig>=3.0.12
   - tensorflow==1.11.0
   - tensorflow-hub==0.1.1
