@@ -127,10 +127,11 @@ def get_url_title(url):
 
 def get_url_id(url):
     """ Extract the drive ID from a google_drive url """
+    pass
 
 
 def get_url_filename(url=None, driveid=None):
-    """ Get the filename associated with a google drive driveid or drive.google.com URL
+    r""" Get the filename associated with a google drive driveid or drive.google.com URL
 
     >>> get_url_filename(driveid='1a-64b6y6xsQr5puUsHX_wxI1orQDercM')
     'VGG_VOC0712Plus_SSD_512x512_ft_iter_160000.h5'
