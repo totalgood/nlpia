@@ -49,9 +49,7 @@ from math import ceil
 from itertools import product, zip_longest
 import requests
 from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, InvalidHeader, MissingSchema
-from urllib.parse import urlparse
 from urllib.error import URLError
-from lxml.html import fromstring as parse_html
 from html2text import html2text
 from copy import deepcopy, copy
 
@@ -74,6 +72,7 @@ from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATE
 from nlpia.constants import INT_MIN, INT_NAN, MAX_LEN_FILEPATH, MIN_DATA_FILE_SIZE
 from nlpia.constants import HTML_TAGS, EOL
 from nlpia.futil import find_filepath, expand_filepath, ensure_open, read_json
+from nlpia.web import get_url_filemeta, get_url_title, try_parse_url
 
 _parse = None  # placeholder for SpaCy parser + language model
 
@@ -427,6 +426,7 @@ for syn, lang in ANKI_LANGUAGE_SYNONYMS:
     for eng in ENGLISHES:
         BIG_URLS[lang + '-' + eng] = BIG_URLS[lang + '-eng']
 
+
 """
 Google N-Gram Viewer meta data is from:
 * [GOOGLE_NGRAM files](https://storage.googleapis.com/books/ngrams/books/datasetsv2.html)
@@ -441,6 +441,7 @@ for name in GOOGLE_NGRAM_NAMES:
                                          1000, GOOGLE_NGRAM_FILE.format(name),
                                          pd.read_table,
                                          {'sep': '\t', 'header': None, 'names': 'term_pos year term_freq book_freq'.split()})
+
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
     logger.warning('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIG_URLS !!!'.format(
@@ -815,19 +816,6 @@ def no_tqdm(it, total=1, **kwargs):
     return it
 
 
-def dropbox_basename(url):
-    """ Strip off the dl=0 suffix from dropbox links
-    
-    >>> dropbox_basename('https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1')
-    'aclImdb_v1.tar.gz'
-    """
-    filename = os.path.basename(url)
-    match = re.findall(r'\?dl=[0-9]$', filename)
-    if match:
-        return filename[:-len(match[0])]
-    return filename
-
-
 def normalize_ext(filepath):
     """ Convert file extension(s) to normalized form, e.g. '.tgz' -> '.tar.gz'
 
@@ -1004,27 +992,6 @@ def create_big_url(name):
     return name
 
 
-def try_parse_url(url):
-    """ User urlparse to try to parse URL returning None on exception """
-    if len(url.strip()) < 4:
-        logger.info('URL too short: {}'.format(url))
-        return None
-    try:
-        parsed_url = urlparse(url)
-    except ValueError:
-        logger.info('Parse URL ValueError: {}'.format(url))
-        return None
-    if parsed_url.scheme:
-        return parsed_url
-    try:
-        parsed_url = urlparse('http://' + parsed_url.geturl())
-    except ValueError:
-        logger.info('Invalid URL for assumed http scheme: urlparse("{}") from "{}" '.format('http://' + parsed_url.geturl(), url))
-        return None
-    if not parsed_url.scheme:
-        logger.info('Unable to guess a scheme for URL: {}'.format(url))
-        return None
-    return parsed_url
 
 
 def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood.com'):
@@ -1039,72 +1006,6 @@ def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood
     ftp.cwd(parsed_url.path)
     ftp.retrbinary("RETR " + filename, open(filename, 'wb').write)
     ftp.quit()
-
-
-def get_url_filemeta(url):
-    """ Request HTML for the page at the URL indicated and return the url, filename, and remote size
-
-    TODO: just add remote_size and basename and filename attributes to the urlparse object
-          instead of returning a dict
-
-    >>> sorted(get_url_filemeta('mozilla.com').items())
-    [('filename', ''),
-     ('hostname', 'mozilla.com'),
-     ('path', ''),
-     ('remote_size', -1),
-     ('url', 'http://mozilla.com'),
-     ('username', None)]
-    >>> sorted(get_url_filemeta('https://duckduckgo.com/about?q=nlp').items())
-    [('filename', 'about'),
-     ('hostname', 'duckduckgo.com'),
-     ('path', '/about'),
-     ('remote_size', -1),
-     ('url', 'https://duckduckgo.com/about?q=nlp'),
-     ('username', None)]
-    >>> 1000 <= int(get_url_filemeta('en.wikipedia.org')['remote_size']) <= 200000
-    True
-    """
-    parsed_url = try_parse_url(url)
-
-    if parsed_url is None:
-        return None
-    if parsed_url.scheme.startswith('ftp'):
-        return get_ftp_filemeta(parsed_url)
-
-    url = parsed_url.geturl()
-    try:
-        r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
-        remote_size = r.headers.get('Content-Length', -1)
-        return dict(url=url, hostname=parsed_url.hostname, path=parsed_url.path,
-                    username=parsed_url.username, remote_size=remote_size,
-                    filename=os.path.basename(parsed_url.path))
-    except ConnectionError:
-        return None
-    except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema):
-        return None
-    return None
-
-
-def get_url_title(url):
-    r""" Request HTML for the page at the URL indicated and return it's <title> property
-
-    >>> get_url_title('mozilla.com').strip()
-    'Internet for people, not profit\n    — Mozilla'
-    """
-    parsed_url = try_parse_url(url)
-    if parsed_url is None:
-        return None
-    try:
-        r = requests.get(parsed_url.geturl(), stream=False, allow_redirects=True, timeout=5)
-        tree = parse_html(r.content)
-        title = tree.findtext('.//title')
-        return title
-    except ConnectionError:
-        logging.error('Unable to connect to internet to retrieve URL {}'.format(parsed_url.geturl()))
-        logging.error(format_exc())
-    except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema):
-        logging.warn('Unable to retrieve URL {}'.format(parsed_url.geturl()))
-        logging.error(format_exc())
 
 
 def download_unzip(names=None, normalize_filenames=False, verbose=True):

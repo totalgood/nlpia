@@ -4,52 +4,7 @@
 Thank you @turdus-merula and Andrew Hundt! 
 https://stackoverflow.com/a/39225039/623735
 """
-import sys
-import requests
-from tqdm import tqdm
-from nlpia.loaders import get_url_title
-
-
-def download_file_from_google_drive(driveid, destination=None):
-    if '&id=' in driveid:
-        # https://drive.google.com/uc?export=download&id=0BwmD_VLjROrfM1BxdkxVaTY2bWs  # dailymail_stories.tgz
-        driveid = driveid.split('&id=')[-1]
-    if '?id=' in driveid:
-        # 'https://drive.google.com/open?id=14mELuzm0OvXnwjb0mzAiG-Ake9_NP_LQ'  # SSD pretrainined keras model
-        driveid = driveid.split('?id=')[-1]
-
-    def get_confirm_token(response):
-        for key, value in response.cookies.items():
-            if key.startswith('download_warning'):
-                return value
-
-        return None
-
-    def save_response_content(response, destination):
-        CHUNK_SIZE = 32768
-
-        with open(destination, "wb") as f:
-            for chunk in tqdm(response.iter_content(CHUNK_SIZE)):
-                if chunk:  # filter out keep-alive new chunks
-                    f.write(chunk)
-
-    URL = "https://docs.google.com/uc?export=download"
-
-    session = requests.Session()
-
-    response = session.get(URL, params={'id': driveid}, stream=True)
-    token = get_confirm_token(response)
-
-    if token:
-        params = {'id': driveid, 'confirm': token}
-        response = session.get(URL, params=params, stream=True)
-
-    if not destination:
-        destination = get_url_title('https://drive.google.com/open?id={}'.format(driveid))
-        if destination.endswith('Google Drive'):
-            destination = destination[:-len('Google Drive')].rstrip().rstrip('-:').rstrip()
-    save_response_content(response, destination)    
-
+from nlpia.web import download_file_from_google_drive, 
 
 def main():
     if len(sys.argv) is not 3:
