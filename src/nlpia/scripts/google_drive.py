@@ -7,7 +7,7 @@ https://stackoverflow.com/a/39225039/623735
 import sys
 import requests
 from tqdm import tqdm
-from .loaders import get_url_title
+from nlpia.loaders import get_url_title
 
 
 def download_file_from_google_drive(driveid, destination=None):
