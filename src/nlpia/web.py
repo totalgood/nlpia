@@ -12,6 +12,7 @@ from urllib.error import URLError
 from lxml.html import fromstring as parse_html
 
 from nlpia.constants import logging
+from nlpia.futil import expand_filepath
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,67 @@ GOOGLE_DRIVEID_FILENAMES = """
 1fyDDUcIOSjeiP08vl1WCndcFdtboFXua VGG_VOC0712Plus_SSD_300x300_ft_iter_160000.h5
 1a-64b6y6xsQr5puUsHX_wxI1orQDercM VGG_VOC0712Plus_SSD_512x512_ft_iter_160000.h5
 """
+
+def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
+    r""" Parse the HTTP documentation HTML page in filename
+    
+    Return:
+        code_dict: {200: "OK", ...}
+
+    >>> fn = 'HTTP_1.1  Status Code Definitions.html'
+    >>> code_dict = read_http_status_codes(fn)
+    >>> code_dict
+    {'100': 'Continue',
+    100: 'Continue',
+    '101': 'Switching Protocols',
+    101: 'Switching Protocols',
+    '200': 'OK',
+    200: 'OK',...
+    >>> json.dump(code_dict, open(os.path.join(DATA_PATH, fn + '.json'), 'wt'), indent=2)
+    """ 
+    lines = read_text(filename)
+    level_lines = get_markdown_levels(lines, 3)
+    code_dict = {}
+    for level, line in level_lines:
+        code, name = (re.findall(r'\s(\d\d\d)[\W]+([-\w\s]*)', line) or [[0, '']])[0]
+        if 1000 > int(code) >= 100:
+            code_dict[code] = name
+            code_dict[int(code)] = name
+    return code_dict
+
+
+def http_status_code(code):
+    r""" convert 3-digit integer into a short name of the response status code for an HTTP request
+    
+    >>> http_status_code(301)
+    'Moved Permanently'
+    >>> http_status_code(302)
+    'Found'
+    >>> http_status_code(404)
+    'Not Found'
+    """
+    code_dict = read_json('HTTP_1.1  Status Code Definitions.html.json')
+    return code_dict.get(code, None)
+
+
+def looks_like_url(url):
+    """ Simplified check to see if the text appears to be a URL.
+
+    Similar to `urlparse` but much more basic.
+
+    Returns:
+      True if the url str appears to be valid.
+      False otherwise.
+
+    >>> url = looks_like_url("totalgood.org")
+    >>> bool(url)
+    True
+    """
+    if not isinstance(url, basestring):
+        return False
+    if not isinstance(url, basestring) or len(url) >= 1024 or not cre_url.match(url):
+        return False
+    return True
 
 
 def try_parse_url(url):
@@ -147,9 +209,31 @@ def get_url_filename(url=None, driveid=None):
             filename = filename[:-len('Google Drive')].rstrip().rstrip('-:').rstrip()
         return filename
     logger.warn('Unable to find filename for the URL "{}"'.format(url))
-    
 
-def download_file_from_google_drive(driveid, destination=None):
+
+def get_response_confirmation_token(response):
+    for key, value in response.cookies.items():
+        if key.startswith('download_warning'):
+            return value
+    return None
+
+
+def save_response_content(response, filename=filename, destination=os.path.curdir, chunksize=32768):
+    """ For streaming response from requests, download the content one CHUNK at a time """
+    chunksize = chunksize or 32768
+    if os.path.sep in filename:
+        full_destination_path = filename
+    else:
+        full_destination_path = os.path.join(destination, filename)
+    full_destination_path = expand_filepath(full_destination_path)
+    with open(full_destination_path, "wb") as f:
+        for chunk in tqdm(response.iter_content(CHUNK_SIZE)):
+            if chunk:  # filter out keep-alive new chunks
+                f.write(chunk)
+    return full_destination_path
+
+
+def download_file_from_google_drive(driveid, filename=None, destination=os.path.curdir):
     """ Download script for google drive shared links 
 
     Thank you @turdus-merula and Andrew Hundt! 
@@ -162,44 +246,20 @@ def download_file_from_google_drive(driveid, destination=None):
         # 'https://drive.google.com/open?id=14mELuzm0OvXnwjb0mzAiG-Ake9_NP_LQ'  # SSD pretrainined keras model
         driveid = driveid.split('?id=')[-1]
 
-    def get_confirm_token(response):
-        for key, value in response.cookies.items():
-            if key.startswith('download_warning'):
-                return value
-
-        return None
-
-    def save_response_content(response, destination):
-        CHUNK_SIZE = 32768
-
-        with open(destination, "wb") as f:
-            for chunk in tqdm(response.iter_content(CHUNK_SIZE)):
-                if chunk:  # filter out keep-alive new chunks
-                    f.write(chunk)
-
     URL = "https://docs.google.com/uc?export=download"
 
     session = requests.Session()
 
     response = session.get(URL, params={'id': driveid}, stream=True)
-    token = get_confirm_token(response)
+    token = get_response_confirmation_token(response)
 
     if token:
         params = {'id': driveid, 'confirm': token}
         response = session.get(URL, params=params, stream=True)
 
-    destination = destination or get_url_filename(driveid=driveid)
+    filename = filename or get_url_filename(driveid=driveid)
 
-    save_response_content(response, destination)    
+    full_destination_path = save_response_content(response, filename=fileanme, destination=destination)
 
+    return os.path.abspath(destination)   
 
-def main(driveid=None, filename=None):
-    if driveid is None:
-        if len(sys.argv) < 2:
-            print("Usage: python google_drive.py drive_file_id destination_file_path")
-            return
-        else:
-            driveid = sys.argv[1]  # TAKE ID FROM SHAREABLE LINK
-        if len(sys.argv) > 2:
-            filename = sys.argv[2]  # DESTINATION FILE ON YOUR DISK
-        download_file_from_google_drive(driveid, filename)
