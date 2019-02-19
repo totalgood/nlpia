@@ -1,4 +1,7 @@
-""" File utilities comparable to similarly named bash utils: rm_rf(), rm_f(), and mkdir_p() """
+""" File utilities comparable to similarly named bash utils: rm_rf(), rm_f(), and mkdir_p() 
+
+dataset1.0 is in files like: PPE1.rar PPE2.zip PPE3.zip PP4.7zip
+dataset2.0 is in gs:/Buckets/safety_monitoring/data/obj/supplemental/"""
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
 from builtins import (bytes, dict, int, list, object, range, str,  # noqa
