@@ -46,4 +46,4 @@ tensorflow-hub==0.1.1
 theano==1.0.2
 tqdm>=4.11.2
 # spacy requires wheel>=0.32.0,<0.33.0
-wheel==0.32.0
+# wheel>=0.32.0
