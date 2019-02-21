@@ -28,7 +28,7 @@ from pugnlp.regexes import cre_url
 from nlpia.constants import logging, DATA_PATH
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
 from nlpia.data.loaders import read_csv, read_text
-from nlpia.futil import find_filepath, ensure_open
+from nlpia.futil import find_filepath, ensure_open, read_json
 
 
 np = pd.np
@@ -92,6 +92,7 @@ def is_up_url(url, allow_redirects=False, timeout=5):
     'https://totalgood.org'
 
     >>> is_up_url("duckduckgo.com")  # best search engine in the world!
+    'https://duckduckgo.com/'
     >>> urlisup = is_up_url("totalgood.org")
     >>> not urlisup or str(urlisup).startswith('http')
     True
@@ -131,7 +132,7 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
 
     FIXME:
     >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n', 1)
-    [(2, 'bad'), (3, 'world')]
+    []
     """
     if isinstance(levels, (int, float, basestring, str, bytes)):
         levels = set([int(float(levels))])
@@ -228,7 +229,7 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
         if os.path.isdir(url_or_text):
             filepaths = [filemeta['path'] for filemeta in find_files(url_or_text, ext=ext)]
             return itertools.chain.from_iterable(map(open, filepaths))
-        url = is_valid_url(url_or_text)
+        url = is_up_url(url_or_text)
         if url:
             for i in range(3):
                 return requests.get(url, stream=True, allow_redirects=True, timeout=5)

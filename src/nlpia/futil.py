@@ -9,6 +9,7 @@ standard_library.install_aliases()  # noqa
 
 import os
 import gzip
+import json
 
 from pugnlp.futil import mkdir_p  # noqa
 
@@ -214,3 +215,14 @@ def find_filepath(filename):
         if os.path.isfile(fullpath):
             return fullpath
     return False
+
+
+def read_json(filepath):
+    """ Expand file path variables like ~, look for file at common locations, open and deserialize it
+    
+    >>> read_json('HTTP_1.1  Status Code Definitions.html.json')
+    {'100': 'Continue',
+     '101': 'Switching Protocols',...
+    """
+    filepath = expand_filepath(filepath)
+    return json.load(ensure_open(filepath, mode='rt'))
