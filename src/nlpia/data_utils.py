@@ -25,7 +25,7 @@ import pandas as pd
 from pugnlp.futil import find_files
 from pugnlp.regexes import cre_url
 
-from nlpia.constants import logging, DATA_PATH
+from nlpia.constants import logging, DATA_PATH, BOOK_PATH
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
 from nlpia.data.loaders import read_csv, read_text
 from nlpia.futil import find_filepath, ensure_open, read_json
@@ -93,14 +93,12 @@ def is_up_url(url, allow_redirects=False, timeout=5):
 
     >>> is_up_url("duckduckgo.com")  # best search engine in the world!
     'https://duckduckgo.com/'
-    >>> urlisup = is_up_url("totalgood.org")
-    >>> not urlisup or str(urlisup).startswith('http')
+    >>> urlisup = is_up_url("wikipedia.org")
+    >>> str(urlisup).startswith('http')
     True
-    >>> not urlisup or urlisup.endswith('totalgood.org')
+    >>> 'wikipedia.org' in tr(urlisup)
     True
-    >>> is_up_url('abcd')
-    False
-    >>> bool(is_up_url('abcd.com'))
+    >>> is_up_url('invalidurlwithoutadomain')
     False
     """
     if not isinstance(url, basestring) or '.' not in url:
@@ -178,7 +176,7 @@ def http_status_code(code):
     >>> http_status_code(301)
 
     """
-    code_dict = read_json('HTTP_1.1  Status Code Definitions.html.json')
+    code_dict = read_json(os.path.joint(DATA_PATH, 'HTTP_1.1  Status Code Definitions.html.json'))
     return code_dict.get(code, None)
 
 
