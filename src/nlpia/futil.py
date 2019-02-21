@@ -8,6 +8,7 @@ from past.builtins import basestring
 standard_library.install_aliases()  # noqa
 
 import os
+import gzip
 
 from pugnlp.futil import mkdir_p  # noqa
 
