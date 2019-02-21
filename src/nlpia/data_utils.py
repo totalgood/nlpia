@@ -123,7 +123,7 @@ def is_up_url(url, allow_redirects=False, timeout=5):
 
 def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
     r""" Return a list of 2-tuples with a level integer for the heading levels
-    
+
     >>> get_markdown_levels('paragraph \n##bad\n# hello\n  ### world\n')
     [(0, 'paragraph '), (2, 'bad'), (0, '# hello'), (3, 'world')]
     >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n')
