@@ -67,9 +67,7 @@ def get_lines(file_path=BOOK_PATH):
     ('.../src/nlpia/data/book/Appendix F -- Glossary.asc',
      ['= Glossary\n',
       '\n',
-      "We've collected some ...
-     ]
-    )
+      "We've collected some ...])
     """
     if os.path.isdir(file_path):
         file_path = os.path.join(file_path, '*.asc')
@@ -253,8 +251,11 @@ def infer_url_title(url):
     meta = get_url_filemeta(url)
     title = ''
     if meta:
-        title = meta.get('filename', meta['hostname']) or meta['hostname']
-        title, fileext = splitext(title)
+        if meta.get('hostname', url) == 'drive.google.com':
+            title = get_url_title(url)
+        else:
+            title = meta.get('filename', meta['hostname']) or meta['hostname']
+            title, fileext = splitext(title)
     else:
         logging.error('Unable to retrieve URL: {}'.format(url))
         return None
