@@ -13,7 +13,6 @@ standard_library.install_aliases()  # noqa
 import os
 import io
 import json
-
 import gzip
 
 from pugnlp.futil import mkdir_p, path_status, find_files  # noqa
