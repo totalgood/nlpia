@@ -14,6 +14,7 @@ import os
 import io
 import json
 import gzip
+import json
 
 from pugnlp.futil import mkdir_p, path_status, find_files  # noqa
 
@@ -235,4 +236,3 @@ def read_json(filepath, intkeys=True, intvalues=True):
     d = json.load(ensure_open(find_filepath(filepath), mode='rt'))
     d = update_dict_types(d, keys=intkeys, values=intvalues)
     return d
-    

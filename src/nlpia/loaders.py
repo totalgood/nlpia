@@ -72,7 +72,10 @@ from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATE
 from nlpia.constants import INT_MIN, INT_NAN, MAX_LEN_FILEPATH, MIN_DATA_FILE_SIZE
 from nlpia.constants import HTML_TAGS, EOL
 from nlpia.futil import find_filepath, expand_filepath, ensure_open, read_json
+<<<<<<< HEAD
 from nlpia.web import get_url_filemeta, get_url_title, try_parse_url
+=======
+>>>>>>> master
 
 _parse = None  # placeholder for SpaCy parser + language model
 

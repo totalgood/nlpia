@@ -89,17 +89,20 @@ def is_up_url(url, allow_redirects=False, timeout=5):
       False if url is invalid (any HTTP error code)
       cleaned up URL (following redirects and possibly adding HTTP schema "http://")
 
-    >> is_up_url("totalgood.org")
-    'https://totalgood.org'
-
     >>> is_up_url("duckduckgo.com")  # a more private, less manipulative search engine
     'https://duckduckgo.com/'
     >>> urlisup = is_up_url("totalgood.org")
     >>> not urlisup or str(urlisup).startswith('http')
     True
-    >>> not urlisup or urlisup.endswith('totalgood.org')
+    >>> urlisup = is_up_url("wikipedia.org")
+    >>> str(urlisup).startswith('http')
+    True
+    >>> 'wikipedia.org' in str(urlisup)
     True
     >>> bool(is_up_url('8158989668202919656'))
+    False
+    >>> is_up_url('invalidurlwithoutadomain')
+
     False
     """
     if not isinstance(url, basestring) or '.' not in url:
@@ -130,6 +133,9 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
     [(0, '- bullet '), (2, 'bad'), (0, '# hello'), (3, 'world')]
     >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n', 2)
     [(2, 'bad')]
+    >>> get_markdown_levels('- bullet \n##bad\n# hello\n  ### world\n', 1)
+    []
+
     """
     if isinstance(levels, (int, float, basestring, str, bytes)):
         levels = [float(levels)]
@@ -149,6 +155,55 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
         if level_line and level_line[0] in levels:
             level_lines.append(level_line)
     return level_lines
+
+
+
+def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
+    """ Parse the HTTP documentation HTML page in filename
+    
+    Return:
+        code_dict: {200: "OK", ...}
+    """ 
+    lines = read_text(filename)
+    level_lines = get_markdown_levels(lines)
+    code_dict = {}
+    for level, line in level_lines:
+        code, name = (re.findall(r'\s(\d\d\d)[\W]+([-\w\s]*)', line) or [[0, '']])[0]
+        if 1000 > int(code) >= 100:
+            code_dict[code] = name
+            code_dict[int(code)] = name
+    return code_dict
+    # json.dump(code_dict, open(os.path.join(DATA_PATH, fn + '.json'), 'wt'), indent=2)
+
+
+def http_status_code(code):
+    """ convert 3-digit integer into a short name of the response status code for an HTTP request
+    
+    >>> http_status_code(301)
+
+    """
+    code_dict = read_json(os.path.join(DATA_PATH, 'HTTP_1.1  Status Code Definitions.html.json'))
+    return code_dict.get(code, None)
+
+
+def looks_like_url(url):
+    """ Simplified check to see if the text appears to be a URL.
+
+    Similar to `urlparse` but much more basic.
+
+    Returns:
+      True if the url str appears to be valid.
+      False otherwise.
+
+    >>> url = looks_like_url("totalgood.org")
+    >>> bool(url)
+    True
+    """
+    if not isinstance(url, basestring):
+        return False
+    if not isinstance(url, basestring) or len(url) >= 1024 or not cre_url.match(url):
+        return False
+    return True
 
 
 def iter_lines(url_or_text, ext=None, mode='rt'):
