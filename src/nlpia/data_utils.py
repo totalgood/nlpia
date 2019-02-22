@@ -176,7 +176,7 @@ def http_status_code(code):
     >>> http_status_code(301)
 
     """
-    code_dict = read_json(os.path.joint(DATA_PATH, 'HTTP_1.1  Status Code Definitions.html.json'))
+    code_dict = read_json(os.path.join(DATA_PATH, 'HTTP_1.1  Status Code Definitions.html.json'))
     return code_dict.get(code, None)
 
 
