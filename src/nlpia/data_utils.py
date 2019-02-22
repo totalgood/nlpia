@@ -96,7 +96,7 @@ def is_up_url(url, allow_redirects=False, timeout=5):
     >>> urlisup = is_up_url("wikipedia.org")
     >>> str(urlisup).startswith('http')
     True
-    >>> 'wikipedia.org' in tr(urlisup)
+    >>> 'wikipedia.org' in str(urlisup)
     True
     >>> is_up_url('invalidurlwithoutadomain')
     False
