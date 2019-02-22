@@ -220,7 +220,7 @@ def find_filepath(filename):
 def read_json(filepath):
     """ Expand file path variables like ~, look for file at common locations, open and deserialize it
     
-    >>> read_json(ospath.join(DATA_PATH, 'HTTP_1.1  Status Code Definitions.html.json'))
+    >>> read_json(os.path.join(DATA_PATH, 'HTTP_1.1  Status Code Definitions.html.json'))
     {'100': 'Continue',...
     """
     filepath = expand_filepath(filepath)
