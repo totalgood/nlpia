@@ -25,10 +25,9 @@ from pugnlp.futil import find_files
 from pugnlp.regexes import cre_url
 from pugnlp.util import clean_columns  # creates column names that are valid class attribute names
 
-from nlpia.futil import find_filepath, ensure_open, read_json
+from nlpia.futil import find_filepath, ensure_open, read_json, read_csv, read_text
 from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
-from nlpia.data.loaders import read_csv, read_text
 from nlpia.web import try_parse_url, looks_like_url, http_status_code, read_http_status_codes
 
 

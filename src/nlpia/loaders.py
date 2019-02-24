@@ -61,13 +61,13 @@ import spacy
 from gensim.models import KeyedVectors
 from gensim.models.keyedvectors import REAL, Vocab
 from gensim.scripts.glove2word2vec import glove2word2vec
+from pugnlp.util import clean_columns
 
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
 from nlpia.constants import INT_MIN, INT_NAN, MAX_LEN_FILEPATH, MIN_DATA_FILE_SIZE
 from nlpia.constants import HTML_TAGS, EOL
 from nlpia.constants import tqdm, no_tqdm
-from nlpia.data_utils import clean_columns  # from pugnlp.utils
 from nlpia.futil import mkdir_p, path_status, find_files  # from pugnlp.futil
 from nlpia.futil import find_filepath, expand_filepath, normalize_filepath, normalize_ext, ensure_open
 from nlpia.futil import read_json, read_text, read_csv

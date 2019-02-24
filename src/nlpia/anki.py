@@ -7,7 +7,8 @@ import pandas as pd
 import numpy as np
 import spacy
 
-from nlpia.loaders import get_data, ANKI_LANGUAGES, LANG2ANKI, BIGDATA_PATH, nlp
+from nlpia.constants import BIGDATA_PATH
+from nlpia.loaders import get_data, ANKI_LANGUAGES, LANG2ANKI, nlp
 
 logger = logging.getLogger(__name__)
 
