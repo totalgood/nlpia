@@ -146,7 +146,7 @@ def split_sentences_nltk(text, language_model='tokenizers/punkt/english.pickle')
         sentence_detector = nltk.data.load(language_model)
     except LookupError:
         try:
-            nltk.download('punkt', raise_on_error=True)
+            nltk.download('punkt', raise_on_error=True, quiet=True)
             sentence_detector = nltk.data.load(language_model)
         except ValueError:
             return split_sentences_regex(text)
@@ -224,9 +224,6 @@ def segment_sentences(path=os.path.join(DATA_PATH, 'book'), splitter=split_sente
         4. process each 1-3 line window (breaking on empty lines) with syntax net to label them
         5. label each 1-3-line window of lines as "complete sentence, partial sentence/phrase, or multi-sentence"
 
-    >>> success = nltk.download('punkt')
-    [nltk_data] Downloading package punkt to ...
-    [nltk_data] ...
     >>> 10000 > len(segment_sentences(path=os.path.join(DATA_PATH, 'book'))) >= 4
     True
     >>> len(segment_sentences(path=os.path.join(DATA_PATH, 'psychology-scripts.txt'), splitter=split_sentences_nltk))
