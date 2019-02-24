@@ -45,7 +45,7 @@ try:
 except:
     class Bot:
         pass
-    class AimlParserError
+    class AimlParserError:
         pass
     logger.error('Unable to import aiml_bot.aiml_parser and aiml_bot.Bot, so nlpia will not be able to parse AIML files.')
 
