@@ -21,7 +21,6 @@ from lxml.html import fromstring as parse_html
 from tqdm import tqdm
 
 from nlpia.constants import logging, tqdm, no_tqdm
-from nlpia.data_utils import get_markdown_levels
 from nlpia.futil import expand_filepath, read_text, read_json
 
 
@@ -46,34 +45,6 @@ GOOGLE_DRIVEID_FILENAMES = """
 1fyDDUcIOSjeiP08vl1WCndcFdtboFXua VGG_VOC0712Plus_SSD_300x300_ft_iter_160000.h5
 1a-64b6y6xsQr5puUsHX_wxI1orQDercM VGG_VOC0712Plus_SSD_512x512_ft_iter_160000.h5
 """
-
-def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
-    r""" Parse the HTTP documentation HTML page in filename
-    
-    Return:
-        code_dict: {200: "OK", ...}
-
-    >>> fn = 'HTTP_1.1  Status Code Definitions.html'
-    >>> code_dict = read_http_status_codes(fn)
-    >>> code_dict
-    {'100': 'Continue',
-    100: 'Continue',
-    '101': 'Switching Protocols',
-    101: 'Switching Protocols',
-    '200': 'OK',
-    200: 'OK',...
-    >>> json.dump(code_dict, open(os.path.join(DATA_PATH, fn + '.json'), 'wt'), indent=2)
-    """ 
-    lines = read_text(filename)
-    level_lines = get_markdown_levels(lines, 3)
-    code_dict = {}
-    for level, line in level_lines:
-        code, name = (re.findall(r'\s(\d\d\d)[\W]+([-\w\s]*)', line) or [[0, '']])[0]
-        if 1000 > int(code) >= 100:
-            code_dict[code] = name
-            code_dict[int(code)] = name
-    return code_dict
-
 
 def http_status_code(code):
     r""" convert 3-digit integer into a short name of the response status code for an HTTP request

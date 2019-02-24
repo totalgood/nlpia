@@ -28,7 +28,7 @@ from pugnlp.util import clean_columns  # creates column names that are valid cla
 from nlpia.futil import find_filepath, ensure_open, read_json, read_csv, read_text
 from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
-from nlpia.web import try_parse_url, looks_like_url, http_status_code, read_http_status_codes
+from nlpia.web import try_parse_url, looks_like_url, http_status_code
 
 
 np = pd.np
@@ -154,6 +154,34 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
         if level_line and level_line[0] in levels:
             level_lines.append(level_line)
     return level_lines
+
+
+def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
+    r""" Parse the HTTP documentation HTML page in filename
+    
+    Return:
+        code_dict: {200: "OK", ...}
+
+    >>> fn = 'HTTP_1.1  Status Code Definitions.html'
+    >>> code_dict = read_http_status_codes(fn)
+    >>> code_dict
+    {'100': 'Continue',
+    100: 'Continue',
+    '101': 'Switching Protocols',
+    101: 'Switching Protocols',
+    '200': 'OK',
+    200: 'OK',...
+    >>> json.dump(code_dict, open(os.path.join(DATA_PATH, fn + '.json'), 'wt'), indent=2)
+    """ 
+    lines = read_text(filename)
+    level_lines = get_markdown_levels(lines, 3)
+    code_dict = {}
+    for level, line in level_lines:
+        code, name = (re.findall(r'\s(\d\d\d)[\W]+([-\w\s]*)', line) or [[0, '']])[0]
+        if 1000 > int(code) >= 100:
+            code_dict[code] = name
+            code_dict[int(code)] = name
+    return code_dict
 
 
 def iter_lines(url_or_text, ext=None, mode='rt'):
