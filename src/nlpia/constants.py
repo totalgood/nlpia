@@ -6,12 +6,13 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii, chr,  #
 from future import standard_library
 standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 
+import configparser
 import logging
 import logging.config
 import os
-import configparser
 
 from pandas import read_csv
+from tqdm import tqdm
 
 from pugnlp.util import dict2obj
 from pugnlp.futil import touch_p
@@ -132,3 +133,8 @@ except IOError:
     secrets = {}
 
 secrets = dict2obj(secrets)
+
+
+def no_tqdm(it, total=1, **kwargs):
+    """ Do-nothing iterable wrapper to subsitute for tqdm when verbose==False """
+    return it

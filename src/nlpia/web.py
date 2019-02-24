@@ -4,6 +4,13 @@
 - Google Drive file download
 - Dropbox URL parsing and download
 """
+""" Constants and global configuration options, like `logging.getLogger` and loading secrets.cfg """
+from __future__ import print_function, unicode_literals, division, absolute_import
+from builtins import (bytes, dict, int, list, object, range, str, ascii, chr,  # noqa
+                      hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from future import standard_library
+standard_library.install_aliases()  # noqa: Counter, OrderedDict,
+
 import os
 import re
 import requests
@@ -11,11 +18,11 @@ import sys
 from urllib.parse import urlparse
 from urllib.error import URLError
 
-from tqdm import tqdm
 from lxml.html import fromstring as parse_html
+from tqdm import tqdm
 
-from nlpia.constants import logging
-from nlpia.futil import expand_filepath
+from nlpia.constants import logging, tqdm, no_tqdm
+from nlpia.futil import expand_filepath, read_text, read_json
 
 logger = logging.getLogger(__name__)
 

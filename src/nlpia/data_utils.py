@@ -23,7 +23,7 @@ import pandas as pd
 
 from pugnlp.futil import find_files
 from pugnlp.regexes import cre_url
-from pugnlp.utils import clean_columns  # creates column names that are valid class attribute names
+from pugnlp.util import clean_columns  # creates column names that are valid class attribute names
 
 from nlpia.futil import find_filepath, ensure_open, read_json
 from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
@@ -155,7 +155,6 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
         if level_line and level_line[0] in levels:
             level_lines.append(level_line)
     return level_lines
-
 
 
 def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
