@@ -4,7 +4,6 @@
 - Google Drive file download
 - Dropbox URL parsing and download
 """
-""" Constants and global configuration options, like `logging.getLogger` and loading secrets.cfg """
 from __future__ import print_function, unicode_literals, division, absolute_import
 from builtins import (bytes, dict, int, list, object, range, str, ascii, chr,  # noqa
                       hex, input, next, oct, open, pow, round, super, filter, map, zip)
