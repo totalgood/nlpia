@@ -68,7 +68,32 @@ Plus it has more plugins written by individual developers like you.
 
 If you're on Linux or Mac OS, you're good to go. Just figure out how to launch a terminal and make sure you can run `ipython` or `jupyter notebook` in it. This is where you'll play around with your own NLP pipeline. 
 
+#### Windows
+
 On Windows you have a bit more work to do. Supposedly Windows 10 will let you install Ubuntu with a terminal and bash. But the terminal and shell that comes with [`git`](https://git-scm.com/downloads) is probably a safer bet. It's maintained by a broader open source community.
+
+You need to make sure your `PATH` variable includes a path to `conda`, `python` and other command line apps installed by Anaconda. This can sometimes be set with something like this:
+
+```
+echo "PATH=$HOME/Anaconda3/bin:$PATH" >> ~/.bashrc
+```
+
+or 
+
+```bash
+echo "PATH=/c/Users/$USER/AppData/Local/Continuum/Anaconda3/:$PATH" >> ~/.bashrc
+```
+
+You'll need to make sure you new MINGW64 terminal is launched with `winpty` to trick windows into treating the `MINGW64` terminal (git-bash) like a standards-compliant TTY terminal application. So add these aliases to your `~/.bashrc` from within your git-bash terminal:
+
+```bash
+echo "alias python='winpty python'" >> ~/.bashrc
+echo "alias jupyter='winpty jupyter'" >> ~/.bashrc
+echo "alias ipython='winpty ipython'" >> ~/.bashrc
+```
+
+
+>>>>>>> master
 
 ### Step 4. Clone this repository
 
