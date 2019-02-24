@@ -36,8 +36,18 @@ import os
 import zipfile
 from traceback import format_exc
 
-from aiml_bot import Bot
-from aiml_bot.aiml_parser import AimlParserError
+from nlpia.constants import logging
+logger = logging.getLogger(__name__)
+
+try:
+    from aiml_bot import Bot
+    from aiml_bot.aiml_parser import AimlParserError
+except:
+    class Bot:
+        pass
+    class AimlParserError
+        pass
+    logger.error('Unable to import aiml_bot.aiml_parser and aiml_bot.Bot, so nlpia will not be able to parse AIML files.')
 
 from nlpia.constants import logging
 from nlpia.constants import BIGDATA_PATH
