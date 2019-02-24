@@ -218,7 +218,7 @@ def get_response_confirmation_token(response):
     return None
 
 
-def save_response_content(response, filename=filename, destination=os.path.curdir, chunksize=32768):
+def save_response_content(response, filename='data.csv', destination=os.path.curdir, chunksize=32768):
     """ For streaming response from requests, download the content one CHUNK at a time """
     chunksize = chunksize or 32768
     if os.path.sep in filename:
