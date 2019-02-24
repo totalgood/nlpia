@@ -235,8 +235,6 @@ def save_response_content(response, filename='data.csv', destination=os.path.cur
     return full_destination_path
 
 
-
-live_stream
 def download_file_from_google_drive(driveid, filename=None, destination=os.path.curdir):
     """ Download script for google drive shared links 
 
