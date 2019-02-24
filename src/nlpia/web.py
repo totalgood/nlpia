@@ -22,9 +22,11 @@ from urllib.error import URLError
 
 from lxml.html import fromstring as parse_html
 from tqdm import tqdm
+from pugnlp.regexes import cre_url
 
 from nlpia.constants import logging, tqdm, no_tqdm
 from nlpia.futil import expand_filepath, read_text, read_json
+
 
 
 logger = logging.getLogger(__name__)
@@ -184,7 +186,8 @@ def get_url_filename(url=None, driveid=None):
     'VGG_VOC0712Plus_SSD_512x512_ft_iter_160000.h5'
     >>> get_url_filename(url='https://drive.google.com/open?id=' + '1fyDDUcIOSjeiP08vl1WCndcFdtboFXua')
     'VGG_VOC0712Plus_SSD_300x300_ft_iter_160000.h5'
-    >>> get_url_filename(f'{GOOGLE_DRIVE_PREFIX}{driveid}'.format(GOOGLE_DRIVE_PREFIX=GOOGLE_DRIVE_PREFIX, driveid='14mELuzm0OvXnwjb0mzAiG-Ake9_NP_LQ'))
+    >>> get_url_filename('{GOOGLE_DRIVE_PREFIX}{driveid}'.format(
+    ...     GOOGLE_DRIVE_PREFIX=GOOGLE_DRIVE_PREFIX, driveid='14mELuzm0OvXnwjb0mzAiG-Ake9_NP_LQ'))
     'VGG_VOC0712_SSD_512x512_ft_iter_120000.h5'
     """
     url = url or 'https://drive.google.com/open?id={}'.format(driveid)

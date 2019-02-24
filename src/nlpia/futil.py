@@ -17,6 +17,7 @@ import os
 import json
 import re
 
+from html2text import html2text
 import pandas as pd
 from pugnlp.futil import mkdir_p, path_status, find_files  # noqa
 

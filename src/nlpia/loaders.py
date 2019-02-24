@@ -50,7 +50,6 @@ from itertools import product, zip_longest
 import requests
 from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, InvalidHeader, MissingSchema
 from urllib.error import URLError
-from html2text import html2text
 from copy import deepcopy, copy
 
 import pandas as pd

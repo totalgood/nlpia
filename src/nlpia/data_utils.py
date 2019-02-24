@@ -6,13 +6,14 @@ from future import standard_library
 from past.builtins import basestring
 standard_library.install_aliases()  # noqa
 
-import tempfile
-import os
 import itertools
 import json
+import os
+import re
 import requests
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError  # MissingSchema
+import tempfile
 from urllib.parse import urlparse
 try:
     from StringIO import StringIO
@@ -22,7 +23,6 @@ except ImportError:
 import pandas as pd
 
 from pugnlp.futil import find_files
-from pugnlp.regexes import cre_url
 
 from nlpia.futil import find_filepath, ensure_open, read_json, read_csv, read_text
 from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
