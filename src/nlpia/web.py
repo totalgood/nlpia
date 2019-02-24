@@ -5,6 +5,7 @@
 - Dropbox URL parsing and download
 """
 import os
+import re
 import requests
 import sys
 from urllib.parse import urlparse
@@ -265,3 +266,15 @@ def download_file_from_google_drive(driveid, filename=None, destination=os.path.
 
     return os.path.abspath(destination)   
 
+
+def dropbox_basename(url):
+    """ Strip off the dl=0 suffix from dropbox links
+    
+    >>> dropbox_basename('https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1')
+    'aclImdb_v1.tar.gz'
+    """
+    filename = os.path.basename(url)
+    match = re.findall(r'\?dl=[0-9]$', filename)
+    if match:
+        return filename[:-len(match[0])]
+    return filename

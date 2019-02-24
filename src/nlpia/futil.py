@@ -10,11 +10,11 @@ from future import standard_library
 from past.builtins import basestring
 standard_library.install_aliases()  # noqa
 
-import os
-import io
-import json
 import gzip
+import io
+import os
 import json
+import re
 
 from pugnlp.futil import mkdir_p, path_status, find_files  # noqa
 
@@ -186,6 +186,73 @@ def ensure_open(f, mode='r'):
     return f
 
 
+def normalize_ext(filepath):
+    """ Convert file extension(s) to normalized form, e.g. '.tgz' -> '.tar.gz'
+
+    Normalized extensions are ordered in reverse order of how they should be processed.
+    Also extensions are ordered in order of decreasing specificity/detail.
+    e.g. zip last, then txt/bin, then model type, then model dimensionality
+
+    .TGZ => .tar.gz
+    .ZIP => .zip
+    .tgz => .tar.gz
+    .bin.gz => .w2v.bin.gz
+    .6B.zip => .6B.glove.txt.zip
+    .27B.zip => .27B.glove.txt.zip
+    .42B.300d.zip => .42B.300d.glove.txt.zip
+    .840B.300d.zip => .840B.300d.glove.txt.zip
+
+    FIXME: Don't do this! Stick with the original file names and let the text loader figure out what it is!
+    TODO: use regexes to be more general (deal with .300D and .42B extensions)
+
+    >>> normalize_ext('glove.42B.300d.zip')
+    'glove.42B.300d.glove.txt.zip'
+    """
+    mapping = tuple(reversed((
+        ('.tgz', '.tar.gz'),
+        ('.bin.gz', '.w2v.bin.gz'),
+        ('.6B.zip', '.6b.glove.txt.zip'),
+        ('.42B.zip', '.42b.glove.txt.zip'),
+        ('.27B.zip', '.27b.glove.txt.zip'),
+        ('.300d.zip', '.300d.glove.txt.zip'),
+    )))
+    if not isinstance(filepath, str):
+        return [normalize_ext(fp) for fp in filepath]
+    if '~' == filepath[0] or '$' in filepath:
+        filepath = expand_filepath(filepath)
+    fplower = filepath.lower()
+    for ext, newext in mapping:
+        r = ext.lower().replace('.', r'\.') + r'$'
+        r = r'^[.]?([^.]*)\.([^.]{1,10})*' + r
+        if re.match(r, fplower) and not fplower.endswith(newext):
+            filepath = filepath[:-len(ext)] + newext
+    return filepath
+
+
+def normalize_filepath(filepath):
+    r""" Lowercase the filename and ext, expanding extensions like .tgz to .tar.gz.
+
+    >>> normalize_filepath('/Hello_World.txt\n')
+    'hello_world.txt'
+    >>> normalize_filepath('NLPIA/src/nlpia/bigdata/Goog New 300Dneg\f.bIn\n.GZ')
+    'NLPIA/src/nlpia/bigdata/goog new 300dneg.bin.gz'
+    """
+    filename = os.path.basename(filepath)
+    dirpath = filepath[:-len(filename)]
+    cre_controlspace = re.compile(r'[\t\r\n\f]+')
+    new_filename = cre_controlspace.sub('', filename)
+    if not new_filename == filename:
+        logger.warning('Stripping whitespace from filename: {} => {}'.format(
+            repr(filename), repr(new_filename)))
+        filename = new_filename
+    filename = filename.lower()
+    filename = normalize_ext(filename)
+    if dirpath:
+        dirpath = dirpath[:-1]  # get rid of the trailing os.path.sep
+        return os.path.join(dirpath, filename)
+    return filename
+
+
 def find_filepath(
         filename,
         basepaths=(os.path.curdir, DATA_PATH, BIGDATA_PATH, BASE_DIR, '~', '~/Downloads', os.path.join('/', 'tmp'), '..')):
@@ -208,19 +275,23 @@ def find_filepath(
     return False
 
 
-def update_dict_types(d, keys=True, values=True, typ=int):
+def update_dict_types(d, update_keys=True, update_values=True, typ=int):
     di = {}
+    if not isinstance(typ, tuple):
+        typ = (typ, )
     for k, v in d.items():
-        if values:
-            try:
-                vi = typ(v)
-            except ValueError:
-                vi = v
-        if keys:
-            try:
-                ki = typ(k)
-            except:
-                ki = k
+        ki, vi = k, v
+        for t in typ:  # stop coercing type when the first conversion works
+            if update_values and vi is v:
+                try:
+                    vi = t(v)
+                except ValueError:
+                    pass
+            if update_keys and ki is k:
+                try:
+                    ki = t(k)
+                except ValueError:
+                    pass
         di[ki] = vi
     d.update(di)
     return d

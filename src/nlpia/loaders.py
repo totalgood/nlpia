@@ -64,14 +64,13 @@ from gensim.models import KeyedVectors
 from gensim.models.keyedvectors import REAL, Vocab
 from gensim.scripts.glove2word2vec import glove2word2vec
 
-from pugnlp.futil import mkdir_p, path_status, find_files
-from pugnlp.util import clean_columns
-
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
 from nlpia.constants import INT_MIN, INT_NAN, MAX_LEN_FILEPATH, MIN_DATA_FILE_SIZE
 from nlpia.constants import HTML_TAGS, EOL
-from nlpia.futil import find_filepath, expand_filepath, ensure_open, read_json
+from nlpia.data_utils import clean_columns  # from pugnlp.utils
+from nlpia.futil import mkdir_p, path_status, find_files  # from pugnlp.futil
+from nlpia.futil import find_filepath, expand_filepath, normalize_filepath, normalize_ext, ensure_open, read_json
 from nlpia.web import get_url_filemeta, get_url_title, try_parse_url
 
 _parse = None  # placeholder for SpaCy parser + language model
@@ -814,73 +813,6 @@ for filename in CSVS:
 def no_tqdm(it, total=1, **kwargs):
     """ Do-nothing iterable wrapper to subsitute for tqdm when verbose==False """
     return it
-
-
-def normalize_ext(filepath):
-    """ Convert file extension(s) to normalized form, e.g. '.tgz' -> '.tar.gz'
-
-    Normalized extensions are ordered in reverse order of how they should be processed.
-    Also extensions are ordered in order of decreasing specificity/detail.
-    e.g. zip last, then txt/bin, then model type, then model dimensionality
-
-    .TGZ => .tar.gz
-    .ZIP => .zip
-    .tgz => .tar.gz
-    .bin.gz => .w2v.bin.gz
-    .6B.zip => .6B.glove.txt.zip
-    .27B.zip => .27B.glove.txt.zip
-    .42B.300d.zip => .42B.300d.glove.txt.zip
-    .840B.300d.zip => .840B.300d.glove.txt.zip
-
-    FIXME: Don't do this! Stick with the original file names and let the text loader figure out what it is!
-    TODO: use regexes to be more general (deal with .300D and .42B extensions)
-
-    >>> normalize_ext('glove.42B.300d.zip')
-    'glove.42B.300d.glove.txt.zip'
-    """
-    mapping = tuple(reversed((
-        ('.tgz', '.tar.gz'),
-        ('.bin.gz', '.w2v.bin.gz'),
-        ('.6B.zip', '.6b.glove.txt.zip'),
-        ('.42B.zip', '.42b.glove.txt.zip'),
-        ('.27B.zip', '.27b.glove.txt.zip'),
-        ('.300d.zip', '.300d.glove.txt.zip'),
-    )))
-    if not isinstance(filepath, str):
-        return [normalize_ext(fp) for fp in filepath]
-    if '~' == filepath[0] or '$' in filepath:
-        filepath = expand_filepath(filepath)
-    fplower = filepath.lower()
-    for ext, newext in mapping:
-        r = ext.lower().replace('.', r'\.') + r'$'
-        r = r'^[.]?([^.]*)\.([^.]{1,10})*' + r
-        if re.match(r, fplower) and not fplower.endswith(newext):
-            filepath = filepath[:-len(ext)] + newext
-    return filepath
-
-
-def normalize_filepath(filepath):
-    r""" Lowercase the filename and ext, expanding extensions like .tgz to .tar.gz.
-
-    >>> normalize_filepath('/Hello_World.txt\n')
-    'hello_world.txt'
-    >>> normalize_filepath('NLPIA/src/nlpia/bigdata/Goog New 300Dneg\f.bIn\n.GZ')
-    'NLPIA/src/nlpia/bigdata/goog new 300dneg.bin.gz'
-    """
-    filename = os.path.basename(filepath)
-    dirpath = filepath[:-len(filename)]
-    cre_controlspace = re.compile(r'[\t\r\n\f]+')
-    new_filename = cre_controlspace.sub('', filename)
-    if not new_filename == filename:
-        logger.warning('Stripping whitespace from filename: {} => {}'.format(
-            repr(filename), repr(new_filename)))
-        filename = new_filename
-    filename = filename.lower()
-    filename = normalize_ext(filename)
-    if dirpath:
-        dirpath = dirpath[:-1]  # get rid of the trailing os.path.sep
-        return os.path.join(dirpath, filename)
-    return filename
 
 
 def migrate_big_urls(big_urls=BIG_URLS, inplace=True):

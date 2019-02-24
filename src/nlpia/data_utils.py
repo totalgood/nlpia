@@ -8,27 +8,27 @@ standard_library.install_aliases()  # noqa
 
 import tempfile
 import os
-import re
 import itertools
 import json
+import requests
+from requests.adapters import HTTPAdapter
+from requests.exceptions import ConnectionError  # MissingSchema
+from urllib.parse import urlparse
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
-import requests
-from requests.adapters import HTTPAdapter
-from requests.exceptions import ConnectionError  # MissingSchema
-from urllib.parse import urlparse
 import pandas as pd
 
 from pugnlp.futil import find_files
 from pugnlp.regexes import cre_url
+from pugnlp.utils import clean_columns  # creates column names that are valid class attribute names
 
+from nlpia.futil import find_filepath, ensure_open, read_json
 from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
 from nlpia.data.loaders import read_csv, read_text
-from nlpia.futil import find_filepath, ensure_open, read_json
 from nlpia.web import try_parse_url, looks_like_url, http_status_code, read_http_status_codes
 
 
