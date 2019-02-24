@@ -157,54 +157,6 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
     return level_lines
 
 
-def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
-    """ Parse the HTTP documentation HTML page in filename
-    
-    Return:
-        code_dict: {200: "OK", ...}
-    """ 
-    lines = read_text(filename)
-    level_lines = get_markdown_levels(lines)
-    code_dict = {}
-    for level, line in level_lines:
-        code, name = (re.findall(r'\s(\d\d\d)[\W]+([-\w\s]*)', line) or [[0, '']])[0]
-        if 1000 > int(code) >= 100:
-            code_dict[code] = name
-            code_dict[int(code)] = name
-    return code_dict
-    # json.dump(code_dict, open(os.path.join(DATA_PATH, fn + '.json'), 'wt'), indent=2)
-
-
-def http_status_code(code):
-    """ convert 3-digit integer into a short name of the response status code for an HTTP request
-    
-    >>> http_status_code(301)
-
-    """
-    code_dict = read_json(os.path.join(DATA_PATH, 'HTTP_1.1  Status Code Definitions.html.json'))
-    return code_dict.get(code, None)
-
-
-def looks_like_url(url):
-    """ Simplified check to see if the text appears to be a URL.
-
-    Similar to `urlparse` but much more basic.
-
-    Returns:
-      True if the url str appears to be valid.
-      False otherwise.
-
-    >>> url = looks_like_url("totalgood.org")
-    >>> bool(url)
-    True
-    """
-    if not isinstance(url, basestring):
-        return False
-    if not isinstance(url, basestring) or len(url) >= 1024 or not cre_url.match(url):
-        return False
-    return True
-
-
 def iter_lines(url_or_text, ext=None, mode='rt'):
     r""" Return an iterator over the lines of a file or URI response.
 

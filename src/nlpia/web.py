@@ -22,7 +22,9 @@ from lxml.html import fromstring as parse_html
 from tqdm import tqdm
 
 from nlpia.constants import logging, tqdm, no_tqdm
+from nlpia.data_utils import get_markdown_levels
 from nlpia.futil import expand_filepath, read_text, read_json
+
 
 logger = logging.getLogger(__name__)
 
