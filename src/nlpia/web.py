@@ -1,18 +1,21 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """ Web URL maniuplation and downloading/scraping/ParsingError scripts
 
 - Google Drive file download
 - Dropbox URL parsing and download
 """
 from __future__ import print_function, unicode_literals, division, absolute_import
-from builtins import (bytes, dict, int, list, object, range, str, ascii, chr,  # noqa
-                      hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from builtins import (bytes, dict, int, list, object, range, str,  # noqa
+    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
-standard_library.install_aliases()  # noqa: Counter, OrderedDict,
+standard_library.install_aliases()  # noqa
+from past.builtins import basestring
 
 import os
 import re
 import requests
+from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, InvalidHeader, MissingSchema
 import sys
 from urllib.parse import urlparse
 from urllib.error import URLError

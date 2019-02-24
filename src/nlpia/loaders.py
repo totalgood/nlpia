@@ -71,7 +71,7 @@ from nlpia.constants import tqdm, no_tqdm
 from nlpia.futil import mkdir_p, path_status, find_files  # from pugnlp.futil
 from nlpia.futil import find_filepath, expand_filepath, normalize_filepath, normalize_ext, ensure_open
 from nlpia.futil import read_json, read_text, read_csv
-from nlpia.web import get_url_filemeta, get_url_title, try_parse_url
+from nlpia.web import get_url_filemeta, get_url_title, try_parse_url, dropbox_basename, dropbox_basename
 
 _parse = None  # placeholder for SpaCy parser + language model
 

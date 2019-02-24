@@ -1,14 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """ File utilities comparable to similarly named bash utils: rm_rf(), rm_f(), and mkdir_p() 
 
 dataset1.0 is in files like: PPE1.rar PPE2.zip PPE3.zip PP4.7zip
 dataset2.0 is in gs:/Buckets/safety_monitoring/data/obj/supplemental/"""
-# -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
 from builtins import (bytes, dict, int, list, object, range, str,  # noqa
     ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from future import standard_library
-from past.builtins import basestring
 standard_library.install_aliases()  # noqa
+from past.builtins import basestring
 
 import gzip
 import io
@@ -21,6 +22,7 @@ from pugnlp.futil import mkdir_p, path_status, find_files  # noqa
 
 from nlpia.constants import logging, MAX_LEN_FILEPATH
 from nlpia.constants import BASE_DIR, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
+from nlpia.constants import HTML_TAGS, EOL
 from nlpia.constants import tqdm, no_tqdm
 
 try:

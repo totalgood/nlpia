@@ -23,10 +23,10 @@ import pandas as pd
 
 from pugnlp.futil import find_files
 from pugnlp.regexes import cre_url
-from pugnlp.util import clean_columns  # creates column names that are valid class attribute names
 
 from nlpia.futil import find_filepath, ensure_open, read_json, read_csv, read_text
 from nlpia.constants import logging, DATA_PATH, BIGDATA_PATH, BOOK_PATH  # noqa
+from nlpia.constants import HTML_TAGS, EOL
 from nlpia.constants import UTF8_TO_ASCII, UTF8_TO_MULTIASCII
 from nlpia.web import try_parse_url, looks_like_url, http_status_code
 
@@ -101,7 +101,6 @@ def is_up_url(url, allow_redirects=False, timeout=5):
     >>> bool(is_up_url('8158989668202919656'))
     False
     >>> is_up_url('invalidurlwithoutadomain')
-
     False
     """
     if not isinstance(url, basestring) or '.' not in url:
