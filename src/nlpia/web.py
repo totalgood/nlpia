@@ -4,11 +4,13 @@
 - Google Drive file download
 - Dropbox URL parsing and download
 """
-import sys
+import os
 import requests
-from tqdm import tqdm
+import sys
 from urllib.parse import urlparse
 from urllib.error import URLError
+
+from tqdm import tqdm
 from lxml.html import fromstring as parse_html
 
 from nlpia.constants import logging
