@@ -605,27 +605,6 @@ def combine_dfs(dfs, index_col='index0 index1 index2'.split()):
         dfs = list(dfs.values())
 
 
-def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
-    """ Tries to infer if the Series (usually leftmost column) should be the index_col
-
-    >>> looks_like_index(pd.Series(np.arange(100)))
-    True
-    """
-    if series.name in index_names:
-        return True
-    if (series == series.index.values).all():
-        return True
-    if (series == np.arange(len(series))).all():
-        return True
-    if (
-        (series.index == np.arange(len(series))).all() and
-        str(series.dtype).startswith('int') and
-        (series.count() == len(series))
-    ):
-        return True
-    return False
-
-
 def get_longest_table(url='https://www.openoffice.org/dev_docs/source/file_extensions.html', header=0):
     """ Retrieve the HTML tables from a URL and return the longest DataFrame found
 
@@ -840,6 +819,7 @@ def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood
 def download_unzip(names=None, normalize_filenames=False, verbose=True):
     r""" Download CSV or HTML tables listed in `names`, unzip and to DATA_PATH/`names`.csv .txt etc
 
+    TODO: move to web or data_utils or futils
     Also normalizes file name extensions (.bin.gz -> .w2v.bin.gz).
     Uses table in data_info.csv (internal DATA_INFO) to determine URL or file path from dataset name.
     Also looks

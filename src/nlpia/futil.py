@@ -352,6 +352,27 @@ def read_json(filepath, intkeys=True, intvalues=True):
     return d
 
 
+def looks_like_index(series, index_names=('Unnamed: 0', 'pk', 'index', '')):
+    """ Tries to infer if the Series (usually leftmost column) should be the index_col
+
+    >>> looks_like_index(pd.Series(np.arange(100)))
+    True
+    """
+    if series.name in index_names:
+        return True
+    if (series == series.index.values).all():
+        return True
+    if (series == np.arange(len(series))).all():
+        return True
+    if (
+        (series.index == np.arange(len(series))).all() and
+        str(series.dtype).startswith('int') and
+        (series.count() == len(series))
+    ):
+        return True
+    return False
+
+
 def read_csv(*args, **kwargs):
     """Like pandas.read_csv, only little smarter: check left column to see if it should be the index_col
 
