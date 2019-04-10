@@ -50,7 +50,9 @@ It will usually be found among your other applications with the name `git-bash`.
 
 If you're installing Anaconda3 using a GUI, be sure to check the box that updates your PATH variable. 
 Also, at the end, the Anaconda3 installer will ask if you want to install VSCode. 
-Microsoft's VSCode is supposed to be an OK editor for Python so feel free to use it. 
+Microsoft's VSCode is a decent Python editor/linter if you're willing to send your data to Microsoft to enable all the linting features.
+
+Some of us prefer Sublime Text 3 to the open source IDEs like Atom and VSCode. In Sublime you can get complete linting and spellchecking and auto-delinters for free, even in offline mode (no intrusive data slurping or EULA). 
 
 ### Step 2. Install an Editor
 
