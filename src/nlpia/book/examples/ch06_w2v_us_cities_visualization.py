@@ -6,11 +6,10 @@
 # wv = KeyedVectors.load_word2vec_format(path, binary=True)
 
 # nlpia can now automatically download and load w2v
-
 from nlpia.data.loaders import get_data
 from gensim.models import KeyedVectors
-path = get_data('word2vec')
-wv = KeyedVectors.load_word2vec_format(path, binary=True)
+wv = get_data('word2vec')
+# wv = KeyedVectors.load_word2vec_format(path, binary=True)
 len(wv.vocab)
 # 3000000
 wv.vectors.shape
@@ -91,10 +90,7 @@ us[us.columns[-3:]].head()
 
 import numpy as np
 vocab = pd.np.concatenate([us.city, us.st, us.state])
-vocab = np.array([word for word in vocab if word in wv.wv])
-vocab[:5]
-# array(['Edna', 'Henderson', 'Natalia', 'Yorktown', 'Brighton', 'Berry',
-#        'Trinity', 'Villas', 'Bessemer', 'Aurora'], dtype='<U15')
+vocab = np.array([word for word in vocab if word in wv])
 vocab[:10]
 # array(['Edna', 'Henderson', 'Natalia', 'Yorktown', 'Brighton', 'Berry',
 #        'Trinity', 'Villas', 'Bessemer', 'Aurora'], dtype='<U15')
@@ -117,12 +113,11 @@ us_300D_sorted = pd.DataFrame(city_plus_state)
 del city_plus_state
 del wv
 
+######################################################################
+# Load the city word vectors and compute the 2D PCA vectors for each
 
-# Simplified plot of 10 largest cities
-from sklearn.decomposition import PCA
-pca = PCA(n_components=2) 
-us_300D = get_data('cities_us_wordvectors')
-us_2D = pca.fit_transform(us_300D.iloc[:10, :300])
+# num_cities = 10  # simplified plot of 10 largest cities at beginning of the chapter
+num_cities = 500  # Detailed eye candy plot of US cities
 
 # Original confusing/complicated/detailed plot
 from sklearn.decomposition import PCA
@@ -133,21 +128,44 @@ us_2D = pca.fit_transform(us_300D.iloc[:num_cities, :300])  # <2>
 # <1> PCA here is for visualization of high dimensional vectors only, not for calculating Word2vec vectors
 # <2> The last column (# 301) of this DataFrame contains the name, which is also stored in the DataFrame index.
 
-# this example is completely independent of the examples above
+#
+######################################################################
+
+
+############################################################################################
+# Offline interactive HTML plot example (completely independent of the examples above)
+
+import os 
 from nlpia.data.loaders import get_data
 from nlpia.plots import offline_plotly_scatter_bubble
+num_cities = 200
+
 df = get_data('cities_us_wordvectors_pca2_meta')
-df = df.sort_values('population', ascending=False)[:10].copy()
-df[['x', 'y']] = - df[['x', 'y']]  # <1> flip East/West & North/South axes to match geography better
+df = df.sort_values('population', ascending=False)[:num_cities].copy()
+# <1> flip East/West & North/South axes to match geography better
+flip_east_west, flip_north_south = -1, -1
+df['x'] = flip_east_west * df['x']
+df['y'] = flip_north_south * df['y']
+df = df.sort_values('population', ascending=True)
 html = offline_plotly_scatter_bubble(
     df, x='x', y='y',
-    size_col=None, text_col='name', category_col=None,
+    size_col='population', text_col='name', category_col='timezone',
     xscale=None, yscale=None,  # 'log' or None
     layout={}, marker={'sizeref': 3000})
-with open('wordmap.html', 'w') as fout:
+filename = 'wordmap_{}_US_cities.html'.format(num_cities)
+filepath = os.path.abspath(filename)
+print('Saving interactive HTML plot to "{}".'.format(filepath))
+with open(filepath, 'w') as fout:
     fout.write(html)
-# !firefox ./wordmap.html
-""" Simplified Plot
+# !firefox ./wordmap_*.html  # linux
+# open -a Firefox wordmap_*.html  # Mac
+
+# End of offline interactive visualization
+#################################################################################
+
+
+###################################################
+# Simplified plot for beginning of chapter 6
 
 from nlpia.data.loaders import get_data
 from nlpia.plots import offline_plotly_scatter_bubble
@@ -159,11 +177,11 @@ html = offline_plotly_scatter_bubble(
     size_col=None, text_col='name', category_col=None,
     xscale=None, yscale=None,  # 'log' or None
     layout={}, marker={'sizeref': 3000})
-with open('wordmap.html', 'w') as fout:
+with open('wordmap_10_US_cities.html', 'w') as fout:
     fout.write(html)
 # !firefox ./wordmap.html
 
 <1> flips the East/West North/South axes around to match geography better
 
-
-"""
+#
+#######################################################
