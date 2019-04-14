@@ -54,6 +54,7 @@ src/nlpia/data/bigdata_info.csv
 src/nlpia/data/bigdata_info.latest.csv
 # big data directory
 src/nlpia/bigdata/*
+!src/nlpia/bigdata/glove_test.txt
 # small data compressed/binary files
 src/nlpia/data/*.gz
 src/nlpia/data/*.bz2
