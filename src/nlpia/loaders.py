@@ -164,10 +164,10 @@ def load_glove(filepath, batch_size=1000, limit=None, verbose=True):
         the .12 .22 .32 .42 ... .42
 
     >>> wv = load_glove(os.path.join(BIGDATA_PATH, 'glove_test.txt'))
-    >>> wv.most_similar('two')[:3]
-    [('three', 0.98...),
-     ('with', 0.89...),
-     ('one', 0.87...)]
+    >>> wv.most_similar('and')[:3]
+    [(',', 0.92...),
+     ('.', 0.91...),
+     ('of', 0.86...)]
     """
     num_dim = isglove(filepath)
     tqdm_prog = tqdm if verbose else no_tqdm
@@ -216,7 +216,9 @@ def load_glove_df(filepath, **kwargs):
     3   -0.41242
     Name: the, dtype: float64
     """
-    return pd.read_table(filepath, index_col=0, header=None, sep=' ')
+    pdkwargs = dict(index_col=0, header=None, sep=r'\s', skiprows=[0], verbose=False, engine='python')
+    pdkwargs.update(kwargs)
+    return pd.read_csv(filepath, **pdkwargs)
 
 
 # def load_glove_format(filepath):
