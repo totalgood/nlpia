@@ -95,8 +95,6 @@ echo "alias ipython='winpty ipython'" >> ~/.bashrc
 ```
 
 
->>>>>>> master
-
 ### Step 4. Clone this repository
 
 ```bash
@@ -123,15 +121,15 @@ Use conda (part of the Anaconda package that you installed in Step 1 above) to c
 ```bash
 cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`
 conda env create -n nlpiaenv -f conda/environment.yml
-conda install pip  # to get the latest version of pip
-source activate nlpiaenv
+conda install -y pip  # to get the latest version of pip
+conda activate nlpiaenv
 pip install -e .
 ```
 
 Whenever you want to be able to import or run any `nlpia` modules, you'll need to activate this conda environment first:
 
 ```bash
-$ source activate nlpiaenv
+$ conda activate nlpiaenv
 ```
 
 On **Windows** CMD prompt (Anaconda Prompt in Applications) there is no source command so:
@@ -140,7 +138,7 @@ On **Windows** CMD prompt (Anaconda Prompt in Applications) there is no source c
 C:\ activate nlpiaenv
 ```
 
-Now you can finally make sure you can import nlpia with:
+Now make sure you can import nlpia with:
 
 ```bash
 python -c "print(import nlpia)"
