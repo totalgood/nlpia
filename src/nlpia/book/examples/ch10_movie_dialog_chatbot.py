@@ -1,4 +1,4 @@
-""" Build character sequence-to-sequence training set
+r""" Build character sequence-to-sequence training set
 >>> import os
 >>> from nlpia.loaders import get_data
 >>> df = get_data(os.path.join('..', 'book', 'data', 'dialog.txt'))
@@ -54,7 +54,7 @@ for input_text, target_text in zip(df.statement, df.reply):
 # <6> Compile the vocabulary -- set of the unique characters seen in the input_texts
 
 
-""" Character sequence-to-sequence model parameters
+r""" Character sequence-to-sequence model parameters
 >>> input_vocabulary = sorted(input_vocabulary)  # <1>
 >>> output_vocabulary = sorted(output_vocabulary)
 
@@ -96,7 +96,7 @@ reverse_input_char_index = dict((i, char) for char, i in input_token_index.items
 # <5> Loop over the newly created dictionaries to create the reverse lookups.
 
 
-""" Construct character sequence encoder-decoder training set
+r""" Construct character sequence encoder-decoder training set
 
 >>> import numpy as np  # <1>
 
@@ -151,7 +151,7 @@ for i, (input_text, target_text) in enumerate(
 # <6> For the training data for the decoder, you create the `decoder_input_data` and `decoder_target_data` (which is one time step behind the _decoder_input_data_).
 
 
-"""Construct and train a character sequence encoder-decoder network
+r"""Construct and train a character sequence encoder-decoder network
 >>> from keras.models import Model
 >>> from keras.layers import Input, LSTM, Dense
 
@@ -270,7 +270,7 @@ model.fit([encoder_input_data, decoder_input_data],
 # 57915/57915 [==============================] - 276s 5ms/step - loss: 0.4064 - acc: 0.2123 - val_loss: 0.4717 - val_acc: 0.2035
 # Epoch 33/100
 # 57915/57915 [==============================] - 277s 5ms/step - loss: 0.4053 - acc: 0.2127 - val_loss: 0.4729 - val_acc: 0.2032
-...
+# ...
 # Epoch 69/100                                                                                                                                                                                                                           [1480/1902]
 # 57915/57915 [==============================] - 276s 5ms/step - loss: 0.3830 - acc: 0.2191 - val_loss: 0.4912 - val_acc: 0.2008
 # Epoch 70/100
@@ -336,7 +336,7 @@ model.fit([encoder_input_data, decoder_input_data],
 # Epoch 100/100
 # 57915/57915 [==============================] - 278s 5ms/step - loss: 0.3736 - acc: 0.2220 - val_loss: 0.5017 - val_acc: 0.1992
 
-""" .Construct response generator model
+r""" .Construct response generator model
 >>> encoder_model = Model(encoder_inputs, encoder_states)
 >>> thought_input = [
 ...     Input(shape=(num_neurons,)), Input(shape=(num_neurons,))]
@@ -361,7 +361,7 @@ decoder_model = Model(
     inputs=[decoder_inputs] + thought_input,
     output=[decoder_outputs] + decoder_states)
 
-"""
+r"""
 >>> def decode_sequence(input_seq):
 ...     thought = encoder_model.predict(input_seq)  # <1>
 
@@ -388,3 +388,4 @@ decoder_model = Model(
 ...         thought = [h, c]  # <7>
 
 ...     return generated_sequence
+"""
