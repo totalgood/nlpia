@@ -102,6 +102,10 @@ import os  # noqa
 from keras.callbacks import ModelCheckpoint  # noqa
 from nlpia.constants import BIGDATA_PATH  # noqa
 checkpoint_path = os.path.join(BIGDATA_PATH, 'checkpoints')
+try:
+    os.mkdir(checkpoint_path)
+except FileExistsError:
+    pass
 checkpoint_path = os.path.join(checkpoint_path, 'nlpia-seq2seq-translation-weights.{epoch:02d}-{val_loss:.2f}.hdf5')
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" File utilities comparable to similarly named bash utils: rm_rf(), rm_f(), and mkdir_p() 
+""" File utilities comparable to similarly named bash utils: rm_rf(), rm_f(), and mkdir_p()
 
 dataset1.0 is in files like: PPE1.rar PPE2.zip PPE3.zip PP4.7zip
 dataset2.0 is in gs:/Buckets/safety_monitoring/data/obj/supplemental/"""
@@ -123,7 +123,7 @@ def rm_r(path, force=False):
     elif os.path.isdir(path):
         try:
             return os.rmdir(path)
-        except OSError:  # OSError: [Errno 66] Directory not empty: 
+        except OSError:  # OSError: [Errno 66] Directory not empty:
             pass
         except:
             if not force:
@@ -223,7 +223,7 @@ def ensure_open(f, mode='r'):
                 return open(f, mode=mode)
             f = fin  # reset path in case it is the text that needs to be opened with StringIO
         else:
-            f = io.StringIO(f) 
+            f = io.StringIO(f)
     elif f and getattr(f, 'closed', None):
         if hasattr(f, '_write_gzip_header'):
             return gzip.open(f.name, mode=mode)
@@ -341,11 +341,11 @@ def update_dict_types(d, update_keys=True, update_values=True, typ=(int,)):
         di[ki] = vi
     d.update(di)
     return d
-            
+
 
 def read_json(filepath, intkeys=True, intvalues=True):
     """ read text from filepath (`open(find_filepath(expand_filepath(fp)))`) then json.loads()
-    
+
     >>> read_json('HTTP_1.1  Status Code Definitions.html.json')
     {'100': 'Continue',
      '101': 'Switching Protocols',...
@@ -432,6 +432,3 @@ def read_text(forfn, nrows=None, verbose=True):
                 ) / float(len(lines)) > .05:
             return np.array(html2text(EOL.join(lines)).split(EOL))
     return lines
-
-
-read_txt = read_text

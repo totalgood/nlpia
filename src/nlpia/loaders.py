@@ -312,7 +312,7 @@ BIG_URLS = {
         'http://www.cs.cornell.edu/~cristian/data/cornell_movie_dialogs_corpus.zip',
         9916637,
         'cornell_movie_dialogs_corpus',
-        
+
     ),
     'save_dialog_tweets': (
         'https://www.dropbox.com/s/tlrr9bm45uzm9yl/save_dialog_tweets.txt.gz?dl=1',
@@ -981,7 +981,7 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
         except (IOError, pd.errors.ParserError):
             pass
         try:
-            return read_txt(name, nrows=nrows)
+            return read_text(name, nrows=nrows)
         except (IOError, UnicodeDecodeError):
             pass
     data_path = expand_filepath(data_path)
@@ -1006,7 +1006,7 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
     except IOError:
         pass
     try:
-        return read_txt(os.path.join(data_path, name + '.txt'), verbose=verbose)
+        return read_text(os.path.join(data_path, name + '.txt'), verbose=verbose)
     except IOError:
         pass
 
@@ -1019,7 +1019,7 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
     except ValueError:
         pass
     try:
-        return read_txt(os.path.join(BIGDATA_PATH, name + '.txt'), verbose=verbose)
+        return read_text(os.path.join(BIGDATA_PATH, name + '.txt'), verbose=verbose)
     except IOError:
         pass
 
@@ -1093,7 +1093,7 @@ def get_data(name='sms-spam', nrows=None, limit=None):
                 pass
         if filepathlow.endswith('.txt'):
             try:
-                return read_txt(filepath)
+                return read_text(filepath)
             except (TypeError, UnicodeError):
                 pass
         return filepaths[name]
@@ -1290,7 +1290,7 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
 
 def clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip', subdir='cornell movie-dialogs corpus'):
     """ Load a dataframe of ~100k raw (uncollated) movie lines from the cornell movies dialog corpus
-    
+
     >>> local_filepath = download_file(BIG_URLS['cornell_movie_dialogs_corpus'][0])
     >>> df = clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip')
     >>> df.describe(include='all')
