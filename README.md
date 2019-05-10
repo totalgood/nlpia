@@ -108,7 +108,7 @@ You have two alternative package managers you can use to install `nlpia`:
 5.1. `conda`  
 5.2. `pip`  
 
-Or you can a reader's container with:
+A reader created a Dockerfile you can use for a third way to manage your environment:
 
 5.3. `docker`
 
