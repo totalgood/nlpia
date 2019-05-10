@@ -108,7 +108,7 @@ You have two alternative package managers you can use to install `nlpia`:
 5.1. [`conda`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-51-conda)  
 5.2. [`pip`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-52-pip)   
 
-A reader created a Dockerfile you can use for a third way to manage your environment:
+A helpful [NLPIA](http://bit.ly/gh-readme-nlpia-book) reader, [Hoang Chung Hien](https://github.com/hoangchunghien), created a Dockerfile you can use for a third way to manage your environment:
 
 5.3. [`docker`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-53-docker
 
