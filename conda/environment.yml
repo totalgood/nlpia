@@ -1,6 +1,7 @@
 name: nlpiaenv
 
 channels:
+  - anaconda
   - conda-forge
   - defaults
 
@@ -9,11 +10,11 @@ dependencies:
   # - conda-build
   - cython==0.29
   - gensim>=3.4.0,<3.7.0
-  - h5py
+  - h5py==2.9.0
   - jupyter>=1.0.0,<3.0.0
   - keras-applications>=1.0.6
   - keras-preprocessing>=1.0.5
-  - keras>=2.2.4
+  - keras==2.2.4
   - matplotlib>=2.2.2,<2.3.0
   - nltk>=3.2.5,<3.3.0
   # spacy 2.0.18 has requirement numpy>=1.15.0, but you'll have numpy 1.14.3 which is incompatible.
@@ -34,8 +35,8 @@ dependencies:
   - scipy==1.1.0
   - spacy==2.0.18
   - swig>=3.0.12
-  - tensorflow>=1.13.1
-  - tensorflow-hub>=0.4.0
+  - tensorflow==1.13.1
+  - tensorflow-hub==0.4.0
   - theano>=1.0.2
   # this will fail on windows:
   # - python-annoy>=1.9.5,<2.0.0
