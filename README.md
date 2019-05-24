@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/totalgood/nlpia.svg?branch=master)](https://travis-ci.org/totalgood/nlpia)
+[![Build Status](https://api.travis-ci.com/totalgood/nlpia.svg?branch=master)](https://travis-ci.com/totalgood/nlpia)
 [![Coverage](https://codecov.io/gh/totalgood/nlpia/branch/master/graph/badge.svg)](https://codecov.io/gh/totalgood/nlpia)
 [![GitHub release](https://img.shields.io/github/release/totalgood/nlpia.svg)](https://github.com/totalgood/nlpia/releases/latest)
 [![PyPI version](https://img.shields.io/pypi/pyversions/nlpia.svg)](https://pypi.org/project/nlpia/)
@@ -105,18 +105,18 @@ git clone https://github.com/totalgood/nlpia.git
 
 You have two alternative package managers you can use to install `nlpia`:
 
-5.1. `conda`  
-5.2. `pip`  
+5.1. [`conda`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-51-conda)  
+5.2. [`pip`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-52-pip)   
 
-Or you can a reader's container with:
+A helpful [NLPIA](http://bit.ly/gh-readme-nlpia-book) reader, [Hoang Chung Hien](https://github.com/hoangchunghien), created a Dockerfile you can use for a third way to manage your environment:
 
-5.3. `docker`
+5.3. [`docker`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-53-docker
 
-In most cases, `conda` will be able to install python packages faster and more reliably than pip. Without `conda` Some packages, such as `python-levenshtein`, require you to compile a C library during installation. Windows doesn't have a a compiler and python package installer that will "just work."
+In most cases, `conda` will be able to install python packages faster and more reliably than `pip`. Without `conda` Some packages, such as `python-levenshtein`, require you to compile a C library during installation. Windows doesn't have a a compiler and python package installer that will "just work."
 
 #### Alternative 5.1. `conda`
 
-Use conda (part of the Anaconda package that you installed in Step 1 above) to create an environment called `nlpiaenv`:
+Use `conda` (from the Anaconda3 package that you installed in Step 1 above) to create an environment called `nlpiaenv`:
 
 ```bash
 cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`
