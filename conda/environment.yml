@@ -26,6 +26,7 @@ dependencies:
   - pip>=18.0
   - plac>=0.9.6,<1.0.0
   - plotly==3.3.0
+  - python==3.6
   - pyqt>=5.9.2,<6.0
   - pyscaffold>=3.1
   - python-levenshtein>=0.12.0

@@ -6,10 +6,10 @@ cufflinks>=0.14.6
 cython==0.29
 future>=0.16.0
 gensim==3.6.0
-h5py>=2.7.1,<2.8.0
+# h5py
 html2text>=2018.1.9
 jupyter>=1.0.0,<3.0.0  # pandas>=0.23.4,<0.30.0
-Keras>=2.2.4
+Keras==2.2.4
 Keras-Applications>=1.0.6
 Keras-Preprocessing>=1.0.5
 matplotlib>=2.2.3,<2.3.0
@@ -17,7 +17,7 @@ MechanicalSoup>=0.10.0,<1.0.0
 nltk>=3.2.5,<3.3.0
 # spacy 2.0.18 has requirement numpy>=1.15.0, but you'll have numpy 1.14.3 which is incompatible.
 # spacy 2.0.18 has requirement regex==2018.01.10, but you'll have regex 2018.11.22 which is incompatible.
-# numpy<=1.14.5,>=1.13.3  # tensorflow 1.10 requires numpy<=1.14.5,>=1.13.3, scipy prefers want numpy>=1.15.1  
+# numpy<=1.14.5,>=1.13.3  # tensorflow 1.10 requires numpy<=1.14.5,>=1.13.3, scipy prefers want numpy>=1.15.1
 opencv-python>=3.4.2,<3.5.0
 # pandas-datareader>=0.5.0
 # pandoc>=2.2.3,<3.0.0
@@ -40,7 +40,7 @@ scipy>=1.1.0
 seaborn>=0.8
 setuptools>=40.8.0
 spacy==2.0.18
-tensorflow>=1.13.1
+tensorflow==1.13.1
 tensorflow-hub>=0.4.0
 theano==1.0.2
 tqdm>=4.11.2
