@@ -9,6 +9,7 @@ dependencies:
   # - conda-build
   - cython==0.29
   - gensim>=3.4.0,<3.7.0
+  - h5py
   - jupyter>=1.0.0,<3.0.0
   - keras-applications>=1.0.6
   - keras-preprocessing>=1.0.5
