@@ -28,7 +28,7 @@ from pugnlp.regexes import cre_url
 from nlpia.constants import logging, tqdm, REQUESTS_HEADER
 from nlpia.constants import no_tqdm  # noqa (not used)
 from nlpia.futil import expand_filepath, read_json
-from nlpia.futil read_text  # noqa (not used)
+from nlpia.futil import read_text  # noqa (not used)
 
 logger = logging.getLogger(__name__)
 
