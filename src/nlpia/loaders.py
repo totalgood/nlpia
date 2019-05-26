@@ -945,7 +945,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
                     f.write(chunk)
         r.close()
     else:
-        logger.error('Unable to request URL: {} using request object {}'.format(url, r))
+        logger.error(f'Unable to requests.get(url={url}) using request object {r}')
         return None
 
     logger.debug('nlpia.loaders.download_file: bytes={}'.format(bytes_downloaded))
