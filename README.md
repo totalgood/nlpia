@@ -35,11 +35,11 @@ A community-developed book about building socially responsible NLP pipelines tha
 
 ## Getting Started
 
-You'll need a bash shell on your machine. 
-[Git](https://git-scm.com/downloads) has installers that include bash shell for all three major OSes. 
+You'll need a bash shell on your machine.
+[Git](https://git-scm.com/downloads) has installers that include bash shell for all three major OSes.
 
-Once you have Git installed, launch a bash terminal. 
-It will usually be found among your other applications with the name `git-bash`. 
+Once you have Git installed, launch a bash terminal.
+It will usually be found among your other applications with the name `git-bash`.
 
 
 ### Step 1. Install [Anaconda3](https://docs.anaconda.com/anaconda/install/)
@@ -48,18 +48,18 @@ It will usually be found among your other applications with the name `git-bash`.
 * [MacOSX](https://repo.anaconda.com/archive/Anaconda3-5.2.0-MacOSX-x86_64.pkg)
 * [Windows](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Windows-x86_64.exe)
 
-If you're installing Anaconda3 using a GUI, be sure to check the box that updates your PATH variable. 
-Also, at the end, the Anaconda3 installer will ask if you want to install VSCode. 
+If you're installing Anaconda3 using a GUI, be sure to check the box that updates your PATH variable.
+Also, at the end, the Anaconda3 installer will ask if you want to install VSCode.
 Microsoft's VSCode is a decent Python editor/linter if you're willing to send your data to Microsoft to enable all the linting features.
 
-Some of us prefer Sublime Text 3 to the open source IDEs like Atom and VSCode. In Sublime you can get complete linting and spellchecking and auto-delinters for free, even in offline mode (no intrusive data slurping or EULA). 
+Some of us prefer Sublime Text 3 to the open source IDEs like Atom and VSCode. In Sublime you can get complete linting and spellchecking and auto-delinters for free, even in offline mode (no intrusive data slurping or EULA).
 
 ### Step 2. Install an Editor
 
-You can skip this step if you are happy using `jupyter notebook` or `VSCode` or the editor built into Anaconda3. 
+You can skip this step if you are happy using `jupyter notebook` or `VSCode` or the editor built into Anaconda3.
 
-I like [Sublime Text](https://www.sublimetext.com/3). 
-It's a lot cleaner and more mature than the alternatives. 
+I like [Sublime Text](https://www.sublimetext.com/3).
+It's a lot cleaner and more mature than the alternatives.
 Plus it has more plugins written by individual developers like you.
 
 ### Step 3. Install Git and Bash
@@ -68,7 +68,7 @@ Plus it has more plugins written by individual developers like you.
 * MacOSX -- already installed
 * [Windows](https://git-scm.com/downloads)
 
-If you're on Linux or Mac OS, you're good to go. Just figure out how to launch a terminal and make sure you can run `ipython` or `jupyter notebook` in it. This is where you'll play around with your own NLP pipeline. 
+If you're on Linux or Mac OS, you're good to go. Just figure out how to launch a terminal and make sure you can run `ipython` or `jupyter notebook` in it. This is where you'll play around with your own NLP pipeline.
 
 #### Windows
 
@@ -80,7 +80,7 @@ You need to make sure your `PATH` variable includes a path to `conda`, `python` 
 echo "PATH=$HOME/Anaconda3/bin:$PATH" >> ~/.bashrc
 ```
 
-or 
+or
 
 ```bash
 echo "PATH=/c/Users/$USER/AppData/Local/Continuum/Anaconda3/:$PATH" >> ~/.bashrc
@@ -101,16 +101,16 @@ echo "alias ipython='winpty ipython'" >> ~/.bashrc
 git clone https://github.com/totalgood/nlpia.git
 ```
 
-### Step 5. Install `nlpia` 
+### Step 5. Install `nlpia`
 
 You have two alternative package managers you can use to install `nlpia`:
 
-5.1. [`conda`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-51-conda)  
-5.2. [`pip`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-52-pip)   
+5.1. [`conda`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-51-conda)
+5.2. [`pip`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-52-pip)
 
 A helpful [NLPIA](http://bit.ly/gh-readme-nlpia-book) reader, [Hoang Chung Hien](https://github.com/hoangchunghien), created a Dockerfile you can use for a third way to manage your environment:
 
-5.3. [`docker`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-53-docker
+5.3. [`docker`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-53-docker)
 
 In most cases, `conda` will be able to install python packages faster and more reliably than `pip`. Without `conda` Some packages, such as `python-levenshtein`, require you to compile a C library during installation. Windows doesn't have a a compiler and python package installer that will "just work."
 
@@ -120,7 +120,7 @@ Use `conda` (from the Anaconda3 package that you installed in Step 1 above) to c
 
 ```bash
 cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`
-conda env create -n nlpiaenv -f conda/environment.yml
+conda env create -n nlpiaenv -f conda/environment.yml python==3.7
 conda install -y pip  # to get the latest version of pip
 conda activate nlpiaenv
 pip install -e .
@@ -162,8 +162,8 @@ Or if you don't think you'll be editing any of the source code for nlpia and you
 pip install nlpia
 ```
 
-Linux-based OSes like Ubuntu and OSX come with C++ compilers built-in, so you may be able to install the dependencies using pip instead of `conda`. 
-But if you're on Windows and you want to install packages, like `python-levenshtein` that need compiled C++ libraries, you'll need a compiler. 
+Linux-based OSes like Ubuntu and OSX come with C++ compilers built-in, so you may be able to install the dependencies using pip instead of `conda`.
+But if you're on Windows and you want to install packages, like `python-levenshtein` that need compiled C++ libraries, you'll need a compiler.
 Fortunately Microsoft still lets you [download a compiler for free](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_14.0_standalone:_Visual_C.2B-.2B-_Build_Tools_2015_.28x86.2C_x64.2C_ARM.29), just make sure you follow the links to the Visual Studio "Build Tools" and not the entire Visual Studio package.
 
 Once you have a compiler on your OS you can install `nlpia` using pip:
@@ -310,7 +310,7 @@ Now you can display your 307x300 spectrogram or "wordogram":
 >>> plt.show()
 ```
 
-[![307x300 spectrogram or "wordogram"](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png)](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png) 
+[![307x300 spectrogram or "wordogram"](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png)](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png)
 
 Can you think of some image processing or deep learning algorithms you could run on images of natural language text?
 
