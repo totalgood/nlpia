@@ -1,7 +1,6 @@
 """ Translate documents in some way, like `sed`, only a bit more complex """
 # -*- coding: utf-8 -*-
 import os
-import requests
 import regex
 import re
 import json
@@ -12,6 +11,7 @@ from pugnlp.futil import find_files
 from nlpia.data_utils import iter_lines
 from nlpia.loaders import nlp
 from nlpia.regexes import CRE_SLUG_DELIMITTER
+from nlpia.web import requests_get
 
 from .constants import secrets, DATA_PATH
 
@@ -47,7 +47,7 @@ def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified'
             url = match.group()
             start = match.start()
             altered_text += text[:start]
-            resp = requests.get('https://api-ssl.bitly.com/v3/shorten?access_token={}&longUrl={}'.format(
+            resp = requests_get('https://api-ssl.bitly.com/v3/shorten?access_token={}&longUrl={}'.format(
                 access_token, url), allow_redirects=True, timeout=5)
             js = resp.json()
             short_url = js['shortUrl']
@@ -81,9 +81,9 @@ def hyphenate_slug(slug):
 
 
 def split_slug(slug):
-    """ Return a list of tokens from within a slugLike_This => ['slug', 'Like', 'This'] 
+    """ Return a list of tokens from within a slugLike_This => ['slug', 'Like', 'This']
 
-    >>> split_slug('slugLike_ThisW/aTLA') 
+    >>> split_slug('slugLike_ThisW/aTLA')
     ['slug', 'Like', 'This', 'W', 'a', 'TLA']
     """
     return delimit_slug(slug, sep=' ').split()

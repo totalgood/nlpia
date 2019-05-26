@@ -47,13 +47,11 @@ from traceback import format_exc
 from zipfile import ZipFile
 from math import ceil
 from itertools import product, zip_longest
-import requests
 from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, InvalidHeader, MissingSchema
 from urllib.error import URLError
-from copy import deepcopy, copy
+from copy import deepcopy
 
 import pandas as pd
-import gzip
 import tarfile
 import ftplib
 import spacy
@@ -64,13 +62,16 @@ from pugnlp.util import clean_columns
 
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.constants import DATA_INFO_FILE, BIGDATA_INFO_FILE, BIGDATA_INFO_LATEST
-from nlpia.constants import INT_MIN, INT_NAN, MAX_LEN_FILEPATH, MIN_DATA_FILE_SIZE
-from nlpia.constants import HTML_TAGS, EOL
+from nlpia.constants import INT_MIN, INT_NAN, MIN_DATA_FILE_SIZE
+from nlpia.constants import EOL  # noqa (not used)
 from nlpia.constants import tqdm, no_tqdm
 from nlpia.futil import mkdir_p, path_status, find_files  # from pugnlp.futil
 from nlpia.futil import find_filepath, expand_filepath, normalize_filepath, normalize_ext, ensure_open
 from nlpia.futil import read_json, read_text, read_csv
-from nlpia.web import get_url_filemeta, get_url_title, try_parse_url, dropbox_basename, dropbox_basename
+from nlpia.web import get_url_filemeta
+from nlpia.web import dropbox_basename, get_url_title, try_parse_url  # noqa (not used)
+from nlpia.web import requests_get
+
 
 _parse = None  # placeholder for SpaCy parser + language model
 
@@ -908,7 +909,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     r = None
     if not remote_size or not stat['type'] == 'file' or not local_size >= remote_size or not stat['size'] > MIN_DATA_FILE_SIZE:
         try:
-            r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
+            r = requests_get(url, stream=True, allow_redirects=True, timeout=5)
             remote_size = r.headers.get('Content-Length', -1)
         except ConnectionError:
             logger.error('ConnectionError for url: {} => request {}'.format(url, r))
@@ -1129,7 +1130,7 @@ def get_wikidata_qnum(wikiarticle, wikisite):
     >>> print(get_wikidata_qnum(wikiarticle="Andromeda Galaxy", wikisite="enwiki"))
     Q2469
     """
-    resp = requests.get('https://www.wikidata.org/w/api.php', timeout=5, params={
+    resp = requests_get('https://www.wikidata.org/w/api.php', timeout=5, params={
         'action': 'wbgetentities',
         'titles': wikiarticle,
         'sites': wikisite,
@@ -1305,6 +1306,7 @@ def clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip', subdir='co
     subdir = 'cornell movie-dialogs corpus'
     if fullpath_zipfile.lower().endswith('.zip'):
         retval = unzip(fullpath_zipfile)
+        logger.debug(f'unzip({fullpath_zipfile}) return value: {retval}')
         dirname = dirname[:-4]
     fullpath_movie_lines = os.path.join(BIGDATA_PATH, dirname, subdir, 'movie_lines.txt')
     dialog = pd.read_csv(

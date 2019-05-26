@@ -8,15 +8,15 @@ import os
 import re
 import tarfile
 import tqdm
-import requests
 
-from pugnlp.futil import path_status, find_files
 import numpy as np  # Keras takes care of most of this but it likes to see Numpy arrays
 from keras.preprocessing import sequence    # A helper module to handle padding input
 from keras.models import Sequential         # The base keras Neural Network model
 from keras.layers import Dense, Dropout, Activation   # The layer objects we will pile into the model
-from keras.layers import Conv1D, GlobalMaxPooling1D 
+from keras.layers import Conv1D, GlobalMaxPooling1D
 
+from pugnlp.futil import path_status, find_files
+from nlpia.web import requests_get
 
 # In[2]:
 
@@ -71,7 +71,7 @@ def download_file(url, data_path='.', filename=None, size=None, chunk_size=4096,
         print('requesting URL: {}'.format(url))
     else:
         tqdm_prog = no_tqdm
-    r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
+    r = requests_get(url, stream=True, allow_redirects=True, timeout=5)
     size = r.headers.get('Content-Length', None) if size is None else size
     print('remote size: {}'.format(size))
 

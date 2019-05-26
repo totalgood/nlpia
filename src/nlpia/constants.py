@@ -12,12 +12,17 @@ import logging.config
 import os
 
 from pandas import read_csv
-from tqdm import tqdm
+from tqdm import tqdm  # noqa
 
 from pugnlp.util import dict2obj
 from pugnlp.futil import touch_p
 import platform
 
+REQUESTS_HEADER = (
+    ('User-Agent', 'Mozilla Firefox'),
+    ('From', 'nlpia+github@totalgood.com'),
+    ('Referer', 'http://github.com/totalgood/nlpia'),
+    )
 
 LOG_LEVEL = 'WARN' if not os.environ.get('DEBUG') else 'DEBUG'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -117,7 +122,7 @@ INT_NAN = INT64_NAN = INT64_MIN
 INT_MIN = INT64_MIN = INT64_MIN + 1
 
 MIN_DATA_FILE_SIZE = 100  # loaders.get_data() will fail on files < 100 bytes
-MAX_LEN_FILEPATH = 1023  # on OSX `open(fn)` raises OSError('Filename too long') if len(fn)>=1024 
+MAX_LEN_FILEPATH = 1023  # on OSX `open(fn)` raises OSError('Filename too long') if len(fn)>=1024
 
 HTML_TAGS = '<HTML', '<A HREF=', '<P>', '<BOLD>', '<SCRIPT', '<DIV', '<TITLE', '<BODY', '<HEADER'
 EOL = os.linesep

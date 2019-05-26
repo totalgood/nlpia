@@ -1,9 +1,8 @@
 import re
 
-import requests
 import pandas as pd
 
-# import json
+from nlpia.web import requests_get
 
 
 def simplify_address(address, remove_zip=True, remove_apt=True):
@@ -23,7 +22,7 @@ def geocode_osm(address, polygon=0):
         address=address, polygon=polygon, addressdetails=0)
 
     print(osm_url)
-    resp = requests.get(osm_url, timeout=5)
+    resp = requests_get(osm_url, timeout=5)
     print(resp)
     d = resp.json()
     print(d)
@@ -42,7 +41,7 @@ def geocode_google(address, apikey=None):
     apikey = apikey or 'AIzaSyC--s1-y1xkIxzO7wfIUOeHm8W-ID9fbfM'  # this is a Total Good API key, GET YOUR OWN!
     google_url = 'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={apikey}'.format(
         address=address, apikey=apikey)
-    resp = requests.get(google_url, allow_redirects=True, timeout=5)
+    resp = requests_get(google_url, allow_redirects=True, timeout=5)
     results = resp.json()
     results = results.get('results', {})
     results = [{}] if not len(results) else results

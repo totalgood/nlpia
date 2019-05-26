@@ -7,13 +7,13 @@ from past.builtins import basestring
 standard_library.install_aliases()  # noqa
 
 import itertools
-import json
+import json  # noqa (unused)
 import os
 import re
 import requests
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError  # MissingSchema
-import tempfile
+import tempfile  # noqa (unused)
 from urllib.parse import urlparse
 try:
     from StringIO import StringIO
@@ -112,7 +112,7 @@ def is_up_url(url, allow_redirects=False, timeout=5):
         resp = session.get(normalized_url, allow_redirects=allow_redirects, timeout=timeout)
     except ConnectionError:
         return None
-    except:
+    except:  # noqa (bare except)
         return None
     if resp.status_code in (301, 302, 307) or resp.headers.get('location', None):
         return resp.headers.get('location', None)  # return redirected URL
@@ -157,7 +157,7 @@ def get_markdown_levels(lines, levels=set((0, 1, 2, 3, 4, 5, 6))):
 
 def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
     r""" Parse the HTTP documentation HTML page in filename
-    
+
     Return:
         code_dict: {200: "OK", ...}
 
@@ -171,7 +171,7 @@ def read_http_status_codes(filename='HTTP_1.1  Status Code Definitions.html'):
     '200': 'OK',
     200: 'OK',...
     >>> json.dump(code_dict, open(os.path.join(DATA_PATH, fn + '.json'), 'wt'), indent=2)
-    """ 
+    """
     lines = read_text(filename)
     level_lines = get_markdown_levels(lines, 3)
     code_dict = {}
@@ -213,7 +213,7 @@ def iter_lines(url_or_text, ext=None, mode='rt'):
         url = looks_like_url(url_or_text)
         if url:
             for i in range(3):
-                return requests.get(url, stream=True, allow_redirects=True, timeout=5)
+                return requests_get(url, stream=True, allow_redirects=True, timeout=5)
         else:
             return StringIO(url_or_text)
     elif isinstance(url_or_text, (list, tuple)):

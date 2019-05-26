@@ -14,26 +14,37 @@ from past.builtins import basestring
 
 import os
 import re
+
 import requests
 from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, InvalidHeader, MissingSchema
-import sys
+import sys  # noqa unused
 from urllib.parse import urlparse
-from urllib.error import URLError
+from urllib.error import URLError  # noqa (not used)
+import ftplib
 
 from lxml.html import fromstring as parse_html
-from tqdm import tqdm
 from pugnlp.regexes import cre_url
 
-from nlpia.constants import logging, tqdm, no_tqdm
-from nlpia.futil import expand_filepath, read_text, read_json
+from nlpia.constants import logging, tqdm, REQUESTS_HEADER
+from nlpia.constants import no_tqdm  # noqa (not used)
+from nlpia.futil import expand_filepath, read_json
+from nlpia.futil read_text  # noqa (not used)
 
 logger = logging.getLogger(__name__)
 
-REQUESTS_HEADER = (
-                  ('User-Agent', 'Mozilla Firefox'),
-                  ('From', 'nlpia+github@totalgood.com'),
-                  ('Referer', 'http://github.com/totalgood/nlpia'),
-                 )
+
+def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood.com'):
+    """ FIXME: Get file size, hostname, path metadata from FTP server using parsed_url (urlparse)"""
+    return dict(
+        url=parsed_url.geturl(), hostname=parsed_url.hostname, path=parsed_url.path,
+        username=(parsed_url.username or username),
+        remote_size=-1,
+        filename=os.path.basename(parsed_url.path))
+    ftp = ftplib.FTP(parsed_url.hostname)
+    ftp.login(username, password)
+    ftp.cwd(parsed_url.path)
+    ftp.retrbinary("RETR " + filename, open(filename, 'wb').write)
+    ftp.quit()
 
 
 def requests_get(*args, **kwargs):
@@ -67,6 +78,7 @@ GOOGLE_DRIVEID_FILENAMES = """
 1fyDDUcIOSjeiP08vl1WCndcFdtboFXua VGG_VOC0712Plus_SSD_300x300_ft_iter_160000.h5
 1a-64b6y6xsQr5puUsHX_wxI1orQDercM VGG_VOC0712Plus_SSD_512x512_ft_iter_160000.h5
 """
+
 
 def http_status_code(code):
     r""" convert 3-digit integer into a short name of the response status code for an HTTP request
@@ -179,7 +191,7 @@ def get_url_title(url):
     if parsed_url is None:
         return None
     try:
-        r = requests.get(parsed_url.geturl(), stream=False, allow_redirects=True, timeout=5)
+        r = requests_get(parsed_url.geturl(), stream=False, allow_redirects=True, timeout=5)
         tree = parse_html(r.content)
         title = tree.findtext('.//title')
         return title
