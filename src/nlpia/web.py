@@ -27,9 +27,26 @@ from pugnlp.regexes import cre_url
 from nlpia.constants import logging, tqdm, no_tqdm
 from nlpia.futil import expand_filepath, read_text, read_json
 
-
-
 logger = logging.getLogger(__name__)
+
+REQUESTS_HEADER = (
+                  ('User-Agent', 'Mozilla Firefox'),
+                  ('From', 'nlpia+github@totalgood.com'),
+                  ('Referer', 'http://github.com/totalgood/nlpia'),
+                 )
+
+
+def requests_get(*args, **kwargs):
+    """ Wrapper for requests.get that set the HTTP header be more acceptable by web servers
+
+    >>> resp = requests_get('https://en.wikipedia.org/wiki/List_of_HTTP_header_fields')
+    >>> resp.content[:10]
+    b'<!DOCTYPE '
+    """
+    headers = dict(REQUESTS_HEADER)
+    headers.update(kwargs.get('headers', None) or {})
+    kwargs['headers'] = headers
+    return requests.get(*args, **kwargs)
 
 
 GOOGLE_DRIVE_PREFIX = 'https://drive.google.com/open?id='
@@ -53,7 +70,7 @@ GOOGLE_DRIVEID_FILENAMES = """
 
 def http_status_code(code):
     r""" convert 3-digit integer into a short name of the response status code for an HTTP request
-    
+
     >>> http_status_code(301)
     'Moved Permanently'
     >>> http_status_code(302)
@@ -140,7 +157,7 @@ def get_url_filemeta(url):
 
     url = parsed_url.geturl()
     try:
-        r = requests.get(url, stream=True, allow_redirects=True, timeout=5)
+        r = requests_get(url, stream=True, allow_redirects=True, timeout=5)
         remote_size = r.headers.get('Content-Length', -1)
         return dict(url=url, hostname=parsed_url.hostname, path=parsed_url.path,
                     username=parsed_url.username, remote_size=remote_size,
@@ -222,9 +239,9 @@ def save_response_content(response, filename='data.csv', destination=os.path.cur
 
 
 def download_file_from_google_drive(driveid, filename=None, destination=os.path.curdir):
-    """ Download script for google drive shared links 
+    """ Download script for google drive shared links
 
-    Thank you @turdus-merula and Andrew Hundt! 
+    Thank you @turdus-merula and Andrew Hundt!
     https://stackoverflow.com/a/39225039/623735
     """
     if '&id=' in driveid:
@@ -249,12 +266,12 @@ def download_file_from_google_drive(driveid, filename=None, destination=os.path.
 
     full_destination_path = save_response_content(response, filename=fileanme, destination=destination)
 
-    return os.path.abspath(destination)   
+    return os.path.abspath(destination)
 
 
 def dropbox_basename(url):
     """ Strip off the dl=0 suffix from dropbox links
-    
+
     >>> dropbox_basename('https://www.dropbox.com/s/yviic64qv84x73j/aclImdb_v1.tar.gz?dl=1')
     'aclImdb_v1.tar.gz'
     """
