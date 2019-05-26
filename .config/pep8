@@ -1,0 +1,4 @@
+[pep8]
+# E309 conflicts with other PEPs but can't be found here: https://pep8.readthedocs.io/en/release-1.7.x/intro.html
+ignore = E123, E309
+max-line-length = 160
