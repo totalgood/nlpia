@@ -1,15 +1,24 @@
 import os
 import re
+import sys
 
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-
 from nlpia.loaders import get_data
 
-lang = 'esp'
+if len(sys.argv) > 1:
+    lang = sys.argv[1][:3].lower()
+else:
+    lang = 'spa'
+
 
 df = get_data(lang)
+if lang not in df.columns:
+    # print(df.columns)
+    print(f"changing language name {lang} to {list(df.columns)[-1]}")
+    lang = list(df.columns)[-1]
+
 input_texts, target_texts = [], []  # <1>
 input_vocabulary = set()  # <3>
 output_vocabulary = set()
@@ -20,7 +29,7 @@ decoder_input_path = 'decoder_input_data-{}-{}.np'.format(lang, n)
 decoder_target_path = 'decoder_target_data-eng-{}.np'.format(n)
 
 
-for k, (input_text, target_text) in enumerate(tqdm(zip(df.eng, df.deu), total=n)):
+for k, (input_text, target_text) in enumerate(tqdm(zip(df.eng, df[lang]), total=n)):
     if k == n:
         break
     target_text = start_token + target_text \
@@ -296,6 +305,50 @@ def translate_cli(input_vocab=input_vocab_filename, output_vocab=output_vocab_fi
     model.save(checkpoint_path.format(epoch=999, val_loss=0, val_acc=10))
     model = model.load(find_best_model())
     return cli(model=model, input_encoder=input_encoder, output_decoder=output_decoder)
+
+
+# checkpoint_callback = ModelCheckpoint(checkpoint_path,
+#                                       monitor='val_loss', verbose=0, save_best_only=False, mode='auto')
+# model.fit([encoder_input_data, decoder_input_data],
+#           decoder_target_data,
+#           callbacks=[checkpoint_callback],
+#           batch_size=batch_size, epochs=epochs, validation_split=0.1)  # <4>
+
+# # load the best model and use it to translate whatever you like
+# from keras.models import Model  # noqa
+# from keras.layers import Input, LSTM, Dense  # noqa
+# from nlpia.constants import BIGDATA_PATH
+
+# batch_size = 64    # <1>
+# epochs = 100       # <2>
+# num_neurons = 256  # <3>
+
+# encoder_inputs = Input(shape=(None, input_vocab_size))
+# encoder = LSTM(num_neurons, return_state=True)
+# encoder_outputs, state_h, state_c = encoder(encoder_inputs)
+# encoder_states = [state_h, state_c]
+
+# decoder_inputs = Input(shape=(None, output_vocab_size))
+# decoder_lstm = LSTM(num_neurons, return_sequences=True,
+#                     return_state=True)
+# decoder_outputs, _, _ = decoder_lstm(decoder_inputs,
+#                                      initial_state=encoder_states)
+# decoder_dense = Dense(output_vocab_size, activation='softmax')
+# decoder_outputs = decoder_dense(decoder_outputs)
+# model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
+
+# model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
+#               metrics=['acc'])
+
+# checkpoint_path = os.path.join(BIGDATA_PATH, 'checkpoints')
+# files = os.path.listdir(checkpoint_path)
+# files = pd.Dataframe([[fn] + re.findall(fn, r'[.0-9]{2,4}') for fn in files])
+# files.columns = 'filename loss accuracy'.split()
+# files['goodness'] = files['accuracy'] / files['loss']
+# files = files.sort_values('goodness', inplace=False)
+# checkpoint_path = os.path.join(checkpoint_path, files.iloc[0]['filename'])
+
+# model = model.load(checkpoint_path)
 
 
 if __name__ == '__main__':

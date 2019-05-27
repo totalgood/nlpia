@@ -8,11 +8,15 @@ from nlpia.loaders import get_data
 if len(sys.argv) > 1:
    lang = sys.argv[1][:3].lower()
 else:
-   lang = 'deu'
+   lang = 'spa'
 
 
 df = get_data(lang)
-print(df.columns)
+if lang not in df.columns:
+    # print(df.columns)
+    print(f"changing language name {lang} to {list(df.columns)[-1]}")
+    lang = list(df.columns)[-1]
+
 input_texts, target_texts = [], []  # <1>
 input_vocabulary = set()  # <3>
 output_vocabulary = set()
@@ -124,3 +128,50 @@ model.fit([encoder_input_data, decoder_input_data],
           decoder_target_data,
           callbacks=[checkpoint_callback],
           batch_size=batch_size, epochs=epochs, validation_split=0.1)  # <4>
+
+
+
+# load the best model and use it to translate whatever you like
+from keras.models import Model  # noqa
+from keras.layers import Input, LSTM, Dense  # noqa
+from nlpia.constants import BIGDATA_PATH
+
+batch_size = 64    # <1>
+epochs = 100       # <2>
+num_neurons = 256  # <3>
+
+encoder_inputs = Input(shape=(None, input_vocab_size))
+encoder = LSTM(num_neurons, return_state=True)
+encoder_outputs, state_h, state_c = encoder(encoder_inputs)
+encoder_states = [state_h, state_c]
+
+decoder_inputs = Input(shape=(None, output_vocab_size))
+decoder_lstm = LSTM(num_neurons, return_sequences=True,
+                    return_state=True)
+decoder_outputs, _, _ = decoder_lstm(decoder_inputs,
+                                     initial_state=encoder_states)
+decoder_dense = Dense(output_vocab_size, activation='softmax')
+decoder_outputs = decoder_dense(decoder_outputs)
+model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
+
+model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
+              metrics=['acc'])
+
+
+checkpoint_path = os.path.join(BIGDATA_PATH, 'checkpoints')
+files = os.path.listdir(checkpoint_path)
+files = pd.Dataframe([[fn] + re.findall(fn, r'[.0-9]{2,4}') for fn in files])
+files.columns = 'filename loss accuracy'.split()
+files['goodness'] = files['accuracy'] / files['loss']
+files = files.sort_values('goodness', inplace=False)
+checkpoint_path = os.path.join(checkpoint_path, files.iloc[0]['filename'])
+
+model = model.load(checkpoint_path)
+
+eng = ' '
+while len(eng):
+    english = input('English: ')
+    spanish = onehot_decode_output(model.predict(onehot_encode_input(english)))
+    print(f'Spanish: {spanish}
+    print()
+
