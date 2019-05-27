@@ -1,9 +1,18 @@
-from nlpia.loaders import get_data
+import sys
+
 from tqdm import tqdm
-lang = 'deu'
+
+from nlpia.loaders import get_data
+
+
+if len(sys.argv) > 1:
+   lang = sys.argv[1][:3].lower()
+else:
+   lang = 'deu'
 
 
 df = get_data(lang)
+print(df.columns)
 input_texts, target_texts = [], []  # <1>
 input_vocabulary = set()  # <3>
 output_vocabulary = set()
@@ -14,7 +23,7 @@ decoder_input_path = 'decoder_input_data-{}-{}.np'.format(lang, n)
 decoder_target_path = 'decoder_target_data-eng-{}.np'.format(n)
 
 
-for k, (input_text, target_text) in enumerate(tqdm(zip(df.eng, df.deu), total=n)):
+for k, (input_text, target_text) in enumerate(tqdm(zip(df.eng, df[lang]), total=n)):
     if k == n:
         break
     target_text = start_token + target_text \
