@@ -100,9 +100,11 @@ model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
               metrics=['acc'])
+
+
 model.fit([encoder_input_onehot, decoder_input_onehot],
           decoder_target_onehot, batch_size=batch_size, epochs=epochs,
-          validation_split=0.05)  # <4>
+          validation_split=0.10)  # <4>
 # 57915/57915 [==============================] - 296s 5ms/step - loss: 0.7575 - acc: 0.1210 - val_loss: 0.6521 - val_acc: 0.1517
 # Epoch 2/100
 # 57915/57915 [==============================] - 283s 5ms/step - loss: 0.5924 - acc: 0.1613 - val_loss: 0.5738 - val_acc: 0.1734
