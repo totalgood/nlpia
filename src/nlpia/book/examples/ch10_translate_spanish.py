@@ -239,7 +239,7 @@ class Translator():
         self.input_encoder = OneHotEncoder(vocab=input_vocab)
         self.output_decoder = OneHotEncoder(vocab=output_vocab)
 
-    def cli(self):
+    def interact(self):
         eng = 'x'
         while len(eng.strip()):
             english = input('English: ')
@@ -263,7 +263,7 @@ def find_best_model(checkpoint_path=os.path.join(BIGDATA_PATH, 'checkpoints')):
     return checkpoint_path
 
 
-def cli(model, input_encoder, output_decoder):
+def interract(model, input_encoder, output_decoder):
     eng = ' '
     while len(eng):
         english = input('English: ')
@@ -295,7 +295,7 @@ def compile_model(input_vocab_size=input_vocab_size, output_vocab_size=output_vo
     return model
 
 
-def fit_and_cli(input_vocab=input_vocab_filename, output_vocab=output_vocab_filename):
+def fit_and_interact(input_vocab=input_vocab_filename, output_vocab=output_vocab_filename):
     """ load the best model and use it to translate whatever you like """
     input_encoder = OneHotEncoder(vocab=input_vocab_filename)
     output_decoder = OneHotEncoder(vocab=output_vocab_filename)
@@ -306,15 +306,15 @@ def fit_and_cli(input_vocab=input_vocab_filename, output_vocab=output_vocab_file
     print(model)
     model.save(checkpoint_path.format(epoch=999, val_loss=0, val_acc=10))
     model = model.load(find_best_model())
-    return cli(model=model, input_encoder=input_encoder, output_decoder=output_decoder)
+    return interact(model=model, input_encoder=input_encoder, output_decoder=output_decoder)
 
 
-def load_and_cli(input_vocab=input_vocab_filename, output_vocab=output_vocab_filename):
+def load_and_interact(input_vocab=input_vocab_filename, output_vocab=output_vocab_filename):
     """ load the best model and use it to translate whatever you like """
     model = compile_model()
     model.load()
     model = model.load(find_best_model())
-    return cli(model=model, input_encoder=input_encoder, output_decoder=output_decoder)
+    return interact(model=model, input_encoder=input_encoder, output_decoder=output_decoder)
 
 
 # checkpoint_callback = ModelCheckpoint(checkpoint_path,
