@@ -12,6 +12,8 @@ if len(sys.argv) > 1:
 else:
     lang = 'spa'
 
+source_lang = 'eng'
+
 
 df = get_data(lang)
 if lang not in df.columns:
@@ -20,7 +22,7 @@ if lang not in df.columns:
     lang = list(df.columns)[-1]
 
 
-df.columns = ['english', lang]
+df.columns = [source_lang, lang]
 df = df.dropna()
 input_texts, target_texts = [], []  # <1>
 start_token, stop_token = '\t\n'  # <3>
@@ -29,12 +31,12 @@ output_vocab = set(start_token + stop_token)
 n_samples = min(100000, len(df))  # <4>
 
 df['target'] = start_token + df[lang] + stop_token
-[input_vocab.update(set(statement)) for statement in df.statement]
+[input_vocab.update(set(statement)) for statement in df[source_lang]]
 [output_vocab.update(set(reply)) for reply in df[lang]]
 input_vocab = tuple(sorted(input_vocab)) #<6>
 output_vocab = tuple(sorted(output_vocab))
 
-max_encoder_seq_len = df.statement.str.len().max()
+max_encoder_seq_len = df[source_lang].str.len().max()
 # max_encoder_seq_len
 # 100
 max_decoder_seq_len = df.target.str.len().max()
@@ -64,7 +66,7 @@ decoder_target_onehot = np.zeros(
     dtype='float32')
 
 for i, (input_text, target_text) in enumerate(
-        zip(df.statement, df.target)):  # <3>
+        zip(df[source_lang], df.target)):  # <3>
     for t, c in enumerate(input_text):  # <4>
         k = input_vocab.index(c)
         encoder_input_onehot[i, t, k] = 1.  # <5>
