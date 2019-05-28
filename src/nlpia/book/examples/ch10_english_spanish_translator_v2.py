@@ -28,9 +28,9 @@ input_vocab = set()  # <2>
 output_vocab = set(start_token + stop_token)
 n_samples = min(100000, len(df))  # <4>
 
-df['target'] = start_token + df.reply + stop_token
+df['target'] = start_token + df[lang] + stop_token
 [input_vocab.update(set(statement)) for statement in df.statement]
-[output_vocab.update(set(reply)) for reply in df.reply]
+[output_vocab.update(set(reply)) for reply in df[lang]]
 input_vocab = tuple(sorted(input_vocab)) #<6>
 output_vocab = tuple(sorted(output_vocab))
 
