@@ -252,10 +252,12 @@ class Translator():
 
 def find_best_model(checkpoint_path=os.path.join(BIGDATA_PATH, 'checkpoints')):
     files = os.listdir(checkpoint_path)
-    files = pd.DataFrame([[fn] + re.findall(fn, r'[0-9][.][0-9]{2}') for fn in files])
+    files = pd.DataFrame([[fn] + re.findall(r'[0-9]?[.][0-9]{2}', fn) for fn in files])
+    print(files.head())
     files.columns = 'filename epoch loss accuracy'.split()[:len(files.columns)]
-    files['goodness'] = (files['accuracy'] if 'accuracy' in files.columns else 1.) / files['loss']
-    files = files.sort_values('goodness', inplace=False)
+    files['goodness'] = np.array(files['accuracy'] if 'accuracy' in files.columns else 1.).astype(float) / files['loss'].astype(float)
+    files = files.sort_values('goodness', inplace=False, ascending=False)
+    print(files.head())
     checkpoint_path = os.path.join(checkpoint_path, files.iloc[0]['filename'])
 
     return checkpoint_path
@@ -293,7 +295,7 @@ def compile_model(input_vocab_size=input_vocab_size, output_vocab_size=output_vo
     return model
 
 
-def translate_cli(input_vocab=input_vocab_filename, output_vocab=output_vocab_filename):
+def fit_and_cli(input_vocab=input_vocab_filename, output_vocab=output_vocab_filename):
     """ load the best model and use it to translate whatever you like """
     input_encoder = OneHotEncoder(vocab=input_vocab_filename)
     output_decoder = OneHotEncoder(vocab=output_vocab_filename)
@@ -303,6 +305,14 @@ def translate_cli(input_vocab=input_vocab_filename, output_vocab=output_vocab_fi
     model = fit()
     print(model)
     model.save(checkpoint_path.format(epoch=999, val_loss=0, val_acc=10))
+    model = model.load(find_best_model())
+    return cli(model=model, input_encoder=input_encoder, output_decoder=output_decoder)
+
+
+def load_and_cli(input_vocab=input_vocab_filename, output_vocab=output_vocab_filename):
+    """ load the best model and use it to translate whatever you like """
+    model = compile_model()
+    model.load()
     model = model.load(find_best_model())
     return cli(model=model, input_encoder=input_encoder, output_decoder=output_decoder)
 
@@ -352,4 +362,4 @@ def translate_cli(input_vocab=input_vocab_filename, output_vocab=output_vocab_fi
 
 
 if __name__ == '__main__':
-    translate_cli(input_encoder, output_decoder)
+    fit_and_cli(input_encoder, output_decoder)

@@ -1,34 +1,26 @@
-r""" Build character sequence-to-sequence training set
-
->>> df = get_data('moviedialog')
->>> df.columns = 'statement reply'.split()
->>> df = df.dropna()
->>> input_texts, target_texts = [], []  # <1>
->>> start_token, stop_token = '\t', '\n'  # <3>
->>> input_vocab = set(start_token+stop_token)  # <2>
->>> output_vocab = set()
->>> n_samples = min(100000, len(df))  # <4>
-
->>> df['target'] = start_token + df.reply + stop_token
->>> for statement in df.statement:
-...     input_vocab.update(set(statement))
->>> for reply in df.reply:
-...     output_vocab.update(set(reply))
->>> input_vocab = tuple(sorted(input_vocab))
->>> output_vocab = tuple(sorted(output_vocab))
->>> input_vocabulary = tuple(sorted(input_vocab))
->>> output_vocabulary = tuple(sorted(output_vocab))
-
->>> max_encoder_seq_len = df.statement.str.len().max()  # <3>
->>> max_decoder_seq_len = df.target.str.len().max()
->>> max_encoder_seq_len, max_decoder_seq_len
-(100, 102)
-"""
 import os
+import re
+import sys
+
+import pandas as pd
+import numpy as np
+from tqdm import tqdm
 from nlpia.loaders import get_data
 
-df = get_data('moviedialog')
-df.columns = 'statement reply'.split()
+if len(sys.argv) > 1:
+    lang = sys.argv[1][:3].lower()
+else:
+    lang = 'spa'
+
+
+df = get_data(lang)
+if lang not in df.columns:
+    # print(df.columns)
+    print(f"changing language name {lang} to {list(df.columns)[-1]}")
+    lang = list(df.columns)[-1]
+
+
+df.columns = ['english', lang]
 df = df.dropna()
 input_texts, target_texts = [], []  # <1>
 start_token, stop_token = '\t\n'  # <3>
