@@ -31,9 +31,11 @@ output_vocab = set(start_token + stop_token)
 n_samples = min(100000, len(df))  # <4>
 
 df['target'] = start_token + df[lang] + stop_token
-[input_vocab.update(set(statement)) for statement in df[source_lang]]
-[output_vocab.update(set(reply)) for reply in df[lang]]
-input_vocab = tuple(sorted(input_vocab)) #<6>
+for statement in df[source_lang]:
+    input_vocab.update(set(statement))
+for reply in df[lang]:
+    output_vocab.update(set(reply))
+input_vocab = tuple(sorted(input_vocab))
 output_vocab = tuple(sorted(output_vocab))
 
 max_encoder_seq_len = df[source_lang].str.len().max()
@@ -42,14 +44,6 @@ max_encoder_seq_len = df[source_lang].str.len().max()
 max_decoder_seq_len = df.target.str.len().max()
 # max_decoder_seq_len
 # 102
-
-# <1> The arrays hold the input and target text read from the corpus file.
-# <2> The sets hold the seen characters in the input and target text.
-# <3> The target sequence is annotated with a start (first) and stop (last) token; the characters representing the tokens are defined here. These tokens can't be part of the normal sequence text and should be uniquely used as start and stop tokens.
-# <4> `max_training_samples` defines how many lines are used for the training.
-#     It is the lower number of either a user-defined maximum or the total number of lines loaded from the file.
-# <6> Compile the vocabulary -- set of the unique characters seen in the input_texts
-
 
 """ Construct character sequence encoder-decoder training set
 """
@@ -87,7 +81,7 @@ from keras.models import Model  # noqa
 from keras.layers import Input, LSTM, Dense  # noqa
 
 batch_size = 64    # <1>
-epochs = 100       # <2>
+epochs = 15       # <2>
 num_neurons = 256  # <3>
 
 encoder_inputs = Input(shape=(None, len(input_vocab)))
@@ -108,7 +102,7 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
               metrics=['acc'])
 model.fit([encoder_input_onehot, decoder_input_onehot],
           decoder_target_onehot, batch_size=batch_size, epochs=epochs,
-          validation_split=0.1)  # <4>
+          validation_split=0.05)  # <4>
 # 57915/57915 [==============================] - 296s 5ms/step - loss: 0.7575 - acc: 0.1210 - val_loss: 0.6521 - val_acc: 0.1517
 # Epoch 2/100
 # 57915/57915 [==============================] - 283s 5ms/step - loss: 0.5924 - acc: 0.1613 - val_loss: 0.5738 - val_acc: 0.1734
