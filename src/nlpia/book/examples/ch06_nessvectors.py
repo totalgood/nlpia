@@ -78,12 +78,12 @@ from collections import OrderedDict
 
 import pandas as pd
 from nlpia.data.loaders import get_data
-from gensim.models import KeyedVectors
+# from gensim.models import KeyedVectors
+
 
 if 'word_vectors' not in globals():
-    wordvector_path = get_data('word2vec')
-    word_vectors = KeyedVectors.load_word2vec_format(wordvector_path, binary=True)
-WV = word_vectors
+    WV = word_vectors = get_data('word2vec')
+    # word_vectors = KeyedVectors.load_word2vec_format(wordvector_path, binary=True)
 
 
 ###################################################
