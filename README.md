@@ -4,27 +4,6 @@
 [![PyPI version](https://img.shields.io/pypi/pyversions/nlpia.svg)](https://pypi.org/project/nlpia/)
 [![License](https://img.shields.io/pypi/l/nlpia.svg)](https://pypi.python.org/pypi/nlpia/)
 
-<!---
-Some more badges from grakn.ai and search of github markdown files
-
-### downloads are no longer provided by pypi: https://mail.python.org/pipermail/distutils-sig/2016-May/028986.html
-[![PyPI Package monthly downloads](https://img.shields.io/pypi/dm/nlpia.svg?style=flat)](https://pypi.python.org/pypi/nlpia
-
-
-[![GitHub release](https://img.shields.io/github/release/graknlabs/grakn.svg)](https://github.com/graknlabs/grakn/releases/latest)
-[![Build Status](https://travis-ci.org/graknlabs/grakn.svg?branch=internal)](https://travis-ci.org/graknlabs/grakn)
-[![Slack Status](http://totalgood.herokuapp.com/badge.svg)](https://totalgood.com/slack)
-[![Stack Overflow][stackoverflow-shield]][stackoverflow-link]
-[![Download count](https://img.shields.io/github/downloads/graknlabs/grakn/total.svg)](https://grakn.ai/download)
----
-[![Static Bugs](https://sonarcloud.io/api/project_badges/measure?project=ai.grakn%3Agrakn&metric=bugs)](https://sonarcloud.io/dashboard?id=ai.grakn%3Agrakn)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=ai.grakn%3Agrakn&metric=code_smells)](https://sonarcloud.io/dashboard?id=ai.grakn%3Agrakn)
-[![Duplicated Code](https://sonarcloud.io/api/project_badges/measure?project=ai.grakn%3Agrakn&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=ai.grakn%3Agrakn)
-
-[stackoverflow-shield]: https://img.shields.io/badge/stackoverflow-grakn-blue.svg
-[stackoverflow-link]: https://stackoverflow.com/questions/tagged/grakn
---->
-
 # NLPIA
 
 Community-driven code for the book [**N**atural **L**anguage **P**rocessing **i**n **A**ction](http://bit.ly/gh-readme-nlpia-book).

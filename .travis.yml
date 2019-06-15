@@ -14,11 +14,7 @@ install:
   - sudo apt-get update
   - sudo apt-get remove -y python-boto
   - sudo apt-get install -y libasound* build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev
-  - if [[ "$CONDA_PYTHON_VERSION" == "2.7" ]]; then
-      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-    else
-      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-    fi
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - cp conda/.condarc ~/.condarc
@@ -31,11 +27,7 @@ install:
   - source activate testenv
   - conda install pip
   - conda install python-annoy
-  - if [[ "$CONDA_PYTHON_VERSION" == "2.7" ]]; then
-      pip install -U 'PyScaffold==2.5' ;
-    else
-      pip install -U PyScaffold ;
-    fi
+  - pip install -U PyScaffold ;
   # - sudo apt-get install -y python-boto
   - pip install -r requirements.txt
   - pip install -U -e .

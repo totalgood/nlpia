@@ -3,27 +3,7 @@
 [![GitHub release](https://img.shields.io/github/release/totalgood/nlpia.svg)](https://github.com/totalgood/nlpia/releases/latest)
 [![PyPI version](https://img.shields.io/pypi/pyversions/nlpia.svg)](https://pypi.org/project/nlpia/)
 [![License](https://img.shields.io/pypi/l/nlpia.svg)](https://pypi.python.org/pypi/nlpia/)
-
-<!---
-Some more badges from grakn.ai and search of github markdown files
-
-### downloads are no longer provided by pypi: https://mail.python.org/pipermail/distutils-sig/2016-May/028986.html
-[![PyPI Package monthly downloads](https://img.shields.io/pypi/dm/nlpia.svg?style=flat)](https://pypi.python.org/pypi/nlpia
-
-
-[![GitHub release](https://img.shields.io/github/release/graknlabs/grakn.svg)](https://github.com/graknlabs/grakn/releases/latest)
-[![Build Status](https://travis-ci.org/graknlabs/grakn.svg?branch=internal)](https://travis-ci.org/graknlabs/grakn)
-[![Slack Status](http://totalgood.herokuapp.com/badge.svg)](https://totalgood.com/slack)
-[![Stack Overflow][stackoverflow-shield]][stackoverflow-link]
-[![Download count](https://img.shields.io/github/downloads/graknlabs/grakn/total.svg)](https://grakn.ai/download)
----
-[![Static Bugs](https://sonarcloud.io/api/project_badges/measure?project=ai.grakn%3Agrakn&metric=bugs)](https://sonarcloud.io/dashboard?id=ai.grakn%3Agrakn)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=ai.grakn%3Agrakn&metric=code_smells)](https://sonarcloud.io/dashboard?id=ai.grakn%3Agrakn)
-[![Duplicated Code](https://sonarcloud.io/api/project_badges/measure?project=ai.grakn%3Agrakn&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=ai.grakn%3Agrakn)
-
-[stackoverflow-shield]: https://img.shields.io/badge/stackoverflow-grakn-blue.svg
-[stackoverflow-link]: https://stackoverflow.com/questions/tagged/grakn
---->
+----
 
 # NLPIA
 
@@ -35,11 +15,11 @@ A community-developed book about building socially responsible NLP pipelines tha
 
 ## Getting Started
 
-You'll need a bash shell on your machine. 
-[Git](https://git-scm.com/downloads) has installers that include bash shell for all three major OSes. 
+You'll need a bash shell on your machine.
+[Git](https://git-scm.com/downloads) has installers that include bash shell for all three major OSes.
 
-Once you have Git installed, launch a bash terminal. 
-It will usually be found among your other applications with the name `git-bash`. 
+Once you have Git installed, launch a bash terminal.
+It will usually be found among your other applications with the name `git-bash`.
 
 
 ### Step 1. Install [Anaconda3](https://docs.anaconda.com/anaconda/install/)
@@ -48,16 +28,16 @@ It will usually be found among your other applications with the name `git-bash`.
 * [MacOSX](https://repo.anaconda.com/archive/Anaconda3-5.2.0-MacOSX-x86_64.pkg)
 * [Windows](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Windows-x86_64.exe)
 
-If you're installing Anaconda3 using a GUI, be sure to check the box that updates your PATH variable. 
-Also, at the end, the Anaconda3 installer will ask if you want to install VSCode. 
-Microsoft's VSCode is supposed to be an OK editor for Python so feel free to use it. 
+If you're installing Anaconda3 using a GUI, be sure to check the box that updates your PATH variable.
+Also, at the end, the Anaconda3 installer will ask if you want to install VSCode.
+Microsoft's VSCode is supposed to be an OK editor for Python so feel free to use it.
 
 ### Step 2. Install an Editor
 
-You can skip this step if you are happy using `jupyter notebook` or `VSCode` or the editor built into Anaconda3. 
+You can skip this step if you are happy using `jupyter notebook` or `VSCode` or the editor built into Anaconda3.
 
-I like [Sublime Text](https://www.sublimetext.com/3). 
-It's a lot cleaner more mature. 
+I like [Sublime Text](https://www.sublimetext.com/3).
+It's a lot cleaner more mature.
 Plus it has more plugins written by individual developers like you.
 
 ### Step 3. Install Git and Bash
@@ -66,7 +46,7 @@ Plus it has more plugins written by individual developers like you.
 * MacOSX -- already installed
 * [Windows](https://git-scm.com/downloads)
 
-If you're on Linux or Mac OS, you're good to go. Just figure out how to launch a terminal and make sure you can run `ipython` or `jupyter notebook` in it. This is where you'll play around with your own NLP pipeline. 
+If you're on Linux or Mac OS, you're good to go. Just figure out how to launch a terminal and make sure you can run `ipython` or `jupyter notebook` in it. This is where you'll play around with your own NLP pipeline.
 
 On Windows you have a bit more work to do. Supposedly Windows 10 will let you install Ubuntu with a terminal and bash. But the terminal and shell that comes with [`git`](https://git-scm.com/downloads) is probably a safer bet. It's mained by a broader open source community.
 
@@ -76,12 +56,12 @@ On Windows you have a bit more work to do. Supposedly Windows 10 will let you in
 git clone https://github.com/totalgood/nlpia.git
 ```
 
-### Step 5. Install `nlpia` 
+### Step 5. Install `nlpia`
 
 You have two alternative package managers you can use to install `nlpia`:
 
-5.1. `conda`  
-5.2. `pip`  
+5.1. `conda`
+5.2. `pip`
 
 In most cases, `conda` will be able to install python packages faster and more reliably than pip. Without `conda` Some packages, such as `python-levenshtein`, require you to compile a C library during installation. Windows doesn't have an installer that will "just work."
 
@@ -133,8 +113,8 @@ Or if you don't think you'll be editing any of the source code for nlpia your ca
 pip install nlpia
 ```
 
-Linux-based OSes like Ubuntu and OSX come with C++ compilers built-in, so you may be able to install the dependencies using pip instead of `conda`. 
-But if you're on Windows and you want to install packages, like `python-levenshtein` that need compiled C++ libraries, you'll need a compiler. 
+Linux-based OSes like Ubuntu and OSX come with C++ compilers built-in, so you may be able to install the dependencies using pip instead of `conda`.
+But if you're on Windows and you want to install packages, like `python-levenshtein` that need compiled C++ libraries, you'll need a compiler.
 Fortunately Microsoft still lets you [download a compiler for free](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_14.0_standalone:_Visual_C.2B-.2B-_Build_Tools_2015_.28x86.2C_x64.2C_ARM.29), just make sure you follow the links to the Visual Studio "Build Tools" and not the entire Visual Studio package.
 
 Once you have a compiler on your OS you can install `nlpia` using pip:
@@ -272,7 +252,7 @@ Now you can display your 307x300 spectrogram or "wordogram":
 >>> plt.show()
 ```
 
-[![307x300 spectrogram or "wordogram"](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png)](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png) 
+[![307x300 spectrogram or "wordogram"](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png)](https://raw.githubusercontent.com/totalgood/nlpia/master/docs/ch1_conclusion_spectrogram.png)
 
 Can you think of some image processing or deep learning algorithms you could run on images of natural language text?
 
@@ -280,7 +260,7 @@ Once you've mastered word vectors you can play around with Google's Universal Se
 
 #### Feature 5: Build your own Sequence-to-Sequence translator
 
-If you have pairs of statements or words in two languages, you can build a sequence-to-sequence translator.  You could even design your own language like you did in gradeschool with piglatin or build yourself a L337 translator. 
+If you have pairs of statements or words in two languages, you can build a sequence-to-sequence translator.  You could even design your own language like you did in gradeschool with piglatin or build yourself a L337 translator.
 
 
 #### Other Ideas
