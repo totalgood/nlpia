@@ -13,7 +13,7 @@ install:
   - env
   - sudo apt-get update
   - sudo apt-get remove -y python-boto
-  - sudo apt-get install -y libasound* build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev pulseaudio-libs-devel libpulse-dev
+  - sudo apt-get install -y build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev libasound* pulseaudio* libpulse*
   - bash tests/install_miniconda.sh
   - env
   - echo "before hash -r which python: $(which python)"
