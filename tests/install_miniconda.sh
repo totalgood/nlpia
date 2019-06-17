@@ -16,7 +16,7 @@ fi
 echo "CONDA_ENV_NAME=$CONDA_ENV_NAME"
 
 
-if [[ -f "$HOME/miniconda/bin/conda" ]]; then
+if [[ -f "$CONDA_DIR/bin/conda" ]]; then
     echo "Skip install conda (it has already been installed and cached)"
 else
     # By default, travis caching mechanism creates an empty dir in the
