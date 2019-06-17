@@ -16,7 +16,8 @@ install:
   - sudo apt-get install -y libasound* build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev pulseaudio-libs-devel libpulse-dev
   - bash tests/install_miniconda.sh
   - env
-  - echo "which python: $(which python)"
+  - echo "before hash -r which python: $(which python)"
+  - echo "before hash -r which conda: $(which conda)"
   # - cp conda/.condarc $HOME/.condarc
   # - conda update -n base conda
   - hash -r
