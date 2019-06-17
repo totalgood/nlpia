@@ -32,5 +32,6 @@ fi
 export PATH=$CONDA_DIR/bin:$PATH
 # Make sure to use the most updated version
 conda update --yes conda
+conda install pip
 
 
