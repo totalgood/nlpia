@@ -7,18 +7,18 @@ python:
 install:
   - export ENVIRONMENT_YML="conda/environment.yml"
   - export CONDA_PYTHON_VERSION=3.7
-  - echo "ENVIRONMENT_YML = $ENVIRONMENT_YML"
-  - echo "TRAVIS_PYTHON_VERSION = $TRAVIS_PYTHON_VERSION"
-  - echo "CONDA_PYTHON_VERSION = $CONDA_PYTHON_VERSION"
+  - export PYTHON_VERSION=3.6
+  - export CONDA_DIR="$HOME/miniconda"
+  - export CONDA_ENV_NAME="venv_nlpia"
   - env
   - sudo apt-get update
   - sudo apt-get remove -y python-boto
   - sudo apt-get install -y libasound* build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-  - bash miniconda.sh -b -f -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - cp conda/.condarc ~/.condarc
-  - conda update -n base conda
+  - bash tests/install_miniconda.sh
+  - env
+  - echo "which python: $(which python)"
+  # - cp conda/.condarc $HOME/.condarc
+  # - conda update -n base conda
   - hash -r
   # - conda config --set always_yes yes --set changeps1 no
   # - conda config --add channels conda-forge
@@ -34,13 +34,14 @@ install:
   - python -c "import nltk; nltk.download('punkt')"
   - conda info -a
   - conda list
-  - pip install codecov
+  - pip list
+  # - pip install codecov
   # - conda build conda-build-recipe
   # - conda install nlpia --use-local
 
-after_success:
-  - bash < (curl -s https://codecov.io/bash)
-  - codecov
+# after_success:
+#   - bash < (curl -s https://codecov.io/bash)
+#   - codecov
 
 
 script:

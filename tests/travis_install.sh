@@ -15,6 +15,14 @@ if [[ "$DISTRIB" == "conda" ]]; then
     # conda-based environment instead
     deactivate
 
+    if [[ -f "$HOME/miniconda/bin/conda" ]]; then
+        echo "Skip install conda [cached]"
+    else
+        # By default, travis caching mechanism creates an empty dir in the
+        # beginning of the build, but conda installer aborts if it finds an
+        # existing folder, so let's just remove it:
+        rm -rf "$HOME/miniconda"
+
     # Use the anaconda3 installer
     DOWNLOAD_DIR=${DOWNLOAD_DIR:-$HOME/.tmp/anaconda3}
     mkdir -p $DOWNLOAD_DIR
@@ -43,7 +51,7 @@ if [[ "$DISTRIB" == "conda" ]]; then
     echo "Downloading spacy language model"
     python -m spacy download en
 
-    # download NLTK punkt, Penn Treebank, and wordnet corpora 
+    # download NLTK punkt, Penn Treebank, and wordnet corpora
     python -c "import nltk; nltk.download('punkt'); nltk.download('treebank'); nltk.download('wordnet');"
     which python
     python --version
@@ -52,7 +60,7 @@ elif [[ "$DISTRIB" == "ubuntu" ]]; then
     # Use standard ubuntu packages in their default version
     echo $DISTRIB
     apt-get install -y build-essential swig gfortran
-    apt-get install -y python-dev python3-dev python-pip python3-pip 
+    apt-get install -y python-dev python3-dev python-pip python3-pip
 
     apt-get install -y python-igraph
 
