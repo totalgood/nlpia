@@ -22,9 +22,7 @@ install:
   - hash -r
   # - conda config --set always_yes yes --set changeps1 no
   # - conda config --add channels conda-forge
-  - echo "running-- conda env create -f $ENVIRONMENT_YML -n testenv"
-  - travis_wait 30 conda env create -q -f $ENVIRONMENT_YML -n testenv
-  - source activate testenv
+  - bash tests/create_conda_environment.sh
   - conda install pip
   - conda install python-annoy
   - pip install -U PyScaffold ;
