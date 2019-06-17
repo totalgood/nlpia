@@ -39,8 +39,9 @@ install:
   # - conda install nlpia --use-local
 
 after_success:
+  - bash < (curl -s https://codecov.io/bash)
   - codecov
-  # - bash < (curl -s https://codecov.io/bash)
+
 
 script:
   - python setup.py test
