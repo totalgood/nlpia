@@ -49,6 +49,6 @@ after_script:
   - travis-cleanup
 
 cache:
-  pip: true
+  pip: false
   directories:
     - $HOME/miniconda
