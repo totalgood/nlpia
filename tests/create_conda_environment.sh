@@ -14,13 +14,17 @@ echo "CONDA_ENV_NAME=$CONDA_ENV_NAME"
 # provided versions
 # (prefer local venv, since the miniconda folder is cached)
 if [[ -f "./$ENVIRONMENT_YML" ]]; then
-
+    if [[ -d "./$CONDA_ENV_NAME" ]] ; then
+        conda env update -p "./$CONDA_ENV_NAME" -f "$ENVIRONMENT_YML"
+    else
+        conda env create -p "./$CONDA_ENV_NAME" -f "$ENVIRONMENT_YML"
+    fi
 else
 
-if [[ -d "./$CONDA_ENV_NAME" ]] ; then
-    conda env update -p "./$CONDA_ENV_NAME" -f "$ENVIRONMENT_YML"
-else
-    conda env create -p "./$CONDA_ENV_NAME" -f "$ENVIRONMENT_YML"
+if [[ ! -d "./$CONDA_ENV_NAME" ]] ; then
+    conda create -p "./$CONDA_ENV_NAME"
+    conda install pip
+    pip install -r requirements.txt
 fi
 
 source activate "./$CONDA_ENV_NAME"
