@@ -99,7 +99,7 @@ Use `conda` (from the Anaconda3 package that you installed in Step 1 above) to c
 
 ```bash
 cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`
-conda env create -n nlpiaenv -f conda/environment.yml python==3.7
+conda env create -n nlpiaenv -f conda/environment.yml
 conda install -y pip  # to get the latest version of pip
 conda activate nlpiaenv
 pip install -e .

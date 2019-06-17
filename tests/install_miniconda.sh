@@ -33,8 +33,4 @@ export PATH=$CONDA_DIR/bin:$PATH
 # Make sure to use the most updated version
 conda update --yes conda
 
-# Configure the conda environment and put it in the path using the
-# provided versions
-# (prefer local venv, since the miniconda folder is cached)
-conda create -p ./$CONDA_ENV_NAME --yes python=${PYTHON_VERSION} pip
-source activate ./$CONDA_ENV_NAME
+
