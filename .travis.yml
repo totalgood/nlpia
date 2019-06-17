@@ -15,7 +15,7 @@ install:
   - sudo apt-get remove -y python-boto
   - sudo apt-get install -y libasound* build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-  - bash miniconda.sh -b -p $HOME/miniconda
+  - bash miniconda.sh -b -f -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - cp conda/.condarc ~/.condarc
   - conda update -n base conda
