@@ -23,8 +23,9 @@ else
 
 if [[ ! -d "./$CONDA_ENV_NAME" ]] ; then
     conda create -p "./$CONDA_ENV_NAME"
+    source activate "./$CONDA_ENV_NAME"
     conda install pip
-    pip install -r requirements.txt
+    pip install -r requirements.txt ||
 fi
 
 source activate "./$CONDA_ENV_NAME"
