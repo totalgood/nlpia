@@ -20,6 +20,8 @@ install:
   # - cp conda/.condarc $HOME/.condarc
   # - conda update -n base conda
   - hash -r
+  - echo "after hash -r which python: $(which python)"
+  - echo "after hash -r which conda: $(which conda)"
   # - conda config --set always_yes yes --set changeps1 no
   # - conda config --add channels conda-forge
   - bash tests/create_conda_environment.sh
