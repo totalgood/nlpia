@@ -19,7 +19,12 @@ def get_anki_phrases(lang='english', limit=None):
     If `ankis` (requested languages) is more than one, then get the english texts associated with those languages.
 
     TODO: improve modularity: def function that takes a single language and call it recursively if necessary
-    >>> get_anki_phrases('afr')[:2]
+
+    >>> phrases = get_anki_phrases('afr')[:2]
+    >>> any(('piesang' in s.lower() for s in phrases))
+    True
+
+    >> get_anki_phrases('afr')[:2]
     ["'n Groen piesang is nie ryp genoeg om te eet nie.",
      "'n Hond het agter die kat aan gehardloop."]
     """
@@ -31,7 +36,7 @@ def get_anki_phrases(lang='english', limit=None):
 
 
 def get_anki_phrases_english(limit=None):
-    """ Return all the English phrases in the Anki translation flashcards 
+    """ Return all the English phrases in the Anki translation flashcards
 
     >>> len(get_anki_phrases_english(limit=100)) > 700
     True
