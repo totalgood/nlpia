@@ -7,7 +7,6 @@ channels:
 
 dependencies:
   - boto3
-  # - conda-build
   - cython==0.29
   - gensim
   - google-auth-oauthlib
@@ -45,4 +44,5 @@ dependencies:
   # - python-annoy>=1.9.5,<2.0.0
 
   - pip:
-    - -r ../requirements/requirements-base.txt
+    - google-cloud-storage
+    - -r --ignore-installed ../requirements/requirements-base.txt
