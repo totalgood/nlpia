@@ -45,4 +45,5 @@ dependencies:
 
   - pip:
     - google-cloud-storage
+    - google-compute-engine
     - -r --ignore-installed ../requirements/requirements-base.txt
