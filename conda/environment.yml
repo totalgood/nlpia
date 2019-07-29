@@ -6,10 +6,11 @@ channels:
   - defaults
 
 dependencies:
-  # - boto3
+  - boto3
   # - conda-build
   - cython==0.29
-  - gensim>=3.4.0,<3.7.0
+  - gensim
+  - google-auth-oauthlib
   - h5py==2.8.0
   - jupyter>=1.0.0,<3.0.0
   - keras-applications>=1.0.6
