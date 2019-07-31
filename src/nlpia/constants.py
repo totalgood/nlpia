@@ -140,6 +140,7 @@ def mkdir_p(path, exist_ok=True):
 
     SEE: https://stackoverflow.com/a/600612/623735
     """
+    path = os.path.abspath(os.path.expandvars(os.path.expanduser(path)))
     try:
         os.makedirs(path)
     except OSError as exc:  # Python >2.5
