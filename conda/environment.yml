@@ -6,7 +6,7 @@ channels:
   - defaults
 
 dependencies:
-  # - boto3
+  - botocore
   # - conda-build
   - cython==0.29
   - gensim>=3.4.0,<3.7.0

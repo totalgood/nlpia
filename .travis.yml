@@ -29,7 +29,9 @@ install:
   # - travis_wait 30 source tests/create_conda_environment.sh
   - conda update conda
   - conda env create --verbose --force --prefix "./$CONDA_ENV_NAME" --file "$ENVIRONMENT_YML"
-  - source activate "./$CONDA_ENV_NAME"
+  - source activate ./$CONDA_ENV_NAME
+  - touch ./$CONDA_ENV_NAME/boto.cfg
+  - export BOTO_CONFIG="$PWD"/$CONDA_ENV_NAME/boto.cfg
   - hash -r
   - "echo \"after hash -r which python: $(which python)\""
   - "echo \"after hash -r which conda: $(which conda)\""
