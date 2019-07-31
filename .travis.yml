@@ -13,11 +13,10 @@ install:
   - sudo apt-get update
   - sudo apt-get remove -y python-boto
   - sudo apt-get install -y build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev libasound2-dev pulseaudio libpulse-dev
-  - bash tests/install_miniconda.sh
+  - source tests/install_miniconda.sh
+  - export PATH=$CONDA_DIR/bin:$PATH"
   - env
-  - hash -r
-  - "echo \"before hash -r which python: $(which python)\""
-  - "echo \"before hash -r which conda: $(which conda)\""
+
   # - cp conda/.condarc $HOME/.condarc
   - conda config --add channels conda-forge
   - conda config --add channels anaconda
