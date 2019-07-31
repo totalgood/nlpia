@@ -139,6 +139,14 @@ def mkdir_p(path, exist_ok=True):
     """ mkdir -p functionality (make intervening directories and ignore existing directories)
 
     SEE: https://stackoverflow.com/a/600612/623735
+
+    >>> deeper_path = os.path.join(BIGDATA_PATH, 'doctest_nlpia', 'constants', 'mkdir_p')
+    >>> mkdir_p(deeper_path, exist_ok=False)
+    >>> os.path.isdir(deeper_path)
+    True
+    >>> mkdir_p(deeper_path, exist_ok=True)
+    >>> os.path.isdir(deeper_path)
+    True
     """
     path = os.path.abspath(os.path.expandvars(os.path.expanduser(path)))
     try:
@@ -212,8 +220,3 @@ except IOError:
     secrets = {}
 
 secrets = dict2obj(secrets)
-
-
-def no_tqdm(it, total=1, **kwargs):
-    """ Do-nothing iterable wrapper to subsitute for tqdm when verbose==False """
-    return it
