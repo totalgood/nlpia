@@ -10,11 +10,12 @@ import configparser
 import logging
 import logging.config
 import os
+import errno
+from collections import Mapping
 
 from pandas import read_csv
 from tqdm import tqdm  # noqa
 
-from pugnlp.util import dict2obj
 from pugnlp.futil import touch_p
 import platform
 
@@ -95,8 +96,14 @@ elif SYSLOG_PATH:
     }
 
 
-logging.config.dictConfig(LOGGING_CONFIG)
-logger = logging.getLogger(__name__)
+try:
+    logging.config.dictConfig(LOGGING_CONFIG)
+    logger = logging.getLogger(__name__)
+    raise NotImplementedError("Force logger to fall back to failsafe file logging.")
+except:  # noqa
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+logger.warning('Starting logger in nlpia.constants...')
 
 USER_HOME = os.path.expanduser("~")
 PROJECT_PATH = PRJECT_DIR = BASE_DIR
@@ -110,7 +117,7 @@ BIGDATA_INFO_FILE = os.path.join(DATA_PATH, 'bigdata_info.csv')
 BIGDATA_INFO_LATEST = BIGDATA_INFO_FILE[:-4] + '.latest.csv'
 touch_p(BIGDATA_INFO_FILE, times=False)
 touch_p(BIGDATA_INFO_LATEST, times=False)
-
+CHECKPOINT_PATH = os.path.join(BIGDATA_PATH, 'checkpoints')
 
 UTF8_TABLE = read_csv(os.path.join(DATA_PATH, 'utf8.csv'))
 UTF8_TO_MULTIASCII = dict(zip(UTF8_TABLE.char, UTF8_TABLE.multiascii))
@@ -126,6 +133,72 @@ MAX_LEN_FILEPATH = 1023  # on OSX `open(fn)` raises OSError('Filename too long')
 
 HTML_TAGS = '<HTML', '<A HREF=', '<P>', '<BOLD>', '<SCRIPT', '<DIV', '<TITLE', '<BODY', '<HEADER'
 EOL = os.linesep
+
+
+def mkdir_p(path, exist_ok=True):
+    """ mkdir -p functionality (make intervening directories and ignore existing directories)
+
+    SEE: https://stackoverflow.com/a/600612/623735
+    """
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path) and exist_ok:
+            pass
+        else:
+            raise
+
+
+class Object(object):
+    """If your dict is "flat", this is a simple way to create an object from a dict
+
+    >>> obj = Object()
+    >>> obj.__dict__ = {'a': 1, 'b': 2}
+    >>> obj.a, obj.b
+    (1, 2)
+    """
+    pass
+
+
+# For a nested dict, you need to recursively update __dict__
+def dict2obj(d):
+    """Convert a dict to an object or namespace
+
+
+    >>> d = {'a': 1, 'b': {'c': 2}, 'd': ["hi", {'foo': "bar"}]}
+    >>> obj = dict2obj(d)
+    >>> obj.b.c
+    2
+    >>> obj.d
+    ['hi', {'foo': 'bar'}]
+    >>> d = {'a': 1, 'b': {'c': 2}, 'd': [("hi", {'foo': "bar"})]}
+    >>> obj = dict2obj(d)
+    >>> obj.d.hi.foo
+    'bar'
+    """
+    if isinstance(d, (Mapping, list, tuple)):
+        try:
+            d = dict(d)
+        except (ValueError, TypeError):
+            return d
+    else:
+        return d
+    obj = Object()
+    for k, v in d.items():
+        obj.__dict__[k] = dict2obj(v)
+    return obj
+
+
+def no_tqdm(it, total=1, **kwargs):
+    """ Do-nothing iterable wrapper to subsitute for tqdm when verbose==False """
+    return it
+
+
+if not os.path.isdir(BIGDATA_PATH):
+    mkdir_p(BIGDATA_PATH, exist_ok=True)
+if not os.path.isdir(CHECKPOINT_PATH):  # Thank you Matt on livebook for catching this
+    mkdir_p(CHECKPOINT_PATH, exist_ok=True)
+
 
 # rename secrets.cfg.EXAMPLE_TEMPLATE -> secrets.cfg then edit secrets.cfg to include your actual credentials
 secrets = configparser.RawConfigParser()
