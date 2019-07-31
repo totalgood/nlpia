@@ -139,6 +139,7 @@ def mkdir_p(path, exist_ok=True):
     """ mkdir -p functionality (make intervening directories and ignore existing directories)
 
     SEE: https://stackoverflow.com/a/600612/623735
+    Thank you Abhijit Mustafi for catching this bug and sharing it on Manning's Livebook comments.
 
     >>> deeper_path = os.path.join(BIGDATA_PATH, 'doctest_nlpia', 'constants', 'mkdir_p')
     >>> mkdir_p(deeper_path, exist_ok=False)
