@@ -18,7 +18,7 @@ from pugnlp.util import clean_columns
 from plotly.graph_objs import Scatter, Layout
 from plotly.graph_objs.scatter import Marker
 from plotly.graph_objs.layout import XAxis, YAxis
-import cufflinks as cf  # noqa
+# import cufflinks as cf  # noqa
 
 from nlpia.constants import DATA_PATH
 
@@ -60,6 +60,7 @@ DEFAULT_PLOTLY_CONFIG = {
 
 
 def plotly_timeseries(df):
+    """ NotImplemented: cufflinks has some strict plotly limits so couldn't be reliably installed """
     fig = df.iplot([{
         'x': df.index,
         'y': df[col],
