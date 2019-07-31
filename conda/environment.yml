@@ -16,6 +16,7 @@ dependencies:
   - keras-preprocessing>=1.0.5
   - keras==2.2.4
   - matplotlib>=2.2.2,<2.3.0
+  - mechanicalsoup
   - nltk>=3.2.5,<3.3.0
   # spacy 2.0.18 has requirement numpy>=1.15.0, but you'll have numpy 1.14.3 which is incompatible.
   # - numpy>=1.15.0,<1.16.0
