@@ -18,7 +18,7 @@ from pugnlp.util import clean_columns
 from plotly.graph_objs import Scatter, Layout
 from plotly.graph_objs.scatter import Marker
 from plotly.graph_objs.layout import XAxis, YAxis
-import cufflinks as cf  # noqa
+# import cufflinks as cf  # noqa
 
 from nlpia.constants import DATA_PATH
 

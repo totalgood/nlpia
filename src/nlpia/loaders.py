@@ -240,9 +240,16 @@ def get_en2fr(url='http://www.manythings.org/anki/fra-eng.zip'):
 def load_anki_df(language='deu'):
     """ Load into a DataFrame statements in one language along with their translation into English
 
-    >>> get_data('zsm').head(1)
+    >>> df = get_data('zsm')
+    >>> list(df.columns)
+    ['eng', 'zsm']
+    >>> len(df) > 100
+    True
+
+    >> get_data('zsm').head(2)
                     eng                                zsm
     0      Are you new?                         Awak baru?
+    1        Forget it.                        Lupakanlah.
     """
     if os.path.isfile(language):
         filepath = language
