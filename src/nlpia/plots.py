@@ -60,6 +60,7 @@ DEFAULT_PLOTLY_CONFIG = {
 
 
 def plotly_timeseries(df):
+    """ NotImplemented: cufflinks has some strict plotly limits so couldn't be reliably installed """
     fig = df.iplot([{
         'x': df.index,
         'y': df[col],

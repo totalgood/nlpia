@@ -4,52 +4,53 @@ python:
   # - "2.7"
   # - "3.6-dev"
   # - "3.7"
+before_install:
+  - sudo rm -f /etc/boto.cfg
+
 install:
   - export ENVIRONMENT_YML="conda/environment.yml"
-  - export CONDA_PYTHON_VERSION=3.7
+  - export CONDA_ENV_NAME="venv_nlpia"
+  - export CONDA_PYTHON_VERSION=3.6
   - export PYTHON_VERSION=3.6
   - export CONDA_DIR="$HOME/miniconda"
-  - export CONDA_ENV_NAME="venv_nlpia"
-  - env
   - sudo apt-get update
   - sudo apt-get remove -y python-boto
   - sudo apt-get install -y build-essential gfortran libopenblas-dev liblapack-dev pandoc portaudio19-dev libasound2-dev pulseaudio libpulse-dev
-  - bash tests/install_miniconda.sh
-  - env
-  - echo "before hash -r which python: $(which python)"
-  - echo "before hash -r which conda: $(which conda)"
-  # - cp conda/.condarc $HOME/.condarc
-  # - conda update -n base conda
+  - source tests/install_miniconda.sh
+  - export PATH="$CONDA_DIR/bin:$PATH"
   - hash -r
-  - echo "after hash -r which python: $(which python)"
-  - echo "after hash -r which conda: $(which conda)"
-  # - conda config --set always_yes yes --set changeps1 no
-  # - conda config --add channels conda-forge
-  - bash tests/create_conda_environment.sh
-  - conda install pip
-  - conda install python-annoy
-  - pip install -U PyScaffold ;
+
+  # - cp conda/.condarc $HOME/.condarc
+  - conda config --add channels conda-forge
+  - conda config --add channels anaconda
+  - conda config --set always_yes yes
+  - conda config --set changeps1 no
+  # - conda update -n base conda
+  # - travis_wait 30 source tests/create_conda_environment.sh
+  - conda update conda
+  - conda env create --verbose --force --prefix "./$CONDA_ENV_NAME" --file "$ENVIRONMENT_YML"
+  - source activate ./$CONDA_ENV_NAME
+  - touch ./$CONDA_ENV_NAME/boto.cfg
+  - export BOTO_CONFIG="$PWD"/$CONDA_ENV_NAME/boto.cfg
+  - hash -r
+  - "echo \"after hash -r which python: $(which python)\""
+  - "echo \"after hash -r which conda: $(which conda)\""
+  - echo $PATH
+  - conda install pip --yes
+  - conda install python-annoy --yes
+  - pip install --upgrade PyScaffold
   # - sudo apt-get install -y python-boto
-  - pip install -r requirements.txt
-  - pip install -U -e .
-  - python -c "import nltk; nltk.download('punkt')"
-  - conda info -a
-  - conda list
+  # - pip install -r requirements/requirements.txt
   - pip list
-  # - pip install codecov
-  # - conda build conda-build-recipe
-  # - conda install nlpia --use-local
-
-# after_success:
-#   - bash < (curl -s https://codecov.io/bash)
-#   - codecov
-
+  - pip install -e .
+  - python -c "import nltk; nltk.download('punkt')"
 
 script:
-  - python setup.py test
+  - pytest
 
-after_script:
-  - travis-cleanup
+# after_success:
+#   - git remote
+#   - git push --force deploy
 
 # cache:
 #   pip: true

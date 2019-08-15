@@ -6,7 +6,7 @@ channels:
   - defaults
 
 dependencies:
-  # - boto3
+  - botocore
   # - conda-build
   - cython==0.29
   - gensim>=3.4.0,<3.7.0
@@ -16,6 +16,7 @@ dependencies:
   - keras-preprocessing>=1.0.5
   - keras==2.2.4
   - matplotlib>=2.2.2,<2.3.0
+  - mechanicalsoup
   - nltk>=3.2.5,<3.3.0
   # spacy 2.0.18 has requirement numpy>=1.15.0, but you'll have numpy 1.14.3 which is incompatible.
   # - numpy>=1.15.0,<1.16.0
@@ -25,10 +26,11 @@ dependencies:
   - pandoc>=2.2.3,<3.0.0
   - pip>=18.0
   - plac>=0.9.6,<1.0.0
-  - plotly==3.3.0
+  - plotly<4.0.0,>=3.3.0
   # pyqt>=5.9.2,<6.0 fails because conda  thinks it needs python2.7
   # - PyQt4==5.6.0
   - pyscaffold>=3.1
+  - pytest-cov
   - python-levenshtein>=0.12.0
   # - python==3.7
   - redis-py>=2.10.6

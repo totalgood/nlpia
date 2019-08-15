@@ -392,11 +392,11 @@ def generate_big_urls_glove(bigurls=None):
     for num_dim in (50, 100, 200, 300):
         # not all of these dimensionality, and training set size combinations were trained by Stanford
         for suffixes, num_words in zip(
-                                       ('sm -sm _sm -small _small'.split(),
-                                        'med -med _med -medium _medium'.split(),
-                                        'lg -lg _lg -large _large'.split()),
-                                       (6, 42, 840)
-                                      ):
+                ('sm -sm _sm -small _small'.split(),
+                 'med -med _med -medium _medium'.split(),
+                 'lg -lg _lg -large _large'.split()),
+                (6, 42, 840)
+                ):
             for suf in suffixes[:-1]:
                 name = 'glove' + suf + str(num_dim)
                 dirname = 'glove.{num_words}B'.format(num_words=num_words)
@@ -404,7 +404,7 @@ def generate_big_urls_glove(bigurls=None):
                 filename = dirname + '.{num_dim}d.w2v.txt'.format(num_dim=num_dim)
                 # seed the alias named URL with the URL for that training set size's canonical name
                 bigurl_tuple = BIG_URLS['glove' + suffixes[-1]]
-                bigurls[name] =  list(bigurl_tuple[:2])
+                bigurls[name] = list(bigurl_tuple[:2])
                 bigurls[name].append(os.path.join(dirname, filename))
                 bigurls[name].append(load_glove)
                 bigurls[name] = tuple(bigurls[name])
@@ -809,8 +809,6 @@ def create_big_url(name):
     return name
 
 
-
-
 def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood.com'):
     """ FIXME: Get file size, hostname, path metadata from FTP server using parsed_url (urlparse)"""
     return dict(
@@ -1151,7 +1149,7 @@ DATASET_FILENAMES = [f['name'] for f in find_files(DATA_PATH, ext='.csv.gz', lev
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, ext='.csv', level=0)]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, ext='.json', level=0)]
 DATASET_FILENAMES += [f['name'] for f in find_files(DATA_PATH, ext='.txt', level=0)]
-DATASET_NAMES =[
+DATASET_NAMES = [
     f[:-4] if f.endswith('.csv') else f for f in [os.path.splitext(f)[0] for f in DATASET_FILENAMES]]
 DATASET_NAME2FILENAME = dict(sorted(zip(DATASET_NAMES, DATASET_FILENAMES)))
 
@@ -1296,6 +1294,7 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
     df['country'] = cleancanon.country
     return df
 
+
 def clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip', subdir='cornell movie-dialogs corpus'):
     """ Load a dataframe of ~100k raw (uncollated) movie lines from the cornell movies dialog corpus
 
@@ -1325,6 +1324,7 @@ def clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip', subdir='co
     for col in dialog.columns:
         dialog[col] = dialog[col].str.strip()
     return dialog
+
 
 def isglove(filepath):
     """ Get the first word vector in a GloVE file and return its dimensionality or False if not a vector
