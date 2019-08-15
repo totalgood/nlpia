@@ -27,11 +27,10 @@ def build_index(vectors, index=None, n_trees=None, metric='euclidean'):
         break
     for i, v in enumerate(vector_iterator):
         annindex.add_item(i + 1, v)
-        break
     annindex.build(n_trees=n_dim * 2 if n_trees is None else n_trees)
     return annindex
 
 
 annindex = build_index((v.vector for v in nlp.vocab if v.has_vector))
 annindex.save('spacy_wordvecs.annoy')
-json.dump([tok.text for tok in nlp], open('spacy_wordvec_vocab.json', 'w'))
+json.dump([tok.text for tok in nlp.vocab], open('spacy_wordvec_vocab.json', 'w'))
