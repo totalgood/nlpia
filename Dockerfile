@@ -7,6 +7,8 @@ COPY . .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN pip install -e .
+RUN pip install jupyter_contrib_nbextensions 
+RUN jupyter contrib nbextension instal
 
 WORKDIR /home/jovyan
 RUN chown -R jovyan nlpia
