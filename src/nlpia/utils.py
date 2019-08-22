@@ -4,11 +4,13 @@ import sys
 import os
 
 import pandas as pd
+import numpy as np
 from sklearn.manifold import TSNE
 from gensim.models import KeyedVectors
 
 from nlpia.constants import DATA_PATH
 from nlpia.data.loaders import get_data
+from nlpia.loaders import nlp, _parse, WV, WV_IDS, WORD2ID, VOCAB, ANN
 
 
 def stdout_logging(loglevel=logging.INFO):
@@ -40,6 +42,41 @@ def embed_wordvecs(w2v=None, df=None, vocab='name', embedder=TSNE, **kwargs):
     tsne = embedder(**kwargs)
     tsne = tsne.fit(vectors)
     return pd.DataFrame(tsne.embedding_, columns=['x', 'y'])
+
+
+def most_similar(tok, num_similar=20):
+    """ FIXME: Use annoy to index word vectors and find most similar words to token str, id, or vector """
+    raise NotImplementedError("Work in Progress, FIXME!")
+
+    if _parse is None:
+        nlp("hello", lang='en_core_web_lg')
+        # FIXME: is the _parse variable updated by this, will WV and other globals work?
+    stem = None
+    idx = None
+    vec = None
+
+    if isinstance(tok, str):
+        # TODO: if the tok is long or has punctuation/whitespace in it, use the spacy pipeline to tokenize it and compute the docvec
+        stem = tok
+        while stem not in WV_IDS:
+            stem = stem[:-1]
+        idx = WORD2ID[stem]
+    elif isinstance(tok, int):
+        idx = tok
+        stem = VOCAB[idx].text
+    else:
+        vec = np.array(tok)
+        if len(vec.shape) == 2:
+            if vec.shape[0] == WV.shape[1]:
+                vec = vec.mean(axis=0)
+            else:
+                vec = vec.mean(axis=1)
+        idx = ANN.get_nns_by_vector(vec, 1)[0]
+        stem = VOCAB[idx].text
+    if idx is not None:
+        vec = WV[idx]
+        stem = VOCAB[idx].text
+    return ANN.get_nns_by_vector(vec, num_similar)
 
 
 """
