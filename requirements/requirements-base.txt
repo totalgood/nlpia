@@ -15,7 +15,7 @@ Keras-Applications>=1.0.6
 Keras-Preprocessing>=1.0.5
 matplotlib>=2.2.3,<2.3.0
 MechanicalSoup>=0.10.0,<1.0.0
-nltk>=3.4.5,<3.3.0
+nltk>=3.4.5,<3.5.0
 # spacy 2.0.18 has requirement numpy>=1.15.0, but you'll have numpy 1.14.3 which is incompatible.
 # spacy 2.0.18 has requirement regex==2018.01.10, but you'll have regex 2018.11.22 which is incompatible.
 # numpy<=1.14.5,>=1.13.3  # tensorflow 1.10 requires numpy<=1.14.5,>=1.13.3, scipy prefers want numpy>=1.15.1
