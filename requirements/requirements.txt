@@ -53,7 +53,7 @@
 #$ sudo apt-get install tcl-dev tk-dev python-tk python3-tk
 
 # pugnlp includes:
-# coverage>=4.3.4 nltk>=3.2.2 fuzzywuzzy>=0.15.0 python-slugify>=1.2.4 nlup>=0.5
+# coverage>=4.3.4 nltk>=3.4.5 fuzzywuzzy>=0.15.0 python-slugify>=1.2.4 nlup>=0.5
 
 # optional packages:
 # boto==2.46
