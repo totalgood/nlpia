@@ -147,7 +147,7 @@ def get_url_filemeta(url):
     [('filename', ''),
      ('hostname', 'mozilla.com'),
      ('path', ''),
-     ('remote_size', -1),
+     ('remote_size', ...
      ('url', 'http://mozilla.com'),
      ('username', None)]
     >>> sorted(get_url_filemeta('https://duckduckgo.com/about?q=nlp').items())
