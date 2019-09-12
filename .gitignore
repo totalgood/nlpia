@@ -60,12 +60,9 @@ src/nlpia/data/*.gz
 src/nlpia/data/*.bz2
 src/nlpia/data/*.xz
 src/nlpia/data/*.zip
-nlpia/data/*.gz
-nlpia/data/*.bz2
-nlpia/data/*.xz
-nlpia/data/*.zip
-nlpia/bigdata/*.gz
-nlpia/bigdata/*.tgz
+src/nlpia/bigdata
+src/nlpia/bigdata/*.gz
+src/nlpia/bigdata/*.tgz
 *.h5
 # models created within examples (ch10?)
 *seq2seq_keras_weights*
