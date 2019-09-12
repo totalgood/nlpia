@@ -46,7 +46,7 @@ install:
   - python -c "import nltk; nltk.download('punkt')"
 
 script:
-  - travis_wait 30 pytest
+  - pytest
 
 # after_success:
 #   - git remote
