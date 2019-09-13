@@ -119,7 +119,7 @@ def splitext(filepath):
 
 
 # ? \(\): ()
-# \': '"'"' 
+# \': '"'"'
 # \s: [:space:]
 # RE_URL_BASH_ESCAPE = '((http|ftp|https)://)?[^/:\(\[\"'"'"'\`\)\] \t\n]+[.](com|org|edu|gov|net|mil|uk|ca|de|jp|fr|au|us|ru|ch|it|nl|se|no|es|io|me)[^\"'"'"'\`\)\] \t\n]*'  # noqa
 
@@ -136,7 +136,7 @@ def to_tsv():
 
 
 class Pattern:
-    """ Container for _regex.Pattern object augmented with Irregular matching rules 
+    """ Container for _regex.Pattern object augmented with Irregular matching rules
 
     >>> pattern = Pattern('Aaron[ ]Swartz')
     >>> pattern.match('Aaron Swartz')
@@ -158,7 +158,7 @@ class Pattern:
                 setattr(self, name, attr)
                 logger.debug('{}.{}.Pattern successfully "inherited" `_regex.Pattern.{}{}`'.format(
                     __package__, __name__, name, '()' if callable(attr) else ''))
-            except:
+            except:  # noqa
                 logger.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
                     name, '()' if callable(attr) else ''))
 
@@ -168,12 +168,12 @@ class REPattern:
 
     >>> pattern = REPattern('Aaron[ ]Swartz')
     >>> pattern.match('Aaron Swartz')
-    <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
+    <re.Match object; span=(0, 12), match='Aaron Swartz'>
     >>> pattern.fullmatch('Aaron Swartz!!')
     >>> pattern.fullmatch('Aaron Swartz')
     <regex.Match object; span=(0, 12), match='Aaron Swartz'>
     >>> pattern.match('Aaron Swartz!!')
-    <_sre.SRE_Match object; span=(0, 12), match='Aaron Swartz'>
+    <re.Match object; span=(0, 12), match='Aaron Swartz'>
     """
 
     def __init__(self, pattern):
@@ -186,7 +186,7 @@ class REPattern:
                 setattr(self, name, attr)
                 logger.debug('{}.{}.{} successfully "inherited" `_regex.Pattern.{}{}`'.format(
                     __package__, __name__, self.__class__, name, '()' if callable(attr) else ''))
-            except:
+            except:  # noqa
                 logger.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
                     name, '()' if callable(attr) else ''))
 
