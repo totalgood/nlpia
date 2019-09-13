@@ -11,6 +11,7 @@ from builtins import (bytes, dict, int, list, object, range, str,  # noqa
 from future import standard_library
 standard_library.install_aliases()  # noqa
 from past.builtins import basestring
+from traceback import format_exc
 
 import os
 import re
@@ -20,7 +21,7 @@ from requests.exceptions import ConnectionError, InvalidURL, InvalidSchema, Inva
 import sys  # noqa unused
 from urllib.parse import urlparse
 from urllib.error import URLError  # noqa (not used)
-import ftplib
+# import ftplib
 
 from lxml.html import fromstring as parse_html
 from pugnlp.regexes import cre_url
@@ -33,6 +34,9 @@ from nlpia.futil import read_text  # noqa (not used)
 logger = logging.getLogger(__name__)
 
 
+CHUNK_SIZE = 32768
+
+
 def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood.com'):
     """ FIXME: Get file size, hostname, path metadata from FTP server using parsed_url (urlparse)"""
     return dict(
@@ -40,11 +44,11 @@ def get_ftp_filemeta(parsed_url, username='anonymous', password='nlpia@totalgood
         username=(parsed_url.username or username),
         remote_size=-1,
         filename=os.path.basename(parsed_url.path))
-    ftp = ftplib.FTP(parsed_url.hostname)
-    ftp.login(username, password)
-    ftp.cwd(parsed_url.path)
-    ftp.retrbinary("RETR " + filename, open(filename, 'wb').write)
-    ftp.quit()
+    # ftp = ftplib.FTP(parsed_url.hostname)
+    # ftp.login(username, password)
+    # ftp.cwd(parsed_url.path)
+    # ftp.retrbinary("RETR " + filename, open(filename, 'wb').write)
+    # ftp.quit()
 
 
 def requests_get(*args, **kwargs):
@@ -235,7 +239,7 @@ def get_response_confirmation_token(response):
     return None
 
 
-def save_response_content(response, filename='data.csv', destination=os.path.curdir, chunksize=32768):
+def save_response_content(response, filename='data.csv', destination=os.path.curdir, chunksize=CHUNK_SIZE):
     """ For streaming response from requests, download the content one CHUNK at a time """
     chunksize = chunksize or 32768
     if os.path.sep in filename:
@@ -276,9 +280,9 @@ def download_file_from_google_drive(driveid, filename=None, destination=os.path.
 
     filename = filename or get_url_filename(driveid=driveid)
 
-    full_destination_path = save_response_content(response, filename=fileanme, destination=destination)
+    full_destination_path = save_response_content(response, filename=filename, destination=destination)
 
-    return os.path.abspath(destination)
+    return os.path.abspath(full_destination_path)
 
 
 def dropbox_basename(url):
