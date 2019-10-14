@@ -9,6 +9,7 @@ standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 import configparser
 import logging
 import logging.config
+import logging.handlers
 import os
 import errno
 from collections import Mapping
