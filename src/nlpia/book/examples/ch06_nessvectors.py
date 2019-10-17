@@ -74,16 +74,22 @@ Now try to find the answer to the original question... it's hard.
 TODO:
 automate the search for synonyms with higher than 60% similarity, walking a shallow graph
 """
+import os
+
 from collections import OrderedDict
 
 import pandas as pd
-from nlpia.data.loaders import get_data
-# from gensim.models import KeyedVectors
+from nlpia.data.loaders import get_data, BIGDATA_PATH
+from gensim.models import KeyedVectors
 
 
-if 'word_vectors' not in globals():
+word_vectors = get_data('word2vec')  # not in book
+
+wordvector_path = os.path.join(BIGDATA_PATH, 'GoogleNews-vectors-negative300.bin.gz')    # not in book, reader required to compose this path
+
+if 'word_vectors' not in globals():  # not in book
     WV = word_vectors = get_data('word2vec')
-    # word_vectors = KeyedVectors.load_word2vec_format(wordvector_path, binary=True)
+    word_vectors = KeyedVectors.load_word2vec_format(wordvector_path, binary=True)
 
 
 ###################################################
