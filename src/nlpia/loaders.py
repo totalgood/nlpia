@@ -258,9 +258,12 @@ def load_anki_df(language='deu'):
         lang = (language or 'deu').lower()[:3]
         filepath = os.path.join(BIGDATA_PATH, '{}-eng'.format(lang), '{}.txt'.format(lang))
     df = pd.read_table(filepath, skiprows=1, header=None)
-    columns = ('eng', lang)
-    for newc in columns:
-        df.columns = [newc if c.lower().strip().startswith(newc) else c for c in df.columns]
+    for i, newc in enumerate(['eng', lang, 'license']):
+        df.columns = [newc if str(c).lower().strip().startswith(newc) else c for c in df.columns]
+        if newc not in df.columns and i < len(df.columns):
+            columns = list(df.columns)
+            columns[i] = newc
+            df.columns = columns
     return df
 
 
