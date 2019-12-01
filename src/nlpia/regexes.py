@@ -139,11 +139,11 @@ class Pattern:
     """ Container for _regex.Pattern object augmented with Irregular matching rules
 
     >>> pattern = Pattern('Aaron[ ]Swartz')
-    >>> pattern.match('Aaron Swartz')
-    <regex.Match object; span=(0, 12), match='Aaron Swartz'>
+    >>> pattern.match('Aaron Swartz').group()
+    'Aaron Swartz'
     >>> pattern.fullmatch('Aaron Swartz!!')
-    >>> pattern.match('Aaron Swartz!!')
-    <regex.Match object; span=(0, 12), match='Aaron Swartz'>
+    >>> pattern.match('Aaron Swartz!!').group()
+    'Aaron Swartz'
     """
 
     def __init__(self, pattern):
@@ -167,8 +167,8 @@ class REPattern:
     """ Container for re.SRE_Pattern object augmented with Irregular matching rules
 
     >>> pattern = REPattern('Aaron[ ]Swartz')
-    >>> pattern.match('Aaron Swartz')
-    <re.Match object; span=(0, 12), match='Aaron Swartz'>
+    >>> pattern.match('Aaron Swartz').group()
+    'Aaron Swartz'
     >>> pattern.fullmatch('Aaron Swartz!!')
     >>> pattern.fullmatch('Aaron Swartz').group()
     'Aaron Swartz'
