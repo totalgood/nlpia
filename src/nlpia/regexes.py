@@ -170,10 +170,10 @@ class REPattern:
     >>> pattern.match('Aaron Swartz')
     <re.Match object; span=(0, 12), match='Aaron Swartz'>
     >>> pattern.fullmatch('Aaron Swartz!!')
-    >>> pattern.fullmatch('Aaron Swartz')
-    <regex.Match object; span=(0, 12), match='Aaron Swartz'>
-    >>> pattern.match('Aaron Swartz!!')
-    <re.Match object; span=(0, 12), match='Aaron Swartz'>
+    >>> pattern.fullmatch('Aaron Swartz').group()
+    'Aaron Swartz'
+    >>> pattern.match('Aaron Swartz!!').group()
+    'Aaron Swartz'
     """
 
     def __init__(self, pattern):

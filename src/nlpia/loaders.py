@@ -241,7 +241,7 @@ def load_anki_df(language='deu'):
     """ Load into a DataFrame statements in one language along with their translation into English
 
     >>> df = get_data('zsm')
-    >>> list(df.columns)
+    >>> list(list(df.columns)[:2])
     ['eng', 'zsm']
     >>> len(df) > 100
     True
