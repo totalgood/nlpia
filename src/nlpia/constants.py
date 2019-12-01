@@ -9,6 +9,7 @@ standard_library.install_aliases()  # noqa: Counter, OrderedDict,
 import configparser
 import logging
 import logging.config
+import logging.handlers
 import os
 import errno
 from collections import Mapping
@@ -23,7 +24,7 @@ REQUESTS_HEADER = (
     ('User-Agent', 'Mozilla Firefox'),
     ('From', 'nlpia+github@totalgood.com'),
     ('Referer', 'http://github.com/totalgood/nlpia'),
-    )
+)
 
 LOG_LEVEL = 'WARN' if not os.environ.get('DEBUG') else 'DEBUG'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -103,7 +104,7 @@ try:
 except:  # noqa
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
-logger.warning('Starting logger in nlpia.constants...')
+logger.info('Starting logger in nlpia.constants...')
 
 USER_HOME = os.path.expanduser("~")
 PROJECT_PATH = PRJECT_DIR = BASE_DIR
@@ -142,7 +143,10 @@ def mkdir_p(path, exist_ok=True):
     Thank you Abhijit Mustafi for catching this bug and sharing it on Manning's Livebook comments.
 
     >>> deeper_path = os.path.join(BIGDATA_PATH, 'doctest_nlpia', 'constants', 'mkdir_p')
-    >>> mkdir_p(deeper_path, exist_ok=False)
+    >>> if os.path.isdir(deeper_path):
+    ...     os.removedirs(deeper_path)
+    >>> if not os.path.isdir(deeper_path):
+    ...     mkdir_p(deeper_path, exist_ok=False)
     >>> os.path.isdir(deeper_path)
     True
     >>> mkdir_p(deeper_path, exist_ok=True)

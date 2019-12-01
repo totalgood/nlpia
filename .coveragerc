@@ -2,12 +2,13 @@
 [run]
 branch = True
 source = */nlpia/*
-omit = 
+omit =
    src/nlpia/data/*
    src/nlpia/book/*
    src/nlpia/talk.py
+   src/nlpia/highd.py
 
-include = 
+include =
    src/nlpia/book/examples/ch02.py
    src/nlpia/book/examples/ch03.py
    src/nlpia/book/examples/ch04.py

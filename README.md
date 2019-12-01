@@ -35,7 +35,7 @@ Some of us prefer Sublime Text 3 to the open source IDEs like Atom and VSCode. I
 
 ### Step 2. Install an Editor
 
-You can skip this step if you are happy using `jupyter notebook` or `VSCode` or the editor built into Anaconda3.
+You can skip this step if you are happy using `jupyter notebook` or `VSCode` or `Spyder` (built into Anaconda).
 
 I like [Sublime Text](https://www.sublimetext.com/3).
 It's a lot cleaner and more mature than the alternatives.
@@ -145,7 +145,7 @@ Linux-based OSes like Ubuntu and OSX come with C++ compilers built-in, so you ma
 But if you're on Windows and you want to install packages, like `python-levenshtein` that need compiled C++ libraries, you'll need a compiler.
 Fortunately Microsoft still lets you [download a compiler for free](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_14.0_standalone:_Visual_C.2B-.2B-_Build_Tools_2015_.28x86.2C_x64.2C_ARM.29), just make sure you follow the links to the Visual Studio "Build Tools" and not the entire Visual Studio package.
 
-Once you have a compiler on your OS you can install `nlpia` using pip:
+Once you have a C/C++ compiler and the python source code files, you can install `nlpia` using pip:
 
 ```bash
 cd nlpia  # make sure you're in the nlpia directory that contains `setup.py`

@@ -68,7 +68,7 @@ packages:
   - future>=0.16.0
   - jupyter>=1.0.0,<2.0.0
   - matplotlib>=2.0.2
-  - nltk>=3.2.2,<3.3.0
+  - nltk>=3.4.5,<3.5.0
   - pandas>=0.19.2
   - pip>=8.1.2
   - pypandoc>=1.4.0
@@ -133,7 +133,6 @@ env_specs:
       - aiml>=0.8.6,<0.9.0
       - annoy>=1.9.5,<2.0.0
       - ChatterBot>=0.7.6,<0.8.0
-      - cufflinks
       - django>=1.11.1,<1.12.0
       - future>=0.16.0
       - gensim>=2.1.0,<3.0.0

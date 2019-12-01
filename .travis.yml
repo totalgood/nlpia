@@ -37,7 +37,7 @@ install:
   - "echo \"after hash -r which conda: $(which conda)\""
   - echo $PATH
   - conda install pip --yes
-  - conda install python-annoy --yes
+  # - conda install python-annoy --yes
   - pip install --upgrade PyScaffold
   # - sudo apt-get install -y python-boto
   # - pip install -r requirements/requirements.txt

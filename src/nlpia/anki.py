@@ -31,7 +31,10 @@ def get_anki_phrases(lang='english', limit=None):
     lang = LANG2ANKI[lang[:2]] if lang not in ANKI_LANGUAGES else lang
     if lang[:2] == 'en':
         return get_anki_phrases_english(limit=limit)
-    return sorted(get_data(lang).iloc[:, -1].str.strip().values)
+    df_pairs = get_data(lang)
+    if lang in df_pairs.columns:
+        return sorted(df_pairs[lang].str.strip().values)
+    return sorted(df_pairs.iloc[:, 1].str.strip().values)
 
 
 def get_anki_phrases_english(limit=None):
@@ -101,4 +104,3 @@ def get_anki_vocab(lang=['eng'], limit=None, filename='anki_en_vocabulary.csv'):
     if filename:
         vocab.to_csv(os.path.join(BIGDATA_PATH, filename))
     return vocab
-
