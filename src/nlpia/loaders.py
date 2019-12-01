@@ -258,7 +258,9 @@ def load_anki_df(language='deu'):
         lang = (language or 'deu').lower()[:3]
         filepath = os.path.join(BIGDATA_PATH, '{}-eng'.format(lang), '{}.txt'.format(lang))
     df = pd.read_table(filepath, skiprows=1, header=None)
-    df.columns = ['eng', lang]
+    columns = ('eng', lang)
+    for newc in columns:
+        df.columns = [newc if c.lower().strip().startswith(newc) else c for c in df.columns]
     return df
 
 
@@ -396,7 +398,7 @@ def generate_big_urls_glove(bigurls=None):
                  'med -med _med -medium _medium'.split(),
                  'lg -lg _lg -large _large'.split()),
                 (6, 42, 840)
-                ):
+        ):
             for suf in suffixes[:-1]:
                 name = 'glove' + suf + str(num_dim)
                 dirname = 'glove.{num_words}B'.format(num_words=num_words)
@@ -427,7 +429,8 @@ ENGLISHES = 'eng usa us bri british american aus australian'.split()
 for lang in ANKI_LANGUAGES:
     for eng in ENGLISHES:
         BIG_URLS[lang] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-{}'.format(lang, eng), load_anki_df)
-        BIG_URLS[lang + '-eng'] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang), 1000, '{}-{}'.format(lang, eng), load_anki_df)
+        BIG_URLS[lang + '-eng'] = ('http://www.manythings.org/anki/{}-eng.zip'.format(lang),
+                                   1000, '{}-{}'.format(lang, eng), load_anki_df)
 
 for syn, lang in ANKI_LANGUAGE_SYNONYMS:
     BIG_URLS[syn] = BIG_URLS[lang]
