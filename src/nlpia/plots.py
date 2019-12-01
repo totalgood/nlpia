@@ -11,7 +11,10 @@ from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa
 import pandas as pd
 
-import plotly.chatstudio as plotly
+try:
+    import plotly.chartstudio as plotly
+except ImportError:
+    import plotly.plotly as plotly
 from plotly.offline.offline import _plot_html
 from pugnlp.util import clean_columns
 # from plotly import graph_objs  # Scatter, scatter.Marker, Layout, layout.YAxis, layout.XAxis
