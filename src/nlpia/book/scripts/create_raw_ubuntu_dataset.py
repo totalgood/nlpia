@@ -87,7 +87,7 @@ def get_random_utterances_from_corpus(candidate_dialog_paths, rng, utterances_nu
         # we do not count the last  _dialog_end__ urn
         dialog_len = len(dialog) - 1
         if(dialog_len < min_turn):
-            print "Dialog {} was shorter than the minimum required lenght {}".format(dialog_path, dialog_len)
+            print ("Dialog {} was shorter than the minimum required length {}".format(dialog_path, dialog_len))
             exit()
         # sample utterance, exclude the last round that is always "dialog end"
         max_ix = min(max_turn, dialog_len) - 1
