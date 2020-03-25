@@ -3,7 +3,7 @@
 
 # In[1]:
 
-
+from __future__ import print_function
 import keras
 
 
@@ -20,7 +20,6 @@ Some configurations won't converge.
 - LSTM loss decrease patterns during training can be quite different
 from what you see with CNNs/MLPs/etc.
 '''
-from __future__ import print_function
 import numpy as np
 np.random.seed(1337)  # for reproducibility
 
