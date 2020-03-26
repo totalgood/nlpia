@@ -41,7 +41,7 @@ scipy>=1.1.0
 seaborn>=0.8
 setuptools>=40.8.0
 spacy==2.0.18
-tensorflow==1.13.1
+tensorflow==1.15.2
 tensorflow-hub>=0.4.0
 theano==1.0.2
 tqdm>=4.11.2
