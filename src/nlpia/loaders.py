@@ -78,6 +78,7 @@ _parse = None  # placeholder for SpaCy parser + language model
 np = pd.np
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 # logging.config.dictConfig(LOGGING_CONFIG)
 # # doesn't display line number, etc
 # if os.environ.get('DEBUG'):
@@ -524,12 +525,12 @@ def normalize_ext_rename(filepath):
     >>> pth == normalize_ext_rename(pth)
     True
     """
-    logger.debug('normalize_ext.filepath=' + str(filepath))
+    logger.warn('normalize_ext.filepath=' + str(filepath))
     new_file_path = normalize_ext(filepath)
-    logger.debug('download_unzip.new_filepaths=' + str(new_file_path))
+    logger.warn('download_unzip.new_filepaths=' + str(new_file_path))
     # FIXME: fails when name is a url filename
     filepath = rename_file(filepath, new_file_path)
-    logger.debug('download_unzip.filepath=' + str(filepath))
+    logger.warn('download_unzip.filepath=' + str(filepath))
     return filepath
 
 
@@ -866,7 +867,7 @@ def download_unzip(names=None, normalize_filenames=False, verbose=True):
             df.columns = clean_columns(df.columns)
             file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
             df.to_csv(file_paths[name])
-        file_paths[name] = normalize_ext_rename(file_paths[name])
+            file_paths[name] = normalize_ext_rename(file_paths[name])
     return file_paths
 
 

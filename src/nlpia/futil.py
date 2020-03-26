@@ -31,6 +31,7 @@ try:
 except ImportError:
     import numpy as np  # noqa
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def wc(f, verbose=False, nrows=None):
@@ -125,7 +126,7 @@ def rm_r(path, force=False):
             return os.rmdir(path)
         except OSError:  # OSError: [Errno 66] Directory not empty:
             pass
-        except:
+        except:  # noqa
             if not force:
                 raise
     elif not force:
@@ -270,6 +271,7 @@ def normalize_ext(filepath):
     for ext, newext in mapping:
         r = ext.lower().replace('.', r'\.') + r'$'
         r = r'^[.]?([^.]*)\.([^.]{1,10})*' + r
+        logger.debug(f'regex pattern = {r}, string={filepath}')
         if re.match(r, fplower) and not fplower.endswith(newext):
             filepath = filepath[:-len(ext)] + newext
     return filepath
@@ -429,6 +431,6 @@ def read_text(forfn, nrows=None, verbose=True):
                 f.seek(0)
                 return read_csv(f, sep='\t', header=None, nrows=nrows)
         elif sum((1 for line in lines if any((tag.lower() in line.lower() for tag in HTML_TAGS)))
-                ) / float(len(lines)) > .05:
+                 ) / float(len(lines)) > .05:
             return np.array(html2text(EOL.join(lines)).split(EOL))
     return lines

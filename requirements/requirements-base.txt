@@ -9,7 +9,7 @@ future>=0.16.0
 gensim==3.6.0
 # h5py==2.8.0
 html2text>=2018.1.9
-jupyter>=1.0.0,<3.0.0  # pandas>=0.23.4,<0.30.0
+jupyter  # pandas>=0.23.4,<0.30.0
 Keras==2.2.4
 Keras-Applications>=1.0.6
 Keras-Preprocessing>=1.0.5

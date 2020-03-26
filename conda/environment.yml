@@ -1,7 +1,6 @@
 name: nlpiaenv
 
 channels:
-  - anaconda
   - conda-forge
   - defaults
 
@@ -11,7 +10,7 @@ dependencies:
   - cython==0.29
   - gensim>=3.4.0,<3.7.0
   - h5py==2.8.0
-  - jupyter>=1.0.0,<3.0.0
+  - jupyter
   - keras-applications>=1.0.6
   - keras-preprocessing>=1.0.5
   - keras==2.2.4
