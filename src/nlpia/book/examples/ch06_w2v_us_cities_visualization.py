@@ -181,7 +181,7 @@ with open('wordmap_10_US_cities.html', 'w') as fout:
     fout.write(html)
 # !firefox ./wordmap.html
 
-<1> flips the East/West North/South axes around to match geography better
+# <1> flips the East/West North/South axes around to match geography better
 
 #
 #######################################################
