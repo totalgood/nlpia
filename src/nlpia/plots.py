@@ -101,11 +101,11 @@ def get_array(df, x, default=None):
             x = df[df.columns[0]]
         else:
             x = df[default] if default in df else default
-    elif isinstance(x, (pd.Series, pd.np.ndarray, list, tuple)):
+    elif isinstance(x, (pd.Series, np.ndarray, list, tuple)):
         x = np.nd.array(x)
     else:
         x = df[x] if x in df.columns else df[df.columns[x]]
-    return pd.np.array(x)
+    return np.array(x)
 
 
 def offline_plotly_scatter3d(df, x=0, y=1, z=-1):
@@ -126,9 +126,9 @@ def offline_plotly_scatter3d(df, x=0, y=1, z=-1):
     for i in range(len(df['name'].unique())):
         name = df['Name'].unique()[i]
         color = colors[i]
-        x = x[pd.np.array(df['name'] == name)]
-        y = y[pd.np.array(df['name'] == name)]
-        z = z[pd.np.array(df['name'] == name)]
+        x = x[np.array(df['name'] == name)]
+        y = y[np.array(df['name'] == name)]
+        z = z[np.array(df['name'] == name)]
 
         trace = dict(
             name=name,

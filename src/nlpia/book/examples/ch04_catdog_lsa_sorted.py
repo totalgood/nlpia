@@ -1,4 +1,4 @@
-""" Uses np.linalg.svd directly to illustrate LSA on a small corpus. 
+""" Uses np.linalg.svd directly to illustrate LSA on a small corpus.
 
 Examples from the SVD section in Chapter 4 of NLPIA
 
@@ -31,7 +31,7 @@ nyc     1   1   1   1   1   0   0   0   0   1   0
 love    0   0   1   0   0   0   0   0   1   1   0
 >>> import numpy as np
 >>> U, s, Vt = np.linalg.svd(tdm)  # <1>
- 
+
 >>> import pandas as pd
 >>> pd.DataFrame(U, index=tdm.index).round(2)
           0     1     2     3     4     5
@@ -45,7 +45,7 @@ love  -0.22  0.42  0.69  0.00  0.41  0.37
 >>> s.round(1)
 array([3.1, 2.2, 1.8, 1. , 0.8, 0.5])
 >>> S = np.zeros((len(U), len(Vt)))
->>> pd.np.fill_diagonal(S, s)
+>>> np.fill_diagonal(S, s)
 >>> pd.DataFrame(S).round(1)
     0    1    2    3    4    5    6    7    8    9    10
 0  3.1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
@@ -77,7 +77,7 @@ array([3.1, 2.2, 1.8, 1. , 0.8, 0.5])
 >>> for numdim in range(len(s), 0, -1):
 ...     S[numdim - 1, numdim - 1] = 0
 ...     reconstructed_tdm = U.dot(S).dot(Vt)
-...     err.append(np.sqrt(((reconstructed_tdm - tdm).values.flatten() ** 2).sum() 
+...     err.append(np.sqrt(((reconstructed_tdm - tdm).values.flatten() ** 2).sum()
 ...                / np.product(tdm.shape)))
 >>> np.array(err).round(2)
 array([0.  , 0.06, 0.12, 0.17, 0.28, 0.39, 0.55])
@@ -90,7 +90,7 @@ array([0.  , 0.06, 0.12, 0.17, 0.28, 0.39, 0.55])
 >>> for numdim in range(len(s), 0, -1):
 ...     S[numdim - 1, numdim - 1] = 0
 ...     reconstructed_tdm = U.dot(S).dot(Vt)
-...     err2.append(np.sqrt(((reconstructed_tdm - tdm).values.flatten() ** 2).sum() 
+...     err2.append(np.sqrt(((reconstructed_tdm - tdm).values.flatten() ** 2).sum()
 ...                / np.product(tdm.shape)))
 >>> np.array(err2).round(2)
 array([0.  , 0.07, 0.11, 0.15, 0.23, 0.3 , 0.41])
@@ -431,7 +431,7 @@ def lsa_models(vocabulary='cat dog apple lion NYC love'.lower().split(), docs=11
     err = accuracy_study(verbosity=verbosity, **lsa_bow_model)
     lsa_bow_model['err'] = err
     lsa_bow_model['accuracy'] = list(1. - np.array(err))
-    
+
     lsa_tfidf_model = lsa(tdm=tfidfdm)
     lsa_bow_model['vocabulary'] = tfidfdm.index.values
     lsa_tfidf_model['docs'] = docs

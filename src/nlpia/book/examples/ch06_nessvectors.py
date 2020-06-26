@@ -106,7 +106,7 @@ COMPONENT_WORDS = OrderedDict([
 
 
 def component_vector(words):
-    vector = pd.np.zeros(300)
+    vector = np.zeros(300)
     for word in words:
         v = word_vectors[word]
         vector += v / len(words)
@@ -139,7 +139,7 @@ def nessvector_marie_curie():
     word_vectors.most_similar('location')
     word_vectors.most_similar('geography')
 
-    placeness = pd.np.zeros(300)
+    placeness = np.zeros(300)
     for word in COMPONENT_WORDS['placeness']:
         v = word_vectors[word]
         print(v.min(), v.max())
@@ -152,9 +152,9 @@ def nessvector_marie_curie():
 
     word_vectors.most_similar('animal')
 
-    animalness = pd.np.zeros(300)
+    animalness = np.zeros(300)
 
-    animalness = pd.np.zeros(300)
+    animalness = np.zeros(300)
     for word in 'animal mammal carnivore animals Animal animal_welfare dog pet cats ani_mal'.split():
         v = word_vectors[word]
         print(v.min(), v.max())
@@ -164,7 +164,7 @@ def nessvector_marie_curie():
     word_vectors.most_similar('people')
     word_vectors.most_similar('humans')
 
-    peopleness = pd.np.zeros(300)
+    peopleness = np.zeros(300)
     for word in 'human Humans homo_sapiens peole people individuals humankind people men women'.split():
         v = word_vectors[word]
         print(v.min(), v.max())
@@ -179,7 +179,7 @@ def nessvector_marie_curie():
 
     word_vectors.most_similar('concept')
 
-    conceptness = pd.np.zeros(300)
+    conceptness = np.zeros(300)
     for word in 'concept concepts idea'.split():
         v = word_vectors[word]
         print(v.min(), v.max())
@@ -191,7 +191,7 @@ def nessvector_marie_curie():
     word_vectors.most_similar('female')
     word_vectors.most_similar('woman')
 
-    femaleness = pd.np.zeros(300)
+    femaleness = np.zeros(300)
     for word in 'female Female females femal woman girl lady'.split():
         v = word_vectors[word]
         femaleness += v / 7.

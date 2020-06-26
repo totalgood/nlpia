@@ -89,7 +89,7 @@ us[us.columns[-3:]].head()
 
 
 import numpy as np
-vocab = pd.np.concatenate([us.city, us.st, us.state])
+vocab = np.concatenate([us.city, us.st, us.state])
 vocab = np.array([word for word in vocab if word in wv])
 vocab[:10]
 # array(['Edna', 'Henderson', 'Natalia', 'Yorktown', 'Brighton', 'Berry',
@@ -135,7 +135,7 @@ us_2D = pca.fit_transform(us_300D.iloc[:num_cities, :300])  # <2>
 ############################################################################################
 # Offline interactive HTML plot example (completely independent of the examples above)
 
-import os 
+import os
 from nlpia.data.loaders import get_data
 from nlpia.plots import offline_plotly_scatter_bubble
 num_cities = 200

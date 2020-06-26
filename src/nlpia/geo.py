@@ -1,6 +1,7 @@
 import re
 
 import pandas as pd
+import numpy as np
 
 from nlpia.web import requests_get
 
@@ -28,9 +29,9 @@ def geocode_osm(address, polygon=0):
     print(d)
 
     return {
-        'lat': d[0].get('lat', pd.np.nan),
-        'lon': d[0].get('lon', pd.np.nan),
-        }
+        'lat': d[0].get('lat', np.nan),
+        'lon': d[0].get('lon', np.nan),
+    }
 
 
 def encode_get_args(s):
@@ -47,6 +48,6 @@ def geocode_google(address, apikey=None):
     results = [{}] if not len(results) else results
     latlon = results[0].get('geometry', {}).get('location', {})
     return {
-        'lat': latlon.get('lat', pd.np.nan),
-        'lon': latlon.get('lng', pd.np.nan),
-        }
+        'lat': latlon.get('lat', np.nan),
+        'lon': latlon.get('lng', np.nan),
+    }

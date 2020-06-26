@@ -1285,13 +1285,13 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
     canonical = pd.DataFrame([list(row) for row in df.canonical_name.str.split(',').values])
 
     def cleaner(row):
-        cleaned = pd.np.array(
+        cleaned = np.array(
             [s for i, s in enumerate(row.values) if s not in ('Downtown', None) and (i > 3 or row[i + 1] != s)])
         if len(cleaned) == 2:
             cleaned = [cleaned[0], None, cleaned[1], None, None]
         else:
             cleaned = list(cleaned) + [None] * (5 - len(cleaned))
-        if not pd.np.all(pd.np.array(row.values)[:3] == pd.np.array(cleaned)[:3]):
+        if not np.all(np.array(row.values)[:3] == np.array(cleaned)[:3]):
             logger.info('{} => {}'.format(row.values, cleaned))
         return list(cleaned)
 

@@ -111,7 +111,7 @@ v_topic_vectors[:6, :].dot(v_topic_vectors[:6, :].T).round(3)
 sim = v_topic_vectors[:6, :].dot(v_topic_vectors[:6, :].T)
 sim /= sim.diag()
 sim /= np.diag(sim)
-sim /= pd.np.diag(sim)
+sim /= np.diag(sim)
 sim
 sim.round(3)
 sim.round(6)
@@ -152,7 +152,7 @@ C = utopics.T.dot(utopics)[:6, :6]
 C
 C.round(3)
 C2 = C / diag(C)
-C2 = C / pd.np.diag(C)
+C2 = C / np.diag(C)
 C2
 C2.round(3)
 pd.DataFrame(C2).round(3)

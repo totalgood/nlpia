@@ -8,7 +8,8 @@
 # nlpia can now automatically download and load w2v
 
 from nlpia.data.loaders import get_data
-from gensim.models import KeyedVectors
+# from gensim.models import KeyedVectors
+
 wv = get_data('word2vec')
 # wv = KeyedVectors.load_word2vec_format(path, binary=True)
 len(wv.vocab)
@@ -17,7 +18,7 @@ wv.vectors.shape
 # (3000000, 300)
 
 
-import pandas as pd
+import pandas as pd  # noqa
 vocab = pd.Series(wv.vocab)
 vocab.iloc[100000:100006]  # different words for new KeyedVector format
 # Illington_Fund             Vocab(count:447860, index:2552140)
@@ -28,7 +29,7 @@ vocab.iloc[100000:100006]  # different words for new KeyedVector format
 # Illini_Bluffs              Vocab(count:2636947, index:363053)
 
 
-import numpy as np
+import numpy as np  # noqa
 np.linalg.norm(wv['Illinois'] - wv['Illini'])  # <1>
 # 3.3653798
 similarity = np.dot(wv['Illinois'], wv['Illini']) / (
@@ -49,7 +50,7 @@ wv['Illini']
 #        -0.0291748 ,  0.39257812,  0.05395508,  0.35351562, -0.02270508,
 
 
-from nlpia.data.loaders import get_data
+from nlpia.data.loaders import get_data  # noqa
 cities = get_data('cities')
 cities.head(1).T
 # geonameid                       3039154
@@ -89,8 +90,8 @@ us[us.columns[-3:]].head()
 # 4046430           Natalia  TX    Texas
 
 
-import numpy as np
-vocab = pd.np.concatenate([us.city, us.st, us.state])
+import numpy as np  # noqa
+vocab = np.concatenate([us.city, us.st, us.state])
 vocab = np.array([word for word in vocab if word in wv.wv])
 vocab[:5]
 # array(['Edna', 'Henderson', 'Natalia', 'Yorktown', 'Brighton', 'Berry',
@@ -119,13 +120,13 @@ del wv
 
 
 # Simplified plot of 10 largest cities
-from sklearn.decomposition import PCA
-pca = PCA(n_components=2) 
+from sklearn.decomposition import PCA  # noqa
+pca = PCA(n_components=2)
 us_300D = get_data('cities_us_wordvectors')
 us_2D = pca.fit_transform(us_300D.iloc[:10, :300])
 
 # Original confusing/complicated/detailed plot
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA  # noqa
 pca = PCA(n_components=2)  # <1>
 us_300D = get_data('cities_us_wordvectors')
 us_2D = pca.fit_transform(us_300D.iloc[:500, :300])  # <2>
@@ -134,8 +135,8 @@ us_2D = pca.fit_transform(us_300D.iloc[:500, :300])  # <2>
 # <2> The last column (# 301) of this DataFrame contains the name, which is also stored in the DataFrame index.
 
 # this example is completely independent of the examples above
-from nlpia.data.loaders import get_data
-from nlpia.plots import offline_plotly_scatter_bubble
+from nlpia.data.loaders import get_data  # noqa
+from nlpia.plots import offline_plotly_scatter_bubble  # noqa
 df = get_data('cities_us_wordvectors_pca2_meta')
 df = df.sort_values('population', ascending=False)[:10].copy()
 df[['x', 'y']] = - df[['x', 'y']]  # <1> flip East/West & North/South axes to match geography better

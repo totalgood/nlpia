@@ -40,15 +40,15 @@ female_nurse = v_nurse.dot(v_female) / np.linalg.norm(v_nurse) / np.linalg.norm(
 male_doctor = v_doctor.dot(v_male) / np.linalg.norm(v_doctor) / np.linalg.norm(v_male)
 male_nurse = v_nurse.dot(v_male) / np.linalg.norm(v_nurse) / np.linalg.norm(v_male)
 
-v_nurse.dot(v_female) / np.linalg.norm(v_nurse) / pd.np.linalg.norm(v_female)
+v_nurse.dot(v_female) / np.linalg.norm(v_nurse) / np.linalg.norm(v_female)
 v_female_1 = nlp('female').vector
 v_male_1 = nlp('male').vector
 v_doctor.similarity(v_male)
 tok_doctor = nlp('doctor')
 tok_male = nlp('male')
 tok_doctor.similarity(tok_male)
-v_doctor.dot(v_male) / pd.np.linalg.norm(v_doctor) / pd.np.linalg.norm(v_male)
-v_doctor.dot(v_male_1) / pd.np.linalg.norm(v_doctor) / pd.np.linalg.norm(v_male_1)
+v_doctor.dot(v_male) / np.linalg.norm(v_doctor) / np.linalg.norm(v_male)
+v_doctor.dot(v_male_1) / np.linalg.norm(v_doctor) / np.linalg.norm(v_male_1)
 
 # NLP Tutorial Nessvectors
 ########################################################################

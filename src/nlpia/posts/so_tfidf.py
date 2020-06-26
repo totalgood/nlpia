@@ -3,6 +3,7 @@ from collections import Counter
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
+import numpy as np
 
 
 corpus = ["The dog ate a sandwich and I ate a sandwich",
@@ -29,11 +30,11 @@ tfs = pd.DataFrame([Counter(d) for d in corp]).fillna(0).astype(int)
 
 # The first document's TFIDF vector:
 tfidf0 = tfs.iloc[0] * (1. / df)
-tfidf0 = tfidf0 / pd.np.linalg.norm(tfidf0)
+tfidf0 = tfidf0 / np.linalg.norm(tfidf0)
 #         ate       dog  sandwich  transfigured  wizard
 # 0  0.754584  0.377292  0.536893           0.0     0.0
 
 tfidf1 = tfs.iloc[1] * (1. / df)
-tfidf1 = tfidf1 / pd.np.linalg.norm(tfidf1)
+tfidf1 = tfidf1 / np.linalg.norm(tfidf1)
 #     ate  dog  sandwich  transfigured    wizard
 # 0   0.0  0.0  0.449436      0.631667  0.631667
