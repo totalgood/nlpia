@@ -78,6 +78,7 @@ _parse = None  # placeholder for SpaCy parser + language model
 np = pd.np
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 # logging.config.dictConfig(LOGGING_CONFIG)
 # # doesn't display line number, etc
 # if os.environ.get('DEBUG'):
@@ -524,12 +525,12 @@ def normalize_ext_rename(filepath):
     >>> pth == normalize_ext_rename(pth)
     True
     """
-    logger.debug('normalize_ext.filepath=' + str(filepath))
+    logger.warn('normalize_ext.filepath=' + str(filepath))
     new_file_path = normalize_ext(filepath)
-    logger.debug('download_unzip.new_filepaths=' + str(new_file_path))
+    logger.warn('download_unzip.new_filepaths=' + str(new_file_path))
     # FIXME: fails when name is a url filename
     filepath = rename_file(filepath, new_file_path)
-    logger.debug('download_unzip.filepath=' + str(filepath))
+    logger.warn('download_unzip.filepath=' + str(filepath))
     return filepath
 
 
@@ -866,7 +867,7 @@ def download_unzip(names=None, normalize_filenames=False, verbose=True):
             df.columns = clean_columns(df.columns)
             file_paths[name] = os.path.join(DATA_PATH, name + '.csv')
             df.to_csv(file_paths[name])
-        file_paths[name] = normalize_ext_rename(file_paths[name])
+            file_paths[name] = normalize_ext_rename(file_paths[name])
     return file_paths
 
 
@@ -1037,7 +1038,7 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
 
 
 def get_data(name='sms-spam', nrows=None, limit=None):
-    """ Load data from a json, csv, or txt file if it exists in the data dir.
+    r""" Load data from a json, csv, or txt file if it exists in the data dir.
 
     References:
       [cities_air_pollution_index](https://www.numbeo.com/pollution/rankings.jsp)
@@ -1056,11 +1057,13 @@ def get_data(name='sms-spam', nrows=None, limit=None):
     Name: 0, dtype: object
     >>> get_data('imdb_test').info()
     <class 'pandas.core.frame.DataFrame'>
-    MultiIndex: 20 entries, (train, pos, 0) to (train, neg, 9)
-    Data columns (total 3 columns):
-    url       20 non-null object
-    rating    20 non-null int64
-    text      20 non-null object
+    MultiIndex: 20 entries, ('train', 'pos', 0) to ('train', 'neg', 9)
+    #   Column  Non-Null Count  Dtype
+    ---  ------  --------------  -----
+    0   url     20 non-null     object
+    1   rating  20 non-null     int64
+    2   text    20 non-null     object
+    memory usage: 809.0+ bytes
     dtypes: int64(1), object(2)
     memory usage: 809.0+ bytes
     """
@@ -1284,13 +1287,13 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
     canonical = pd.DataFrame([list(row) for row in df.canonical_name.str.split(',').values])
 
     def cleaner(row):
-        cleaned = pd.np.array(
+        cleaned = np.array(
             [s for i, s in enumerate(row.values) if s not in ('Downtown', None) and (i > 3 or row[i + 1] != s)])
         if len(cleaned) == 2:
             cleaned = [cleaned[0], None, cleaned[1], None, None]
         else:
             cleaned = list(cleaned) + [None] * (5 - len(cleaned))
-        if not pd.np.all(pd.np.array(row.values)[:3] == pd.np.array(cleaned)[:3]):
+        if not np.all(np.array(row.values)[:3] == np.array(cleaned)[:3]):
             logger.info('{} => {}'.format(row.values, cleaned))
         return list(cleaned)
 
