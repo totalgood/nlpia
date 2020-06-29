@@ -1,14 +1,15 @@
 import pandas as pd
+import numpy as np
 
 
 def cleaner(row):
-    cleaned = pd.np.array([s for i, s in enumerate(row.values)
-                           if s not in ('Downtown', None) and (i > 3 or row[i + 1] != s)])
+    cleaned = np.array([s for i, s in enumerate(row.values)
+                        if s not in ('Downtown', None) and (i > 3 or row[i + 1] != s)])
     if len(cleaned) == 2:
         cleaned = [cleaned[0], None, cleaned[1], None, None]
     else:
         cleaned = list(cleaned) + [None] * (5 - len(cleaned))
-    if not pd.np.all(pd.np.array(row.values)[:3] == pd.np.array(cleaned)[:3]):
+    if not np.all(np.array(row.values)[:3] == np.array(cleaned)[:3]):
         print(row.values)
         print(cleaned)
     return list(cleaned)
