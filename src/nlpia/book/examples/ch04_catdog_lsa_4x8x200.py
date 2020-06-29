@@ -322,7 +322,7 @@ doc10 -0.04 -0.07 -0.36  0.41  0.09  0.09  0.00 -0.33 -0.06 -0.06   0.67  -0.33
 doc11 -0.04 -0.07 -0.36  0.41  0.09  0.09  0.00 -0.33 -0.06 -0.06  -0.33   0.67
 Try to reconstruct an approximate TFIDF, using only 2 topics (from 7 words):
 
->>> tfidf_compressed = U[:,:2] @ (pd.np.diag(S)[:2,:] @ VT[:2,:])
+>>> tfidf_compressed = U[:,:2] @ (np.diag(S)[:2,:] @ VT[:2,:])
 >>> tfidf_compressed.shape
 
 array([[ 0.12191697,  0.01013273,  0.04009995, ...,  0.06057937,

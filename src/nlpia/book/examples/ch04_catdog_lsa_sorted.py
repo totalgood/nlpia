@@ -45,7 +45,7 @@ love  -0.22  0.42  0.69  0.00  0.41  0.37
 >>> s.round(1)
 array([3.1, 2.2, 1.8, 1. , 0.8, 0.5])
 >>> S = np.zeros((len(U), len(Vt)))
->>> pd.np.fill_diagonal(S, s)
+>>> np.fill_diagonal(S, s)
 >>> pd.DataFrame(S).round(1)
     0    1    2    3    4    5    6    7    8    9    10
 0  3.1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
