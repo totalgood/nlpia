@@ -17,13 +17,12 @@ MechanicalSoup>=0.10.0,<0.11.0
 nltk>=3.4.5,<3.5.0
 pandas==0.25.3
 pathlib>=1.0.1,<2.0.0
-# pillow>=5.2.0,<6.0.0
-pillow==6.2.0
+pillow>=5.2.0,<6.0.0
 pip>=18.0
 plac>=0.9.6,<1.0.0  # thinc==6.10.3 requires plac<1.0.0
 plotly==3.3.0
 plyfile>=0.5.0,<1.0.0
-pugnlp>=0.2.6
+pugnlp>=0.2.5
 pytest-cov>=2.5.1
 python-levenshtein>=0.12.0,<0.13.0
 qtconsole==4.4.1. # ,<6.0.0  # 4.4.1 is available on OSX in conda and pip
@@ -33,7 +32,7 @@ scipy>=1.1.0
 seaborn>=0.8
 setuptools>=40.8.0
 spacy==2.0.18
-tensorflow==1.15.2
+tensorflow==1.13.1
 tensorflow-hub>=0.4.0
 theano==1.0.2
 tqdm>=4.11.2
