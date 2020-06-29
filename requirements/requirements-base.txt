@@ -7,6 +7,7 @@ cython==0.29
 future>=0.16.0
 gensim==3.6.0
 html2text>=2018.1.9
+html5lib
 jupyter==1.0.0
 Keras==2.2.4
 Keras-Applications>=1.0.6
