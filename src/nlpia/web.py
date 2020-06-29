@@ -55,8 +55,8 @@ def requests_get(*args, **kwargs):
     """ Wrapper for requests.get that set the HTTP header be more acceptable by web servers
 
     >>> resp = requests_get('https://en.wikipedia.org/wiki/List_of_HTTP_header_fields')
-    >>> resp.content[:10]
-    b'<!DOCTYPE '
+    >>> resp.content[:10].strip()
+    b'<!DOCTYPE'
     """
     headers = dict(REQUESTS_HEADER)
     headers.update(kwargs.get('headers', None) or {})

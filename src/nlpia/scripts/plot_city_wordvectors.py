@@ -1,6 +1,7 @@
 from gensim.models import KeyedVectors
 import matplotlib
-matplotlib.use('TkAgg')  # noqa
+
+# matplotlib.use('TkAgg')  # noqa
 
 import pandas as pd
 import numpy as np

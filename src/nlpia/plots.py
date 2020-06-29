@@ -4,7 +4,8 @@
 import os
 
 import matplotlib
-matplotlib.use('TkAgg')  # noqa
+
+# matplotlib.use('TkAgg')  # noqa
 import seaborn  # noqa
 from matplotlib import pyplot as plt
 

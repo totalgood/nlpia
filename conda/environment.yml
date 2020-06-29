@@ -6,35 +6,27 @@ channels:
 
 dependencies:
   - botocore
-  # - conda-build
   - cython==0.29
   - gensim>=3.4.0,<3.7.0
   - h5py==2.8.0
-  - jupyter
+  - html5lib==1.1
+  - jupyter==1.0.0
   - keras-applications>=1.0.6
   - keras-preprocessing>=1.0.5
   - keras==2.2.4
-  - matplotlib>=2.2.2,<2.3.0
+  - matplotlib==3.2.2
   - mechanicalsoup
   - nltk>=3.4.5,<3.5.0
-  # spacy 2.0.18 has requirement numpy>=1.15.0, but you'll have numpy 1.14.3 which is incompatible.
-  # - numpy>=1.15.0,<1.16.0
-  # - numpy==1.14.5
   - opencv>=3.3.0,<3.5.0
-  # - pandas
+  - pandas==0.25.3
   - pandoc>=2.2.3,<3.0.0
   - pip>=18.0
   - plac>=0.9.6,<1.0.0
   - plotly==3.3.0
-  # pyqt>=5.9.2,<6.0 fails because conda  thinks it needs python2.7
-  # - PyQt4==5.6.0
   - pyscaffold>=3.1
   - pytest-cov
   - python-levenshtein>=0.12.0,<0.13.0
-  # - python==3.7
   - redis-py>=2.10.6
-  # spacy 2.0.18 has requirement regex==2018.01.10, but you'll have regex 2018.11.22 which is incompatible.
-  # - regex==2018.01.10
   - scipy==1.1.0
   - spacy==2.0.18
   - swig>=3.0.12

@@ -1,7 +1,8 @@
 import os
 
 import matplotlib
-matplotlib.use('TkAgg')  # noqa
+
+# matplotlib.use('TkAgg')  # noqa
 import seaborn
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import *  # noqa
