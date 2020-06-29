@@ -54,7 +54,7 @@ def plot_city_wordvectors():
     # 4046430           Natalia  TX    Texas
 
 
-    vocab = pd.np.concatenate([us.city, us.st, us.state])
+    vocab = np.concatenate([us.city, us.st, us.state])
     vocab = np.array([word for word in vocab if word in wv.wv])
     vocab[:10]
     # array(['Edna', 'Henderson', 'Natalia', 'Yorktown', 'Brighton', 'Berry',

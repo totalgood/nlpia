@@ -2,7 +2,7 @@ import os
 import gc
 
 import json
-import pandas as pd
+import numpy as np
 import gzip
 
 from gensim.models import TfidfModel, LsiModel
@@ -44,7 +44,7 @@ def lsa_twitter(cased_tokens):
         tweets_path = os.path.join(BIGDATA_PATH, 'tweets.csv.gz')
         print('Loading tweets: {} ...'.format(tweets_path))
         tweets = read_csv(tweets_path)
-        tweets = pd.np.array(tweets.text.str.split())
+        tweets = np.array(tweets.text.str.split())
         with gzip.open(os.path.join(BIGDATA_PATH, 'tweets.txt.gz'), 'w') as f:
             for tokens in tweets:
                 f.write((' '.join(tokens) + '\n').encode('utf-8'))
