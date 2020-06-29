@@ -1,6 +1,7 @@
 name: nlpiaenv
 
 channels:
+  - anaconda
   - conda-forge
   - defaults
 
