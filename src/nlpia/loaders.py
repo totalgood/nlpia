@@ -1038,7 +1038,7 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
 
 
 def get_data(name='sms-spam', nrows=None, limit=None):
-    """ Load data from a json, csv, or txt file if it exists in the data dir.
+    r""" Load data from a json, csv, or txt file if it exists in the data dir.
 
     References:
       [cities_air_pollution_index](https://www.numbeo.com/pollution/rankings.jsp)
@@ -1057,11 +1057,13 @@ def get_data(name='sms-spam', nrows=None, limit=None):
     Name: 0, dtype: object
     >>> get_data('imdb_test').info()
     <class 'pandas.core.frame.DataFrame'>
-    MultiIndex: 20 entries, (train, pos, 0) to (train, neg, 9)
-    Data columns (total 3 columns):
-    url       20 non-null object
-    rating    20 non-null int64
-    text      20 non-null object
+    MultiIndex: 20 entries, ('train', 'pos', 0) to ('train', 'neg', 9)
+    #   Column  Non-Null Count  Dtype
+    ---  ------  --------------  -----
+    0   url     20 non-null     object
+    1   rating  20 non-null     int64
+    2   text    20 non-null     object
+    memory usage: 809.0+ bytes
     dtypes: int64(1), object(2)
     memory usage: 809.0+ bytes
     """
