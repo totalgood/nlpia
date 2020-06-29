@@ -76,7 +76,8 @@ trip    0.00  0.00  0.0  0.0  0.0  0.0
 import pandas as pd
 import numpy as np
 import matplotlib
-matplotlib.use('TkAgg')  # noqa
+
+# matplotlib.use('TkAgg')  # noqa
 import seaborn  # noqa
 from matplotlib import pyplot as plt
 

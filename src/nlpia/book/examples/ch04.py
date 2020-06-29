@@ -45,9 +45,11 @@ import pandas as pd
 from sklearn.decomposition import PCA
 
 import matplotlib
-matplotlib.use('TkAgg')
+#
+# matplotlib.use('TkAgg')
 import matplotlib
-matplotlib.use('TkAgg')
+#
+# matplotlib.use('TkAgg')
 import seaborn
 
 from matplotlib import pyplot as plt

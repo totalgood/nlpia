@@ -7,7 +7,8 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from nltk.tokenize.casual import casual_tokenize
 from matplotlib import pyplot as plt
 import matplotlib
-matplotlib.use('TkAgg')
+
+# matplotlib.use('TkAgg')
 import seaborn  # noqa
 
 from nlpia.data.loaders import get_data

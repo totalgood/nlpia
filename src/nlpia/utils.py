@@ -59,10 +59,12 @@ from seaborn import plt
 from seaborn import plt
 plt = seaborn.plt
 import matplotlib
-matplotlib.use('TkAgg')
+
+# matplotlib.use('TkAgg')
 import seaborn.plt
 import matplotlib
-matplotlib.use('TkAgg')
+
+# matplotlib.use('TkAgg')
 import seaborn
 plt = seaborn.plt
 from matplotlib import plt
