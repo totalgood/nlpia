@@ -675,10 +675,12 @@ def longest_table(dfs):
     return dfs[sorted_indices[-1][1]]
 
 
-def get_filename_extensions(url='https://www.webopedia.com/quick_ref/fileextensionsfull.asp'):
+def get_filename_extensions(url='https://tan.sfo2.digitaloceanspaces.com/midata/public/corpora/nlpia/file_extensions.html'):
     """ Load a DataFrame of filename extensions from the indicated url
 
-    >>> df = get_filename_extensions('https://www.openoffice.org/dev_docs/source/file_extensions.html')
+      > df = get_filename_extensions('https://www.webopedia.com/quick_ref/fileextensionsfull.asp')
+      > df = get_filename_extensions('https://www.openoffice.org/dev_docs/source/file_extensions.html')
+    >>> df = get_filename_extensions('https://tan.sfo2.digitaloceanspaces.com/midata/public/corpora/nlpia/file_extensions.html')
     >>> df.head(2)
         ext                      description
     0    .a        UNIX static library file.

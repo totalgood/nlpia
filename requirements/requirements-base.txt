@@ -7,12 +7,12 @@ cython==0.29
 future>=0.16.0
 gensim==3.6.0
 html2text>=2018.1.9
-html5lib
+html5lib==1.1
 jupyter==1.0.0
 Keras==2.2.4
 Keras-Applications>=1.0.6
 Keras-Preprocessing>=1.0.5
-matplotlib>=2.2.3,<2.3.0
+matplotlib>=2.3.0,<2.4.0
 MechanicalSoup>=0.10.0,<0.11.0
 nltk>=3.4.5,<3.5.0
 pandas==0.25.3
