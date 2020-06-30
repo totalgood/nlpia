@@ -229,7 +229,7 @@ def get_url_filename(url=None, driveid=None):
         if filename.endswith('Google Drive'):
             filename = filename[:-len('Google Drive')].rstrip().rstrip('-:').rstrip()
         return filename
-    logger.warn('Unable to find filename for the URL "{}"'.format(url))
+    log.warning('Unable to find filename for the URL "{}"'.format(url))
 
 
 def get_response_confirmation_token(response):
