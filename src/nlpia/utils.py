@@ -44,13 +44,10 @@ def embed_wordvecs(w2v=None, df=None, vocab='name', embedder=TSNE, **kwargs):
     return pd.DataFrame(tsne.embedding_, columns=['x', 'y'])
 
 
-WV = None
-
-
 def most_similar(tok, num_similar=20):
     """ FIXME: Use annoy to index word vectors and find most similar words to token str, id, or vector """
     raise NotImplementedError("Work in Progress, FIXME!")
-    global WV
+    WV = most_similar.WV
     from nlpia.loaders import load_glove, WV_IDS, WORD2ID, VOCAB, ANN, WV  # noqa
     if WV is None:
         WV = load_glove(os.path.join(BIGDATA_PATH, 'glove_test.txt'))
@@ -85,6 +82,8 @@ def most_similar(tok, num_similar=20):
         stem = VOCAB[idx].text
     return ANN.get_nns_by_vector(vec, num_similar)
 
+
+most_similar.WV = None  # None
 
 r"""
 Trial and error to produce the steps encoded in embed_vectors() above
