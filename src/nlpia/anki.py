@@ -63,7 +63,7 @@ def get_vocab(docs):
             word    pos  tag       dep ent_type ent_iob  sentiment
     0          !  PUNCT    .     punct                O        0.0
     1        Hey   INTJ   UH      intj                O        0.0
-    2        Man   NOUN   NN      ROOT   PERSON       I        0.0
+    2        Man  PROPN  NNP      ROOT                O        0.0
     3        Mr.  PROPN  NNP  compound                O        0.0
     4  Tangerine  PROPN  NNP  compound   PERSON       B        0.0
     """

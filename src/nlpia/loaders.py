@@ -1387,7 +1387,7 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
     [('Hey', 'UH'),
      ('Mr.', 'NNP'),
      ('Tangerine', 'NNP'),
-     ('Man', 'NN'),
+     ('Man', 'NNP'),
      ('!', '.')]
     >>> [(ent.text, ent.ent_id, ent.has_vector, ent.vector[:3].round(3)) for ent in doc.ents]
     [('Tangerine Man', 0, True, array([0.72 , 1.913, 2.675], dtype=float32))]
