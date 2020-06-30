@@ -8,9 +8,9 @@ import numpy as np
 from sklearn.manifold import TSNE
 from gensim.models import KeyedVectors
 
-from nlpia.constants import DATA_PATH
+from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.data.loaders import get_data
-from nlpia.loaders import nlp, _parse, WV, WV_IDS, WORD2ID, VOCAB, ANN
+from nlpia.loaders import nlp, _parse, WV_IDS, WORD2ID, VOCAB, ANN, load_glove
 
 
 def stdout_logging(loglevel=logging.INFO):
@@ -44,9 +44,15 @@ def embed_wordvecs(w2v=None, df=None, vocab='name', embedder=TSNE, **kwargs):
     return pd.DataFrame(tsne.embedding_, columns=['x', 'y'])
 
 
+WV = None
+
+
 def most_similar(tok, num_similar=20):
     """ FIXME: Use annoy to index word vectors and find most similar words to token str, id, or vector """
     raise NotImplementedError("Work in Progress, FIXME!")
+    global WV
+    if WV is None:
+        WV = load_glove(os.path.join(BIGDATA_PATH, 'glove_test.txt'))
 
     if _parse is None:
         nlp("hello", lang='en_core_web_lg')
@@ -79,7 +85,7 @@ def most_similar(tok, num_similar=20):
     return ANN.get_nns_by_vector(vec, num_similar)
 
 
-"""
+r"""
 Trial and error to produce the steps encoded in embed_vectors() above
 
 ```python
