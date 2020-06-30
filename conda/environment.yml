@@ -20,8 +20,7 @@ dependencies:
   - pytest-cov
   - python-levenshtein>=0.12.0,<0.13.0
   - redis-py>=2.10.6
-  - scipy==1.1.0
-  - spacy==2.0.18
+  - scipy>=1.1.0
   - swig>=3.0.12
   - theano>=1.0.2
   # this will fail on windows:
