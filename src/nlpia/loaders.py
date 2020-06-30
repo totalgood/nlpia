@@ -1390,7 +1390,7 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
      ('Man', 'NNP'),
      ('!', '.')]
     >>> [(ent.text, ent.ent_id, ent.has_vector, ent.vector[:3].round(3)) for ent in doc.ents]
-    [('Tangerine Man', 0, True, array([0.72 , 1.913, 2.675], dtype=float32))]
+    [('Tangerine', 0, True, array([0.678, 0.134, 2.162], dtype=float32))]
     """
     # doesn't let you load a different model anywhere else in the module
     linesep = os.linesep if linesep in ('default', True, 1, 'os') else linesep
