@@ -30,8 +30,8 @@ try:
     np = pd.np
 except ImportError:
     import numpy as np  # noqa
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 def wc(f, verbose=False, nrows=None):
@@ -85,7 +85,7 @@ def ls(path, force=False):
     True
     """
     path = expand_filepath(path)
-    logger.debug('path={}'.format(path))
+    log.debug('path={}'.format(path))
     if os.path.isfile(path):
         return path
     elif os.path.isdir(path):
@@ -118,7 +118,7 @@ def rm_r(path, force=False):
     FileNotFoundError: [Errno 2] No such file or directory: '/tmp/nlpia_dir_that_doesnt_exist_3.141591234'
     """
     path = expand_filepath(path)
-    logger.debug('path={}'.format(path))
+    log.debug('path={}'.format(path))
     if os.path.isfile(path):
         return os.remove(path)
     elif os.path.isdir(path):
@@ -271,7 +271,7 @@ def normalize_ext(filepath):
     for ext, newext in mapping:
         r = ext.lower().replace('.', r'\.') + r'$'
         r = r'^[.]?([^.]*)\.([^.]{1,10})*' + r
-        logger.debug(f'regex pattern = {r}, string={filepath}')
+        log.debug(f'regex pattern = {r}, string={filepath}')
         if re.match(r, fplower) and not fplower.endswith(newext):
             filepath = filepath[:-len(ext)] + newext
     return filepath
@@ -290,7 +290,7 @@ def normalize_filepath(filepath):
     cre_controlspace = re.compile(r'[\t\r\n\f]+')
     new_filename = cre_controlspace.sub('', filename)
     if not new_filename == filename:
-        logger.warning('Stripping whitespace from filename: {} => {}'.format(
+        log.warning('Stripping whitespace from filename: {} => {}'.format(
             repr(filename), repr(new_filename)))
         filename = new_filename
     filename = filename.lower()
@@ -393,7 +393,7 @@ def read_csv(*args, **kwargs):
     if isinstance(args[0], pd.DataFrame):
         df = args[0]
     else:
-        logger.info('Reading CSV with `read_csv(*{}, **{})`...'.format(args, kwargs))
+        log.info('Reading CSV with `read_csv(*{}, **{})`...'.format(args, kwargs))
         df = pd.read_csv(*args, **kwargs)
     if looks_like_index(df[df.columns[0]]):
         df = df.set_index(df.columns[0], drop=True)
@@ -404,7 +404,7 @@ def read_csv(*args, **kwargs):
         try:
             df.index = pd.to_datetime(df.index)
         except (ValueError, TypeError, pd.errors.OutOfBoundsDatetime):
-            logger.info('Unable to coerce DataFrame.index into a datetime using pd.to_datetime([{},...])'.format(
+            log.info('Unable to coerce DataFrame.index into a datetime using pd.to_datetime([{},...])'.format(
                 df.index.values[0]))
     return df
 

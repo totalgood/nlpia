@@ -10,7 +10,7 @@ from gensim import corpora
 from gensim import utils
 
 from nlpia.constants import logging
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def tokens2ngrams(tokens, n=2):
@@ -119,7 +119,7 @@ class TweetCorpus(corpora.TextCorpus):
     def __len__(self):
         """ Enables `len(corpus)` """
         if 'length' not in self.__dict__:
-            logger.info("Computing the number of lines in the corpus size (calculating number of documents)")
+            log.info("Computing the number of lines in the corpus size (calculating number of documents)")
             self.length = sum(1 for doc in self.getstream())
         return self.length
 
@@ -148,6 +148,6 @@ class SMSCorpus(corpora.TextCorpus):
     def __len__(self):
         """ Enables `len(corpus)` """
         if 'length' not in self.__dict__:
-            logger.info("Computing the number of lines in the corpus size (calculating number of documents)")
+            log.info("Computing the number of lines in the corpus size (calculating number of documents)")
             self.length = sum(1 for doc in self.getstream())
         return self.length

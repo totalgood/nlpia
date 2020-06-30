@@ -16,7 +16,7 @@ from nlpia.web import requests_get
 from .constants import secrets, DATA_PATH
 
 from logging import getLogger
-logger = getLogger(__name__)
+log = getLogger(__name__)
 
 
 def minify_urls(filepath, ext='asc', url_regex=None, output_ext='.urls_minified', access_token=None):
@@ -183,7 +183,7 @@ def split_sentences_spacy(text, language_model='en'):
     doc = nlp(text)
     sentences = []
     if not hasattr(doc, 'sents'):
-        logger.warning("Using NLTK sentence tokenizer because SpaCy language model hasn't been loaded")
+        log.warning("Using NLTK sentence tokenizer because SpaCy language model hasn't been loaded")
         return split_sentences_nltk(text)
     for w, span in enumerate(doc.sents):
         sent = ''.join(doc[i].string for i in range(span.start, span.end)).strip()
@@ -242,7 +242,7 @@ def segment_sentences(path=os.path.join(DATA_PATH, 'book'), splitter=split_sente
                         else:
                             batch.append(line)
                 except (UnicodeDecodeError, IOError):
-                    logger.error('UnicodeDecodeError or IOError on line {} in file {} from stat: {}'.format(
+                    log.error('UnicodeDecodeError or IOError on line {} in file {} from stat: {}'.format(
                         i + 1, fin.name, filemeta))
                     raise
 

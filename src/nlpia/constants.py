@@ -99,12 +99,12 @@ elif SYSLOG_PATH:
 
 try:
     logging.config.dictConfig(LOGGING_CONFIG)
-    logger = logging.getLogger(__name__)
+    log = logging.getLogger(__name__)
     raise NotImplementedError("Force logger to fall back to failsafe file logging.")
 except:  # noqa
     logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
-logger.info('Starting logger in nlpia.constants...')
+    log = logging.getLogger(__name__)
+log.info('Starting logger in nlpia.constants...')
 
 USER_HOME = os.path.expanduser("~")
 PROJECT_PATH = PRJECT_DIR = BASE_DIR
@@ -220,8 +220,8 @@ try:
     secrets.read(os.path.join(PROJECT_PATH, 'secrets.cfg'))
     secrets = secrets._sections
 except IOError:
-    logger.error('Unable to load/parse secrets.cfg file at "%s". Does it exist?',
-                 os.path.join(PROJECT_PATH, 'secrets.cfg'))
+    log.error('Unable to load/parse secrets.cfg file at "%s". Does it exist?',
+              os.path.join(PROJECT_PATH, 'secrets.cfg'))
     secrets = {}
 
 secrets = dict2obj(secrets)

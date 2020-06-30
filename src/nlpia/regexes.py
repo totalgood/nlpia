@@ -18,8 +18,7 @@ import copy
 
 from pugnlp.regexes import *  # noqa
 
-
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 # kind of like stopwords, but just the words that are commonly lowercased in article titles
 TITLE_LOWERWORDS = sorted('of a in the on as if and or but with'.split())
@@ -44,10 +43,10 @@ RE_ENGLISH_WORD = '(?:' + RE_WORD_CHARCLASS + '{1,16})'
 
 RE_STYLE_START = '(?:' + '|'.join(
     [RE_BOLD_START, RE_BOLD_CHAR_START, RE_ITALIC_START, RE_ITALIC_CHAR_START]
-    ) + ')'
+) + ')'
 RE_STYLE_END = '(?:' + '|'.join(
     [RE_BOLD_END, RE_BOLD_CHAR_END, RE_ITALIC_END, RE_ITALIC_CHAR_END]
-    ) + ')'
+) + ')'
 
 PATTERNS = {
     'word': RE_ENGLISH_WORD, 'word0': RE_OPTIONAL_WORD,
@@ -56,7 +55,7 @@ PATTERNS = {
     'italicstart': RE_ITALIC_START, 'italicend': RE_ITALIC_END,
     'italiccharstart': RE_ITALIC_CHAR_START, 'italiccharend': RE_ITALIC_CHAR_END,
     'stylestart': RE_STYLE_START, 'styleend': RE_STYLE_END,
-    }
+}
 
 PATTERNS.update({'stylestart': RE_STYLE_START, 'styleend': RE_STYLE_END})
 CHARCLASSES = {'w': RE_WORD_CHARCLASS, 'W': RE_BREAK_CHARCLASS, 'b': RE_BREAK_CHARCLASS}
@@ -156,10 +155,10 @@ class Pattern:
             attr = getattr(self._compiled_pattern, name)
             try:
                 setattr(self, name, attr)
-                logger.debug('{}.{}.Pattern successfully "inherited" `_regex.Pattern.{}{}`'.format(
+                log.debug('{}.{}.Pattern successfully "inherited" `_regex.Pattern.{}{}`'.format(
                     __package__, __name__, name, '()' if callable(attr) else ''))
             except:  # noqa
-                logger.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
+                log.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
                     name, '()' if callable(attr) else ''))
 
 
@@ -184,10 +183,10 @@ class REPattern:
             attr = getattr(self._compiled_pattern, name)
             try:
                 setattr(self, name, attr)
-                logger.debug('{}.{}.{} successfully "inherited" `_regex.Pattern.{}{}`'.format(
+                log.debug('{}.{}.{} successfully "inherited" `_regex.Pattern.{}{}`'.format(
                     __package__, __name__, self.__class__, name, '()' if callable(attr) else ''))
             except:  # noqa
-                logger.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
+                log.warning('Unable to "inherit" `_regex.Pattern.{}{}`'.format(
                     name, '()' if callable(attr) else ''))
 
     def fullmatch(self, *args, **kwargs):

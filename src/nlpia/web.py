@@ -31,7 +31,7 @@ from nlpia.constants import no_tqdm  # noqa (not used)
 from nlpia.futil import expand_filepath, read_json
 from nlpia.futil import read_text  # noqa (not used)
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 CHUNK_SIZE = 32768
@@ -121,22 +121,22 @@ def looks_like_url(url):
 def try_parse_url(url):
     """ User urlparse to try to parse URL returning None on exception """
     if len(url.strip()) < 4:
-        logger.info('URL too short: {}'.format(url))
+        log.info('URL too short: {}'.format(url))
         return None
     try:
         parsed_url = urlparse(url)
     except ValueError:
-        logger.info('Parse URL ValueError: {}'.format(url))
+        log.info('Parse URL ValueError: {}'.format(url))
         return None
     if parsed_url.scheme:
         return parsed_url
     try:
         parsed_url = urlparse('http://' + parsed_url.geturl())
     except ValueError:
-        logger.info('Invalid URL for assumed http scheme: urlparse("{}") from "{}" '.format('http://' + parsed_url.geturl(), url))
+        log.info('Invalid URL for assumed http scheme: urlparse("{}") from "{}" '.format('http://' + parsed_url.geturl(), url))
         return None
     if not parsed_url.scheme:
-        logger.info('Unable to guess a scheme for URL: {}'.format(url))
+        log.info('Unable to guess a scheme for URL: {}'.format(url))
         return None
     return parsed_url
 

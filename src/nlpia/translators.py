@@ -1,4 +1,4 @@
-""" Utilities for transforming the syntax/style/grammar of a document, usually asciidoc or markdown 
+""" Utilities for transforming the syntax/style/grammar of a document, usually asciidoc or markdown
 
 Instantiates Objects derived from the `_sre.SRE_Pattern` class (compiled regular expressions) so they work with regex.sub()
 """
@@ -9,7 +9,7 @@ from copy import copy
 from nlpia.regexes import Pattern, RE_HYPERLINK
 
 # from nlpia.constants import DATA_PATH
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def looks_like_name(s):
@@ -78,7 +78,7 @@ class Filter(Matcher):
     >>> [m.filter(s) for s in tokens]
     ['', '', 'Hello', 'World', '', '']
     >>> m = Filter(None)
-    >>> [m.filter(s) for s in tokens] 
+    >>> [m.filter(s) for s in tokens]
     ['A', 'BIG', 'Hello', 'World', 'to', 'You!']
     """
 
@@ -106,7 +106,7 @@ class Translator(Pattern):
                 name_matcher=Matcher(looks_like_name), url_matcher=Matcher(r'.*[^:]+$')):
         """ Replace all occurrences of rendered from_template in text with `template` rendered from each match.groupdict()
 
-        TODO: from_template 
+        TODO: from_template
 
         >>> translator = HyperlinkStyleCorrector()
         >>> adoc = 'See http://totalgood.com[Total Good] about that.'
@@ -123,12 +123,12 @@ class Translator(Pattern):
         self.url_matcher = url_matcher or Matcher()
         matches = self.finditer(text)
         newdoc = copy(text)
-        logger.debug('before translate: {}'.format(newdoc))
+        log.debug('before translate: {}'.format(newdoc))
         for m in matches:
             # this outer m.captures() loop is overkill:
             #   overlapping pattern matches probably won't match after the first replace
-            logger.debug('match: {}'.format(m))
-            logger.debug('match.captures(): {}'.format(m.captures()))
+            log.debug('match: {}'.format(m))
+            log.debug('match.captures(): {}'.format(m.captures()))
             for i, captured_str in enumerate(m.captures()):
                 captureddict = {'name': None, 'scheme': None, 'url': None}
                 for k, v in m.capturesdict().items():
@@ -136,12 +136,12 @@ class Translator(Pattern):
                         captureddict[k] = v[i]
                     else:
                         captureddict[k] = None
-                        logger.warning('Overlapping captured matches were mishandled: {}'.format(m.capturesdict()))
+                        log.warning('Overlapping captured matches were mishandled: {}'.format(m.capturesdict()))
                 # need to check for optional args:
                 name = captureddict.get('name', None)
                 url = captureddict.get('url', None)
                 scheme = captureddict.get('scheme', None)
-                if (not scheme or not name or not self.name_matcher.ismatch(name) or 
+                if (not scheme or not name or not self.name_matcher.ismatch(name) or
                         not url or not self.url_matcher.ismatch(url)):
                     continue
                 if from_template:
@@ -178,13 +178,13 @@ class HyperlinkStyleCorrector(Pattern):
         super().__init__(pattern=pattern)
 
     def name_matcher(s):
-        return s 
+        return s
 
     def replace(self, text, to_template='{name} ({url})', from_template=None,
                 name_matcher=Matcher(looks_like_name), url_matcher=Matcher(r'.*[^:]+$')):
         """ Replace all occurrences of rendered from_template in text with `template` rendered from each match.groupdict()
 
-        TODO: from_template 
+        TODO: from_template
 
         >>> translator = HyperlinkStyleCorrector()
         >>> adoc = 'See http://totalgood.com[Total Good] about that.'
@@ -201,12 +201,12 @@ class HyperlinkStyleCorrector(Pattern):
         self.url_matcher = url_matcher or Matcher()
         matches = self.finditer(text)
         newdoc = copy(text)
-        logger.debug('before translate: {}'.format(newdoc))
+        log.debug('before translate: {}'.format(newdoc))
         for m in matches:
             # this outer m.captures() loop is overkill:
             #   overlapping pattern matches probably won't match after the first replace
-            logger.debug('match: {}'.format(m))
-            logger.debug('match.captures(): {}'.format(m.captures()))
+            log.debug('match: {}'.format(m))
+            log.debug('match.captures(): {}'.format(m.captures()))
             for i, captured_str in enumerate(m.captures()):
                 captureddict = {'name': None, 'scheme': None, 'url': None}
                 for k, v in m.capturesdict().items():
@@ -214,12 +214,12 @@ class HyperlinkStyleCorrector(Pattern):
                         captureddict[k] = v[i]
                     else:
                         captureddict[k] = None
-                        logger.warning('Overlapping captured matches were mishandled: {}'.format(m.capturesdict()))
+                        log.warning('Overlapping captured matches were mishandled: {}'.format(m.capturesdict()))
                 # need to check for optional args:
                 name = captureddict.get('name', None)
                 url = captureddict.get('url', None)
                 scheme = captureddict.get('scheme', None)
-                if (not scheme or not name or not self.name_matcher.ismatch(name) or 
+                if (not scheme or not name or not self.name_matcher.ismatch(name) or
                         not url or not self.url_matcher.ismatch(url)):
                     continue
                 if from_template:
@@ -242,4 +242,3 @@ class HyperlinkStyleCorrector(Pattern):
         """
         return self.replace(text, to_template=to_template, from_template=from_template,
                             name_matcher=name_matcher, url_matcher=url_matcher)
-

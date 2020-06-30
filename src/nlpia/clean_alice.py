@@ -37,7 +37,7 @@ import zipfile
 from traceback import format_exc
 
 from nlpia.constants import logging
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 try:
     from aiml_bot import Bot
@@ -45,9 +45,10 @@ try:
 except:
     class Bot:
         pass
+
     class AimlParserError:
         pass
-    logger.error('Unable to import aiml_bot.aiml_parser and aiml_bot.Bot, so nlpia will not be able to parse AIML files.')
+    log.error('Unable to import aiml_bot.aiml_parser and aiml_bot.Bot, so nlpia will not be able to parse AIML files.')
 
 from nlpia.constants import logging
 from nlpia.constants import BIGDATA_PATH
@@ -111,9 +112,9 @@ def create_brain(path='aiml-en-us-foundation-alice.v1-9.zip'):
         try:
             bot.learn(path)
         except AimlParserError:
-            logger.error(format_exc())
-            logger.warning('AIML Parse Error: {}'.format(path))
+            log.error(format_exc())
+            log.warning('AIML Parse Error: {}'.format(path))
         num_templates = bot._brain.template_count - num_templates
-        logger.info('Loaded {} trigger-response pairs.\n'.format(num_templates))
+        log.info('Loaded {} trigger-response pairs.\n'.format(num_templates))
     print('Loaded {} trigger-response pairs from {} AIML files.'.format(bot._brain.template_count, len(paths)))
     return bot

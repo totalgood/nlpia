@@ -77,8 +77,8 @@ _parse = None  # placeholder for SpaCy parser + language model
 
 np = pd.np
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 # logging.config.dictConfig(LOGGING_CONFIG)
 # # doesn't display line number, etc
 # if os.environ.get('DEBUG'):
@@ -130,7 +130,7 @@ def load_imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(
         urlspath = os.path.join(dirpath, subdirs[0], 'urls_{}.txt'.format(subdirs[1]))
         if not os.path.isfile(urlspath):
             if subdirs != ('test', 'unsup'):  # test/ dir doesn't usually have an unsup subdirectory
-                logger.warning('Unable to find expected IMDB review list of URLs: {}'.format(urlspath))
+                log.warning('Unable to find expected IMDB review list of URLs: {}'.format(urlspath))
             continue
         df = pd.read_csv(urlspath, header=None, names=['url'])
         # df.index.name = 'id'
@@ -138,7 +138,7 @@ def load_imdb_df(dirpath=os.path.join(BIGDATA_PATH, 'aclImdb'), subdirectories=(
 
         textsdir = os.path.join(dirpath, subdirs[0], subdirs[1])
         if not os.path.isdir(textsdir):
-            logger.warning('Unable to find expected IMDB review text subdirectory: {}'.format(textsdir))
+            log.warning('Unable to find expected IMDB review text subdirectory: {}'.format(textsdir))
             continue
         filenames = [fn for fn in os.listdir(textsdir) if fn.lower().endswith('.txt')]
         df['index0'] = subdirs[0]  # TODO: column names more generic so will work on other datasets
@@ -459,11 +459,11 @@ for name in GOOGLE_NGRAM_NAMES:
 
 try:
     BIGDATA_INFO = pd.read_csv(BIGDATA_INFO_FILE, header=0)
-    logger.warning('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIG_URLS !!!'.format(
+    log.warning('Found BIGDATA index in {default} so it will overwrite nlpia.loaders.BIG_URLS !!!'.format(
         default=BIGDATA_INFO_FILE))
 except (IOError, pd.errors.EmptyDataError):
     BIGDATA_INFO = pd.DataFrame(columns='name url file_size'.split())
-    logger.info('No BIGDATA index found in {default} so copy {latest} to {default} if you want to "freeze" it.'.format(
+    log.info('No BIGDATA index found in {default} so copy {latest} to {default} if you want to "freeze" it.'.format(
         default=BIGDATA_INFO_FILE, latest=BIGDATA_INFO_LATEST))
 BIG_URLS.update(dict(zip(BIGDATA_INFO.name, zip(BIGDATA_INFO.url, BIGDATA_INFO.file_size))))
 BIGDATA_INFO = pd.DataFrame(list(
@@ -507,11 +507,11 @@ def rename_file(source, dest):
     >>> os.path.isfile(os.path.join(tmpdir, 'Fake_Data.bin.gz'))
     True
     """
-    logger.debug('nlpia.loaders.rename_file(source={}, dest={})'.format(source, dest))
+    log.debug('nlpia.loaders.rename_file(source={}, dest={})'.format(source, dest))
     if not isinstance(source, str):
         dest = [dest] if isinstance(dest, str) else dest
         return [rename_file(s, d) for (s, d) in zip_longest(source, dest, fillvalue=[source, dest][int(len(source) > len(dest))])]
-    logger.debug('nlpia.loaders.os.rename(source={}, dest={})'.format(source, dest))
+    log.debug('nlpia.loaders.os.rename(source={}, dest={})'.format(source, dest))
     if source == dest:
         return dest
     os.rename(source, dest)
@@ -548,7 +548,7 @@ def untar(fname, verbose=True):
         if os.path.isdir(dirpath):
             return dirpath
     else:
-        logger.warning("Not a tar.gz file: {}".format(fname))
+        log.warning("Not a tar.gz file: {}".format(fname))
 
 
 def series_rstrip(series, endswith='/usercomments', ignorecase=True):
@@ -569,7 +569,7 @@ def series_strip(series, startswith=None, endswith=None, startsorendswith=None, 
     else:
         mask = series
     if not (startsorendswith or endswith or startswith):
-        logger.warning('In series_strip(): You must specify endswith, startswith, or startsorendswith string arguments.')
+        log.warning('In series_strip(): You must specify endswith, startswith, or startsorendswith string arguments.')
         return series
     if startsorendswith:
         startswith = endswith = startsorendswith
@@ -647,7 +647,7 @@ def get_leet_map():
             table.append((row['eng'].strip(), s.strip()))
     table = pd.DataFrame(table, columns=df.columns)
     leet_path = os.path.join(DATA_PATH, 'l33t.csv')
-    logger.info('Saving l33t dictionary (character mapping) to {}'.format(leet_path))
+    log.info('Saving l33t dictionary (character mapping) to {}'.format(leet_path))
     table.to_csv(leet_path)
     return table
 
@@ -658,7 +658,7 @@ def get_netspeak_map():
     df = dfs[0].drop(index=0)
     df.columns = ['abbrev', 'definition']
     csv_path = os.path.join(DATA_PATH, 'netspeak.csv')
-    logger.info('Saving netspeak dictionary (word mapping) to {}'.format(csv_path))
+    log.info('Saving netspeak dictionary (word mapping) to {}'.format(csv_path))
     df.to_csv(csv_path)
     return df
 
@@ -763,38 +763,38 @@ def unzip(filepath, verbose=True):
     if not os.path.isdir(unzip_dir) or not len(os.listdir(unzip_dir)) == len(z.filelist):
         z.extractall(path=unzip_dir)
 
-    logger.info('unzip_dir contains: {}'.format(os.listdir(unzip_dir)))
+    log.info('unzip_dir contains: {}'.format(os.listdir(unzip_dir)))
     # for f in os.listdir(unzip_dir):
     #     if f.lower().endswith('about.txt'):
     #         os.remove(os.path.join(unzip_dir, f))
     for f in tqdm_prog(os.listdir(unzip_dir)):
         if f[-1] in ' \t\r\n\f':
             bad_path = os.path.join(unzip_dir, f)
-            logger.warning('Stripping whitespace from end of filename: {} -> {}'.format(
+            log.warning('Stripping whitespace from end of filename: {} -> {}'.format(
                 repr(bad_path), repr(bad_path.rstrip())))
             shutil.move(bad_path, bad_path.rstrip())
             # rename_file(source=bad_path, dest=bad_path.rstrip())
     anki_paths = [os.path.join(unzip_dir, f) for f in os.listdir(unzip_dir)
                   if f.lower()[:3] in ANKI_LANGUAGES and f.lower()[3:] == '.txt']
-    logger.info('anki_paths: {}'.format(anki_paths))
+    log.info('anki_paths: {}'.format(anki_paths))
 
     w2v_paths = [os.path.join(BIGDATA_PATH, f[:-4] + '.w2v.txt') for f in os.listdir(unzip_dir)
                  if f.lower().endswith('.txt') and 'glove' in f.lower()]
     for f, word2vec_output_file in zip(os.listdir(unzip_dir), w2v_paths):
         glove_input_file = os.path.join(unzip_dir, f)
-        logger.info('Attempting to converting GloVE format to Word2vec: {} -> {}'.format(
+        log.info('Attempting to converting GloVE format to Word2vec: {} -> {}'.format(
             repr(glove_input_file), repr(word2vec_output_file)))
         try:
             glove2word2vec(glove_input_file=glove_input_file, word2vec_output_file=word2vec_output_file)
         except:  # noqa
-            logger.info('Failed to convert GloVE format to Word2vec: {} -> {}'.format(
+            log.info('Failed to convert GloVE format to Word2vec: {} -> {}'.format(
                 repr(glove_input_file), repr(word2vec_output_file)))
 
     txt_paths = [os.path.join(BIGDATA_PATH, f.lower()[:-4] + '.txt') for f in os.listdir(unzip_dir) if f.lower().endswith('.asc')]
     for f, txt_file in zip(os.listdir(unzip_dir), txt_paths):
         if f.lower().endswith('.asc'):
             input_file = os.path.join(unzip_dir, f)
-            logger.info('Renaming .asc file to .txt: {} -> {}'.format(
+            log.info('Renaming .asc file to .txt: {} -> {}'.format(
                 repr(input_file), repr(txt_file)))
             shutil.move(input_file, txt_file)
 
@@ -855,15 +855,15 @@ def download_unzip(names=None, normalize_filenames=False, verbose=True):
             if not filepath:
                 continue
             file_paths[name] = normalize_ext_rename(filepath)
-            logger.debug('downloaded name={} to filepath={}'.format(name, file_paths[name]))
+            log.debug('downloaded name={} to filepath={}'.format(name, file_paths[name]))
             fplower = file_paths[name].lower()
             if fplower.endswith('.tar.gz'):
-                logger.info('Extracting {}'.format(file_paths[name]))
+                log.info('Extracting {}'.format(file_paths[name]))
                 file_paths[name] = untar(file_paths[name], verbose=verbose)
-                logger.debug('download_untar.filepaths=' + str(file_paths))
+                log.debug('download_untar.filepaths=' + str(file_paths))
             elif file_paths[name].lower().endswith('.zip'):
                 file_paths[name] = unzip(file_paths[name], verbose=verbose)
-                logger.debug('download_unzip.filepaths=' + str(file_paths))
+                log.debug('download_unzip.filepaths=' + str(file_paths))
         else:
             df = pd.read_html(DATA_INFO['url'][name], **DATA_INFO['downloader_kwargs'][name])[-1]
             df.columns = clean_columns(df.columns)
@@ -911,14 +911,14 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     filepath = os.path.join(data_path, filename)
     if normalize_filename:
         filepath = normalize_filepath(filepath)
-    logger.info('expanded+normalized file path: {}'.format(filepath))
+    log.info('expanded+normalized file path: {}'.format(filepath))
     tqdm_prog = tqdm if verbose else no_tqdm
-    logger.info('requesting URL: {}'.format(url))
+    log.info('requesting URL: {}'.format(url))
 
-    logger.info('remote_size: {}'.format(remote_size))
+    log.info('remote_size: {}'.format(remote_size))
     stat = path_status(filepath)
     local_size = stat.get('size', None)
-    logger.info('local_size: {}'.format(local_size))
+    log.info('local_size: {}'.format(local_size))
 
     r = None
     if not remote_size or not stat['type'] == 'file' or not local_size >= remote_size or not stat['size'] > MIN_DATA_FILE_SIZE:
@@ -926,7 +926,7 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
             r = requests_get(url, stream=True, allow_redirects=True, timeout=5)
             remote_size = r.headers.get('Content-Length', -1)
         except ConnectionError:
-            logger.error('ConnectionError for url: {} => request {}'.format(url, r))
+            log.error('ConnectionError for url: {} => request {}'.format(url, r))
             remote_size = -1 if remote_size is None else remote_size
         except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema) as e:
             log.warning(e)
@@ -941,17 +941,17 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
     # TODO: check md5 or get the right size of remote file
     if stat['type'] == 'file' and local_size >= remote_size and stat['size'] > MIN_DATA_FILE_SIZE:
         r = r.close() if r else r
-        logger.info('retained: {}'.format(filepath))
+        log.info('retained: {}'.format(filepath))
         return filepath
 
     filedir = os.path.dirname(filepath)
     created_dir = mkdir_p(filedir)
-    logger.info('data path created: {}'.format(created_dir))
+    log.info('data path created: {}'.format(created_dir))
     assert os.path.isdir(filedir)
     assert created_dir.endswith(filedir)
     bytes_downloaded = 0
     if r:
-        logger.info('downloading to: {}'.format(filepath))
+        log.info('downloading to: {}'.format(filepath))
         with open(filepath, 'wb') as f:
             for chunk in tqdm_prog(r.iter_content(chunk_size=chunk_size), total=ceil(remote_size / float(chunk_size))):
                 bytes_downloaded += len(chunk)
@@ -959,13 +959,13 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
                     f.write(chunk)
         r.close()
     else:
-        logger.error(f'Unable to requests.get(url={url}) using request object {r}')
+        log.error(f'Unable to requests.get(url={url}) using request object {r}')
         return None
 
-    logger.debug('nlpia.loaders.download_file: bytes={}'.format(bytes_downloaded))
+    log.debug('nlpia.loaders.download_file: bytes={}'.format(bytes_downloaded))
     stat = path_status(filepath)
-    logger.info("local file stat {}".format(stat))
-    logger.debug("filepath={}: local_size={}, remote_size={}, downloaded_bytes={}".format(
+    log.info("local file stat {}".format(stat))
+    log.debug("filepath={}: local_size={}, remote_size={}, downloaded_bytes={}".format(
         filepath, size, remote_size, bytes_downloaded))
     return filepath
 
@@ -1071,11 +1071,11 @@ def get_data(name='sms-spam', nrows=None, limit=None):
     """
     nrows = nrows or limit
     if name in BIG_URLS:
-        logger.info('Downloading {}'.format(name))
+        log.info('Downloading {}'.format(name))
         filepaths = download_unzip(name, normalize_filenames=True)
-        logger.debug('nlpia.loaders.get_data.filepaths=' + str(filepaths))
+        log.debug('nlpia.loaders.get_data.filepaths=' + str(filepaths))
         filepath = filepaths[name][0] if isinstance(filepaths[name], (list, tuple)) else filepaths[name]
-        logger.debug('nlpia.loaders.get_data.filepath=' + str(filepath))
+        log.debug('nlpia.loaders.get_data.filepath=' + str(filepath))
         filepathlow = filepath.lower()
 
         if len(BIG_URLS[name]) >= 4:
@@ -1126,7 +1126,7 @@ def get_data(name='sms-spam', nrows=None, limit=None):
     msg = 'Unable to find dataset "{}"" in {} or {} (*.csv.gz, *.csv, *.json, *.zip, or *.txt)\n'.format(
         name, DATA_PATH, BIGDATA_PATH)
     msg += 'Available dataset names include:\n{}'.format('\n'.join(DATASET_NAMES))
-    logger.error(msg)
+    log.error(msg)
     raise IOError(msg)
 
 
@@ -1230,7 +1230,7 @@ def clean_column_values(df, inplace=True):
             except ValueError:
                 values = None
             except:  # noqa
-                logger.error('Error on column {} with dtype {}'.format(c, df[c].dtype))
+                log.error('Error on column {} with dtype {}'.format(c, df[c].dtype))
                 raise
 
         if values is not None:
@@ -1296,7 +1296,7 @@ def load_geo_adwords(filename='AdWords API Location Criteria 2017-06-26.csv.gz')
         else:
             cleaned = list(cleaned) + [None] * (5 - len(cleaned))
         if not np.all(np.array(row.values)[:3] == np.array(cleaned)[:3]):
-            logger.info('{} => {}'.format(row.values, cleaned))
+            log.info('{} => {}'.format(row.values, cleaned))
         return list(cleaned)
 
     cleancanon = canonical.apply(cleaner, axis=1)
@@ -1323,7 +1323,7 @@ def clean_cornell_movies(filename='cornell_movie_dialogs_corpus.zip', subdir='co
     subdir = 'cornell movie-dialogs corpus'
     if fullpath_zipfile.lower().endswith('.zip'):
         retval = unzip(fullpath_zipfile)
-        logger.debug(f'unzip({fullpath_zipfile}) return value: {retval}')
+        log.debug(f'unzip({fullpath_zipfile}) return value: {retval}')
         dirname = dirname[:-4]
     fullpath_movie_lines = os.path.join(BIGDATA_PATH, dirname, subdir, 'movie_lines.txt')
     dialog = pd.read_csv(
@@ -1405,7 +1405,7 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
             try:
                 spacy.cli.download(lang)
             except URLError:
-                logger.warning("Unable to download Spacy language model '{}' so nlp(text) just returns text.split()".format(lang))
+                log.warning("Unable to download Spacy language model '{}' so nlp(text) just returns text.split()".format(lang))
     parse = _parse or str.split
     # TODO: reverse this recursion (str first then sequence) to allow for sequences of sequences of texts
     if isinstance(texts, str):
@@ -1441,6 +1441,6 @@ def clean_win_tsv(filepath=os.path.join(DATA_PATH, 'Products.txt'),
     df = df[~(df[index_col] == INT_NAN)]
     df.set_index(index_col, inplace=True)
     if len(df) != original_len:
-        logger.warning(('Loaded {} rows from tsv. Original file, "{}", contained {} seemingly valid lines.' +
-                        'Index column: {}').format(len(df), original_len, filepath, index_col))
+        log.warning(('Loaded {} rows from tsv. Original file, "{}", contained {} seemingly valid lines.' +
+                     'Index column: {}').format(len(df), original_len, filepath, index_col))
     return df

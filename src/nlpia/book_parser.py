@@ -16,7 +16,7 @@ from nlpia.transcoders import delimit_slug
 from nlpia.translators import HyperlinkStyleCorrector
 from nlpia.futil import rm_rf, rm_r  # noqa  (used in doctests to clean up)
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 # FIXME: redundant definitions here from develop branch
@@ -33,7 +33,7 @@ HEADER_TYPES = [('source', 'code'), ('latex', 'latex')]
 BLOCK_DELIMITERS = dict([('--', 'code'), ('==', 'natural_sidenote'), ('__', 'natural_quote'), ('**', 'natural_asside'),
                          ('++', 'latexmath'), ('//', 'comment')])
 BLOCK_DELIMITER_CHRS = ''.join([k[0] for k in BLOCK_DELIMITERS.keys()])
-BLOCK_HEADERS = dict([('[tip]', 'natural_tip'), ('[note]', 'natural_note'), 
+BLOCK_HEADERS = dict([('[tip]', 'natural_tip'), ('[note]', 'natural_note'),
                       ('[important]', 'natural_important'), ('[quote]', 'natural_quote')])
 BLOCK_HEADERS4 = dict([(k[:4], v) for k, v in BLOCK_HEADERS.items()])
 
@@ -42,11 +42,11 @@ CRE_ANNOTATION = re.compile(r'^<([0-9]{1,2})>.*')
 HEADER_TYPES = [('source', 'code'), ('latex', 'latex'), ('latexmath', 'latex'),
                 ('template="glossary"', 'natural_glossary'), ("template='glossary'", 'natural_glossary')]
 
-VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start', ] + 
-                 [b for b in BLOCK_DELIMITERS.values()] + 
-                 [b + '_start' for b in BLOCK_DELIMITERS.values()] + 
-                 [b + '_end' for b in BLOCK_DELIMITERS.values()] + 
-                 ['natural_heading{}'.format(i) for i in range(1, 6)] + 
+VALID_TAGS = set(['anchor', 'attribute', 'blank_line', 'block_header', 'caption', 'code', 'code_end', 'code_start', ] +
+                 [b for b in BLOCK_DELIMITERS.values()] +
+                 [b + '_start' for b in BLOCK_DELIMITERS.values()] +
+                 [b + '_end' for b in BLOCK_DELIMITERS.values()] +
+                 ['natural_heading{}'.format(i) for i in range(1, 6)] +
                  ['image_link', 'natural', 'natural_end', 'natural_start', 'code_header'])
 INCLUDE_TAGS = set(['natural', 'caption'] + ['natural_heading{}'.format(i) for i in range(1, 6)])
 re_bad_footnotes = re.compile(r'footnote:\[' + RE_URL_SIMPLE + r'\]')
@@ -169,7 +169,7 @@ def tag_lines(lines, include_tags=None):
                 block_terminator = None
             else:
                 tag = current_block_type
-        elif current_block_type and (line.rstrip() == block_terminator or 
+        elif current_block_type and (line.rstrip() == block_terminator or
                                      (not block_terminator and not normalized_line)):
             tag = current_block_type + '_end'
             current_block_type = None
@@ -210,7 +210,7 @@ def get_tagged_sections(book_dir=BOOK_PATH, include_tags=None):
 
 
 def find_bad_footnote_urls(tagged_lines, include_tags=None):
-    """ Find lines in the list of 2-tuples of adoc-tagged lines that contain bad footnotes (only urls) 
+    """ Find lines in the list of 2-tuples of adoc-tagged lines that contain bad footnotes (only urls)
 
     >>> sections = get_tagged_sections(BOOK_PATH)
     >>> tagged_lines = list(sections[0][1])
@@ -218,7 +218,7 @@ def find_bad_footnote_urls(tagged_lines, include_tags=None):
     [[30, 'https://spacy.io/usage/linguistic-features#rule-based-morphology']]
     """
     section_baddies = []
-    logger.debug(tagged_lines[:2])
+    log.debug(tagged_lines[:2])
     for lineno, (tag, line) in enumerate(tagged_lines):
         line_baddies = None
         if tag is None or include_tags is None or tag in include_tags or any((tag.startswith(t) for t in include_tags)):
@@ -259,11 +259,11 @@ def infer_url_title(url):
     else:
         logging.error('Unable to retrieve URL: {}'.format(url))
         return None
-    return delimit_slug(title, ' ') 
+    return delimit_slug(title, ' ')
 
 
 def get_line_bad_footnotes(line, tag=None, include_tags=None):
-    """ Return [original_line, url_footnote1, url_footnote2, ... url_footnoteN] for N bad footnotes in the line """ 
+    """ Return [original_line, url_footnote1, url_footnote2, ... url_footnoteN] for N bad footnotes in the line """
     if tag is None or include_tags is None or tag in include_tags or any((tag.startswith(t) for t in include_tags)):
         found_baddies = re_bad_footnotes.findall(line)
         return [line] + [baddie[0] for baddie in found_baddies]
@@ -271,7 +271,7 @@ def get_line_bad_footnotes(line, tag=None, include_tags=None):
 
 
 def translate_line_footnotes(line, tag=None, default_title='<NOT_FOUND>'):
-    r""" Find all bare-url footnotes, like "footnote:[moz.org]" and add a title like "footnote:[Moz (moz.org)]" 
+    r""" Find all bare-url footnotes, like "footnote:[moz.org]" and add a title like "footnote:[Moz (moz.org)]"
 
     >>> translate_line_footnotes('*Morphemes*:: Parts of tokens or words that contain meaning in and of themselves.'\
     ...     'footnote:[https://spacy.io/usage/linguistic-features#rule-based-morphology]')
@@ -326,9 +326,9 @@ def ensure_dir_exists(dest):
                 'Unable to find destination directory for the path. It looks like a file path rather than a directory: {}'.format(
                     dest))
         if not os.path.isdir(dest):
-            logger.warning('Creating directory with mkdir_p({})'.format(repr(dest)))
+            log.warning('Creating directory with mkdir_p({})'.format(repr(dest)))
         futil.mkdir_p(dest)
-        logger.info('Saving translated files in {}{}*'.format(dest, os.path.sep))
+        log.info('Saving translated files in {}{}*'.format(dest, os.path.sep))
     return dest
 
 
@@ -348,7 +348,7 @@ def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_l
     file_line_maps = []
 
     for fileid, (filepath, tagged_lines) in enumerate(sections):
-        logger.info('filepath={}'.format(filepath))
+        log.info('filepath={}'.format(filepath))
         destpath = filepath
         if not dest:
             copyfile(filepath, filepath + '.' + ext.lstrip('.'))
@@ -358,7 +358,7 @@ def translate_book(translators=(HyperlinkStyleCorrector().translate, translate_l
             destpath = os.path.join(os.path.dirname(filepath), dest, os.path.basename(filepath))
         ensure_dir_exists(os.path.dirname(destpath))
         with open(destpath, 'w') as fout:
-            logger.info('destpath={}'.format(destpath))
+            log.info('destpath={}'.format(destpath))
             for lineno, (tag, line) in enumerate(tagged_lines):
                 if (include_tags is None or tag in include_tags or
                         any((tag.startswith(t) for t in include_tags))):
@@ -375,7 +375,7 @@ def correct_hyperlinks(book_dir=BOOK_PATH, dest=None, include_tags=None,
                        ext='.nlpiabak', skip_untitled=True):
     """ DEPRECATED (see translate_line_footnotes)
 
-    Find bad footnotes (only urls), visit the page, add the title to the footnote 
+    Find bad footnotes (only urls), visit the page, add the title to the footnote
 
     >>> len(correct_hyperlinks(book_dir=BOOK_PATH, dest='cleaned_hyperlinks'))
     2
@@ -392,7 +392,7 @@ def correct_bad_footnote_urls(book_dir=BOOK_PATH, dest=None, include_tags=None,
                               ext='.nlpiabak', skip_untitled=True):
     """ DEPRECATED (see translate_line_footnotes)
 
-    Find bad footnotes (only urls), visit the page, add the title to the footnote 
+    Find bad footnotes (only urls), visit the page, add the title to the footnote
 
     >>> len(correct_bad_footnote_urls(book_dir=BOOK_PATH, dest='cleaned_footnotes'))
     1
@@ -427,15 +427,15 @@ def filter_tagged_lines(tagged_lines, include_tags=None, exclude_tags=None):
             if exclude_tags is None or not any((tagged_line[0].startswith(t) for t in exclude_tags)):
                 yield tagged_line
             else:
-                logger.debug('skipping tag {} because it starts with one of the exclude_tags={}'.format(
+                log.debug('skipping tag {} because it starts with one of the exclude_tags={}'.format(
                     tagged_line[0], exclude_tags))
 
         else:
-            logger.debug('skipping tag {} because not in {}'.format(tagged_line[0], include_tags))
+            log.debug('skipping tag {} because not in {}'.format(tagged_line[0], include_tags))
 
 
 def main(book_dir=BOOK_PATH, include_tags=None, verbosity=1):
-    r""" Parse all the asciidoc files in book_dir, returning a list of 2-tuples of lists of 2-tuples (tagged lines) 
+    r""" Parse all the asciidoc files in book_dir, returning a list of 2-tuples of lists of 2-tuples (tagged lines)
 
     >>> main(BOOK_PATH, verbosity=0)
     [('.../src/nlpia/data/book/Appendix F -- Glossary.asc', <generator object filter_tagged_lines at ...>)]
@@ -458,12 +458,12 @@ def main(book_dir=BOOK_PATH, include_tags=None, verbosity=1):
     We've collected some definitions of some common NLP and ML acronyms and terminology here.footnote:[...
 
     TODO:
-       `def filter_tagged_lines(tagged_lines)` that returns an iterable. 
+       `def filter_tagged_lines(tagged_lines)` that returns an iterable.
     """
     if verbosity:
-        logger.info('book_dir: {}'.format(book_dir))
-        logger.info('include_tags: {}'.format(include_tags))
-        logger.info('verbosity: {}'.format(verbosity))
+        log.info('book_dir: {}'.format(book_dir))
+        log.info('include_tags: {}'.format(include_tags))
+        log.info('verbosity: {}'.format(verbosity))
 
     include_tags = [include_tags] if isinstance(include_tags, str) else include_tags
     include_tags = None if not include_tags else set([t.lower().strip() for t in include_tags])
@@ -485,7 +485,7 @@ def main(book_dir=BOOK_PATH, include_tags=None, verbosity=1):
                 print('=' * 79)
                 print()
     else:
-        logger.debug('vebosity={} so nothing output to stdout with print()'.format(verbosity))
+        log.debug('vebosity={} so nothing output to stdout with print()'.format(verbosity))
     return sections
 
 
