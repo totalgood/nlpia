@@ -10,7 +10,7 @@ import spacy
 from nlpia.constants import BIGDATA_PATH
 from nlpia.loaders import get_data, ANKI_LANGUAGES, LANG2ANKI, nlp
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def get_anki_phrases(lang='english', limit=None):
@@ -88,7 +88,7 @@ def get_word_vectors(vocab):
             if w in wv:
                 vectors[i, :] = wv[w]
         if not np.sum(np.abs(vectors[i])):
-            logger.warning('Unable to find {}, {}, or {} in word2vec.'.format(*variations))
+            log.warning('Unable to find {}, {}, or {} in word2vec.'.format(*variations))
     return vectors
 
 
