@@ -12,7 +12,7 @@ import logging.config
 import logging.handlers
 import os
 import errno
-from collections import Mapping
+from collections.abc import Mapping
 
 from pandas import read_csv
 from tqdm import tqdm  # noqa

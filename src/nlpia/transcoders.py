@@ -173,7 +173,7 @@ def split_sentences_spacy(text, language_model='en'):
     >>> split_sentences_nltk("Hi Ms. Lovelace.\nI'm a wanna-\nbe human @ I.B.M. ;) --Watson 2.0")
     ['Hi Ms. Lovelace.', "I'm a wanna-\nbe human @ I.B.M.", ';) --Watson 2.0']
     >>> split_sentences_spacy("Hi Ms. Lovelace.\nI'm a wanna-\nbe human @ I.B.M. ;) --Watson 2.0")
-    ['Hi Ms. Lovelace.', "I'm a wanna-", 'be human @', 'I.B.M. ;) --Watson 2.0']
+    ['Hi Ms. Lovelace.', "I'm a wanna-", 'be human @', 'I.B.M.', ';) --Watson 2.0']
 
     >>> split_sentences_spacy("Hi Ms. Lovelace. I'm at I.B.M. --Watson 2.0")
     ['Hi Ms. Lovelace.', "I'm at I.B.M. --Watson 2.0"]
