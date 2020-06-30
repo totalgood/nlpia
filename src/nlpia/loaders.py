@@ -1058,11 +1058,20 @@ def get_data(name='sms-spam', nrows=None, limit=None):
     Utterance    basically each xfree86 upload will NOT force u...
     Name: 0, dtype: object
     >>> df = get_data('imdb_test')
-    >>> df.describe(include = 'all')
-                                            url     rating                                               text
-    count                                    20  20.000000                                                 20
-    unique                                    5        NaN                                                 20
-    top     http://www.imdb.com/title/...
+    >>> df.shape
+    (20, 3)
+    >>> df.columns
+    Index(['url', 'rating', 'text'], dtype='object')
+    >>> df.describe()
+              rating
+    count  20.000000
+    mean    5.450000
+    std     3.300319
+    min     1.000000
+    25%     3.000000
+    50%     5.500000
+    75%     8.250000
+    max    10.000000
     """
     nrows = nrows or limit
     if name in BIG_URLS:
