@@ -525,12 +525,12 @@ def normalize_ext_rename(filepath):
     >>> pth == normalize_ext_rename(pth)
     True
     """
-    logger.warn('normalize_ext.filepath=' + str(filepath))
+    log.warning('normalize_ext.filepath=' + str(filepath))
     new_file_path = normalize_ext(filepath)
-    logger.warn('download_unzip.new_filepaths=' + str(new_file_path))
+    log.warning('download_unzip.new_filepaths=' + str(new_file_path))
     # FIXME: fails when name is a url filename
     filepath = rename_file(filepath, new_file_path)
-    logger.warn('download_unzip.filepath=' + str(filepath))
+    log.warning('download_unzip.filepath=' + str(filepath))
     return filepath
 
 
@@ -929,9 +929,9 @@ def download_file(url, data_path=BIGDATA_PATH, filename=None, size=None, chunk_s
             logger.error('ConnectionError for url: {} => request {}'.format(url, r))
             remote_size = -1 if remote_size is None else remote_size
         except (InvalidURL, InvalidSchema, InvalidHeader, MissingSchema) as e:
-            logger.warn(e)
-            logger.warn('HTTP Error for url: {}\n request: {}\n traceback: {}'.format(url, r, format_exc()))
-            logger.warn('This can happen for Google Word Vector download links to Dropbox or Google Docs.')
+            log.warning(e)
+            log.warning('HTTP Error for url: {}\n request: {}\n traceback: {}'.format(url, r, format_exc()))
+            log.warning('This can happen for Google Word Vector download links to Dropbox or Google Docs.')
     try:
         remote_size = int(remote_size)
     except ValueError:
