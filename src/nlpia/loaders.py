@@ -1057,17 +1057,12 @@ def get_data(name='sms-spam', nrows=None, limit=None):
     Context      i think we could import the old comments via r...
     Utterance    basically each xfree86 upload will NOT force u...
     Name: 0, dtype: object
-    >>> get_data('imdb_test').info()
-    <class 'pandas.core.frame.DataFrame'>
-    MultiIndex: 20 entries, ('train', 'pos', 0) to ('train', 'neg', 9)
-    #   Column  Non-Null Count  Dtype
-    ---  ------  --------------  -----
-    0   url     20 non-null     object
-    1   rating  20 non-null     int64
-    2   text    20 non-null     object
-    memory usage: 809.0+ bytes
-    dtypes: int64(1), object(2)
-    memory usage: 809.0+ bytes
+    >>> df = get_data('imdb_test')
+    >>> df.describe(include = 'all')
+                                            url     rating                                               text
+    count                                    20  20.000000                                                 20
+    unique                                    5        NaN                                                 20
+    top     http://www.imdb.com/title/...
     """
     nrows = nrows or limit
     if name in BIG_URLS:
@@ -1372,8 +1367,6 @@ def nlp(texts, lang='en', linesep=None, verbose=True):
     Load the SpaCy parser language model lazily and share it among all nlpia modules.
     Probably unnecessary, since SpaCy probably takes care of this with `spacy.load()`
 
-    >>> _parse is None
-    True
     >>> doc = nlp("Domo arigatto Mr. Roboto.")
     >>> doc.text
     'Domo arigatto Mr. Roboto.'
