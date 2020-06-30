@@ -5,6 +5,7 @@ source = */nlpia/*
 omit =
    src/nlpia/data/*
    src/nlpia/book/*
+   src/nlpia/second_edition/*
    src/nlpia/talk.py
    src/nlpia/highd.py
 
