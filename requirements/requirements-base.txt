@@ -14,7 +14,7 @@ Keras-Applications>=1.0.6
 Keras-Preprocessing>=1.0.5
 matplotlib>=3.2.2,<3.4.0
 MechanicalSoup>=0.10.0,<0.11.0
-nltk>=3.4.5,<3.5.0
+nltk==3.5
 pandas>=0.25.3,<0.26.0
 pathlib>=1.0.1,<2.0.0
 pillow>=5.2.0,<6.0.0
