@@ -3,23 +3,23 @@
 # annoy==1.15.1
 # boto
 coverage>=4.3.4
-cython==0.29
+cython>=0.29.20
 future>=0.16.0
 gensim==3.6.0
 html2text>=2018.1.9
 html5lib==1.1
-jupyter==1.0.0
+jupyter>=1.0.0,<1.1.0
 Keras>=2.2.4,<2.4.0
 Keras-Applications>=1.0.6
 Keras-Preprocessing>=1.0.5
 matplotlib>=3.2.2,<3.4.0
 MechanicalSoup>=0.10.0,<0.11.0
 nltk>=3.4.5,<3.5.0
-pandas==0.25.3
+pandas>=0.25.3,<0.26.0
 pathlib>=1.0.1,<2.0.0
 pillow>=5.2.0,<6.0.0
 pip>=18.0
-plac>=0.9.6,<1.0.0  # thinc==6.10.3 requires plac<1.0.0
+plac>=0.9.6,<1.0.0  # thinc==6.10.3 requires plac<1.0.0 and wrapt?
 plotly==3.3.0
 plyfile>=0.5.0,<1.0.0
 pugnlp>=0.2.6
