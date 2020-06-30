@@ -10,7 +10,7 @@ from gensim.models import KeyedVectors
 
 from nlpia.constants import DATA_PATH, BIGDATA_PATH
 from nlpia.data.loaders import get_data
-from nlpia.loaders import nlp, _parse, WV_IDS, WORD2ID, VOCAB, ANN, load_glove
+from nlpia.loaders import nlp, _parse
 
 
 def stdout_logging(loglevel=logging.INFO):
@@ -51,6 +51,7 @@ def most_similar(tok, num_similar=20):
     """ FIXME: Use annoy to index word vectors and find most similar words to token str, id, or vector """
     raise NotImplementedError("Work in Progress, FIXME!")
     global WV
+    from nlpia.loaders import load_glove, WV_IDS, WORD2ID, VOCAB, ANN, WV  # noqa
     if WV is None:
         WV = load_glove(os.path.join(BIGDATA_PATH, 'glove_test.txt'))
 
