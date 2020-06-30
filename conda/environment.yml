@@ -31,7 +31,6 @@ dependencies:
   - scipy==1.1.0
   - spacy==2.0.18
   - swig>=3.0.12
-  - tensorflow-hub==0.4.0
   - theano>=1.0.2
   # this will fail on windows:
   # - python-annoy>=1.9.5,<2.0.0
