@@ -17,7 +17,7 @@ MechanicalSoup>=0.10.0,<0.11.0
 nltk==3.5
 pandas>=0.25.3,<0.26.0
 pathlib>=1.0.1,<2.0.0
-pillow>=5.2.0,<6.0.0
+pillow==6.2.2
 pip>=18.0
 plac>=0.9.6,<1.0.0  # spacy,thinc==6.10.3 requires plac<1.0.0 and wrapt?
 plotly==3.3.0
