@@ -1,64 +1,37 @@
-# Add your pinned requirements so that they can be easily installed with:
-# `pip install -r requirements.txt`
-# Remember to also add them in setup.cfg but unpinned (unversioned).
--r requirements-base.txt
-
-# Twitter Clients (`pip install nlpia[twitter]`)
-# -r requirements-twitter.txt
-
-# Deep Learning Requirements (`pip install nlpia[deep]`)
--r requirements-deep.txt
-
-# Chatbot Requirements (`pip install nlpia[voice]`)
-# -r requirements-voice.txt
-
-# ###################################################
-# NOTES
-#
-
-###########################
-# Ubuntu (apt)
-
-# On newish Ubuntu OSes you need the python header files:
-#$ sudo apt-get install python-dev python3.5-dev python3-virtualenv python-pip build-essential gfortran
-
-# But python-igraph often requires the binary igraph package
-#$ sudo apt-get install python-igraph
-
-# SpeechRecognizer requires PyAudio
-#$ sudo apt-get install install portaudio19-dev python-pyaudio
-
-###########################
-# Mac OSX (homebrew)
-
-# On Mac OSX you need python3 and pip (brew installs the python-dev header files automatically?):
-#$ brew install python3
-
-# SpeechRecognizer requires PyAudio
-#$ brew install portaudio
-
-# offline SpeechRecognizer requires pocketsphinx and swig
-# brew install cmu-pocketsphinx
-# brew install swig
-
-
-############################
-# scipy requires:
-#$ sudo apt-get install gfortran libopenblas-dev liblapack-dev python-scipy python-matplotlib python-numpy
-
-# matplotlib requires:
-#$ sudo apt-get install libpng12-dev libfreetype6-dev
-
-# matplotlib requires a backend (see matplotlibrc), tkagg is one option:
-#$ sudo apt-get install tcl-dev tk-dev python-tk python3-tk
-
-# pugnlp includes:
-# coverage>=4.3.4 nltk>=3.2.2 fuzzywuzzy>=0.15.0 python-slugify>=1.2.4 nlup>=0.5
-
-# optional packages:
-# boto==2.46
-# editdistance>=0.3.1
-
-#
-# NOTES
-# ###################################################
+AIML-Bot>=0.0.3,<0.1.0
+coverage>=4.3.4
+cython>=0.29.20
+future>=0.16.0
+gensim==3.6.0
+html2text>=2018.1.9
+html5lib==1.1
+jupyter>=1.0.0,<1.1.0
+Keras>=2.2.4,<2.4.0
+Keras-Applications>=1.0.6
+Keras-Preprocessing>=1.0.5
+matplotlib>=3.2.2,<3.4.0
+MechanicalSoup>=0.10.0,<0.11.0
+nltk==3.5
+pandas>=0.25.3,<0.26.0
+pathlib>=1.0.1,<2.0.0
+pillow==6.2.2
+pip>=18.0
+plac>=0.9.6,<1.0.0  # spacy,thinc==6.10.3 requires plac<1.0.0 and wrapt?
+plotly==3.3.0
+plyfile>=0.5.0,<1.0.0
+pugnlp>=0.2.6
+pytest-cov>=2.5.1
+python-levenshtein>=0.12.0,<0.13.0
+qtconsole==4.4.1. # ,<6.0.0  # 4.4.1 is available on OSX in conda and pip
+redis>=2.10.6,<2.11.0
+regex>=2020.6.8
+scikit-learn>=0.18.1
+# scipy==1.4.0
+seaborn>=0.8
+setuptools>=40.8.0
+spacy==2.3.0
+tensorflow>=1.15.2,<1.19.0
+tensorflow-hub>=0.4.0
+theano==1.0.2
+tqdm>=4.11.2
+wheel>=0.30.0a0
