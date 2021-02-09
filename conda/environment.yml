@@ -7,19 +7,21 @@ channels:
 
 dependencies:
   - botocore
-  - gensim>=3.4.0,<3.8.0
+  - gensim==3.4.0
   - h5py==2.8.0
   - mechanicalsoup
-  - opencv>=3.3.0,<3.5.0
-  - pandoc>=2.2.3,<3.0.0
+  - opencv==3.3.0
+  - pandoc==2.2.3.2
   - pip>=18.0
-  - plac>=0.9.6,<1.3.0
+  - plac==0.9.6
   - plotly==3.3.0
-  - pyscaffold>=3.1
+  - pyscaffold==3.1
   - pytest-cov
-  - python-levenshtein>=0.12.0,<0.13.0
-  - redis-py>=2.10.6
-  - swig>=3.0.12
+  - python-levenshtein==0.12.0
+  - redis-py==2.10.6
+  - scipy==1.4.1
+  - swig==3.0.12
+  - tensorflow==2.1.0
   - theano>=1.0.2
   # this will fail on windows:
   # - python-annoy>=1.9.5,<2.0.0
