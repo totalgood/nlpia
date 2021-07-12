@@ -28,6 +28,10 @@ BIG_URLS = {
         'https://www.dropbox.com/s/965dir4dje0hfi4/GoogleNews-vectors-negative300.bin.gz?dl=1',
         1647046227,
     ),
+    'glove': (
+        'http://nlp.stanford.edu/data/glove.6B.zip',
+        862182613,
+    ),
     'slang': (
         'https://www.dropbox.com/s/43c22018fbfzypd/slang.csv.gz?dl=1',
         117633024,
@@ -331,4 +335,3 @@ model.predict(test_vec)
 
 
 model.predict_classes(test_vec)
-

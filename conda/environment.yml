@@ -15,7 +15,7 @@ dependencies:
   - pip>=18.0
   - plac==0.9.6
   - plotly==3.3.0
-  - pyscaffold==3.1
+  - pyscaffold>=4.0
   - pytest-cov
   - python-levenshtein==0.12.0
   - redis-py==2.10.6

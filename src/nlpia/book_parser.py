@@ -64,13 +64,13 @@ def get_lines(file_path=BOOK_PATH):
 
     >>> lines = get_lines(BOOK_PATH)
     >>> next(lines)
-    ('.../src/nlpia/data/book/Appendix F -- Glossary.asc',
+    ('.../src/nlpia/data/book/Appendix F -- Glossary.adoc',
      ['= Glossary\n',
       '\n',
       "We've collected some ...])
     """
     if os.path.isdir(file_path):
-        file_path = os.path.join(file_path, '*.asc')
+        file_path = os.path.join(file_path, '*.adoc')
         files = glob.glob(file_path)
     elif os.path.isfile(file_path):
         files = [file_path]

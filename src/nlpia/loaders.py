@@ -72,6 +72,7 @@ from nlpia.web import get_url_filemeta
 from nlpia.web import dropbox_basename, get_url_title, try_parse_url  # noqa (not used)
 from nlpia.web import requests_get
 
+import ipdb
 
 _parse = None  # placeholder for SpaCy parser + language model
 
@@ -89,7 +90,10 @@ log.setLevel(logging.DEBUG)
 
 W2V_FILES = [
     'GoogleNews-vectors-negative300.bin.gz',
-    'glove.6B.zip', 'glove.twitter.27B.zip', 'glove.42B.300d.zip', 'glove.840B.300d.zip',
+    'glove.6B.zip',
+    'glove.twitter.27B.zip',
+    'glove.42B.300d.zip',
+    'glove.840B.300d.zip',
 ]
 # You probably want to `rm nlpia/src/nlpia/data/bigdata_info.csv` if you modify any of these
 # so they don't overwrite what you hardcode within loaders.py here:
@@ -525,9 +529,9 @@ def normalize_ext_rename(filepath):
     >>> pth == normalize_ext_rename(pth)
     True
     """
-    log.warning('normalize_ext.filepath=' + str(filepath))
+    # log.warning('normalize_ext.filepath=' + str(filepath))
     new_file_path = normalize_ext(filepath)
-    log.warning('download_unzip.new_filepaths=' + str(new_file_path))
+    # log.warning('download_unzip.new_filepath=' + str(new_file_path))
     # FIXME: fails when name is a url filename
     filepath = rename_file(filepath, new_file_path)
     log.warning('download_unzip.filepath=' + str(filepath))
@@ -986,6 +990,7 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
     Args:
     `name` is assumed not to have an extension (like ".csv"), alternative extensions are tried automatically.file
     """
+    print(f"Loading file with name: {name}")
     if os.path.isfile(name):
         try:
             return read_json(name)
@@ -1003,11 +1008,12 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
     if os.path.isfile(os.path.join(data_path, name)):
         return read_csv(os.path.join(data_path, name), nrows=nrows)
     if name in DATASET_NAME2FILENAME:
-        name = DATASET_NAME2FILENAME[name]
-        if name.lower().endswith('.txt') or name.lower().endswith('.txt.gz'):
-            return read_text(os.path.join(data_path, name), nrows=nrows)
-        else:
-            return read_csv(os.path.join(data_path, name), nrows=nrows)
+        filename = DATASET_NAME2FILENAME[name]
+        if filename.lower().endswith('.txt') or filename.lower().endswith('.txt.gz'):
+            return read_text(os.path.join(data_path, filename), nrows=nrows)
+        elif filename.lower().endswith('.bin.gz'):
+            ipdb.set_trace()
+            return KeyedVectors.load_word2vec_format(os.path.join(BIGDATA_PATH, name + '.bin.gz'), binary=True)
     try:
         return read_csv(os.path.join(data_path, name + '.csv.gz'), nrows=nrows)
     except IOError:
@@ -1027,16 +1033,16 @@ def read_named_csv(name, data_path=DATA_PATH, nrows=None, verbose=True):
 
     # FIXME: mapping from short name to uncompressed filename
     # BIGDATA files are usually not loadable into dataframes
-    try:
-        return KeyedVectors.load_word2vec_format(os.path.join(BIGDATA_PATH, name + '.bin.gz'), binary=True)
-    except IOError:
-        pass
-    except ValueError:
-        pass
-    try:
-        return read_text(os.path.join(BIGDATA_PATH, name + '.txt'), verbose=verbose)
-    except IOError:
-        pass
+    filepath = os.path.join(BIGDATA_PATH, name + '.bin.gz')
+    if os.path.isfile(filepath):
+        try:
+            ipdb.set_trace()
+            return KeyedVectors.load_word2vec_format(filepath, binary=True)
+        except ValueError:
+            pass
+    filepath = os.path.join(BIGDATA_PATH, name + '.txt')
+    if os.path.isfile(filepath):
+        return read_text(filepath, verbose=verbose)
 
 
 def get_data(name='sms-spam', nrows=None, limit=None):

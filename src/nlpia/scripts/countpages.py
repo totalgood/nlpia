@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Renders *.asc (asciidoc) files to PDF or HTML then counts pages & words
+""" Renders *.adoc (asciidoc) files to PDF or HTML then counts pages & words
 
 HTML or other render formats requires asciidoctor` ruby package/cli:
 
@@ -21,7 +21,7 @@ $ gem install pygments.rb
 $ gem install coderay
 ````
 
-You can activate the Rouge syntax highlighter with the following atttribute in your *.asc files:
+You can activate the Rouge syntax highlighter with the following atttribute in your *.adoc files:
 
 ```asciidoc
 :source-highlighter: rouge
@@ -29,7 +29,7 @@ You can activate the Rouge syntax highlighter with the following atttribute in y
 
 Usage:
 
-Put all images in a folder called `images` and at the same level a directory called `manuscript` with the *.asc files.
+Put all images in a folder called `images` and at the same level a directory called `manuscript` with the *.adoc files.
 A `build` directory must also be present at the same level. Then to render ascidic files to PDF:
 
 $ python countpages.py ~/src/lane/manuscript/ pdf
@@ -71,7 +71,7 @@ def render(manuscript_dir='manuscript', renderas='html5', renderext='html'):
 
     total_wc, chapters_wc = 0, 0
     for filename in files:
-        if filename.lower().endswith('.asc'):
+        if filename.lower().endswith('.adoc'):
             print("-" * 40)
             print(filename + ':')
             quoted_filename = shell_quote(os.path.join(manuscript_dir, filename))
