@@ -1,0 +1,108 @@
+# Happiness datasets
+-
+  problem: predicting country gross happiness (World Happiness Report) and GNH (Gross National Happiness), also the Easterlin paradox
+  url: https://en.wikipedia.org/wiki/OECD_Better_Life_Index
+-
+  problem: predicting country gross happiness (World Happiness Report) and GNH (Gross National Happiness), also the Easterlin paradox
+  url: https://www.kaggle.com/unsdsn/world-happiness
+# GEC (Grammar Error Correction) Datasets
+-
+  problem: English GEC
+  docs: https://www.cl.cam.ac.uk/research/nl/bea2019st/
+  description: _FCE v2.1_ not NUCLE, Lang-8, W&I+LOCNESS v2.1
+  url: https://www.cl.cam.ac.uk/research/nl/bea2019st/data/fce_v2.1.bea19.tar.gz
+-
+  problem: English GEC
+  docs: https://www.cl.cam.ac.uk/research/nl/bea2019st/
+  description: _W&I+LOCNESS v2.1_ not NUCLE, Lang-8, FCE v2.1
+  url: https://www.cl.cam.ac.uk/research/nl/bea2019st/data/wi+locness_v2.1.bea19.tar.gz
+-
+  problem: Russian grammer error correction
+  docs: https://github.com/arozovskaya/RULEC-GEC
+  data access: https://github.com/arozovskaya/RULEC-GEC/blob/master/RULEC%20User%20Agreement.pdf
+-
+  problem: CONNL - NUS Corpus of Learner English (NUCLE) grammar and fluency correction
+  docs: https://www.comp.nus.edu.sg/~nlp/conll14st.html#nucle32
+  url: https://www.comp.nus.edu.sg/~nlp/conll14st/conll14st-test-data.tar.gz
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html
+  description: Training data (42MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_train.xml.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: Development data (5MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_dev.xml.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html
+  description: Test data (without edits - used for the AESW 2016 Shared Task (5MB)
+  url: http://textmining.lt/aesw/test.evaluation.xml.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html
+  description: Test data (with edits) (6MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_test.xml.zip).
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: Training tokens (49MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_train.tok.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: Training tPOS (20MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_train.pos.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: Training tCFG (65MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_train.cfg.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: Training tDEP (186MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_train.dep.bz2)
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html
+  description: Development tokens (6MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_dev.tok.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: POS (3MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_dev.pos.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: CFG (8MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_dev.cfg.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: DEP (23MB)
+  url: http://textmining.lt/aesw/aesw2016(v1.2)_dev.dep.bz2)
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html
+  description: Test (without edits) tokens (5MB)
+  url: http://textmining.lt/aesw/test.tok.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: Test (without edits) POS (2MB)
+  url: http://textmining.lt/aesw/test.pos.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: Test (without edits) CFG (6MB)
+  url: http://textmining.lt/aesw/test.cfg.bz2
+- 
+  problem: AESW (Automated Evaluation of Scientific Writing Data Set) grammar and fluency correction
+  docs: http://textmining.lt/aesw/aesw2016down.html 
+  description: Test (without edits) DEP (17MB)
+  url: http://textmining.lt/aesw/test.dep.bz2)
+
+  

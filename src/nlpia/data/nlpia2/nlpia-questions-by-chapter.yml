@@ -1,0 +1,32 @@
+# nlpia questions by chapter
+
+## Chapter 1
+
+Chapter 1:
+  title:  Applications
+  questions:
+    -
+      Q: Recent advances in NLU accuracy have enabled semantic search applications. Name one technical and one social challenge that remain be solved for accurate and efficient semantic search of Internet?
+      A: 1. Indexing high dimensional continuous vectors (embeddings) for efficient retrieval. 2. Economic incentives to deploy accurate search engines rather than advertisement recommendation engines and customer funnel optimizers.
+    -
+      Q: Name some unsolved problems in NLP.
+      A: Open domain question answering; Incorporating common sense logic and physics into language models; Human level conversational interfaces (chatbots); Long technical document abstractive summarization; Rigorous turing-test level conversational chatbots; Robust NLP
+Chapter 2:
+  title: Tokenization
+    -
+      Q: What is the most common "packet" or "atom" of meaning within natural language text for linguistics and NLP?
+      A: Words (including compound words and names), also called terms, tokens, or lexemes.
+    -
+      Q: Name six approaches to reducing your vocabulary size in order of their effectiveness for most NLP problems.
+      A: 1) Byte Pair Encoding, Word Piece Encoding, or Sentence Piece Encoding; 2) Increase the minimum document frequency (`min_df`) threshold for your tokenizer or vectorizer; 3) Decrease the maximum document frequency (`max_df`) threshold for your tokenizer or vectorizer; 4) Use a character n-gram tokenizer with an n-gram range of up to 3-grams; 5) lemmatization; 6) stemming.    
+    - 
+      Q: What is a typical piece of text used for cryptography?
+      A: A character or byte.
+    -
+      Q: What are the advantages and disadvantages of lemmatization for a search engine pipeline?
+      A: Lemmatization usually increases recall (sensitivity) but reduces specificity. A pipeline using lemmatization will return more documents or web pages, but many of the pages will likely be irrelevant and not match your intent of your search.
+Chapter 3:
+  title: TFIDF Vectorization
+Chapter 4:
+  title: PCA
+      

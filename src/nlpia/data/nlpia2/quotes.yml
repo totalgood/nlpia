@@ -1,0 +1,273 @@
+# Quotes for clues within NLPIA 2nd Ed
+# can be used on nlpia.org for a treasure hunt.
+# also good for a concept graph or mind map
+
+-
+  text: "For over 70 years economics has been fixated on GDP, or national output, as its primary measure of progress. That fixation has been used to justify extreme inequalities of income and wealth coupled with unprecedented destruction of the living world. For the twenty-first century a far bigger goal is needed: meeting the human rights of every person within the means of our life-giving planet."
+  author: Kate Raworth
+  title: "Doughnut Economics: Seven Ways to Think like a 21st-Century Economist"
+  concept: economics, regenerative economics, regenerative business, social impact, externalities, doughnut economics, rational agent, behavioral economics 
+-
+  text: "Depicting rational economic man as an isolated individual - unaffected by the choices of others – proved highly convenient for modelling the economy, but it was long questioned even from within the discipline. At the end of the nineteenth century, the sociologist and economist Thorstein Veblen berated economic theory for depicting man as a \"self-contained globule of desire\", while the French polymath Henri Poincaré pointed out that it overlooked \"people's tendency to act like sheep\". He was right: we are not so different from herds as we might like to imagine. We follow social norms, typically preferring to do what we expect others will do and, especially if filled with fear or doubt, we tend to go with the crowd."
+  author: Kate Raworth
+  title: "Doughnut Economics: Seven Ways to Think like a 21st-Century Economist"
+  concept: economics, regenerative economics, regenerative business, social impact, externalities, doughnut economics, rational agent, behavioral economics 
+  attribution: Thorstein Veblen, Henri Poincaré
+-
+  text: "The pessimist complains about the wind; the optimist expects it to change; the realist adjusts the sails."
+  author: William Arthur Ward
+  concept: [adversity, optimism, practicality]
+-
+  text: "Life isn't about finding yourself. Life is about creating yourself."
+  author: "George Bernard Shaw"
+  concept: life, meaning, will, motivation
+-
+  text: |+
+    "You're the reason she left. You can leave too, for all I care. I sure as hell would be better off without you."
+
+    The words were just as I remembered them, but it wasn't Nicole saying them.
+    
+    It was me.
+  concept:
+    - flawed human memory
+    - pivotal moments in life
+    - _Sliding Doors_
+    - Remem
+    - cognitive assistants
+    - memory assistant
+    - Google Search
+    - Life log
+    - qary
+  book: _Exhalation_ short story "Truth of Fact, Truth of Fiction"
+  title: Truth of Fact, Truth of Fiction
+  author: Ted Chiang
+  nlpia: ch02 stopwords
+-
+  text: "\"Tell me the story that the paper tells,\" he said."
+  book: _Exhalation_ short story "Truth of Fact, Truth of Fiction"
+  character: Moseby talking to Jinji
+  context: Genesis story of Adam and snake read to an African chief and oral storyteller.
+  concept:
+    - fake news
+    - written vs oral storytelling
+    - memory
+    - machines better eye witnesses
+  title: Truth of Fact, Truth of Fiction
+  author: Ted Chiang
+  nlpia: ch02 about fake news and tokenizing quotes.
+- 
+  text: "Evolution has no foresight. Complex machinery develops its own agendas. Brains -- cheat. Feedback loops evolve to promote stable heartbeats and then stumble upon the temptation of rhythm and music. The rush evoked by fractal imagery, the algorithms used for habitat selection, metastasize into art. Thrills that once had to be earned in increments of fitness can now be had from pointless introspection. Aesthetics rise unbidden from a trillion dopamine receptors, and the system moves beyond modeling the organism. It begins to model the very process of modeling. It consumes evermore computational resources, bogs itself down with endless recursion and irrelevant simulations. Like the parasitic DNA that accretes in every natural genome, it persists and proliferates and produces nothing but itself. Metaprocesses bloom like cancer, and awaken, and call themselves I."
+  book: Blindsight
+  author: Peter Watts
+-
+  text: "People aren't rational. We're not thinking machines, we're -- we're feeling machines that happen to think."
+  book: Blindsight
+  author: Peter Watts
+-
+  text: "This is how you communicate with a fellow intelligence: You hurt it, you keep on hurting it, until you can distinguish the speech from the screams."
+  concept: [decypher alien communication, sociopathy, cross-species empathy and ethics]
+  book: Blindsight
+  author: Peter Watts
+-
+  text: "There's no such things as survival of the fittest. Survival of the most adequate, maybe. It doesn't matter whether a solution's optimal. All that matters is whether it beats the alternative."
+  concept: [evolution, survival of the fittest, consciousness]
+  book: Blindsight
+  author: Peter Watts
+-
+  text: "I brought her flowers one dusky Tuesday evening when the light was perfect. I pointed out the irony of that romantic old tradition -- the severed genitalia of another species, offered as a precopulatory bribe -- and then I recited my story just as we were about to fuck."
+  concept: [love, rommance, sex]
+-
+  text: "If information is to the mind what food is to the body, then it is time we become aware of the impact of our informational diet on our mental health"
+  author: Jodie Jackson
+  concept: psychological impact of social media
+  book: You are What you Read
+  author: Peter Watts
+-
+  text: "A primary object should be the education of our youth in the science of government. In a republic, what species of knowledge can be equally important? And what duty more pressing than communicating it to those who are to be the future guardians of the liberties of the country?"
+  concept: [social media, education, democracy, knowledge, fake news]
+  author: George Washington
+-
+  text: "There is nothing which can better deserve our patronage than the promotion of science and literature. Knowledge is in every country the surest basis of public happiness."
+  author: George Washington
+  concept: [social media, education, democracy, science, knowledge, fake news]
+- 
+  text: "Is it [the answer] just a rigorous parctice of dialectic synthesis as essentially conversations with a-holes of various flavors until they are not a-holes because you become deeply empathetic with their perspective."
+  concept: [Happiness quotient, HDP vs GDP]
+  author: Lex Frideman
+  media: podcast
+  brainstorm partner: Daniel Schmachtenberg
+  url: https://lexfridman.com/daniel-schmachtenberger/
+-
+  text: "Let's throw out happines and comfort. They are useless. Personal growth which is intellectural growth, I think we are able to make that concrete for ourselves. I think we can ourselves report that and understand what that means. We all dream of becoming a certain kind of person and we think we have a sense of getting closer and not towards that person. e behave an idealistic sense of the person we want to become."
+  concept: [Happiness Quotient, GNH, beneficial ai, human compatible, utilitarianism]
+  author: Lex Frideman
+  media: podcast
+  brainstorm partner: Daniel Schmachtenberg
+  url: https://lexfridman.com/daniel-schmachtenberger/
+-
+  text: "What about love. F*@# if you're happy or not, F*@# if you are comfortable or not. That's a good metric. If I can quantify it. How many times a day have you thought positively about another person, put down that down as a number, and increase that number."
+  concept: [Happiness Quotient, GNH, beneficial ai, human compatible, utilitarianism]
+  author: Lex Frideman
+  media: podcast
+  brainstorm partner: Daniel Schmachtenberg
+  url: https://lexfridman.com/daniel-schmachtenberger/
+-
+  text: "Think about the emergence of the plow, the ox-drawn plow and the beginning of agriculture that came with it. Where before that you had hunter gatherer and then you had a horticulture kind-of digging stick, but not the plow. Well the world changed a lot with that, right. And a few of the changes, that at least some of the theorists believe in, is when the ox drawn plow started to proliferate, any culture that utilized it was able to start to actually cultivate grain. Because just with the digging stick you couldn't get enough grain for it to matter. Grain was a storable caloric surplus. They could make it through the famines. They could grow their populations. So the ones that used it got so much ahead that it became obligate and everybody used it. That corresponding with the use of a plow, animism went away everywhere that it existed. Because you can't talk about the spirit of the buffalo while beating the cow all day long to pull a plow. So the moment that we do animal husbandry of that kind where you have to beat the cow all day you have to say it's just a dumb animal. Man has dominion over Earth. And the nature of our religious and even spiritual ideas change. You went from women primarily using the digging stick to do the horticulture or gathering before that. Men doing the hunting stuff, to now men had to use the plow because the upper body strength really mattered. Women would have more miscarriages when they would do it when they were pregnant. So all the caloric supply started to come from men where it had been from both before and the ratio of male/female gods changed to being mostly male gods. That particular line of thought says that then  Feminism followed the tractor. And the rise of feminism in the west followed women being able to say we can do what men can because the male upper body strength wasn't differential once the internal combustion engine was much stronger. And we [women] can drive a tractor. ... The plow is also the beginning of the anthropocene. It was the beginning of us changing the environment radically to clearcut areas to make them useful for people. Which also changed the view of the web of life, where we're just a part of it, etc."
+  concept: "tech affects society, plow created patriarchal society, tractor created feminism; The Jetsons Fallacy"
+  location: 3:24:00 - 3:27:09
+  concept: causal models
+  author: Daniel Schmachtenberger
+  secondary author: Lex Frideman
+-
+  text: "So I dont' think trying to trace complex things to one cause is a good idea. So the idea that technology is values agnostic is silly. Technology codes patterns of behavior that code rationalizing those patterns of behavior and believing in them."
+  location: 3:26:42
+  concept: causal models, confounding factors
+  author: Daniel Schmachtenberger
+  secondary author: Lex Frideman
+-
+  text: "In the film Star Wars and the cartoon The Jetsons, humans  are surrounded by sophisticated AIs, while themselves remaining unenhanced. In reality, AI will not just transform the world. It will transform us."
+  concept: The Jetsons Fallacy
+  media: podcast
+  author: Susan Schneider
+  secondary author: Michael Bess
+-
+  text: "Because we do not understand the brain very well we are constantly tempted to use the latest technology as a model for trying to understand it. In my childhood we were always assured that the brain was a telephone switchboard...Sherrington, the great British neuroscientist, thought the brain worked like a telegraph system. Freud often compared the brain to hydraulic and electromagnetic systems. Leibniz compared it to a mill... At present, obviously, the metaphor is the digital computer."
+  author: John Searle
+-
+  text: "The problem posed by indirect speech acts is the problem of how it is possible for the speaker to say one thing and mean that but also to mean something else."
+  tags: [meaning, communication, nlp, natural language, semantics]
+  author: John Searle 
+-
+  text: "If you can say it clearly, you don't understand it yourself"
+  concepts:
+    - "syntax doesn’t suffice for semantics"
+  author: John Searle 
+-
+  text: "Why does all the information processin ghte brain need to feel a certain way, from the inside?"
+  book: "The Conscious Mind"
+  author: David Chalmers
+-
+  text: "The reason that no computer program can ever be a mind is simply that a computer program is only syntactical, and minds are more than syntactical. Minds are semantical, in the sense that they have more than a formal structure, they have content."
+  concepts:
+    - "brains cause minds"
+    - "syntax doesn’t suffice for semantics"
+    - "Strong AI"
+    - "AGI (Artificial General Intelligence)"
+    - "The Chinese Room"
+  author: John Searle
+-
+  text: "CAC: Consciousness can be explained computationally, and further, the computational details of a system fix the kind of consicous experiences that it has and whether it has any."
+  concept: 
+    - Computationalism about Consciousness
+    - "substrate independence (of consciousness and mind)"
+  book: "Artificial You"
+  author: Susan Schneider
+- 
+  text: "But, in our age, conscience and duty are not ideals: an excess of either is seen as a mental illness called social-pressure personality disorder."
+  character: AA
+  page: 122
+  book: "Death's End"
+  author: Cixin Liu
+-
+  text: "We have seen that fascism is not just something those other people did. No. It's right here. In this room."
+  author: Ron Jones
+  utterer: Ron Jones
+  date: 1967
+  page: 9
+  book: The Third Wave (originaly titled Take as Directed)
+  url: "http://libcom.org/files/The%20third%20wave.pdf"
+-
+  text: "Of course, perhaps the real reason for sending her was only one of vanity, a wish that the Staircase Program would not be forgotten by the future."
+  page: 99
+  book: "Death's End"
+  author: Cixin Liu 
+-
+  text: "This moment resembled the rest of his life: a dedicated watch for a slim, slim ray of hope."
+  page: 57
+  character: Cheng Xin
+  book: "Death's End"
+  author: Cixin Liu 
+-
+  text: "The root cause for Crisis Infantilism may well be foun in the interaction between these manifestations adn the tremendous intertia of human society's inherent conservatism."
+  page: 43
+  book: "Death's End"
+  author: Cixin Liu 
+-
+  text: "I crushed some weeds and added them to the water. It's the most organic drink."
+  page: 40
+  character: Tianming
+  tag: Green Tempest
+  book: "Death's End"
+  author: Cixin Liu 
+-
+  text: "That most lovely day of his time in college held a golden glow in his mind. ... Tianming fell in love with drizzly days, ..."
+  page: 39
+  character: Tianming
+  book: "Death's End"
+  author: Cixin Liu 
+-
+  text: "He thought of "The Judgement" by Franz Kafka, in which a father curses his son and sentences him to death. The son agrees, as easily as someone agreeing to take out the trash or to shut the door, ..."
+  page: 38
+  book: "Death's End"
+  character: Tianming
+  author: Cixin Liu
+-
+  text: "It was as ridiculuous to worry about the future as to lament the past."
+  page: 33
+  book: "Death's End"
+  character: Tianming
+  author: Cixin Liu
+-
+  text: "But if we're talking about the universe, life is exceedingly rare, and its impact on the evolution of the universe can be ignored."
+  page: 32
+  book: "Death's End"
+  character: Green Glasses
+  author: Cixin Liu
+-
+  text: "As long as you give it enough time, life is stronger than metal and stone, more powerful than typhoons and volcanoes."
+  page: 31
+  book: "Death's End"
+  character: Yang Dong
+  author: Cixin Liu
+-
+  text: "Once, Yang Dong had held a basic velief: Life and the world were perhaps ugly, but at the limits of the micro and macro scales, everything was harmonious and beautiful."
+  page: 28
+  book: "Death's End"
+  character: Yang Dong
+  author: Cixin Liu
+-
+  text: "As far as she could see, a considerable number of the people around her lived only half lives. As long as one was good at forgetting and adjusting, half a life could be lived in contentment and even happiness."
+  page: 29
+  book: "Death's End"
+  character: Yang Dong
+  author: Cixin Liu
+-
+  text: "Trisolaran writing was purely ideographic; unlike human scripts, which were mostly phonetic, Trisolaran writing had no connection to their speech, but expressed ideas directly."
+  footnote: "An introduction to how Chinese Characters really function may be found in John DeFrancis's _Chinese Language: Fact and Fantasy_"
+  page: 589
+  book: "Death's End"
+  author: Cixin Liu 
+-
+  text: "Sophon bowed again. 'Welcome to Univers 647. I am its manager."
+  page: 585
+  book: "Death's End"
+  author: Cixin Liu 
+-
+  text: "We're going to advance! Advance! We'll stop at nothing to advance!"
+  character: Wade and Cheng Xin
+  page: 588
+  book: "Death's End"
+  author: Cixin Liu 
+-
+  text: "Reading The Shoulder Shrug between two and three o'clock each morning, post-nightmare, or during the afternoon, in the basement."
+  character: Liesel
+  book: "The Book Thief"
+  author: Markus Zusak
+  references:
+    - https://bookthiefbooks.weebly.com/the-shoulder-shrug.html
+-
+  page: 85
+  text: "Trust me, though, the words were on their way, and when they arrived, Liesel would hold them in her hands like the clouds, and she would wring them out, like the rain."
+  character: Liesel
+  book: "The Book Thief"
+  author: Markus Zusak

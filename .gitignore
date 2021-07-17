@@ -92,3 +92,7 @@ src/nlpia/data/aiml-en-us-foundation-alice/
 # models
 *.ann
 
+# big data
+*.bz2
+*.gz
+*.zip
