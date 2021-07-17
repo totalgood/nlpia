@@ -39,7 +39,7 @@ n_samples = min(100000, len(df))  # <4>
 df['target'] = start_token + df.reply + stop_token
 [input_vocab.update(set(statement)) for statement in df.statement]
 [output_vocab.update(set(reply)) for reply in df.reply]
-input_vocab = tuple(sorted(input_vocab)) #<6>
+input_vocab = tuple(sorted(input_vocab))  # <6>
 output_vocab = tuple(sorted(output_vocab))
 
 max_encoder_seq_len = df.statement.str.len().max()
@@ -189,25 +189,27 @@ r"""
 
 ...     return generated_sequence
 """
+
+
 def decode_sequence(input_seq):
     thought = encoder_model.predict(input_seq)  # <1>
 
     target_seq = np.zeros((1, 1, len(output_vocab)))  # <2>
-    target_seq[0, 0, output_vocab.index(stop_token)
-        ] = 1.  # <3>
+    target_seq[0, 0, output_vocab.index(start_token)
+               ] = 1.  # <3>
     stop_condition = False
     generated_sequence = ''
 
     while not stop_condition:
         output_tokens, h, c = decoder_model.predict(
-            [target_seq] + thought) # <4>
+            [target_seq] + thought)  # <4>
 
         generated_token_idx = np.argmax(output_tokens[0, -1, :])
         generated_char = output_vocab[generated_token_idx]
         generated_sequence += generated_char
         if (generated_char == stop_token or
                 len(generated_sequence) > max_decoder_seq_len
-                ):  # <5>
+            ):  # <5>
             stop_condition = True
 
         target_seq = np.zeros((1, 1, len(output_vocab)))  # <6>
@@ -227,6 +229,7 @@ def respond(input_text):
     print('Human: {}'.format(input_text))
     print('Bot:', decoded_sentence)
     return decoded_sentence
+
 
 """
 respond('Hi Rosa, how are you?')

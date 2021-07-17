@@ -96,3 +96,7 @@ src/nlpia/data/aiml-en-us-foundation-alice/
 *.bz2
 *.gz
 *.zip
+Fake.csv
+True.csv
+encoder_*.np.npy
+decoder_*.np.npy
