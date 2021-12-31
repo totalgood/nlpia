@@ -192,7 +192,7 @@ docker run -p 8888:8888 -v ~:/home/jovyan/work nlpia
 Then open a new notebook and test your code. Make sure save it inside `work` directory so it's accessible outside the container.
 
 
-## Alternative 5.3. `miniforge`
+## Alternative 5.4. `miniforge`
 
 ### 5.4.1 Install Python3.9.5 and tensorflow-metal with miniforge
 
