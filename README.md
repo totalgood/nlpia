@@ -86,10 +86,10 @@ You have two alternative package managers you can use to install `nlpia`:
 
 5.1. [`conda`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-51-conda)
 5.2. [`pip`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-52-pip)
+5.3. [`docker`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-53-docker)
+5.4. [`miniforge`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-54-miniforge)
 
 A helpful [NLPIA](http://bit.ly/gh-readme-nlpia-book) reader, [Hoang Chung Hien](https://github.com/hoangchunghien), created a Dockerfile you can use for a third way to manage your environment:
-
-5.3. [`docker`](https://github.com/totalgood/nlpia/blob/master/README.md#alternative-53-docker)
 
 In most cases, `conda` will be able to install python packages faster and more reliably than `pip`. Without `conda` Some packages, such as `python-levenshtein`, require you to compile a C library during installation. Windows doesn't have a a compiler and python package installer that will "just work."
 
@@ -190,6 +190,24 @@ docker run -p 8888:8888 -v ~:/home/jovyan/work nlpia
 ```
 
 Then open a new notebook and test your code. Make sure save it inside `work` directory so it's accessible outside the container.
+
+
+## Alternative 5.3. `miniforge`
+
+### 5.4.1 Install Python3.9.5 and tensorflow-metal with miniforge
+
+Follow this [tutorial](https://makeoptim.com/en/deep-learning/tensorflow-metal)
+
+### 5.4.2 Install all requirements with pip
+
+Miniforge will give you a Python3.9.5 (or more) virtual environment, capable to run the accelerated tensorflow-metal , optimized to use the M1 integrated GPU hardware.
+
+    pip install -r requirements.txt
+
+### 5.4.3 Install mlpia
+
+    python setup.py install
+    
 
 ### 6. Have Fun!
 
