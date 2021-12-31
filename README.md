@@ -202,9 +202,10 @@ Follow this [tutorial](https://makeoptim.com/en/deep-learning/tensorflow-metal)
 
 Miniforge will give you a Python3.9.5 (or more) virtual environment, capable to run the accelerated tensorflow-metal , optimized to use the M1 integrated GPU hardware.
 
+    cd nlpia
     pip install -r requirements.txt
 
-### 5.4.3 Install mlpia
+### 5.4.3 Install nlpia
 
     python setup.py install
     
